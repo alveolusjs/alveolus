@@ -1,0 +1,26 @@
+{
+	"name": "@alveolus/testing",
+	"version": "0.0.0",
+	"description": "Test helpers for codebases built with Alveolus building blocks",
+	"type": "module",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/alveolusjs/alveolus.git",
+		"directory": "packages/testing"
+	},
+	"homepage": "https://alveolusjs.github.io/alveolus/testing",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.mts",
+			"import": "./dist/index.mjs"
+		}
+	},
+	"files": [
+		"dist"
+	],
+	"scripts": {
+		"build": "tsdown",
+		"typecheck": "tsc -p tsconfig.json"
+	}
+}

@@ -1,0 +1,26 @@
+{
+	"name": "@alveolus/core",
+	"version": "0.0.0",
+	"description": "Domain-Driven Design building blocks for TypeScript",
+	"type": "module",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/alveolusjs/alveolus.git",
+		"directory": "packages/core"
+	},
+	"homepage": "https://alveolusjs.github.io/alveolus/core",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.mts",
+			"import": "./dist/index.mjs"
+		}
+	},
+	"files": [
+		"dist"
+	],
+	"scripts": {
+		"build": "tsdown",
+		"typecheck": "tsc -p tsconfig.json"
+	}
+}

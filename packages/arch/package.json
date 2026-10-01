@@ -1,0 +1,29 @@
+{
+	"name": "@alveolus/arch",
+	"version": "0.0.0",
+	"description": "Architecture tests for codebases built with Alveolus building blocks",
+	"type": "module",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/alveolusjs/alveolus.git",
+		"directory": "packages/arch"
+	},
+	"homepage": "https://alveolusjs.github.io/alveolus/arch",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.mts",
+			"import": "./dist/index.mjs"
+		}
+	},
+	"files": [
+		"dist"
+	],
+	"scripts": {
+		"build": "tsdown",
+		"typecheck": "tsc -p tsconfig.json"
+	},
+	"bin": {
+		"alveolus": "./dist/cli.mjs"
+	}
+}
