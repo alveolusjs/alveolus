@@ -1,0 +1,36 @@
+import { describe, expect, it } from "vitest";
+
+import { TestCodebase } from "../../test/support/test-codebase.ts";
+import { PlacementRule } from "./placement.rule.ts";
+
+describe("PlacementRule", () => {
+	it("accepts each building block in its folder with its suffix", () => {
+		const codebase = new TestCodebase()
+			.file("src/ordering/domain/value-objects/order-id.identifier.ts", `import { Identifier } from "@alveolus/core";\nexport class OrderId extends Identifier<string, "OrderId"> {}`)
+			.file("src/ordering/domain/errors/invalid-total.error.ts", `import { DomainError } from "@alveolus/core";\nexport class InvalidTotal extends DomainError {}`)
+			.file("src/ordering/domain/ports/payments.port.ts", `import { Port } from "@alveolus/core";\nexport abstract class Payments extends Port {}`)
+			.file("src/ordering/driven/adapters/stripe-payments.adapter.ts", `import { Payments } from "../../domain/ports/payments.port.ts";\nexport class StripePayments extends Payments {}`)
+			.file("src/ordering/driving/http/orders.controller.ts", `export class OrdersController {}`);
+
+		expect(codebase.check(new PlacementRule())).toEqual([]);
+	});
+
+	it("rejects a building block in the wrong folder or with the wrong suffix", () => {
+		const codebase = new TestCodebase()
+			.file("src/ordering/domain/order-id.ts", `import { Identifier } from "@alveolus/core";\nexport class OrderId extends Identifier<string, "OrderId"> {}`)
+			.file("src/ordering/domain/ports/payments.ts", `import { Port } from "@alveolus/core";\nexport abstract class Payments extends Port {}`);
+
+		expect(codebase.check(new PlacementRule())).toEqual(["src/ordering/domain/order-id.ts:2 OrderId", "src/ordering/domain/ports/payments.ts:2 Payments"]);
+	});
+
+	it("allows one class per file", () => {
+		const codebase = new TestCodebase().file(
+			"src/ordering/domain/errors/order.error.ts",
+			`import { DomainError } from "@alveolus/core";
+			export class InvalidTotal extends DomainError {}
+			export class OrderAlreadyPlaced extends DomainError {}`,
+		);
+
+		expect(codebase.check(new PlacementRule())).toEqual(["src/ordering/domain/errors/order.error.ts:3 OrderAlreadyPlaced"]);
+	});
+});

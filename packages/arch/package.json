@@ -1,29 +1,54 @@
 {
-	"name": "@alveolus/arch",
-	"version": "0.0.0",
-	"description": "Architecture tests for codebases built with Alveolus building blocks",
-	"type": "module",
-	"license": "MIT",
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/alveolusjs/alveolus.git",
-		"directory": "packages/arch"
+	"bin": {
+		"alveolus": "./src/bin.ts"
 	},
-	"homepage": "https://alveolusjs.github.io/alveolus/arch",
+	"dependencies": {
+		"commander": "^15.0.0",
+		"jiti": "^2.7.0",
+		"picocolors": "^1.1.1",
+		"ts-morph": "^28.0.0",
+		"zod": "^4.6.5"
+	},
+	"description": "Architecture checks that keep a Domain-Driven Design project from drifting",
+	"devDependencies": {
+		"@alveolus/core": "workspace:*"
+	},
 	"exports": {
 		".": {
-			"types": "./dist/index.d.mts",
-			"import": "./dist/index.mjs"
-		}
+			"@alveolus/source": "./src/index.ts",
+			"default": "./dist/index.mjs"
+		},
+		"./bin": {
+			"@alveolus/source": "./src/bin.ts",
+			"default": "./dist/bin.mjs"
+		},
+		"./package.json": "./package.json"
 	},
 	"files": [
 		"dist"
 	],
+	"homepage": "https://alveolus.dev/",
+	"license": "MIT",
+	"name": "@alveolus/arch",
+	"publishConfig": {
+		"bin": {
+			"alveolus": "./dist/bin.mjs"
+		},
+		"exports": {
+			".": "./dist/index.mjs",
+			"./bin": "./dist/bin.mjs",
+			"./package.json": "./package.json"
+		}
+	},
+	"repository": {
+		"directory": "packages/arch",
+		"type": "git",
+		"url": "git+https://github.com/alveolusjs/alveolus.git"
+	},
 	"scripts": {
 		"build": "tsdown",
 		"typecheck": "tsc -p tsconfig.json"
 	},
-	"bin": {
-		"alveolus": "./dist/cli.mjs"
-	}
+	"type": "module",
+	"version": "0.1.0-alpha.0"
 }
