@@ -1,26 +1,108 @@
 {
-	"name": "@alveolus/core",
-	"version": "0.0.0",
 	"description": "Domain-Driven Design building blocks for TypeScript",
-	"type": "module",
-	"license": "MIT",
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/alveolusjs/alveolus.git",
-		"directory": "packages/core"
-	},
-	"homepage": "https://alveolusjs.github.io/alveolus/core",
 	"exports": {
 		".": {
-			"types": "./dist/index.d.mts",
-			"import": "./dist/index.mjs"
+			"@alveolus/source": "./src/index.ts",
+			"default": "./dist/index.mjs"
+		},
+		"./aggregates": {
+			"@alveolus/source": "./src/domain/aggregates/index.ts",
+			"default": "./dist/aggregates/index.mjs"
+		},
+		"./command-handlers": {
+			"@alveolus/source": "./src/application/command-handlers/index.ts",
+			"default": "./dist/command-handlers/index.mjs"
+		},
+		"./domain-errors": {
+			"@alveolus/source": "./src/domain/domain-errors/index.ts",
+			"default": "./dist/domain-errors/index.mjs"
+		},
+		"./domain-events": {
+			"@alveolus/source": "./src/domain/domain-events/index.ts",
+			"default": "./dist/domain-events/index.mjs"
+		},
+		"./domain-services": {
+			"@alveolus/source": "./src/domain/domain-services/index.ts",
+			"default": "./dist/domain-services/index.mjs"
+		},
+		"./entities": {
+			"@alveolus/source": "./src/domain/entities/index.ts",
+			"default": "./dist/entities/index.mjs"
+		},
+		"./event-publishers": {
+			"@alveolus/source": "./src/application/event-publishers/index.ts",
+			"default": "./dist/event-publishers/index.mjs"
+		},
+		"./notifications": {
+			"@alveolus/source": "./src/application/notifications/index.ts",
+			"default": "./dist/notifications/index.mjs"
+		},
+		"./package.json": "./package.json",
+		"./policies": {
+			"@alveolus/source": "./src/domain/policies/index.ts",
+			"default": "./dist/policies/index.mjs"
+		},
+		"./ports": {
+			"@alveolus/source": "./src/application/ports/index.ts",
+			"default": "./dist/ports/index.mjs"
+		},
+		"./query-handlers": {
+			"@alveolus/source": "./src/application/query-handlers/index.ts",
+			"default": "./dist/query-handlers/index.mjs"
+		},
+		"./repositories": {
+			"@alveolus/source": "./src/domain/repositories/index.ts",
+			"default": "./dist/repositories/index.mjs"
+		},
+		"./result": {
+			"@alveolus/source": "./src/utilities/result/index.ts",
+			"default": "./dist/result/index.mjs"
+		},
+		"./value-objects": {
+			"@alveolus/source": "./src/domain/value-objects/index.ts",
+			"default": "./dist/value-objects/index.mjs"
+		},
+		"./views": {
+			"@alveolus/source": "./src/domain/views/index.ts",
+			"default": "./dist/views/index.mjs"
 		}
 	},
 	"files": [
 		"dist"
 	],
+	"homepage": "https://alveolusjs.github.io/alveolus/core",
+	"license": "MIT",
+	"name": "@alveolus/core",
+	"publishConfig": {
+		"exports": {
+			".": "./dist/index.mjs",
+			"./aggregates": "./dist/aggregates/index.mjs",
+			"./command-handlers": "./dist/command-handlers/index.mjs",
+			"./domain-errors": "./dist/domain-errors/index.mjs",
+			"./domain-events": "./dist/domain-events/index.mjs",
+			"./domain-services": "./dist/domain-services/index.mjs",
+			"./entities": "./dist/entities/index.mjs",
+			"./event-publishers": "./dist/event-publishers/index.mjs",
+			"./notifications": "./dist/notifications/index.mjs",
+			"./package.json": "./package.json",
+			"./policies": "./dist/policies/index.mjs",
+			"./ports": "./dist/ports/index.mjs",
+			"./query-handlers": "./dist/query-handlers/index.mjs",
+			"./repositories": "./dist/repositories/index.mjs",
+			"./result": "./dist/result/index.mjs",
+			"./value-objects": "./dist/value-objects/index.mjs",
+			"./views": "./dist/views/index.mjs"
+		}
+	},
+	"repository": {
+		"directory": "packages/core",
+		"type": "git",
+		"url": "git+https://github.com/alveolusjs/alveolus.git"
+	},
 	"scripts": {
 		"build": "tsdown",
 		"typecheck": "tsc -p tsconfig.json"
-	}
+	},
+	"type": "module",
+	"version": "0.0.0"
 }

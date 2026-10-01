@@ -4,79 +4,118 @@ import llmstxt from "vitepress-plugin-llms";
 
 const repository = "https://github.com/alveolusjs/alveolus";
 
-const packages = [
-	{ id: "core", items: ["result", "building-blocks", "application-contracts"] },
-	{ id: "arch", items: ["rules"] },
-	{ id: "testing", items: [] },
-] as const;
-
-const titles: Record<string, string> = {
-	result: "Result",
-	"building-blocks": "Building blocks",
-	"application-contracts": "Application contracts",
-	rules: "Rules",
-};
-
-export default defineConfig({
-	title: "Alveolus",
-	description: "Building blocks and architecture tests for Domain-Driven Design in TypeScript",
-	base: "/alveolus/",
-	cleanUrls: true,
-	lastUpdated: true,
-	head: [["link", { rel: "icon", type: "image/svg+xml", href: "/alveolus/logo.svg" }]],
-
-	themeConfig: {
-		logo: "/logo.svg",
-		nav: [
-			{ text: "Guide", link: "/guide/", activeMatch: "^/guide/" },
+const sidebar = [
+	{
+		items: [
+			{ link: "/guide/", text: "Introduction" },
+			{ link: "/guide/getting-started", text: "Getting started" },
+			{ link: "/guide/vocabulary", text: "Vocabulary" },
+		],
+		text: "Guide",
+	},
+	{
+		items: [
+			{ link: "/core/", text: "Overview" },
 			{
-				text: "Packages",
-				activeMatch: "^/(core|arch|testing)/",
-				items: packages.map(({ id }) => ({ text: `@alveolus/${id}`, link: `/${id}/` })),
+				items: [
+					{ link: "/core/domain/aggregates", text: "Aggregates" },
+					{ link: "/core/domain/value-objects", text: "Value Objects" },
+					{ link: "/core/domain/entities", text: "Entities" },
+					{ link: "/core/domain/domain-events", text: "Domain Events" },
+					{ link: "/core/domain/domain-errors", text: "Domain Errors" },
+					{ link: "/core/domain/domain-services", text: "Domain Services" },
+					{ link: "/core/domain/policies", text: "Policies" },
+					{ link: "/core/domain/repositories", text: "Repositories" },
+					{ link: "/core/domain/views", text: "Views" },
+				],
+				text: "Domain",
+			},
+			{
+				items: [
+					{ link: "/core/application/command-handlers", text: "Command handlers" },
+					{ link: "/core/application/query-handlers", text: "Query handlers" },
+					{ link: "/core/application/event-publishers", text: "Event publishers" },
+					{ link: "/core/application/notifications", text: "Notifications" },
+					{ link: "/core/application/ports", text: "Ports" },
+				],
+				text: "Application",
+			},
+			{
+				items: [{ link: "/core/utilities/result", text: "Result" }],
+				text: "Utilities",
 			},
 		],
-		sidebar: {
-			"/guide/": [
-				{
-					text: "Guide",
-					items: [
-						{ text: "Introduction", link: "/guide/" },
-						{ text: "Project layout", link: "/guide/project-layout" },
-					],
-				},
-			],
-			...Object.fromEntries(
-				packages.map(({ id, items }) => [
-					`/${id}/`,
-					[
-						{
-							text: `@alveolus/${id}`,
-							items: [
-								{ text: "Overview", link: `/${id}/` },
-								...items.map((item) => ({ text: titles[item], link: `/${id}/${item}` })),
-							],
-						},
-					],
-				]),
-			),
-		},
-		socialLinks: [{ icon: "github", link: repository }],
-		search: { provider: "local" },
-		editLink: {
-			pattern: `${repository}/edit/main/apps/docs/:path`,
-			text: "Edit this page on GitHub",
-		},
-		footer: {
-			message: "Released under the MIT License.",
-			copyright: "Copyright © 2026-present Alveolus contributors",
-		},
+		text: "Core",
 	},
+	{
+		items: [
+			{ link: "/testing/", text: "Overview" },
+			{ link: "/testing/scenarios", text: "Scenarios" },
+			{ link: "/testing/event-assertions", text: "Event assertions" },
+		],
+		text: "Testing",
+	},
+	{
+		items: [
+			{ link: "/arch/", text: "Overview" },
+			{ link: "/arch/cli", text: "CLI" },
+			{ link: "/arch/project-layout", text: "Project layout" },
+			{
+				items: [
+					{ link: "/arch/rules/aggregates", text: "Aggregates" },
+					{ link: "/arch/rules/entities", text: "Entities" },
+					{ link: "/arch/rules/value-objects", text: "Value Objects" },
+					{ link: "/arch/rules/domain-events", text: "Domain Events" },
+					{ link: "/arch/rules/domain-services", text: "Domain Services" },
+					{ link: "/arch/rules/policies", text: "Policies" },
+					{ link: "/arch/rules/repositories", text: "Repositories" },
+				],
+				text: "Rules",
+			},
+		],
+		text: "Arch",
+	},
+];
+
+export default defineConfig({
+	base: "/alveolus/",
+	cleanUrls: true,
+	description: "Building blocks and architecture tests for Domain-Driven Design in TypeScript",
+	head: [
+		["link", { href: "/alveolus/logo.svg", rel: "icon", type: "image/svg+xml" }],
+		[
+			"script",
+			{
+				"data-website-id": "f08d2258-37c3-4859-870a-145181b8b3d1",
+				defer: "",
+				src: "https://cloud.umami.is/script.js",
+			},
+		],
+	],
+	lastUpdated: true,
 
 	markdown: {
 		config(md) {
 			md.use(groupIconMdPlugin);
 		},
 	},
+
+	themeConfig: {
+		editLink: {
+			pattern: `${repository}/edit/main/apps/docs/:path`,
+			text: "Edit this page on GitHub",
+		},
+		footer: {
+			copyright: "Copyright © 2026-present Alveolus contributors",
+			message: "Released under the MIT License.",
+		},
+		logo: "/logo.svg",
+		nav: [{ activeMatch: "^/(guide|core|testing|arch)/", link: "/guide/", text: "Guide" }],
+		search: { provider: "local" },
+		sidebar,
+		socialLinks: [{ icon: "github", link: repository }],
+	},
+	title: "Alveolus",
 
 	vite: {
 		plugins: [groupIconVitePlugin(), llmstxt()],

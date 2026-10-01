@@ -1,6 +1,7 @@
 # @alveolus/testing
 
-Test helpers for codebases built with `@alveolus/core`.
+Helpers to test a domain model through its behaviour. They throw a Node.js `AssertionError`, so
+they work with Vitest, Jest and `node:test`, and test runners show a diff on payload mismatches.
 
 ## Installation
 
@@ -24,9 +25,14 @@ bun add -D @alveolus/testing
 
 :::
 
-## Planned helpers
+`@alveolus/core` is a peer dependency.
 
-- **In-memory repositories**: a ready-made implementation of the `Repository` port to test use
-  cases without a database.
-- **Fakes** for common technical ports, such as a controllable clock.
-- **Matchers** to assert on `Result` values and on the domain events pulled from an aggregate.
+## Helpers
+
+| Page                                              | Helpers                                         |
+| ------------------------------------------------- | ----------------------------------------------- |
+| [Scenarios](./scenarios.md)                       | `given`, `when`, `thenSucceeded`, `thenFailedWith`, `thenRecorded`, `thenRecordedNothing` |
+| [Event assertions](./event-assertions.md)         | `assertRecorded`, `assertRecordedNothing`       |
+
+Everything is exported from `@alveolus/testing`, and from `@alveolus/testing/scenarios` and
+`@alveolus/testing/event-assertions`.

@@ -1,25 +1,5 @@
 {
-	"name": "alveolus",
-	"private": true,
 	"description": "Building blocks and architecture tests for Domain-Driven Design in TypeScript",
-	"type": "module",
-	"packageManager": "pnpm@11.1.3",
-	"engines": {
-		"node": ">=24"
-	},
-	"scripts": {
-		"build": "pnpm -r --filter \"./packages/**\" run build",
-		"typecheck": "tsc -p tsconfig.json && pnpm -r run typecheck",
-		"test": "vitest run",
-		"test:watch": "vitest",
-		"lint": "biome check .",
-		"lint:fix": "biome check --write .",
-		"format": "biome format --write .",
-		"knip": "knip",
-		"docs:dev": "pnpm --filter @alveolus/docs dev",
-		"docs:build": "pnpm --filter @alveolus/docs build",
-		"check": "pnpm lint && pnpm typecheck && pnpm knip && pnpm test"
-	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.5.14",
 		"@types/node": "^26.6.3",
@@ -27,5 +7,25 @@
 		"tsdown": "^0.23.0",
 		"typescript": "^7.0.2",
 		"vitest": "^5.0.2"
-	}
+	},
+	"engines": {
+		"node": ">=24"
+	},
+	"name": "alveolus",
+	"packageManager": "pnpm@11.1.3",
+	"private": true,
+	"scripts": {
+		"build": "pnpm -r --filter \"./packages/**\" run build",
+		"check": "pnpm lint && pnpm typecheck && pnpm knip && pnpm test",
+		"docs:build": "pnpm --filter @alveolus/docs build",
+		"docs:dev": "pnpm --filter @alveolus/docs dev",
+		"format": "biome format --write .",
+		"knip": "knip",
+		"lint": "biome check .",
+		"lint:fix": "biome check --write .",
+		"test": "vitest run",
+		"test:watch": "vitest",
+		"typecheck": "tsc -p tsconfig.json && pnpm -r run typecheck"
+	},
+	"type": "module"
 }

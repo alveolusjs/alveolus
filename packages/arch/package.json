@@ -1,29 +1,45 @@
 {
-	"name": "@alveolus/arch",
-	"version": "0.0.0",
-	"description": "Architecture tests for codebases built with Alveolus building blocks",
-	"type": "module",
-	"license": "MIT",
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/alveolusjs/alveolus.git",
-		"directory": "packages/arch"
+	"bin": {
+		"alveolus": "./src/cli/cli.ts"
 	},
-	"homepage": "https://alveolusjs.github.io/alveolus/arch",
+	"dependencies": {
+		"ts-morph": "^28.0.0"
+	},
+	"description": "Architecture tests for codebases built with Alveolus building blocks",
+	"devDependencies": {
+		"@alveolus/core": "workspace:^"
+	},
 	"exports": {
 		".": {
-			"types": "./dist/index.d.mts",
-			"import": "./dist/index.mjs"
-		}
+			"@alveolus/source": "./src/index.ts",
+			"default": "./dist/index.mjs"
+		},
+		"./package.json": "./package.json"
 	},
 	"files": [
 		"dist"
 	],
+	"homepage": "https://alveolusjs.github.io/alveolus/arch",
+	"license": "MIT",
+	"name": "@alveolus/arch",
+	"publishConfig": {
+		"bin": {
+			"alveolus": "./dist/cli.mjs"
+		},
+		"exports": {
+			".": "./dist/index.mjs",
+			"./package.json": "./package.json"
+		}
+	},
+	"repository": {
+		"directory": "packages/arch",
+		"type": "git",
+		"url": "git+https://github.com/alveolusjs/alveolus.git"
+	},
 	"scripts": {
 		"build": "tsdown",
 		"typecheck": "tsc -p tsconfig.json"
 	},
-	"bin": {
-		"alveolus": "./dist/cli.mjs"
-	}
+	"type": "module",
+	"version": "0.0.0"
 }

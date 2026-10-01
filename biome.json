@@ -1,49 +1,251 @@
 {
 	"$schema": "https://biomejs.dev/schemas/2.5.14/schema.json",
-	"vcs": {
-		"enabled": true,
-		"clientKind": "git",
-		"useIgnoreFile": true
+	"assist": {
+		"actions": {
+			"source": {
+				"organizeImports": {
+					"level": "on",
+					"options": {
+						"groups": [
+							{
+								"source": ":PACKAGE:",
+								"type": false
+							},
+							":PACKAGE:",
+							":BLANK_LINE:",
+							":NODE",
+							{
+								"source": ":NODE:",
+								"type": false
+							},
+							":BLANK_LINE:",
+							{
+								"source": [":ALIAS:"],
+								"type": false
+							},
+							":ALIAS:",
+							":BLANK_LINE:",
+							"**"
+						]
+					}
+				},
+				"useSortedAttributes": "on",
+				"useSortedKeys": "on"
+			}
+		},
+		"enabled": true
+	},
+	"css": {
+		"parser": {
+			"tailwindDirectives": true
+		}
 	},
 	"files": {
-		"ignoreUnknown": false
+		"ignoreUnknown": true,
+		"includes": [
+			"**",
+			"!**/node_modules",
+			"!**/dist",
+			"!.claude",
+			"!.org",
+			"!apps/api/src/shared/db/migrations",
+			"!apps/api/src/shared/db/driven/pg/generated",
+			"!apps/provider",
+			"!docs/.c4-dist",
+			"!**/routeTree.gen.ts"
+		]
 	},
 	"formatter": {
 		"enabled": true,
 		"indentStyle": "tab",
-		"lineWidth": 100
-	},
-	"linter": {
-		"enabled": true,
-		"rules": {
-			"preset": "recommended",
-			"style": {
-				"useImportType": "error",
-				"useExportType": "error",
-				"noDefaultExport": "error",
-				"noNonNullAssertion": "error"
-			},
-			"suspicious": {
-				"noExplicitAny": "error"
-			}
-		}
+		"lineEnding": "lf",
+		"lineWidth": 120
 	},
 	"javascript": {
 		"formatter": {
-			"quoteStyle": "double"
+			"arrowParentheses": "always",
+			"bracketSameLine": false,
+			"bracketSpacing": true,
+			"quoteProperties": "asNeeded",
+			"quoteStyle": "double",
+			"semicolons": "always",
+			"trailingCommas": "all"
+		},
+		"parser": {
+			"unsafeParameterDecoratorsEnabled": true
 		}
 	},
-	"assist": {
+	"json": {
+		"formatter": {
+			"enabled": true,
+			"trailingCommas": "none"
+		}
+	},
+	"linter": {
+		"domains": {
+			"project": "all",
+			"test": "all"
+		},
 		"enabled": true,
-		"actions": {
-			"source": {
-				"organizeImports": "on"
+		"rules": {
+			"complexity": {
+				"noExcessiveLinesPerFunction": {
+					"level": "error",
+					"options": {
+						"maxLines": 50,
+						"skipBlankLines": true
+					}
+				},
+				"noStaticOnlyClass": "off",
+				"noUselessCatch": "error",
+				"noUselessUndefined": "error",
+				"useMaxParams": {
+					"level": "error",
+					"options": {
+						"max": 11
+					}
+				}
+			},
+			"correctness": {
+				"noUndeclaredVariables": "error",
+				"useImportExtensions": "off"
+			},
+			"performance": {
+				"noAccumulatingSpread": "error",
+				"noAwaitInLoops": "error",
+				"noDelete": "error",
+				"noDynamicNamespaceImportAccess": "error"
+			},
+			"style": {
+				"noDefaultExport": "error",
+				"noEnum": "error",
+				"noExcessiveClassesPerFile": "error",
+				"noExcessiveLinesPerFile": {
+					"level": "error",
+					"options": {
+						"maxLines": 500,
+						"skipBlankLines": true
+					}
+				},
+				"noMagicNumbers": "error",
+				"noNestedTernary": "error",
+				"noNonNullAssertion": "error",
+				"noProcessEnv": "error",
+				"noRestrictedImports": {
+					"level": "error",
+					"options": {
+						"paths": {
+							"lodash": "Using lodash is forbidden"
+						},
+						"patterns": [
+							{
+								"group": ["../**"],
+								"message": "Imports from parent directories are forbidden. Use aliases for imports."
+							}
+						]
+					}
+				},
+				"useConsistentMemberAccessibility": {
+					"level": "error",
+					"options": {
+						"accessibility": "explicit"
+					}
+				},
+				"useImportType": {
+					"level": "error",
+					"options": {
+						"style": "separatedType"
+					}
+				},
+				"useThrowOnlyError": "error"
+			},
+			"suspicious": {
+				"noApproximativeNumericConstant": "error",
+				"noAssignInExpressions": "error",
+				"noConsole": "error",
+				"noConstEnum": "error",
+				"noDoubleEquals": "error",
+				"noEvolvingTypes": "error",
+				"noExplicitAny": "error",
+				"noExportsInTest": "error",
+				"noFocusedTests": "error",
+				"noGlobalAssign": "error",
+				"noImplicitAnyLet": "error",
+				"noImportCycles": "error",
+				"noLabelVar": "error",
+				"noSkippedTests": "error",
+				"noTsIgnore": "error",
+				"noUnassignedVariables": "error",
+				"noUnsafeNegation": "error",
+				"noVar": "error",
+				"useAwait": "error",
+				"useErrorMessage": "error",
+				"useGetterReturn": "error",
+				"useNumberToFixedDigitsArgument": "error",
+				"useStrictMode": "error"
 			}
 		}
 	},
 	"overrides": [
 		{
-			"includes": ["**/*.config.ts", "**/*.config.mts", "apps/docs/**"],
+			"includes": ["packages/core/src/application/ports/port.ts", "packages/core/src/domain/views/view-repository.ts"],
+			"linter": {
+				"rules": {
+					"correctness": {
+						"noUnusedVariables": "off"
+					},
+					"suspicious": {
+						"noEmptyInterface": "off"
+					}
+				}
+			}
+		},
+		{
+			"includes": ["apps/api/src/**"],
+			"linter": {
+				"rules": {
+					"style": {
+						"useImportType": "off"
+					}
+				}
+			}
+		},
+		{
+			"includes": ["**/*.test.ts", "**/*.spec.ts", "**/test/**", "**/__tests__/**"],
+			"linter": {
+				"rules": {
+					"complexity": {
+						"noExcessiveLinesPerFunction": "off"
+					},
+					"correctness": {
+						"noUndeclaredDependencies": "off"
+					},
+					"style": {
+						"noMagicNumbers": "off",
+						"noProcessEnv": "off",
+						"noRestrictedImports": "off"
+					},
+					"suspicious": {
+						"noConsole": "off"
+					}
+				}
+			}
+		},
+		{
+			"includes": ["**/*.config.ts", "**/*.config.js", "**/*.config.mjs"],
+			"linter": {
+				"rules": {
+					"correctness": {
+						"noUndeclaredDependencies": "off"
+					},
+					"style": {
+						"noDefaultExport": "off"
+					}
+				}
+			}
+		},
+		{
+			"includes": ["apps/docs/.vitepress/**"],
 			"linter": {
 				"rules": {
 					"style": {
@@ -51,6 +253,53 @@
 					}
 				}
 			}
+		},
+		{
+			"includes": ["**/bin/**"],
+			"linter": {
+				"rules": {
+					"style": {
+						"noRestrictedImports": "off"
+					}
+				}
+			}
+		},
+		{
+			"includes": ["packages/*/src/**", "apps/example/src/**"],
+			"linter": {
+				"rules": {
+					"style": {
+						"noRestrictedImports": "off"
+					}
+				}
+			}
+		},
+		{
+			"includes": ["apps/client/**"],
+			"linter": {
+				"rules": {
+					"complexity": {
+						"noExcessiveLinesPerFunction": "off"
+					},
+					"correctness": {
+						"noUndeclaredDependencies": "off",
+						"noUnresolvedImports": "off"
+					},
+					"style": {
+						"noDefaultExport": "off",
+						"noProcessEnv": "off",
+						"noRestrictedImports": "off"
+					},
+					"suspicious": {
+						"noConsole": "off"
+					}
+				}
+			}
 		}
-	]
+	],
+	"vcs": {
+		"clientKind": "git",
+		"enabled": true,
+		"useIgnoreFile": true
+	}
 }

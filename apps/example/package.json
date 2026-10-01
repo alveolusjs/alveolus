@@ -1,0 +1,17 @@
+{
+	"dependencies": {
+		"@alveolus/core": "workspace:^"
+	},
+	"description": "Example application exercising the Alveolus packages and rules",
+	"devDependencies": {
+		"@alveolus/arch": "workspace:^",
+		"@alveolus/testing": "workspace:^"
+	},
+	"name": "@alveolus/example",
+	"private": true,
+	"scripts": {
+		"typecheck": "tsc -p tsconfig.json"
+	},
+	"type": "module",
+	"version": "0.0.0"
+}

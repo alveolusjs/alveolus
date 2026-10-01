@@ -1,26 +1,49 @@
 {
-	"name": "@alveolus/testing",
-	"version": "0.0.0",
 	"description": "Test helpers for codebases built with Alveolus building blocks",
-	"type": "module",
-	"license": "MIT",
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/alveolusjs/alveolus.git",
-		"directory": "packages/testing"
+	"devDependencies": {
+		"@alveolus/core": "workspace:^"
 	},
-	"homepage": "https://alveolusjs.github.io/alveolus/testing",
 	"exports": {
 		".": {
-			"types": "./dist/index.d.mts",
-			"import": "./dist/index.mjs"
+			"@alveolus/source": "./src/index.ts",
+			"default": "./dist/index.mjs"
+		},
+		"./event-assertions": {
+			"@alveolus/source": "./src/event-assertions/index.ts",
+			"default": "./dist/event-assertions/index.mjs"
+		},
+		"./package.json": "./package.json",
+		"./scenarios": {
+			"@alveolus/source": "./src/scenarios/index.ts",
+			"default": "./dist/scenarios/index.mjs"
 		}
 	},
 	"files": [
 		"dist"
 	],
+	"homepage": "https://alveolusjs.github.io/alveolus/testing",
+	"license": "MIT",
+	"name": "@alveolus/testing",
+	"peerDependencies": {
+		"@alveolus/core": "workspace:^"
+	},
+	"publishConfig": {
+		"exports": {
+			".": "./dist/index.mjs",
+			"./event-assertions": "./dist/event-assertions/index.mjs",
+			"./package.json": "./package.json",
+			"./scenarios": "./dist/scenarios/index.mjs"
+		}
+	},
+	"repository": {
+		"directory": "packages/testing",
+		"type": "git",
+		"url": "git+https://github.com/alveolusjs/alveolus.git"
+	},
 	"scripts": {
 		"build": "tsdown",
 		"typecheck": "tsc -p tsconfig.json"
-	}
+	},
+	"type": "module",
+	"version": "0.0.0"
 }

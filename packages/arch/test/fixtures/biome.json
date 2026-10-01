@@ -1,0 +1,20 @@
+{
+	"$schema": "https://biomejs.dev/schemas/2.5.14/schema.json",
+	"extends": "//",
+	"linter": {
+		"rules": {
+			"complexity": {
+				"useDateNow": "off"
+			},
+			"style": {
+				"noExcessiveClassesPerFile": "off",
+				"noMagicNumbers": "off",
+				"noRestrictedImports": "off"
+			},
+			"suspicious": {
+				"useAwait": "off"
+			}
+		}
+	},
+	"root": false
+}

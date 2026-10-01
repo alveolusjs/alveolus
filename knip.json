@@ -1,0 +1,12 @@
+{
+	"$schema": "https://unpkg.com/knip@6/schema.json",
+	"workspaces": {
+		"apps/example": {
+			"entry": ["src/*/index.ts"]
+		},
+		"packages/arch": {
+			"ignore": ["test/fixtures/**"],
+			"ignoreDependencies": ["@alveolus/core"]
+		}
+	}
+}
