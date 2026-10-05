@@ -27,7 +27,6 @@ The query is a plain type named after the request, in the same file as its handl
 
 ```ts [src/ordering/application/queries/get-order-summary.query.ts]
 import { err, ok, QueryHandler, type Result } from "@alveolus/core";
-import { Injectable } from "@nestjs/common";
 
 import { OrderNotFound } from "../../domain/errors/order-not-found.error";
 import { OrderSummaries } from "../../domain/repositories/order-summaries.repository";
@@ -38,7 +37,6 @@ export interface GetOrderSummary {
 	readonly orderId: string;
 }
 
-@Injectable()
 export class GetOrderSummaryHandler extends QueryHandler<GetOrderSummary, OrderSummary, OrderNotFound> {
 	constructor(private readonly summaries: OrderSummaries) {
 		super();
@@ -56,7 +54,6 @@ export class GetOrderSummaryHandler extends QueryHandler<GetOrderSummary, OrderS
 A query that cannot fail keeps the default `Error` of `never`.
 
 ```ts [src/ordering/application/queries/list-orders.query.ts]
-@Injectable()
 export class ListOrdersHandler extends QueryHandler<void, readonly OrderSummary[]> {
 	constructor(private readonly summaries: OrderSummaries) {
 		super();

@@ -13,6 +13,13 @@ const sidebar = [
 		text: "Guide",
 	},
 	{
+		items: [
+			{ link: "/integrations/", text: "Overview" },
+			{ link: "/integrations/nestjs", text: "NestJS" },
+		],
+		text: "Integrations",
+	},
+	{
 		items: [{ link: "/core/", text: "Overview" }],
 		text: "Building blocks",
 	},
@@ -107,7 +114,7 @@ export default defineConfig({
 			message: "Released under the MIT License.",
 		},
 		logo: "/logo.svg",
-		nav: [{ activeMatch: "^/(guide|core|rules)/", link: "/guide/getting-started", text: "Guide" }],
+		nav: [{ activeMatch: "^/(guide|integrations|core|rules)/", link: "/guide/getting-started", text: "Guide" }],
 		search: { provider: "local" },
 		sidebar,
 		socialLinks: [{ icon: "github", link: repository }],

@@ -126,11 +126,12 @@ const pair = combine([Money.create(10, eur), Money.create(20, eur)]);
 
 At the edge, a driving adapter turns the failure into whatever its transport expects.
 
-```ts [src/ordering/driving/nestjs/controllers/orders.controller.ts]
+```ts [src/ordering/driving/http/controllers/orders.controller.ts]
 const placed = await this.placeOrder.handle({ orderId, total: body.total });
 if (!placed.ok) {
-	throw new UnprocessableEntityException({ error: placed.error.type, details: placed.error.payload });
+	return { status: 422, body: { error: placed.error.type, details: placed.error.payload } };
 }
+return { status: 204 };
 ```
 
 ## Reference

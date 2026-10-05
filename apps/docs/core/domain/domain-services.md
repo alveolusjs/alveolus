@@ -100,14 +100,16 @@ if (!shipping.ok) {
 const placed = order.place(shipping.value, this.ids.next(), this.clock.now());
 ```
 
-### Register it with NestJS
+### Build it in the composition root
 
-The domain imports nothing from NestJS, so a domain service has no `@Injectable()`. Build it in the
-module with its configuration:
+The domain imports no framework, so a domain service has no decorator. The composition root builds
+it with its configuration and passes it to the handlers that need it:
 
 ```ts [src/ordering/ordering.module.ts]
-{ provide: ShippingCost, useFactory: () => new ShippingCost(5000, 490) }
+const shippingCost = new ShippingCost(5000, 490);
 ```
+
+With a container, register that instance: see [Integrations](../../integrations/index.md).
 
 ## Reference
 

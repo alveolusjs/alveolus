@@ -72,28 +72,29 @@ return this.unitOfWork.run(async () => {
 
 `OutboxRelay` reads a batch of pending events, publishes them and marks them as published. It returns
 how many it published; if publishing fails, it throws and the events stay pending for the next call.
-With NestJS, build it with a factory and call it from a scheduled job, a driving adapter.
+Build it in the composition root with a batch size, and call it on a schedule from a driving
+adapter: a timer, a cron job, a worker.
 
 ```ts [src/ordering/ordering.module.ts]
-{
-	inject: [Outbox, EventPublisher],
-	provide: OutboxRelay,
-	useFactory: (outbox: Outbox, publisher: EventPublisher) => new OutboxRelay(outbox, publisher, 100),
-}
+const relay = new OutboxRelay(outbox, publisher, 100);
 ```
 
-```ts [src/ordering/driving/nestjs/jobs/outbox-relay.job.ts]
-import { OutboxRelay } from "@alveolus/core";
-import { Injectable } from "@nestjs/common";
-import { Interval } from "@nestjs/schedule";
+```ts [src/ordering/driving/timer/jobs/outbox-relay.job.ts]
+import type { OutboxRelay } from "@alveolus/core";
 
-@Injectable()
 export class OutboxRelayJob {
 	constructor(private readonly relay: OutboxRelay) {}
 
-	@Interval(1000)
-	async run(): Promise<void> {
-		await this.relay.relay();
+	start(): NodeJS.Timeout {
+		return setInterval(() => this.tick(), 1000);
+	}
+
+	private async tick(): Promise<void> {
+		try {
+			await this.relay.relay();
+		} catch (error) {
+			console.error("The outbox relay failed; the events stay pending for the next tick.", error);
+		}
 	}
 }
 ```

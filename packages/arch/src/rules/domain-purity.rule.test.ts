@@ -39,8 +39,16 @@ describe("DomainPurityRule", () => {
 			"src/ordering/domain/aggregates/order.aggregate.ts:1 Entity",
 			"src/ordering/domain/aggregates/order.aggregate.ts:2 default",
 		]);
-		expect(new TestCodebase({ domainDependencies: ["decimal.js"] }).file("src/ordering/domain/aggregates/order.aggregate.ts", source).check(new DomainPurityRule())).toEqual([
+		expect(new TestCodebase({ domainDependencies: { "decimal.js": true } }).file("src/ordering/domain/aggregates/order.aggregate.ts", source).check(new DomainPurityRule())).toEqual([
 			"src/ordering/domain/aggregates/order.aggregate.ts:1 Entity",
 		]);
+	});
+
+	it("limits a package to the names declared in domainDependencies", () => {
+		const messages = new TestCodebase({ domainDependencies: { "date-fns": ["addDays"] } })
+			.file("src/ordering/domain/aggregates/order.aggregate.ts", `import { addDays, format } from "date-fns";`)
+			.messages(new DomainPurityRule());
+
+		expect(messages).toEqual(["The domain imports format from date-fns: domainDependencies only allows addDays."]);
 	});
 });

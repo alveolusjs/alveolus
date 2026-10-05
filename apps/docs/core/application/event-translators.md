@@ -31,13 +31,11 @@ event, adds `source` and the context, and takes the `type`, `version` and `paylo
 
 ```ts [src/ordering/application/translators/order-events.translator.ts]
 import { EventTranslator, type IntegrationEventContext } from "@alveolus/core";
-import { Injectable } from "@nestjs/common";
 
 import { OrderPlaced } from "../../domain/events/order-placed.event";
 import type { OrderEvent } from "../../domain/events/order.event";
 import type { OrderingEvent } from "../../published-language/ordering-event.representation";
 
-@Injectable()
 export class OrderEventsTranslator extends EventTranslator<OrderEvent, OrderingEvent> {
 	protected readonly source = "ordering";
 

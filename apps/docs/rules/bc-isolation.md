@@ -14,7 +14,7 @@ import type { ProductRepresentation } from "../../../../catalog/published-langua
 ```ts [✅ Prefer: src/ordering/driven/catalog/adapters/catalog-price-list.adapter.ts]
 import type { AntiCorruptionLayer } from "@alveolus/core";
 
-import type { CatalogApi } from "../../../../catalog/driving/nestjs/catalog-api";
+import type { CatalogApi } from "../../../../catalog/driving/in-process/catalog-api";
 import { PriceList } from "../../../domain/ports/price-list.port";
 
 export class CatalogPriceList extends PriceList implements AntiCorruptionLayer {
@@ -33,8 +33,8 @@ When a file of one bounded context imports a file of another one:
 - the imported names must all be classes that implement `OpenHostService`;
 - the importing file must declare a class that implements `AntiCorruptionLayer`, or be the
   composition root of its context;
-- a composition root may also import another context's composition root, for instance a NestJS
-  module importing the module that exports an open host service;
+- a composition root may also import another context's composition root, to reach its open host
+  services;
 - the published language of another context is never imported, not even its types.
 
 The shared kernel imports no bounded context at all. Every context may import the shared kernel.

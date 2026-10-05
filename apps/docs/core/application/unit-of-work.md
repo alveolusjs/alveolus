@@ -48,9 +48,8 @@ A business failure rolls back without an exception: the handler returns the same
 ### Implement it in a driven adapter
 
 Extend `UnitOfWork` and implement `begin`, which opens a transaction and returns a `Transaction` with
-`commit` and `rollback`. The repositories and the outbox must write through that transaction; with
-NestJS, an `AsyncLocalStorage` (or `nestjs-cls`) is the usual way to share it without passing it
-around.
+`commit` and `rollback`. The repositories and the outbox must write through that transaction; an
+`AsyncLocalStorage` is the usual way to share it without passing it around, whatever the framework.
 
 ```ts [src/shared-kernel/driven/pg/adapters/pg-unit-of-work.adapter.ts]
 import { AsyncLocalStorage } from "node:async_hooks";

@@ -42,8 +42,8 @@ features:
     link: /core/utilities/result
   - icon: <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="m19 5 3-3"/><path d="m2 22 3-3"/><path d="M6.3 20.3a2.4 2.4 0 0 0 3.4 0L12 18l-6-6-2.3 2.3a2.4 2.4 0 0 0 0 3.4Z"/><path d="M7.5 13.5 10 11"/><path d="M10.5 16.5 13 14"/><path d="m12 6 6 6 2.3-2.3a2.4 2.4 0 0 0 0-3.4l-2.6-2.6a2.4 2.4 0 0 0-3.4 0Z"/></g></svg>
     title: No infrastructure imposed
-    details: No bus, no container, no ORM. Core has no runtime dependency and fits NestJS, where its abstract classes are the injection tokens.
-    link: /core/domain/ports
+    details: No bus, no container, no ORM, no decorator. Core has no runtime dependency and fits NestJS, Express, Fastify, Hono or plain Node.js.
+    link: /integrations/
 ---
 
 <div class="al-home">

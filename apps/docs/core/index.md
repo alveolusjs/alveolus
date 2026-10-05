@@ -77,8 +77,9 @@ How bounded contexts meet without sharing a model. See also the
 - **The domain never reads the clock nor generates ids.** Dates and ids are parameters of business
   methods; `Clock` and `IdGenerator` give them to the application.
 - **No infrastructure.** No bus, no container, no ORM. Repositories, ports and publishers are
-  abstract classes your adapters extend with the tools you already use; with NestJS, the same
-  classes are the injection tokens.
+  abstract classes your adapters extend with the tools you already use. Handlers take them in
+  their constructor: wire them by hand or with any container, where the same classes are the
+  injection tokens.
 - **No runtime dependency.** `@alveolus/core` ends up in your domain and brings nothing with it.
 
 ## Import paths

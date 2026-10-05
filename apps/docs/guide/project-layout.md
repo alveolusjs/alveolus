@@ -82,15 +82,16 @@ src/
       catalog/
         adapters/             # catalog-price-list.adapter.ts
     driving/
-      nestjs/
+      http/
         controllers/          # orders.controller.ts
+      rabbitmq/
         consumers/            # payment-received.consumer.ts
   catalog/                    # another bounded context, same shape
   shared-kernel/              # shared by every bounded context, same shape
 ```
 
 Only create a folder when it gets its first file: a small context may have no `entities/`,
-`services/` or `driving/nestjs/consumers/`.
+`services/` or `driving/rabbitmq/`.
 
 ## Bounded contexts
 
@@ -146,13 +147,13 @@ adapter changes.
 | Layer | Holds | May import |
 | --- | --- | --- |
 | `domain/` | The model: aggregates, entities, value objects, events, errors, domain services, and the ports and repositories it needs. | The domain of its context and of the shared kernel, the domain building blocks of `@alveolus/core`, the packages listed in `domainDependencies`. No framework, no ORM. |
-| `application/` | One class per use case: command handlers, query handlers, and the translators that turn domain events into the published language. | The domain, the application, its own published language, `@alveolus/core`, `domainDependencies`. From NestJS, only `@Injectable()`. |
+| `application/` | One class per use case: command handlers, query handlers, and the translators that turn domain events into the published language. | The domain, the application, its own published language, `@alveolus/core`, `domainDependencies`, `applicationDependencies`. No framework. |
 | `published-language/` | The JSON types exchanged with other contexts: what this context publishes, and what it reads from the others. | Its own published language, the published-language types of core, and packages such as a schema library. |
 | `driven/` | The adapters that implement the ports: database repositories, API clients, the outbox, the clock. | The domain, the application, the published language, any package. Never `driving/`. |
 | `driving/` | The adapters that call the use cases: HTTP controllers, message consumers, scheduled jobs, CLI commands. | The domain, the application, the published language, any package. Never `driven/`. |
 
 Inside `driven/` and `driving/`, files always sit under the name of their technology:
-`driven/pg/adapters/`, `driven/http/adapters/`, `driving/nestjs/controllers/`. Replacing a
+`driven/pg/adapters/`, `driven/http/adapters/`, `driving/http/controllers/`. Replacing a
 technology then means adding a folder next to the old one, never touching it. An adapter that calls
 another bounded context in the same process sits under the name of that context:
 `driven/catalog/adapters/`. Inside `domain/` and `application/`, every
@@ -188,13 +189,14 @@ Tests sit next to the code they test and keep its name: `order.aggregate.spec.ts
 
 ## Composition root
 
-Each bounded context has one file at its root that wires its adapters into its use cases: with
-NestJS, its module, `ordering.module.ts`. It is the only file that sees every layer, and the only
-one, besides an anti-corruption layer, that may import from another context: another context's
-module, to reach its open host services.
+Each bounded context has one file at its root that wires its adapters into its use cases, its
+module: `ordering.module.ts`. It is a class that builds everything with `new`, or the module of your
+framework's container, such as a NestJS `@Module`: see [Integrations](../integrations/index.md). It
+is the only file that sees every layer, and the only one, besides an anti-corruption layer, that
+may import from another context: another context's module, to reach its open host services.
 
-At the root of `src/`, `main.ts` starts the application and `app.module.ts` imports the module of
-each bounded context. These files import composition roots only.
+At the root of `src/`, `main.ts` starts the application and `app.module.ts` builds or imports the
+module of each bounded context. These files import composition roots only.
 
 ## Shared kernel
 

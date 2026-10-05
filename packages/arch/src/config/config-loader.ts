@@ -7,12 +7,15 @@ import { resolve } from "node:path";
 import type { AlveolusConfig } from "./alveolus-config.ts";
 import { Config } from "./config.ts";
 
+const packageDependencies = z.record(z.string(), z.union([z.literal(true), z.array(z.string())]));
+
 const ruleSetting = z.enum(["error", "off"]);
 
 const schema = z.strictObject({
+	applicationDependencies: packageDependencies.exactOptional(),
 	boundedContexts: z.record(z.string(), z.string()),
 	compositionRoot: z.string().exactOptional(),
-	domainDependencies: z.array(z.string()).exactOptional(),
+	domainDependencies: packageDependencies.exactOptional(),
 	ignore: z.array(z.string()).exactOptional(),
 	root: z.string(),
 	rules: z

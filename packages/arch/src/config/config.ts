@@ -1,5 +1,6 @@
 import { matchesGlob, relative, resolve, sep } from "node:path";
 
+import { AllowedPackages } from "./allowed-packages.ts";
 import type { AlveolusConfig, RuleId } from "./alveolus-config.ts";
 
 export interface ContextFolder {
@@ -14,7 +15,9 @@ export class Config {
 	public readonly projectDir: string;
 	public readonly rootDir: string;
 	public readonly compositionRoot: string;
-	public readonly domainDependencies: readonly string[];
+	public readonly domainDependencies: AllowedPackages;
+	/** The packages the application may import: its own, and those of the domain. */
+	public readonly applicationDependencies: AllowedPackages;
 	public readonly contextFolders: readonly ContextFolder[];
 	private readonly ignored: readonly string[];
 	private readonly rules: AlveolusConfig["rules"];
@@ -23,7 +26,8 @@ export class Config {
 		this.projectDir = resolve(projectDir);
 		this.rootDir = resolve(projectDir, config.root);
 		this.compositionRoot = config.compositionRoot ?? "*.module.ts";
-		this.domainDependencies = config.domainDependencies ?? [];
+		this.domainDependencies = new AllowedPackages(config.domainDependencies);
+		this.applicationDependencies = this.domainDependencies.with(new AllowedPackages(config.applicationDependencies));
 		this.ignored = [...testFiles, ...(config.ignore ?? [])];
 		this.rules = config.rules;
 

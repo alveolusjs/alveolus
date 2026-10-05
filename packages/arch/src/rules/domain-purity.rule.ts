@@ -28,10 +28,15 @@ export class DomainPurityRule extends ImportRule {
 			return `The domain imports ${forbidden.join(", ")} from ${CoreApi.packageName}: only domain building blocks and Result are allowed.`;
 		}
 
-		if (codebase.config.domainDependencies.includes(target.name)) {
+		const allowed = codebase.config.domainDependencies;
+		if (!allowed.has(target.name)) {
+			return `The domain imports ${target.name}: add it to domainDependencies if the domain really needs it.`;
+		}
+		const forbidden = allowed.forbiddenNames(target.name, imported.names);
+		if (forbidden.length === 0) {
 			return undefined;
 		}
-		return `The domain imports ${target.name}: add it to domainDependencies if the domain really needs it.`;
+		return `The domain imports ${forbidden.join(", ")} from ${target.name}: domainDependencies only allows ${allowed.allowedNames(target.name).join(", ")}.`;
 	}
 
 	private isDomainReachableFrom(to: Location, from: Location): boolean {

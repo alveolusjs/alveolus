@@ -47,18 +47,17 @@ export type PlaceOrderError = OrderNotFound | InvalidTotal | OrderAlreadyPlaced;
 ### Write the handler
 
 The handler receives its dependencies in its constructor, as abstract classes: repositories, ports,
-the [unit of work](./unit-of-work.md), the [outbox](./outbox.md). With NestJS, `@Injectable()` is the
-only framework import the application may use, and the abstract classes double as injection tokens.
+the [unit of work](./unit-of-work.md), the [outbox](./outbox.md). It imports no framework: no
+decorator, no container. The composition root builds it, by hand or with the container of your
+framework, and the abstract classes double as injection tokens: see [Integrations](../../integrations/index.md).
 
 ```ts [src/ordering/application/commands/place-order.command.ts]
 import { Clock, CommandHandler, err, IdGenerator, ok, type Result } from "@alveolus/core";
-import { Injectable } from "@nestjs/common";
 
 import { OrderNotFound } from "../../domain/errors/order-not-found.error";
 import { Orders } from "../../domain/repositories/orders.repository";
 import { OrderId } from "../../domain/value-objects/order-id.identifier";
 
-@Injectable()
 export class PlaceOrderHandler extends CommandHandler<PlaceOrder, void, PlaceOrderError> {
 	constructor(
 		private readonly orders: Orders,
@@ -82,9 +81,6 @@ export class PlaceOrderHandler extends CommandHandler<PlaceOrder, void, PlaceOrd
 	}
 }
 ```
-
-Import the injected classes as values, not with `import type`: NestJS reads constructor parameter
-types at runtime.
 
 ### Return the failure of the aggregate as is
 
@@ -138,7 +134,6 @@ A command may return data, such as the identifier of what it created. Set `Outpu
 cannot fail may narrow its return type to `Ok`, so callers read the value without checking.
 
 ```ts [src/ordering/application/commands/create-order.command.ts]
-@Injectable()
 export class CreateOrderHandler extends CommandHandler<void, OrderId> {
 	constructor(
 		private readonly orders: Orders,
@@ -160,11 +155,12 @@ export class CreateOrderHandler extends CommandHandler<void, OrderId> {
 A controller builds the command, calls `handle` and turns the `Result` into a response. Domain
 errors become HTTP errors there, and nowhere else.
 
-```ts [src/ordering/driving/nestjs/controllers/orders.controller.ts]
+```ts [src/ordering/driving/http/controllers/orders.controller.ts]
 const placed = await this.placeOrder.handle({ orderId, total: body.total });
 if (!placed.ok) {
-	throw new UnprocessableEntityException({ error: placed.error.type, details: placed.error.payload });
+	return { status: 422, body: { error: placed.error.type, details: placed.error.payload } };
 }
+return { status: 204 };
 ```
 
 ### Keep to the command side
@@ -213,17 +209,12 @@ abstract class CommandHandler<Input, Output = void, Error extends AnyDomainError
 - `Error` only accepts `DomainError` subclasses. A technical failure, such as a lost database
   connection, is thrown and handled like any other exception.
 - Call `super()` in the constructor of your handler.
-- Alveolus provides no bus and no container: wire handlers with your framework.
+- Alveolus provides no bus and no container: wire handlers in the composition root, by hand or
+  with the container of your framework.
 - The events recorded by the aggregate stay on it after `save`; publish them through the
   [outbox](./outbox.md).
 
 Import from `@alveolus/core` or `@alveolus/core/command-handlers`.
-
-## Troubleshooting
-
-**`Nest can't resolve dependencies of PlaceOrderHandler (?, …)`**: an injected class is imported
-with `import type`, or its port has no provider. Import it as a value and register
-`{ provide: Orders, useClass: PgOrders }` in the module.
 
 ## See also
 

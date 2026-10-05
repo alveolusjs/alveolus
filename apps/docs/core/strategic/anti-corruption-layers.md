@@ -81,15 +81,13 @@ and returns your objects.
 
 ```ts [src/ordering/driven/catalog/adapters/catalog-price-list.adapter.ts]
 import type { AntiCorruptionLayer } from "@alveolus/core";
-import { Injectable } from "@nestjs/common";
 
-import { CatalogApi } from "../../../../catalog/driving/nestjs/catalog-api";
+import { CatalogApi } from "../../../../catalog/driving/in-process/catalog-api";
 import { Money } from "../../../../shared-kernel/domain/value-objects/money.value-object";
 import { PriceList } from "../../../domain/ports/price-list.port";
 import type { ProductId } from "../../../domain/value-objects/product-id.identifier";
 import type { CatalogProductRepresentation } from "../../../published-language/catalog-product.representation";
 
-@Injectable()
 export class CatalogPriceList extends PriceList implements AntiCorruptionLayer {
 	constructor(private readonly catalog: CatalogApi) {
 		super();
@@ -120,12 +118,10 @@ When the other context sends you a message, the anti-corruption layer is the con
 
 ```ts [src/billing/driving/rabbitmq/consumers/order-placed.consumer.ts]
 import type { AntiCorruptionLayer } from "@alveolus/core";
-import { Injectable } from "@nestjs/common";
 
 import { OpenInvoiceHandler } from "../../../application/commands/open-invoice.command";
 import type { OrderPlacedRepresentation } from "../../../published-language/order-placed.representation";
 
-@Injectable()
 export class OrderPlacedConsumer implements AntiCorruptionLayer {
 	constructor(private readonly openInvoice: OpenInvoiceHandler) {}
 
@@ -145,7 +141,7 @@ Events are delivered at least once: ignore an event whose `id` you have already 
 <div class="al-compare">
 
 ```ts [❌ Avoid: src/ordering/application/commands/place-order.command.ts]
-import { CatalogApi } from "../../../catalog/driving/nestjs/catalog-api";
+import { CatalogApi } from "../../../catalog/driving/in-process/catalog-api";
 ```
 
 ```ts [✅ Prefer: src/ordering/application/commands/place-order.command.ts]

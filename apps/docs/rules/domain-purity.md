@@ -30,7 +30,7 @@ Every import of a file in `domain/`, in a bounded context or in the shared kerne
 | --- | --- |
 | A file of the project | It is in the `domain/` of the same context or of the shared kernel. |
 | `@alveolus/core` | Every imported name is a domain building block or part of `Result`: `AggregateRoot`, `Entity`, `ValueObject`, `Identifier`, `DomainEvent`, `DomainError`, `DomainService`, `Port`, `Clock`, `IdGenerator`, `CommandRepository`, `QueryRepository`, `View`, `Result`, `ok`, `err`, `map`, `mapErr`, `andThen`, `combine` and their `Any…` types. |
-| Any other package | It is listed in `domainDependencies`. |
+| Any other package | It is listed in `domainDependencies`; when its entry lists names, every imported name is one of them. |
 
 Importing from the root `@alveolus/core` is fine: the rule checks each imported name, not the path.
 
@@ -42,15 +42,19 @@ clock or a framework, and survives a change of any of them.
 
 ## Allow a package
 
-Some packages belong in a domain, such as a decimal library for money. Declare them:
+Some packages belong in a domain, such as a decimal library for money. Declare them, with `true`
+to allow everything they export, or with the names you allow:
 
 ```ts [alveolus.config.ts]
 export default defineConfig({
 	boundedContexts: { ordering: "ordering" },
-	domainDependencies: ["decimal.js"],
+	domainDependencies: { "date-fns": ["addDays", "isBefore"], "decimal.js": true },
 	root: "src",
 });
 ```
+
+Importing another name from a restricted package is reported:
+`The domain imports format from date-fns: domainDependencies only allows addDays, isBefore.`
 
 The application may use them too.
 

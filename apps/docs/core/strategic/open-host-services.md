@@ -4,7 +4,7 @@ An open host service is the documented entry point of a bounded context: the cla
 call, answering in the [published language](./published-language.md), never with objects of the
 domain. It is the only class another context may import.
 
-```ts [src/catalog/driving/nestjs/catalog-api.ts]
+```ts [src/catalog/driving/in-process/catalog-api.ts]
 import type { OpenHostService } from "@alveolus/core";
 
 export class CatalogApi implements OpenHostService {
@@ -26,14 +26,12 @@ is enough.
 In a modular monolith, the open host service is a class of `driving/`. It calls the application
 and maps what it reads to the published language.
 
-```ts [src/catalog/driving/nestjs/catalog-api.ts]
+```ts [src/catalog/driving/in-process/catalog-api.ts]
 import type { OpenHostService } from "@alveolus/core";
-import { Injectable } from "@nestjs/common";
 
 import { GetProductHandler } from "../../application/queries/get-product.query";
 import type { ProductRepresentation } from "../../published-language/product.representation";
 
-@Injectable()
 export class CatalogApi implements OpenHostService {
 	constructor(private readonly getProduct: GetProductHandler) {}
 
@@ -51,53 +49,55 @@ export class CatalogApi implements OpenHostService {
 Other contexts import this class, and only this class, from an
 [anti-corruption layer](./anti-corruption-layers.md).
 
-### Wire it with NestJS
+### Wire it in the composition root
 
-The module of the bounded context exports its open host services, and nothing else. The module of
-the downstream context imports it to inject the service into its anti-corruption layer.
+The composition root of the bounded context builds its open host services and exposes them, and
+nothing else. The composition root of the downstream context receives them to build its
+anti-corruption layers.
 
 ```ts [src/catalog/catalog.module.ts]
-@Module({
-	exports: [CatalogApi],
-	providers: [CatalogApi, GetProductHandler, { provide: Products, useClass: PgProducts }],
-})
-export class CatalogModule {}
+export class CatalogModule {
+	readonly api: CatalogApi;
+
+	constructor(db: Pool) {
+		this.api = new CatalogApi(new GetProductHandler(new PgProducts(db)));
+	}
+}
 ```
 
 ```ts [src/ordering/ordering.module.ts]
-@Module({
-	imports: [CatalogModule],
-	providers: [{ provide: PriceList, useClass: CatalogPriceList }],
-})
-export class OrderingModule {}
+export class OrderingModule {
+	constructor(db: Pool, catalog: CatalogModule) {
+		const prices = new CatalogPriceList(catalog.api);
+		…
+	}
+}
 ```
 
-Exporting a repository or a handler would let another context reach the model behind the open
-host service.
+Exposing a repository or a handler would let another context reach the model behind the open host
+service. With NestJS, the module exports the open host service only: see
+[NestJS](../../integrations/nestjs.md#connect-two-bounded-contexts).
 
 ### Expose it over HTTP
 
 The same role fits a controller: it implements `OpenHostService` and answers with a
-representation.
+representation. The routes are written with your HTTP framework; see
+[Integrations](../../integrations/index.md).
 
-```ts [src/catalog/driving/nestjs/catalog-http-api.ts]
+```ts [src/catalog/driving/http/controllers/products.controller.ts]
 import type { OpenHostService } from "@alveolus/core";
-import { Controller, Get, NotFoundException, Param } from "@nestjs/common";
 
-import type { ProductRepresentation } from "../../published-language/product.representation";
-import { CatalogApi } from "./catalog-api";
+import type { CatalogApi } from "../../in-process/catalog-api";
 
-@Controller("products")
-export class CatalogHttpApi implements OpenHostService {
+export class ProductsController implements OpenHostService {
 	constructor(private readonly catalog: CatalogApi) {}
 
-	@Get(":id")
-	async product(@Param("id") productId: string): Promise<ProductRepresentation> {
+	async product(productId: string) {
 		const product = await this.catalog.productById(productId);
 		if (product === undefined) {
-			throw new NotFoundException({ error: "ProductNotFound", productId });
+			return { status: 404, body: { error: "ProductNotFound", productId } };
 		}
-		return product;
+		return { status: 200, body: product };
 	}
 }
 ```
@@ -148,12 +148,6 @@ something else: it marks the class as the documented entry point of its bounded 
   the contract.
 
 Import from `@alveolus/core` or `@alveolus/core/open-host-services`.
-
-## Troubleshooting
-
-**`Nest can't resolve dependencies of the CatalogPriceList (?)`**: the downstream module cannot see
-the open host service. Export it from the module of its context, and import that module in the
-module of the downstream context.
 
 ## See also
 

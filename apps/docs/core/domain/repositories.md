@@ -164,12 +164,6 @@ abstract class QueryRepository<View extends object> extends Port
 
 Import from `@alveolus/core` or `@alveolus/core/repositories`.
 
-## Troubleshooting
-
-**`Nest can't resolve dependencies of PlaceOrderHandler (?, …)`**: the repository is imported with
-`import type`, or no provider is registered for it. Import it as a value and register
-`{ provide: Orders, useClass: PgOrders }`.
-
 ## See also
 
 - [Aggregates](./aggregates.md), what a command repository holds, and their snapshots

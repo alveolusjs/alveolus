@@ -86,12 +86,13 @@ export class PlaceOrderHandler extends CommandHandler<PlaceOrder, void, PlaceOrd
 The driving adapter turns the error into a response. `instanceof` narrows the union; `type` gives
 the class name, and `payload` the data.
 
-```ts [src/ordering/driving/nestjs/controllers/orders.controller.ts]
+```ts [src/ordering/driving/http/controllers/orders.controller.ts]
 if (!placed.ok) {
+	const body = { error: placed.error.type, details: placed.error.payload };
 	if (placed.error instanceof OrderNotFound) {
-		throw new NotFoundException({ error: placed.error.type, details: placed.error.payload });
+		return { status: 404, body };
 	}
-	throw new UnprocessableEntityException({ error: placed.error.type, details: placed.error.payload });
+	return { status: 422, body };
 }
 ```
 

@@ -94,13 +94,15 @@ export class LayerDirectionRule extends ImportRule {
 		if (imported.target.kind !== "package" || imported.isFromPackage(CoreApi.packageName)) {
 			return undefined;
 		}
-		if (imported.isFromPackage("@nestjs/common")) {
-			const forbidden = imported.names.filter((name) => name !== "Injectable");
-			return forbidden.length === 0 ? undefined : `The application imports ${forbidden.join(", ")} from @nestjs/common: only Injectable is allowed.`;
+		const name = imported.target.name;
+		const allowed = config.applicationDependencies;
+		if (!allowed.has(name)) {
+			return `The application imports ${name}: add it to applicationDependencies if the application really needs it.`;
 		}
-		if (config.domainDependencies.includes(imported.target.name)) {
+		const forbidden = allowed.forbiddenNames(name, imported.names);
+		if (forbidden.length === 0) {
 			return undefined;
 		}
-		return `The application imports ${imported.target.name}: only ${CoreApi.packageName}, Injectable from @nestjs/common and domainDependencies are allowed.`;
+		return `The application imports ${forbidden.join(", ")} from ${name}: applicationDependencies only allows ${allowed.allowedNames(name).join(", ")}.`;
 	}
 }

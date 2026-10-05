@@ -11,7 +11,6 @@ describe("LayerDirectionRule", () => {
 			.file(
 				"src/ordering/application/commands/place-order.command.ts",
 				`import { CommandHandler } from "@alveolus/core";
-				import { Injectable } from "@nestjs/common";
 				import { Order } from "../../domain/aggregates/order.aggregate.ts";`,
 			)
 			.file("src/ordering/application/translators/order-events.translator.ts", `import type { OrderPlacedRepresentation } from "../../published-language/order-placed.representation.ts";`)
@@ -26,16 +25,35 @@ describe("LayerDirectionRule", () => {
 	it("keeps the application away from adapters and frameworks", () => {
 		const codebase = new TestCodebase().file("src/ordering/driven/adapters/mailer.adapter.ts", `export class Mailer {}`).file(
 			"src/ordering/application/commands/place-order.command.ts",
-			`import { Controller, Injectable } from "@nestjs/common";
+			`import { Injectable } from "@nestjs/common";
 				import { Repository } from "typeorm";
 				import { Mailer } from "../../driven/adapters/mailer.adapter.ts";`,
 		);
 
 		expect(codebase.check(new LayerDirectionRule())).toEqual([
-			"src/ordering/application/commands/place-order.command.ts:1 Controller, Injectable",
+			"src/ordering/application/commands/place-order.command.ts:1 Injectable",
 			"src/ordering/application/commands/place-order.command.ts:2 Repository",
 			"src/ordering/application/commands/place-order.command.ts:3 Mailer",
 		]);
+	});
+
+	it("accepts the packages declared in domainDependencies and applicationDependencies", () => {
+		const codebase = new TestCodebase({ applicationDependencies: { "@nestjs/common": true }, domainDependencies: { "decimal.js": true } }).file(
+			"src/ordering/application/commands/place-order.command.ts",
+			`import { Injectable } from "@nestjs/common";
+				import Decimal from "decimal.js";
+				import { Repository } from "typeorm";`,
+		);
+
+		expect(codebase.check(new LayerDirectionRule())).toEqual(["src/ordering/application/commands/place-order.command.ts:3 Repository"]);
+	});
+
+	it("limits a package to the names declared in applicationDependencies", () => {
+		const messages = new TestCodebase({ applicationDependencies: { "@nestjs/common": ["Injectable"] } })
+			.file("src/ordering/application/commands/place-order.command.ts", `import { Controller, Injectable } from "@nestjs/common";`)
+			.messages(new LayerDirectionRule());
+
+		expect(messages).toEqual(["The application imports Controller from @nestjs/common: applicationDependencies only allows Injectable."]);
 	});
 
 	it("keeps driven and driving adapters apart", () => {

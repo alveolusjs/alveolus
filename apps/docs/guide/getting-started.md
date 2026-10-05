@@ -13,6 +13,8 @@ Alveolus is in alpha: the API may change between versions until 1.0.
 - TypeScript resolving packages the way Node.js does. The packages are ES modules described by an
   `exports` map; Node.js 24 also loads them from a CommonJS application, such as a default NestJS
   one.
+- No decorator and no `emitDecoratorMetadata`: the building blocks are plain classes, wired by
+  hand or by your framework. See [Integrations](../integrations/index.md).
 
 ```json [tsconfig.json]
 {
@@ -89,7 +91,8 @@ export default defineConfig({
 | `boundedContexts`    |                          | Each bounded context and its folder, relative to `root` (`"modules/ordering"` works). |
 | `sharedKernel`       | `"shared-kernel"`        | The folder shared by every bounded context, relative to `root`.             |
 | `compositionRoot`    | `"*.module.ts"`          | The file, at the root of a bounded context, that wires it.                  |
-| `domainDependencies` | `[]`                     | npm packages the domain may import, besides `@alveolus/core`.               |
+| `domainDependencies` | `{}`                     | npm packages the domain may import, besides `@alveolus/core`: `{ "decimal.js": true }` for everything, `{ "date-fns": ["addDays"] }` for some names. |
+| `applicationDependencies` | `{}`                | npm packages the application may import, besides `@alveolus/core` and `domainDependencies`, in the same form. |
 | `ignore`             | test files               | More files to leave out, as globs from the project folder. `*.spec.ts`, `*.test.ts` and `__tests__/` are always left out. |
 | `rules`              | every rule on            | Turn a rule off: `{ placement: "off" }`.                                    |
 

@@ -119,21 +119,18 @@ export class RandomIdGenerator extends IdGenerator {
 
 In tests, a fixed clock and a sequential generator make every date and id predictable.
 
-### Inject it with NestJS
+### Wire it in the composition root
 
-A port is a class: it exists at runtime and serves as its own injection token. Register the
-adapter under the port in the module of the bounded context:
+A port is a class: it exists at runtime and serves as its own injection token. The composition root
+of the bounded context picks the adapter and passes it where the port is expected:
 
 ```ts [src/ordering/ordering.module.ts]
-providers: [
-	{ provide: Payments, useClass: StripePayments },
-	{ provide: Clock, useClass: SystemClock },
-	{ provide: IdGenerator, useClass: RandomIdGenerator },
-],
+const placeOrder = new PlaceOrderHandler(new StripePayments(stripe), new SystemClock(), new RandomIdGenerator());
 ```
 
-The command handler then receives `Payments`, `Clock` and `IdGenerator` in its constructor, with no
-string token and no `@Inject()`.
+The command handler receives `Payments`, `Clock` and `IdGenerator` in its constructor, and never
+knows which adapters it got. With a container, register the adapter under the port: see
+[Integrations](../../integrations/index.md).
 
 ### Serve several ports with one adapter
 
@@ -169,12 +166,6 @@ implements is a port: your own ports, the [repositories](./repositories.md), and
 - Core ships no implementation of `Clock` or `IdGenerator`: they are adapters of your project.
 
 Import from `@alveolus/core` or `@alveolus/core/ports`.
-
-## Troubleshooting
-
-**`Nest can't resolve dependencies of PlaceOrderHandler (?, …)`**: the port is imported with
-`import type`, so NestJS cannot read its type at runtime, or no provider is registered for it.
-Import it as a value (`import { Payments } from …`) and register `{ provide: Payments, useClass: … }`.
 
 ## See also
 

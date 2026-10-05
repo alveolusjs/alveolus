@@ -13,7 +13,6 @@ import { PgOrders } from "../../driven/pg/adapters/pg-orders.adapter";
 
 ```ts [✅ Prefer: src/ordering/application/commands/place-order.command.ts]
 import { CommandHandler } from "@alveolus/core";
-import { Injectable } from "@nestjs/common";
 
 import { Orders } from "../../domain/repositories/orders.repository";
 ```
@@ -26,7 +25,7 @@ Imports between layers of the same context, or towards the shared kernel:
 
 | From | May import |
 | --- | --- |
-| `application/` | `domain/`, `application/`, its own `published-language/`. Packages: `@alveolus/core`, `Injectable` from `@nestjs/common`, `domainDependencies`. |
+| `application/` | `domain/`, `application/`, its own `published-language/`. Packages: `@alveolus/core`, `domainDependencies`, `applicationDependencies`. |
 | `published-language/` | Its own `published-language/`. From `@alveolus/core`, only `PublishedLanguage`, `IntegrationEvent` and `JsonValue`; other packages, such as a schema library, are fine. |
 | `driven/` | `domain/`, `application/`, `published-language/`, `driven/`, any package. |
 | `driving/` | `domain/`, `application/`, `published-language/`, `driving/`, any package. |
@@ -47,11 +46,28 @@ driving adapter imports a driven one, a controller starts sending emails. Keepin
 inwards means each layer can be replaced, tested and read on its own, and the composition root is
 the one place that knows how everything fits.
 
+## Allow a package
+
+The application imports no framework: the composition root builds its classes. A package it really
+needs is declared, with `true` to allow everything it exports, or with the names you allow:
+
+```ts [alveolus.config.ts]
+export default defineConfig({
+	applicationDependencies: { "@nestjs/common": ["Injectable"], zod: true },
+	boundedContexts: { ordering: "ordering" },
+	root: "src",
+});
+```
+
+The packages of `domainDependencies` are allowed in the application too. Importing another name
+from a restricted package is reported: `The application imports Controller from @nestjs/common:
+applicationDependencies only allows Injectable.`
+
 ## What it reports
 
 ```
 src/ordering/application/commands/place-order.command.ts:1
-  layer-direction: The application imports Controller from @nestjs/common: only Injectable is allowed.
+  layer-direction: The application imports @nestjs/common: add it to applicationDependencies if the application really needs it.
 
 src/ordering/application/commands/place-order.command.ts:3
   layer-direction: The application layer imports src/ordering/driven/pg/adapters/pg-orders.adapter.ts (ordering driven): it may only import domain, application, published-language.

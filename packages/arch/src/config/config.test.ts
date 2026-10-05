@@ -6,7 +6,8 @@ describe("Config", () => {
 	it("applies the defaults of the convention", () => {
 		const config = new Config({ boundedContexts: { ordering: "ordering" }, root: "src" }, "/project");
 
-		expect([config.rootDir, config.compositionRoot, config.domainDependencies]).toEqual(["/project/src", "*.module.ts", []]);
+		expect([config.rootDir, config.compositionRoot]).toEqual(["/project/src", "*.module.ts"]);
+		expect([config.domainDependencies.has("decimal.js"), config.applicationDependencies.has("decimal.js")]).toEqual([false, false]);
 		expect(config.contextFolders).toEqual([
 			{ dir: "/project/src/ordering", isSharedKernel: false, name: "ordering" },
 			{ dir: "/project/src/shared-kernel", isSharedKernel: true, name: "shared kernel" },
