@@ -6,10 +6,12 @@ import llmstxt, { copyOrDownloadAsMarkdownButtons } from "vitepress-plugin-llms"
 import { PageHead } from "./seo/page-head";
 
 const repository = "https://github.com/alveolusjs/alveolus";
+const npm = "https://www.npmjs.com/org/alveolus";
 
 const sidebar = [
 	{
 		items: [
+			{ link: "/guide/learning-path", text: "Learning path" },
 			{ link: "/guide/getting-started", text: "Getting started" },
 			{ link: "/guide/project-layout", text: "Project layout" },
 		],
@@ -148,7 +150,10 @@ export default defineConfig({
 		outline: { level: "deep" },
 		search: { provider: "local" },
 		sidebar,
-		socialLinks: [{ icon: "github", link: repository }],
+		socialLinks: [
+			{ icon: "github", link: repository },
+			{ icon: "npm", link: npm },
+		],
 	},
 	title: "Alveolus",
 	titleTemplate: ":title | Alveolus, DDD for TypeScript",

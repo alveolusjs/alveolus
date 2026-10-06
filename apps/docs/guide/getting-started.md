@@ -19,6 +19,10 @@ Alveolus comes as two packages: `@alveolus/core`, the building blocks your code 
 Alveolus is in alpha: the API may change between versions until 1.0.
 :::
 
+::: tip New to DDD?
+The [learning path](./learning-path.md) gives the order in which to read the docs.
+:::
+
 ## In four steps
 
 <div class="al-cards al-cards-2">
@@ -193,6 +197,7 @@ today, and fix the past over time:
 
 ## See also
 
+- [Learning path](./learning-path.md), the order in which to read the docs when you are new to DDD
 - [Project layout](./project-layout.md), the folders and layers the checks expect
 - [Building blocks](../core/index.md), the classes your code extends
 - [Rules](../rules/index.md), what `alveolus arch check` verifies
