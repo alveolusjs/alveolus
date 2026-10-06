@@ -275,6 +275,7 @@ html .vp-doc .vp-code .highlighted-word span {
 
 .al-glance dd {
 	margin: 0;
+	overflow-wrap: anywhere;
 }
 
 .al-cards {
@@ -291,6 +292,7 @@ html .vp-doc .vp-code .highlighted-word span {
 	background-color: var(--vp-c-bg-soft);
 	font-size: 14px;
 	line-height: 22px;
+	overflow-wrap: anywhere;
 }
 
 .vp-doc .al-card p {

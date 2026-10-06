@@ -1,3 +1,7 @@
+---
+description: "Use Alveolus with any framework: only the composition root of each bounded context knows how its classes are built, by hand or with a DI container."
+---
+
 # Integrations
 
 Alveolus imposes no framework: only the composition root of each bounded context knows how its

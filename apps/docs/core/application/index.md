@@ -1,3 +1,7 @@
+---
+description: "The application layer in Domain-Driven Design with TypeScript: command and query handlers that run use cases atomically and reliably."
+---
+
 # Application
 
 The application runs the use cases: one handler per request, which calls the domain and makes the

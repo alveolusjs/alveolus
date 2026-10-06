@@ -1,3 +1,7 @@
+---
+description: "Architecture rule: an expected business failure is returned in a Result, and exceptions stay for bugs."
+---
+
 # no-thrown-failure
 
 An expected business failure is a value: the aggregate returns it in a `Result`, and exceptions

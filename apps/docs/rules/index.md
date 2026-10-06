@@ -1,3 +1,7 @@
+---
+description: "Architecture checks for Domain-Driven Design in TypeScript: alveolus arch check reports every way a project drifts from its layers and bounded contexts."
+---
+
 # Rules
 
 `alveolus arch check` applies rules that each report one way a project drifts: a shortcut between

@@ -1,3 +1,7 @@
+---
+description: "Open host services in Domain-Driven Design with TypeScript: the documented entry point other bounded contexts call, answering in the published language."
+---
+
 # Open host services
 
 An open host service is the documented entry point of a bounded context: the one class other

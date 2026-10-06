@@ -1,3 +1,7 @@
+---
+description: "Views in CQRS with TypeScript: the read-only shape a query returns, built for the screen or API that shows it, without loading aggregates."
+---
+
 # Views
 
 A view is the read-only shape a query returns, built for the screen or the API that shows it.

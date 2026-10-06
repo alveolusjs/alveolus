@@ -1,3 +1,7 @@
+---
+description: "Architecture rule: the domain and application layers contain only building blocks, every class extending one from @alveolus/core."
+---
+
 # no-plain-class
 
 The domain and the application contain building blocks, and nothing else: every class extends one

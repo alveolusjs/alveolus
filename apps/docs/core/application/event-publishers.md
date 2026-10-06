@@ -1,3 +1,7 @@
+---
+description: "Event publishers in TypeScript: the port that sends integration events to a message broker such as Kafka, a webhook, or other bounded contexts."
+---
+
 # Event publishers
 
 An event publisher is the port that sends [integration events](./integration-events.md) out of the

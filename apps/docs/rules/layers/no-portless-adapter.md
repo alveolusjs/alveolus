@@ -1,3 +1,7 @@
+---
+description: "Architecture rule: every driven adapter implements a port declared by the domain, as hexagonal architecture requires."
+---
+
 # no-portless-adapter
 
 A driven adapter exists to implement a port: every class in `driven/<technology>/adapters/`

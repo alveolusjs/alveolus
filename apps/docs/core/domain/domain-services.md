@@ -1,3 +1,7 @@
+---
+description: "Domain services in Domain-Driven Design with TypeScript: stateless classes that hold a business rule no single aggregate or value object owns."
+---
+
 # Domain Services
 
 A domain service is a stateless class of the domain that holds a business rule no single object

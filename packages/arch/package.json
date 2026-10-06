@@ -28,6 +28,19 @@
 		"dist"
 	],
 	"homepage": "https://alveolus.dev/",
+	"keywords": [
+		"ddd",
+		"domain-driven-design",
+		"typescript",
+		"architecture",
+		"architecture-testing",
+		"linter",
+		"bounded-context",
+		"hexagonal-architecture",
+		"clean-architecture",
+		"dependency-rules",
+		"cli"
+	],
 	"license": "MIT",
 	"name": "@alveolus/arch",
 	"publishConfig": {

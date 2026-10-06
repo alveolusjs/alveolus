@@ -1,3 +1,7 @@
+---
+description: "Repositories in Domain-Driven Design with TypeScript: ports that load and save aggregates for commands and views for queries, as if they were collections."
+---
+
 # Repositories
 
 A repository is a port that loads and saves what the application works on, as if it were a

@@ -1,3 +1,7 @@
+---
+description: "Domain errors in TypeScript: expected business failures returned as values in a Result instead of thrown exceptions, visible in every signature."
+---
+
 # Domain errors
 
 A domain error is an expected business failure, such as an order placed twice, returned as a value

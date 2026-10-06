@@ -1,3 +1,7 @@
+---
+description: "Install @alveolus/core and @alveolus/arch, write your first aggregate in TypeScript and check your Domain-Driven Design architecture with alveolus arch check."
+---
+
 # Getting started
 
 Alveolus comes as two packages: `@alveolus/core`, the building blocks your code extends, and

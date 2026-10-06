@@ -1,3 +1,7 @@
+---
+description: "The transactional outbox pattern in TypeScript: store integration events in the same transaction as the change, then relay them so none is lost."
+---
+
 # Outbox
 
 An outbox stores the integration events of a change in the same transaction as the change, then a

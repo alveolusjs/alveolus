@@ -1,3 +1,7 @@
+---
+description: "Architecture rule: each class lives in the folder of its kind, in a file named after that kind, one class per file."
+---
+
 # no-misplaced-class
 
 Each class lives in the folder of its kind, in a file whose name ends with that kind, one class per

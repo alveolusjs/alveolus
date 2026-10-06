@@ -1,3 +1,7 @@
+---
+description: "Entities in Domain-Driven Design with TypeScript: objects inside an aggregate that keep their identity while their attributes change."
+---
+
 # Entities
 
 An entity is an object inside an aggregate that keeps its identity while its attributes change.

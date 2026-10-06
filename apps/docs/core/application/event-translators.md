@@ -1,3 +1,7 @@
+---
+description: "Event translators in TypeScript: turn the domain events of an aggregate into integration events, plain JSON that other bounded contexts can read."
+---
+
 # Event translators
 
 An event translator turns the [domain events](../domain/domain-events.md) of an aggregate into

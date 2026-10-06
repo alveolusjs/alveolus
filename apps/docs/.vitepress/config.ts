@@ -1,7 +1,9 @@
 import { transformerNotationWordHighlight } from "@shikijs/transformers";
 import { defineConfig } from "vitepress";
 import { groupIconMdPlugin, groupIconVitePlugin } from "vitepress-plugin-group-icons";
-import llmstxt from "vitepress-plugin-llms";
+import llmstxt, { copyOrDownloadAsMarkdownButtons } from "vitepress-plugin-llms";
+
+import { PageHead } from "./seo/page-head";
 
 const repository = "https://github.com/alveolusjs/alveolus";
 
@@ -112,6 +114,8 @@ export default defineConfig({
 		[
 			"script",
 			{
+				"data-domains": "alveolus.dev",
+				"data-exclude-hash": "true",
 				"data-website-id": "f08d2258-37c3-4859-870a-145181b8b3d1",
 				defer: "",
 				src: "https://cloud.umami.is/script.js",
@@ -124,8 +128,11 @@ export default defineConfig({
 		codeTransformers: [transformerNotationWordHighlight()],
 		config(md) {
 			md.use(groupIconMdPlugin);
+			md.use(copyOrDownloadAsMarkdownButtons);
 		},
 	},
+
+	sitemap: { hostname: PageHead.hostname },
 
 	themeConfig: {
 		editLink: {
@@ -144,6 +151,12 @@ export default defineConfig({
 		socialLinks: [{ icon: "github", link: repository }],
 	},
 	title: "Alveolus",
+	titleTemplate: ":title | Alveolus, DDD for TypeScript",
+
+	transformPageData(page) {
+		page.frontmatter.head ??= [];
+		page.frontmatter.head.push(...new PageHead(page).tags());
+	},
 
 	vite: {
 		plugins: [groupIconVitePlugin(), llmstxt()],

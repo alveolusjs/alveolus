@@ -1,3 +1,7 @@
+---
+description: "Published Language in Domain-Driven Design: the JSON contract that bounded contexts exchange instead of importing each other's code."
+---
+
 # Published Language
 
 The published language is the JSON that bounded contexts exchange: the contract between them,

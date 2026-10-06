@@ -91,6 +91,22 @@
 		"dist"
 	],
 	"homepage": "https://alveolus.dev/core",
+	"keywords": [
+		"ddd",
+		"domain-driven-design",
+		"typescript",
+		"aggregate",
+		"entity",
+		"value-object",
+		"domain-events",
+		"repository",
+		"cqrs",
+		"hexagonal-architecture",
+		"clean-architecture",
+		"outbox",
+		"unit-of-work",
+		"result"
+	],
 	"license": "MIT",
 	"name": "@alveolus/core",
 	"publishConfig": {

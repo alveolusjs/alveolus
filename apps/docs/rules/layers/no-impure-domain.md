@@ -1,3 +1,7 @@
+---
+description: "Architecture rule: the domain layer depends on nothing but itself and @alveolus/core, with no ORM, framework or infrastructure import."
+---
+
 # no-impure-domain
 
 The domain depends on nothing but itself: its own domain, the domain of the shared kernel and the

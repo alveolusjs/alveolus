@@ -1,3 +1,7 @@
+---
+description: "Architecture rule: every dependency points towards the domain, as in hexagonal and clean architecture, and only the composition root sees every layer."
+---
+
 # no-outward-import
 
 Every dependency points towards the domain, only the composition root sees every layer, and every

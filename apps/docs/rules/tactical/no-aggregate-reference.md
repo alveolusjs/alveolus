@@ -1,3 +1,7 @@
+---
+description: "Architecture rule: an aggregate refers to another aggregate by its identifier, never by holding it, to keep transactions and loading small."
+---
+
 # no-aggregate-reference
 
 An aggregate refers to another aggregate by its identifier, never by holding it.

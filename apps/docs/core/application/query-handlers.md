@@ -1,3 +1,7 @@
+---
+description: "Query handlers in CQRS with TypeScript: run one read that returns a view through a query repository, without loading aggregates or changing anything."
+---
+
 # Query handlers
 
 A query handler runs one read: it returns a [view](../domain/views.md) read through a query

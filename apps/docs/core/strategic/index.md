@@ -1,3 +1,7 @@
+---
+description: "Strategic Domain-Driven Design in TypeScript: split a system into bounded contexts and decide how they talk without sharing their models."
+---
+
 # Strategic
 
 Strategic design splits a system into bounded contexts, each with its own model, and decides how

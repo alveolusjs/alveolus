@@ -1,3 +1,7 @@
+---
+description: "Architecture rule for CQRS: a command handler changes aggregates and a query handler reads views, each keeping to the repositories of its side."
+---
+
 # no-mixed-handler
 
 A command changes aggregates, a query reads views: each handler keeps to the repositories of its

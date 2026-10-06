@@ -1,3 +1,7 @@
+---
+description: "Value objects in Domain-Driven Design with TypeScript: immutable values described only by their attributes, such as an amount, an email or an identifier."
+---
+
 # Value objects
 
 A value object is an immutable value described only by its attributes, such as an amount or an

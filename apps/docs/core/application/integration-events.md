@@ -1,3 +1,7 @@
+---
+description: "Integration events in Domain-Driven Design with TypeScript: versioned JSON messages that tell other bounded contexts what happened in yours."
+---
+
 # Integration events
 
 An integration event is what other bounded contexts receive when something happens in yours: plain

@@ -1,3 +1,7 @@
+---
+description: "Domain events in Domain-Driven Design with TypeScript: record what happened in the domain, named in the past tense, such as OrderPlaced."
+---
+
 # Domain events
 
 A domain event records something that happened in the domain, named in the past tense, such as

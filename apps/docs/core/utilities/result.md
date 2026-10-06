@@ -1,3 +1,7 @@
+---
+description: "The Result type in TypeScript: the outcome of an operation that can fail for a business reason, ok with a value or err with a domain error."
+---
+
 # Result
 
 A `Result` is the outcome of an operation that can fail for a business reason: `ok` with a value,

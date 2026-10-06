@@ -1,3 +1,7 @@
+---
+description: "The Domain-Driven Design building blocks of @alveolus/core as TypeScript abstract classes: aggregates, entities, value objects, domain events, repositories."
+---
+
 # Building blocks
 
 `@alveolus/core` gives you the building blocks of Domain-Driven Design as abstract classes. Your

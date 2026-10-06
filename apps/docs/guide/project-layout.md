@@ -1,3 +1,7 @@
+---
+description: "The folder structure of a Domain-Driven Design project in TypeScript: bounded contexts, domain, application, adapters and the direction between layers."
+---
+
 # Project layout
 
 Every Alveolus project has the same shape: the same folders, the same file names, the same

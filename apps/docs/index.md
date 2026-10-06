@@ -1,5 +1,8 @@
 ---
+description: "Alveolus gives TypeScript projects Domain-Driven Design building blocks and architecture checks that keep the domain model clean, for teams and their AI agents."
 layout: home
+title: "Alveolus: Domain-Driven Design for TypeScript"
+titleTemplate: false
 
 hero:
   name: Alveolus

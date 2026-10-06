@@ -1,3 +1,7 @@
+---
+description: "Command handlers in CQRS with TypeScript: run one use case that changes the system by loading an aggregate, calling one of its methods and saving it."
+---
+
 # Command handlers
 
 A command handler runs one use case that changes the system: it loads an aggregate, calls one of its

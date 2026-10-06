@@ -1,3 +1,7 @@
+---
+description: "Aggregates in Domain-Driven Design with TypeScript: a group of objects changed together through one aggregate root that keeps their invariants."
+---
+
 # Aggregates
 
 An aggregate is a group of objects changed together through one entry point, the root, which keeps

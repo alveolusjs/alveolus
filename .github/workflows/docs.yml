@@ -46,3 +46,18 @@ jobs:
     steps:
       - id: deployment
         uses: actions/deploy-pages@v5
+
+  indexnow:
+    needs: deploy
+    runs-on: ubuntu-latest
+    env:
+      HOST: alveolus.dev
+      KEY: a9874704c7ad2b00096d1b8be358044b
+    steps:
+      # Tells Bing, Yandex and the other IndexNow engines that every page of the sitemap changed.
+      - run: |
+          urls=$(curl -fsS "https://$HOST/sitemap.xml" | grep -oP '(?<=<loc>)[^<]+' | jq -R . | jq -s .)
+          jq -n --arg host "$HOST" --arg key "$KEY" --argjson urls "$urls" \
+            '{host: $host, key: $key, keyLocation: "https://\($host)/\($key).txt", urlList: $urls}' \
+            | curl -fsS -X POST https://api.indexnow.org/indexnow \
+                -H "Content-Type: application/json; charset=utf-8" --data @-

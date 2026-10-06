@@ -1,3 +1,7 @@
+---
+description: "Anti-corruption layers in Domain-Driven Design with TypeScript: translate another bounded context into your own language so its model never leaks in."
+---
+
 # Anti-corruption layers
 
 An anti-corruption layer is the adapter that reads another bounded context and translates it into

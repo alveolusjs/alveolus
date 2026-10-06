@@ -1,3 +1,7 @@
+---
+description: "The Unit of Work pattern in TypeScript: run all the writes of one use case in a single transaction, so all of them are kept or none."
+---
+
 # Unit of Work
 
 A unit of work runs the writes of one use case in one transaction: all of them are kept, or none.

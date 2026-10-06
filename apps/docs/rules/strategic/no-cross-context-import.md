@@ -1,3 +1,7 @@
+---
+description: "Architecture rule: a bounded context is reached only through its open host service, from an anti-corruption layer or its composition root."
+---
+
 # no-cross-context-import
 
 A bounded context is closed: another context reaches it only through its open host service, from

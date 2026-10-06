@@ -1,3 +1,7 @@
+---
+description: "Domain-Driven Design with NestJS: each bounded context is a NestJS module, and the abstract classes of ports and repositories are its injection tokens."
+---
+
 # NestJS
 
 Each bounded context is a NestJS module, and the abstract classes of ports and repositories are its

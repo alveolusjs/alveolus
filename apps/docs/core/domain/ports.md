@@ -1,3 +1,7 @@
+---
+description: "Ports in hexagonal architecture with TypeScript: abstract classes through which the domain states what it needs from the outside world, in its own words."
+---
+
 # Ports
 
 A port is an abstract class through which the domain says, in its own words, what it needs from

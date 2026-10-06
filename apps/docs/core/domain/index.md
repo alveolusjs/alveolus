@@ -1,3 +1,7 @@
+---
+description: "The domain layer in Domain-Driven Design with TypeScript: the model of the business, its objects and rules, free of frameworks and infrastructure."
+---
+
 # Domain
 
 The domain is the model of the business: its objects, its rules and what happens to them. It lives
