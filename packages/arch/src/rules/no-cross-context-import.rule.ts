@@ -2,8 +2,8 @@ import type { Codebase, CodeFile, Import } from "../codebase/index.ts";
 import type { RuleId } from "../config/index.ts";
 import { ImportRule } from "./import-rule.ts";
 
-export class BcIsolationRule extends ImportRule {
-	public readonly id: RuleId = "bc-isolation";
+export class NoCrossContextImportRule extends ImportRule {
+	public readonly id: RuleId = "strategic/no-cross-context-import";
 
 	protected appliesTo(file: CodeFile): boolean {
 		return file.location.isInBoundedContext || file.location.isInSharedKernel;

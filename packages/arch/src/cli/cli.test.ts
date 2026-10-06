@@ -41,7 +41,7 @@ describe("Cli", () => {
 
 		expect(await cli.run(["arch", "check"])).toBe(1);
 		expect(stdout.text).toBe(
-			"src/ordering/driven/adapters/mailer.adapter.ts:1\n  driven-adapters-extend-port: Mailer is a driven adapter but extends no Port: extend the port it implements.\n\n1 violation\n",
+			"src/ordering/driven/adapters/mailer.adapter.ts:1\n  layers/no-portless-adapter: Mailer is a driven adapter but extends no Port: extend the port it implements.\n\n1 violation\n",
 		);
 	});
 
@@ -52,7 +52,7 @@ describe("Cli", () => {
 
 		expect(JSON.parse(stdout.text)).toEqual({
 			baselined: 0,
-			violations: [{ file: "src/ordering/driven/adapters/mailer.adapter.ts", line: 1, message: expect.any(String), rule: "driven-adapters-extend-port", symbol: "Mailer" }],
+			violations: [{ file: "src/ordering/driven/adapters/mailer.adapter.ts", line: 1, message: expect.any(String), rule: "layers/no-portless-adapter", symbol: "Mailer" }],
 		});
 	});
 
@@ -73,7 +73,7 @@ describe("Cli", () => {
 
 	it("turns a rule off from the configuration", async () => {
 		sandbox.write("src/ordering/driven/adapters/mailer.adapter.ts", "export class Mailer {}\n");
-		sandbox.write("alveolus.config.ts", `export default { boundedContexts: { catalog: "catalog", ordering: "ordering" }, root: "src", rules: { "driven-adapters-extend-port": "off" } };\n`);
+		sandbox.write("alveolus.config.ts", `export default { boundedContexts: { catalog: "catalog", ordering: "ordering" }, root: "src", rules: { "layers/no-portless-adapter": "off" } };\n`);
 
 		expect(await cli.run(["arch", "check"])).toBe(0);
 	});

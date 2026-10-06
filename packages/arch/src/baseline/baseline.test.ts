@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import type { Violation } from "../rules/index.ts";
 import { Baseline } from "./baseline.ts";
 
-const throwOnLine3: Violation = { file: "src/order.aggregate.ts", line: 3, message: "", rule: "errors-as-values", symbol: "throw" };
+const throwOnLine3: Violation = { file: "src/order.aggregate.ts", line: 3, message: "", rule: "tactical/no-thrown-failure", symbol: "throw" };
 const throwOnLine7: Violation = { ...throwOnLine3, line: 7 };
 
 describe("Baseline", () => {

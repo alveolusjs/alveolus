@@ -9,20 +9,45 @@ on.
 import { AggregateRoot, err, ok, type Result } from "@alveolus/core";
 
 export class Order extends AggregateRoot<OrderId, OrderPlaced, OrderSnapshot> {
-	place(total: number, eventId: string, now: Date): Result<void, InvalidTotal> {
-		if (total <= 0) {
-			return err(new InvalidTotal({ total }));
+	place(
+		eventId: string,
+		now: Date,
+	): Result<void, OrderAlreadyPlaced | EmptyOrder> {
+		if (this.isPlaced) {
+			return err(new OrderAlreadyPlaced());
 		}
-		this.record(new OrderPlaced({ aggregateId: this.id, id: eventId, occurredAt: now, payload: { total } }));
+		if (this.lines.length === 0) {
+			return err(new EmptyOrder());
+		}
+		this.status = "placed";
+		this.record(
+			new OrderPlaced({
+				id: eventId,
+				aggregateId: this.id,
+				occurredAt: now,
+				payload: { customerId: this.customerId.value },
+			}),
+		);
 		return ok();
 	}
 }
 ```
 
+## Strategic
+
+How bounded contexts meet without sharing a model. See the [overview](./strategic/index.md) and the
+[bounded contexts](../guide/project-layout.md#bounded-contexts) of the project layout.
+
+| Building block | What it is |
+| --- | --- |
+| [Published Language](./strategic/published-language.md) | The JSON format exchanged between contexts. |
+| [Open host services](./strategic/open-host-services.md) | The documented entry point of a context, the only class others may import. |
+| [Anti-corruption layers](./strategic/anti-corruption-layers.md) | The adapter that reads another context and translates it into yours. |
+
 ## Domain
 
 The model and what it needs from the outside world. Everything here lives in `domain/` and imports
-nothing but the domain.
+nothing but the domain. See the [overview](./domain/index.md).
 
 | Building block | What it is |
 | --- | --- |
@@ -39,7 +64,8 @@ nothing but the domain.
 ## Application
 
 The use cases, and the contracts that make them atomic and reliable. Everything here lives in
-`application/`, except the adapters that implement the contracts.
+`application/`, except the adapters that implement the contracts. See the
+[overview](./application/index.md).
 
 | Building block | What it is |
 | --- | --- |
@@ -50,17 +76,6 @@ The use cases, and the contracts that make them atomic and reliable. Everything 
 | [Event publishers](./application/event-publishers.md) | Sends integration events to the rest of the system. |
 | [Unit of Work](./application/unit-of-work.md) | Makes a use case atomic: commit on success, roll back otherwise. |
 | [Outbox](./application/outbox.md) | Stores integration events with the change, then relays them, so none is lost. |
-
-## Strategic
-
-How bounded contexts meet without sharing a model. See also the
-[bounded contexts](../guide/project-layout.md#bounded-contexts) of the project layout.
-
-| Building block | What it is |
-| --- | --- |
-| [Published Language](./strategic/published-language.md) | The JSON format exchanged between contexts. |
-| [Open host services](./strategic/open-host-services.md) | The documented entry point of a context, the only class others may import. |
-| [Anti-corruption layers](./strategic/anti-corruption-layers.md) | The adapter that reads another context and translates it into yours. |
 
 ## Utilities
 

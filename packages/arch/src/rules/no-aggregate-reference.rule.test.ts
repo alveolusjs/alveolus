@@ -1,13 +1,13 @@
 import { describe, expect, it } from "vitest";
 
 import { TestCodebase } from "../../test/support/test-codebase.ts";
-import { ReferenceByIdentityRule } from "./reference-by-identity.rule.ts";
+import { NoAggregateReferenceRule } from "./no-aggregate-reference.rule.ts";
 
 const customer = `import { AggregateRoot, Identifier } from "@alveolus/core";
 export class CustomerId extends Identifier<string, "CustomerId"> {}
 export class Customer extends AggregateRoot<CustomerId> { toSnapshot() { return { id: this.id.value }; } }`;
 
-describe("ReferenceByIdentityRule", () => {
+describe("NoAggregateReferenceRule", () => {
 	it("accepts a reference by identifier", () => {
 		const codebase = new TestCodebase().file("src/ordering/domain/aggregates/customer.aggregate.ts", customer).file(
 			"src/ordering/domain/aggregates/order.aggregate.ts",
@@ -20,7 +20,7 @@ describe("ReferenceByIdentityRule", () => {
 			}`,
 		);
 
-		expect(codebase.check(new ReferenceByIdentityRule())).toEqual([]);
+		expect(codebase.check(new NoAggregateReferenceRule())).toEqual([]);
 	});
 
 	it("rejects an aggregate held by another aggregate or by an entity, alone or in a collection", () => {
@@ -36,7 +36,7 @@ describe("ReferenceByIdentityRule", () => {
 			}`,
 		);
 
-		expect(codebase.check(new ReferenceByIdentityRule())).toEqual([
+		expect(codebase.check(new NoAggregateReferenceRule())).toEqual([
 			"src/ordering/domain/entities/order-line.entity.ts:5 OrderLine.buyers",
 			"src/ordering/domain/entities/order-line.entity.ts:6 OrderLine.customer",
 		]);

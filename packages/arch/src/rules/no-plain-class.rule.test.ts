@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
 
 import { TestCodebase } from "../../test/support/test-codebase.ts";
-import { BuildingBlocksOnlyRule } from "./building-blocks-only.rule.ts";
+import { NoPlainClassRule } from "./no-plain-class.rule.ts";
 
-describe("BuildingBlocksOnlyRule", () => {
+describe("NoPlainClassRule", () => {
 	it("accepts building blocks, types and constants of data", () => {
 		const codebase = new TestCodebase()
 			.file(
@@ -26,7 +26,7 @@ describe("BuildingBlocksOnlyRule", () => {
 				}`,
 			);
 
-		expect(codebase.check(new BuildingBlocksOnlyRule())).toEqual([]);
+		expect(codebase.check(new NoPlainClassRule())).toEqual([]);
 	});
 
 	it("rejects plain classes, technical errors, free functions and enums in the domain and the application", () => {
@@ -41,7 +41,7 @@ describe("BuildingBlocksOnlyRule", () => {
 			)
 			.file("src/ordering/application/mappers/order.mapper.ts", `export class OrderMapper {}`);
 
-		expect(codebase.check(new BuildingBlocksOnlyRule())).toEqual([
+		expect(codebase.check(new NoPlainClassRule())).toEqual([
 			"src/ordering/domain/services/pricing.ts:1 Pricing",
 			"src/ordering/domain/services/pricing.ts:2 InvariantBroken",
 			"src/ordering/domain/services/pricing.ts:3 round",
@@ -56,6 +56,6 @@ describe("BuildingBlocksOnlyRule", () => {
 			.file("src/ordering/driving/http/orders.controller.ts", `export class OrdersController {}\nexport function helper(): void {}`)
 			.file("src/ordering/ordering.module.ts", `export class OrderingModule {}`);
 
-		expect(codebase.check(new BuildingBlocksOnlyRule())).toEqual([]);
+		expect(codebase.check(new NoPlainClassRule())).toEqual([]);
 	});
 });

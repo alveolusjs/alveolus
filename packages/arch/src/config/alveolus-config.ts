@@ -1,13 +1,13 @@
 export type RuleId =
-	| "bc-isolation"
-	| "domain-purity"
-	| "layer-direction"
-	| "driven-adapters-extend-port"
-	| "reference-by-identity"
-	| "command-query-separation"
-	| "errors-as-values"
-	| "placement"
-	| "building-blocks-only";
+	| "strategic/no-cross-context-import"
+	| "layers/no-impure-domain"
+	| "layers/no-outward-import"
+	| "layers/no-portless-adapter"
+	| "tactical/no-aggregate-reference"
+	| "tactical/no-mixed-handler"
+	| "tactical/no-thrown-failure"
+	| "tactical/no-misplaced-class"
+	| "tactical/no-plain-class";
 
 /** Each package and what may be imported from it: `true` for everything, or the allowed names. */
 export type PackageDependencies = Readonly<Record<string, true | readonly string[]>>;

@@ -3,8 +3,8 @@ import type { RuleId } from "../config/index.ts";
 import { ClassRule } from "./class-rule.ts";
 import type { Problem } from "./problem.ts";
 
-export class ReferenceByIdentityRule extends ClassRule {
-	public readonly id: RuleId = "reference-by-identity";
+export class NoAggregateReferenceRule extends ClassRule {
+	public readonly id: RuleId = "tactical/no-aggregate-reference";
 
 	protected problemsWith(codeClass: CodeClass): Problem[] {
 		if (!codeClass.is("Entity")) {

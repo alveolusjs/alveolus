@@ -1,9 +1,9 @@
 import { beforeEach, describe, expect, it } from "vitest";
 
 import { TestCodebase } from "../../test/support/test-codebase.ts";
-import { BcIsolationRule } from "./bc-isolation.rule.ts";
+import { NoCrossContextImportRule } from "./no-cross-context-import.rule.ts";
 
-describe("BcIsolationRule", () => {
+describe("NoCrossContextImportRule", () => {
 	let catalog: TestCodebase;
 
 	beforeEach(() => {
@@ -26,7 +26,7 @@ describe("BcIsolationRule", () => {
 			export class CatalogPriceList implements AntiCorruptionLayer {}`,
 		);
 
-		expect(codebase.check(new BcIsolationRule())).toEqual([]);
+		expect(codebase.check(new NoCrossContextImportRule())).toEqual([]);
 	});
 
 	it("lets a composition root import another composition root and an open host service", () => {
@@ -36,7 +36,7 @@ describe("BcIsolationRule", () => {
 			import { CatalogApi } from "../catalog/driving/catalog-api.ts";`,
 		);
 
-		expect(codebase.check(new BcIsolationRule())).toEqual([]);
+		expect(codebase.check(new NoCrossContextImportRule())).toEqual([]);
 	});
 
 	it("rejects anything else from another context", () => {
@@ -48,7 +48,10 @@ describe("BcIsolationRule", () => {
 			export class Stock implements AntiCorruptionLayer {}`,
 		);
 
-		expect(codebase.check(new BcIsolationRule())).toEqual(["src/ordering/driven/adapters/stock.adapter.ts:2 ProductId", "src/ordering/driven/adapters/stock.adapter.ts:3 ProductRepresentation"]);
+		expect(codebase.check(new NoCrossContextImportRule())).toEqual([
+			"src/ordering/driven/adapters/stock.adapter.ts:2 ProductId",
+			"src/ordering/driven/adapters/stock.adapter.ts:3 ProductRepresentation",
+		]);
 	});
 
 	it("rejects an open host service used outside an anti-corruption layer", () => {
@@ -58,12 +61,12 @@ describe("BcIsolationRule", () => {
 			export class Prices {}`,
 		);
 
-		expect(codebase.check(new BcIsolationRule())).toEqual(["src/ordering/driven/adapters/prices.adapter.ts:1 CatalogApi"]);
+		expect(codebase.check(new NoCrossContextImportRule())).toEqual(["src/ordering/driven/adapters/prices.adapter.ts:1 CatalogApi"]);
 	});
 
 	it("keeps the shared kernel free of any bounded context", () => {
 		const codebase = catalog.file("src/shared-kernel/domain/value-objects/sku.value-object.ts", `import { CatalogApi } from "../../../catalog/driving/catalog-api.ts";`);
 
-		expect(codebase.check(new BcIsolationRule())).toEqual(["src/shared-kernel/domain/value-objects/sku.value-object.ts:1 CatalogApi"]);
+		expect(codebase.check(new NoCrossContextImportRule())).toEqual(["src/shared-kernel/domain/value-objects/sku.value-object.ts:1 CatalogApi"]);
 	});
 });

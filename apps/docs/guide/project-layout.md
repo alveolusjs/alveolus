@@ -1,8 +1,32 @@
 # Project layout
 
 Every Alveolus project has the same shape: the same folders, the same file names, the same
-direction between layers. Whoever opens the code, a teammate or an agent, knows where a concept
-lives before searching for it, and `alveolus arch check` keeps it that way.
+direction between layers.
+
+<dl class="al-glance">
+	<dt>Unit</dt><dd>A <a href="#bounded-contexts">bounded context</a>: a folder under <code>src/</code>, such as <code>src/ordering/</code></dd>
+	<dt>Layers</dt><dd><a href="#layers"><code>domain/</code>, <code>application/</code>, <code>published-language/</code>, <code>driven/</code>, <code>driving/</code></a></dd>
+	<dt>Wired by</dt><dd><a href="#composition-root">The composition root</a>, <code>ordering.module.ts</code></dd>
+	<dt>Shared</dt><dd><a href="#shared-kernel"><code>src/shared-kernel/</code></a>, same shape</dd>
+	<dt>Checked by</dt><dd><a href="/rules/layers/no-outward-import"><code>layers/no-outward-import</code></a>, <a href="/rules/tactical/no-misplaced-class"><code>tactical/no-misplaced-class</code></a>, <a href="/rules/strategic/no-cross-context-import"><code>strategic/no-cross-context-import</code></a>, <a href="/rules/layers/no-impure-domain"><code>layers/no-impure-domain</code></a></dd>
+</dl>
+
+## Why
+
+A new teammate looks for the rule that refuses an empty order. Is it in the controller, a service,
+a helper, the repository? An agent asked to add a rule puts it wherever the task led it. Each
+project invents its own layout, and each layout erodes a little with every change.
+
+::: tip The fix
+One layout for every project, kept by `alveolus arch check`. Knowing what a class is tells you
+where it lives, and the other way round: the rule is in `domain/aggregates/order.aggregate.ts`,
+because that is where it can only be.
+:::
+
+## How it works
+
+A bounded context is split into layers, each in its folder. The domain sits at the center, the
+application around it, the adapters at the edge; the composition root wires them together.
 
 <div class="al-diagram">
 <svg viewBox="0 0 680 380" role="img" aria-label="A bounded context. Its composition root wires four layers. Driving adapters call the application, the application uses the domain, driven adapters implement the ports of the domain. The published language is the format exchanged with other contexts. Every dependency points towards the domain.">
@@ -53,7 +77,7 @@ lives before searching for it, and `alveolus arch check` keeps it that way.
 Arrows read "depends on". They all point inwards: the domain depends on nothing but itself, so the
 business rules never change because a database, a framework or another context did.
 
-## At a glance
+## The tree
 
 ```
 src/
@@ -64,7 +88,7 @@ src/
     domain/
       aggregates/             # order.aggregate.ts
       entities/               # order-line.entity.ts
-      value-objects/          # money.value-object.ts, order-id.identifier.ts
+      value-objects/          # order-id.identifier.ts
       events/                 # order-placed.event.ts
       errors/                 # invalid-total.error.ts
       services/               # shipping-cost.service.ts
@@ -95,14 +119,16 @@ Only create a folder when it gets its first file: a small context may have no `e
 
 ## Bounded contexts
 
-A bounded context is a folder under `src/`, declared in `alveolus.config.ts`. Contexts may be
-nested, for instance under `src/modules/`. Each one has its own model: a `Product` in the catalog
-and a product in ordering are two different things, and neither imports the other.
+A bounded context is a folder under `src/`, declared in
+[`alveolus.config.ts`](./getting-started.md#configure-the-checks). Contexts may be nested, for
+instance under `src/modules/`. Each one has its own model: a `Product` in the catalog and a product
+in ordering are two different things, and neither imports the other.
 
-A context is closed. The only class another context may import is an **open host service**, and
-only from an **anti-corruption layer** or from its composition root. What crosses the boundary is
-the published language: plain JSON that the reader redeclares on its side, never the classes of
-the other model.
+<div class="al-cards">
+<div class="al-card"><span class="al-card-title">Closed</span>The only class another context may import is its <a href="../core/strategic/open-host-services">open host service</a>.</div>
+<div class="al-card"><span class="al-card-title">Entered at one place</span>Only an <a href="../core/strategic/anti-corruption-layers">anti-corruption layer</a> or the composition root may import that service.</div>
+<div class="al-card"><span class="al-card-title">Talking in JSON</span>What crosses the boundary is the <a href="../core/strategic/published-language">published language</a>, redeclared by the reader, never the classes of the other model.</div>
+</div>
 
 <div class="al-diagram">
 <svg viewBox="0 0 680 230" role="img" aria-label="Two bounded contexts. In ordering, the anti-corruption layer CatalogPriceList implements the PriceList port of the domain and imports CatalogApi, the open host service of catalog. A direct import from the ordering domain to the catalog domain is forbidden.">
@@ -140,75 +166,19 @@ the other model.
 The ordering domain asks for prices in its own words, through the `PriceList` port. The
 anti-corruption layer is the one place that knows the catalog exists: it calls `CatalogApi`,
 reads its JSON and answers with ordering's objects. If the catalog moves behind HTTP, only that
-adapter changes.
+adapter changes. Checked by [`strategic/no-cross-context-import`](../rules/strategic/no-cross-context-import.md).
 
 ## Layers
 
-| Layer | Holds | May import |
-| --- | --- | --- |
-| `domain/` | The model: aggregates, entities, value objects, events, errors, domain services, and the ports and repositories it needs. | The domain of its context and of the shared kernel, the domain building blocks of `@alveolus/core`, the packages listed in `domainDependencies`. No framework, no ORM. |
-| `application/` | One class per use case: command handlers, query handlers, and the translators that turn domain events into the published language. | The domain, the application, its own published language, `@alveolus/core`, `domainDependencies`, `applicationDependencies`. No framework. |
-| `published-language/` | The JSON types exchanged with other contexts: what this context publishes, and what it reads from the others. | Its own published language, the published-language types of core, and packages such as a schema library. |
-| `driven/` | The adapters that implement the ports: database repositories, API clients, the outbox, the clock. | The domain, the application, the published language, any package. Never `driving/`. |
-| `driving/` | The adapters that call the use cases: HTTP controllers, message consumers, scheduled jobs, CLI commands. | The domain, the application, the published language, any package. Never `driven/`. |
+<div class="al-cards">
+<div class="al-card"><span class="al-card-title"><code>domain/</code></span>The model: aggregates, entities, value objects, events, errors, domain services, and the ports and repositories it needs. No framework, no ORM.</div>
+<div class="al-card"><span class="al-card-title"><code>application/</code></span>One class per use case: command handlers, query handlers, and the translators that turn domain events into the published language.</div>
+<div class="al-card"><span class="al-card-title"><code>published-language/</code></span>The JSON types exchanged with other contexts: what this context publishes, and what it reads from the others.</div>
+<div class="al-card"><span class="al-card-title"><code>driven/</code></span>The adapters that implement the ports: database repositories, API clients, the outbox, the clock.</div>
+<div class="al-card"><span class="al-card-title"><code>driving/</code></span>The adapters that call the use cases: HTTP controllers, message consumers, scheduled jobs, CLI commands.</div>
+</div>
 
-Inside `driven/` and `driving/`, files always sit under the name of their technology:
-`driven/pg/adapters/`, `driven/http/adapters/`, `driving/http/controllers/`. Replacing a
-technology then means adding a folder next to the old one, never touching it. An adapter that calls
-another bounded context in the same process sits under the name of that context:
-`driven/catalog/adapters/`. Inside `domain/` and `application/`, every
-class extends a building block of `@alveolus/core`: there are no free functions and no plain
-classes.
-
-## Folders and file names
-
-Each class goes in the folder of its kind, in a file whose name ends with that kind. One class per
-file; the types that belong to it, such as its snapshot or its command input, stay in its file.
-
-| Kind | Extends | Folder | File name |
-| --- | --- | --- | --- |
-| Aggregate | `AggregateRoot` | `domain/aggregates/` | `order.aggregate.ts` |
-| Entity | `Entity` | `domain/entities/` | `order-line.entity.ts` |
-| Value object | `ValueObject` | `domain/value-objects/` | `money.value-object.ts` |
-| Identifier | `Identifier` | `domain/value-objects/` | `order-id.identifier.ts` |
-| Domain event | `DomainEvent` | `domain/events/` | `order-placed.event.ts` |
-| Domain error | `DomainError` | `domain/errors/` | `invalid-total.error.ts` |
-| Domain service | `DomainService` | `domain/services/` | `shipping-cost.service.ts` |
-| Repository | `CommandRepository`, `QueryRepository` | `domain/repositories/` | `orders.repository.ts` |
-| Port | `Port` | `domain/ports/` | `price-list.port.ts` |
-| View | a `View<…>` type | `domain/views/` | `order-summary.view.ts` |
-| Command handler | `CommandHandler` | `application/commands/` | `place-order.command.ts` |
-| Query handler | `QueryHandler` | `application/queries/` | `get-order-summary.query.ts` |
-| Event translator | `EventTranslator` | `application/translators/` | `order-events.translator.ts` |
-| Representation | a `PublishedLanguage<…>` type | `published-language/` | `order-placed.representation.ts` |
-| Driven adapter | a port | `driven/<technology>/adapters/` | `pg-orders.adapter.ts` |
-| Open host service | implements `OpenHostService` | `driving/<technology>/` | free |
-
-Tests sit next to the code they test and keep its name: `order.aggregate.spec.ts` or
-`order.aggregate.test.ts`.
-
-## Composition root
-
-Each bounded context has one file at its root that wires its adapters into its use cases, its
-module: `ordering.module.ts`. It is a class that builds everything with `new`, or the module of your
-framework's container, such as a NestJS `@Module`: see [Integrations](../integrations/index.md). It
-is the only file that sees every layer, and the only one, besides an anti-corruption layer, that
-may import from another context: another context's module, to reach its open host services.
-
-At the root of `src/`, `main.ts` starts the application and `app.module.ts` builds or imports the
-module of each bounded context. These files import composition roots only.
-
-## Shared kernel
-
-`src/shared-kernel/` holds what every bounded context needs in the same form: value objects such
-as `Money`, ports such as a tracer, and their adapters. It has the same layers as a bounded
-context, possibly grouped by feature (`shared-kernel/time/driven/system/adapters/`). Every context may import it;
-it imports none of them.
-
-Keep it small: each change to the shared kernel reaches every context. `Clock` and `IdGenerator`
-already come with `@alveolus/core`; only their adapters live here.
-
-## Who may import what
+### Who may import what
 
 Read a row as "files in this layer may import…", within the same bounded context or from the
 shared kernel.
@@ -222,10 +192,99 @@ shared kernel.
 | **driving** | ✓ | ✓ | ✓ | ✕ | ✓ | ✕ |
 | **composition root** | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 
-From another bounded context, only an open host service may be imported, by an anti-corruption
-layer or the composition root.
+Outside the project, the domain may import the domain building blocks of `@alveolus/core` and the
+packages listed in `domainDependencies`; the application adds the rest of `@alveolus/core` and
+`applicationDependencies`; the published language may import the published-language types of core
+and packages such as a schema library; adapters may import any package. Checked by
+[`layers/no-outward-import`](../rules/layers/no-outward-import.md) and [`layers/no-impure-domain`](../rules/layers/no-impure-domain.md).
 
-## Checked for you
+### Adapters by technology
 
-`alveolus arch check` verifies this layout on every run: see the [rules](../rules/index.md), one page
-per rule, with what each one checks and why.
+Inside `driven/` and `driving/`, files always sit under the name of their technology:
+`driven/pg/adapters/`, `driven/http/adapters/`, `driving/http/controllers/`. Replacing a
+technology then means adding a folder next to the old one, never touching it. An adapter that calls
+another bounded context in the same process sits under the name of that context:
+`driven/catalog/adapters/`. Every class in `driven/<technology>/adapters/` extends a port of the
+domain: checked by [`layers/no-portless-adapter`](../rules/layers/no-portless-adapter.md).
+
+::: tip
+Inside `domain/` and `application/`, every class extends a building block of `@alveolus/core`:
+there are no free functions and no plain classes. Checked by
+[`tactical/no-plain-class`](../rules/tactical/no-plain-class.md).
+:::
+
+## Folders and file names
+
+Each class goes in the folder of its kind, in a file whose name ends with that kind. One class per
+file; the types that belong to it, such as its snapshot or its command input, stay in its file.
+Checked by [`tactical/no-misplaced-class`](../rules/tactical/no-misplaced-class.md).
+
+### In `domain/`
+
+| Kind | Extends | Folder | File name |
+| --- | --- | --- | --- |
+| Aggregate | `AggregateRoot` | `aggregates/` | `order.aggregate.ts` |
+| Entity | `Entity` | `entities/` | `order-line.entity.ts` |
+| Value object | `ValueObject` | `value-objects/` | `money.value-object.ts` |
+| Identifier | `Identifier` | `value-objects/` | `order-id.identifier.ts` |
+| Domain event | `DomainEvent` | `events/` | `order-placed.event.ts` |
+| Domain error | `DomainError` | `errors/` | `invalid-total.error.ts` |
+| Domain service | `DomainService` | `services/` | `shipping-cost.service.ts` |
+| Repository | `CommandRepository`<br>`QueryRepository` | `repositories/` | `orders.repository.ts` |
+| Port | `Port` | `ports/` | `price-list.port.ts` |
+| View | `View<…>` type | `views/` | `order-summary.view.ts` |
+
+### In `application/`
+
+| Kind | Extends | Folder | File name |
+| --- | --- | --- | --- |
+| Command handler | `CommandHandler` | `commands/` | `place-order.command.ts` |
+| Query handler | `QueryHandler` | `queries/` | `get-order-summary.query.ts` |
+| Event translator | `EventTranslator` | `translators/` | `order-events.translator.ts` |
+
+### Around them
+
+| Kind | Folder | File name |
+| --- | --- | --- |
+| Representation | `published-language/` | `order-placed.representation.ts` |
+| Driven adapter | `driven/pg/adapters/` | `pg-orders.adapter.ts` |
+| Open host service | `driving/<technology>/` | free |
+
+A representation is a `PublishedLanguage<…>` type, a driven adapter extends a port, an open host
+service implements `OpenHostService`.
+
+Tests sit next to the code they test and keep its name: `order.aggregate.spec.ts` or
+`order.aggregate.test.ts`.
+
+## Composition root
+
+Each bounded context has one file at its root that wires its adapters into its use cases, its
+module: `ordering.module.ts`. It is a class that builds everything with `new`, or the module of your
+framework's container, such as a NestJS `@Module`: see [Integrations](../integrations/index.md).
+
+::: tip
+It is the only file that sees every layer, and the only one, besides an anti-corruption layer, that
+may import from another context: another context's module, to reach its open host services.
+:::
+
+At the root of `src/`, `main.ts` starts the application and `app.module.ts` builds or imports the
+module of each bounded context. These files import composition roots only.
+
+## Shared kernel
+
+`src/shared-kernel/` holds what every bounded context needs in the same form: value objects such
+as `Money`, ports such as a tracer, and their adapters. It has the same layers as a bounded
+context, possibly grouped by feature (`shared-kernel/time/driven/system/adapters/`). Every context
+may import it; it imports none of them.
+
+::: warning Keep it small
+Each change to the shared kernel reaches every context. `Clock` and `IdGenerator` already come
+with `@alveolus/core`; only their adapters live here.
+:::
+
+## See also
+
+- [Getting started](./getting-started.md), to configure and run the checks
+- [Building blocks](../core/index.md), the classes each folder holds
+- [Integrations](../integrations/index.md), to write the composition root with your framework
+- Rules: [`layers/no-outward-import`](../rules/layers/no-outward-import.md), [`tactical/no-misplaced-class`](../rules/tactical/no-misplaced-class.md), [`strategic/no-cross-context-import`](../rules/strategic/no-cross-context-import.md), [`layers/no-impure-domain`](../rules/layers/no-impure-domain.md), [`tactical/no-plain-class`](../rules/tactical/no-plain-class.md), [`layers/no-portless-adapter`](../rules/layers/no-portless-adapter.md)

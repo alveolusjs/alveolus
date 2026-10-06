@@ -35,7 +35,7 @@ features:
   - icon: <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M16 3h5v5"/><path d="M8 3H3v5"/><path d="M12 22v-8.3a4 4 0 0 0-1.172-2.872L3 3"/><path d="m15 9 6-6"/></g></svg>
     title: Closed bounded contexts
     details: Contexts meet through an open host service and an anti-corruption layer, never by importing each other's model.
-    link: /rules/bc-isolation
+    link: /rules/strategic/no-cross-context-import
   - icon: <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="m3 17 2 2 4-4"/><path d="m3 7 2 2 4-4"/><path d="M13 6h8"/><path d="M13 12h8"/><path d="M13 18h8"/></g></svg>
     title: Errors as values
     details: Business failures are returned in a typed Result, never thrown, so every caller sees what can go wrong.
@@ -59,49 +59,38 @@ extend, a shared layout tells everyone where things go, and a check run in conti
 reports what breaks them. It works the same for a developer who knows DDD and for an agent that
 has never heard of it.
 
-<div class="al-home-split">
-
-<div>
-
 ### Write the domain with building blocks
 
 ```ts [order.aggregate.ts]
-export class Order extends AggregateRoot<OrderId, OrderPlaced, OrderSnapshot> {
-	place(total: number, eventId: string, now: Date): Result<void, InvalidTotal> {
-		if (total <= 0) {
-			return err(new InvalidTotal({ total }));
-		}
-		this.placedTotal = total;
-		this.record(new OrderPlaced({ aggregateId: this.id, id: eventId, occurredAt: now, payload: { total } }));
-		return ok();
-	}
-}
+// [!code word:AggregateRoot]
+import { AggregateRoot } from "@alveolus/core";
+
+export class Order extends AggregateRoot<OrderId> {}
 ```
 
-</div>
+```ts [place-order.command.ts]
+// [!code word:CommandHandler]
+import { CommandHandler } from "@alveolus/core";
 
-<div>
+export class PlaceOrderHandler extends CommandHandler<PlaceOrder, OrderPlaced, PlaceOrderError> {}
+```
 
 ### Check it on every run
 
 ```sh
 $ npx alveolus arch check
 src/ordering/domain/aggregates/order.aggregate.ts:1
-  domain-purity: The domain imports @nestjs/common: add it
+  layers/no-impure-domain: The domain imports @nestjs/common: add it
   to domainDependencies if the domain really needs it.
 
 src/ordering/application/commands/place-order.command.ts:3
-  layer-direction: The application layer imports
+  layers/no-outward-import: The application layer imports
   src/ordering/driven/pg/adapters/pg-orders.adapter.ts
   (ordering driven): it may only import domain,
   application, published-language.
 
 2 violations
 ```
-
-</div>
-
-</div>
 
 ## Two packages
 
@@ -117,7 +106,7 @@ src/ordering/application/commands/place-order.command.ts:3
 <a class="al-package" href="./rules/">
 	<span class="al-package-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12l2 2l4-4"/></g></svg></span>
 	<span class="al-package-name">@alveolus/arch</span>
-	<span class="al-package-text">The architecture checks: nine rules that keep bounded contexts closed, the domain pure and every class in its place. A command for your terminal and your CI, with a baseline for existing projects.</span>
+	<span class="al-package-text">The architecture checks: rules that keep bounded contexts closed, the domain pure and every class in its place. A command for your terminal and your CI, with a baseline for existing projects.</span>
 	<span class="al-package-link">Rules →</span>
 </a>
 

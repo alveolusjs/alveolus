@@ -31,9 +31,9 @@ describe("Config", () => {
 	});
 
 	it("enables every rule unless it is turned off", () => {
-		const config = new Config({ boundedContexts: {}, root: "src", rules: { placement: "off" } }, "/project");
+		const config = new Config({ boundedContexts: {}, root: "src", rules: { "tactical/no-misplaced-class": "off" } }, "/project");
 
-		expect(config.isEnabled("placement")).toBe(false);
-		expect(config.isEnabled("bc-isolation")).toBe(true);
+		expect(config.isEnabled("tactical/no-misplaced-class")).toBe(false);
+		expect(config.isEnabled("strategic/no-cross-context-import")).toBe(true);
 	});
 });

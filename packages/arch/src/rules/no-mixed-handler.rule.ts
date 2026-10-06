@@ -13,8 +13,8 @@ const separations: readonly Separation[] = [
 	{ forbidden: ["CommandRepository", "Outbox", "UnitOfWork", "EventPublisher"], handler: "QueryHandler" },
 ];
 
-export class CommandQuerySeparationRule extends ClassRule {
-	public readonly id: RuleId = "command-query-separation";
+export class NoMixedHandlerRule extends ClassRule {
+	public readonly id: RuleId = "tactical/no-mixed-handler";
 
 	protected problemsWith(codeClass: CodeClass): Problem[] {
 		const problems: Problem[] = [];

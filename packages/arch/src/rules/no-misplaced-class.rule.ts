@@ -32,8 +32,8 @@ const kindPlaces: readonly KindPlace[] = [
 
 const markedPlace = new Place("driving");
 
-export class PlacementRule extends Rule {
-	public readonly id: RuleId = "placement";
+export class NoMisplacedClassRule extends Rule {
+	public readonly id: RuleId = "tactical/no-misplaced-class";
 
 	public check(codebase: Codebase): Violation[] {
 		const violations: Violation[] = [];

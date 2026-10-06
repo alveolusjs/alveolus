@@ -4,7 +4,7 @@ import { TestCodebase } from "../../test/support/test-codebase.ts";
 
 describe("ArchChecker", () => {
 	it("runs the enabled rules and sorts the violations by file and line", () => {
-		const codebase = new TestCodebase({ rules: { "layer-direction": "off" } })
+		const codebase = new TestCodebase({ rules: { "layers/no-outward-import": "off" } })
 			.file("src/ordering/driven/adapters/mailer.adapter.ts", "export class Mailer {}")
 			.file("src/ordering/domain/order-id.ts", `import { Identifier } from "@alveolus/core";\nexport class OrderId extends Identifier<string, "OrderId"> {}`);
 

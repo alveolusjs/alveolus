@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
 
 import { TestCodebase } from "../../test/support/test-codebase.ts";
-import { ErrorsAsValuesRule } from "./errors-as-values.rule.ts";
+import { NoThrownFailureRule } from "./no-thrown-failure.rule.ts";
 
-describe("ErrorsAsValuesRule", () => {
+describe("NoThrownFailureRule", () => {
 	it("accepts getters and methods returning a Result, even when inferred", () => {
 		const codebase = new TestCodebase().file(
 			"src/ordering/domain/aggregates/order.aggregate.ts",
@@ -20,7 +20,7 @@ describe("ErrorsAsValuesRule", () => {
 			}`,
 		);
 
-		expect(codebase.check(new ErrorsAsValuesRule())).toEqual([]);
+		expect(codebase.check(new NoThrownFailureRule())).toEqual([]);
 	});
 
 	it("rejects other public methods and thrown domain errors", () => {
@@ -38,7 +38,7 @@ describe("ErrorsAsValuesRule", () => {
 			}`,
 		);
 
-		expect(codebase.check(new ErrorsAsValuesRule())).toEqual([
+		expect(codebase.check(new NoThrownFailureRule())).toEqual([
 			"src/ordering/domain/aggregates/order.aggregate.ts:5 Order.cancel",
 			"src/ordering/domain/aggregates/order.aggregate.ts:8 Order.canShip",
 			"src/ordering/domain/aggregates/order.aggregate.ts:6 throw",

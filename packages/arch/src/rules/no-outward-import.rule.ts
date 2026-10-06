@@ -13,8 +13,8 @@ const allowedLayers: Readonly<Record<OuterLayer, readonly Layer[]>> = {
 	"published-language": ["published-language"],
 };
 
-export class LayerDirectionRule extends ImportRule {
-	public readonly id: RuleId = "layer-direction";
+export class NoOutwardImportRule extends ImportRule {
+	public readonly id: RuleId = "layers/no-outward-import";
 
 	public override check(codebase: Codebase): Violation[] {
 		return [...this.filesOutsideLayers(codebase), ...super.check(codebase)];

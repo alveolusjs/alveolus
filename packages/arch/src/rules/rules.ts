@@ -1,26 +1,26 @@
-import { BcIsolationRule } from "./bc-isolation.rule.ts";
-import { BuildingBlocksOnlyRule } from "./building-blocks-only.rule.ts";
-import { CommandQuerySeparationRule } from "./command-query-separation.rule.ts";
-import { DomainPurityRule } from "./domain-purity.rule.ts";
-import { DrivenAdaptersExtendPortRule } from "./driven-adapters-extend-port.rule.ts";
-import { ErrorsAsValuesRule } from "./errors-as-values.rule.ts";
-import { LayerDirectionRule } from "./layer-direction.rule.ts";
-import { PlacementRule } from "./placement.rule.ts";
-import { ReferenceByIdentityRule } from "./reference-by-identity.rule.ts";
+import { NoAggregateReferenceRule } from "./no-aggregate-reference.rule.ts";
+import { NoCrossContextImportRule } from "./no-cross-context-import.rule.ts";
+import { NoImpureDomainRule } from "./no-impure-domain.rule.ts";
+import { NoMisplacedClassRule } from "./no-misplaced-class.rule.ts";
+import { NoMixedHandlerRule } from "./no-mixed-handler.rule.ts";
+import { NoOutwardImportRule } from "./no-outward-import.rule.ts";
+import { NoPlainClassRule } from "./no-plain-class.rule.ts";
+import { NoPortlessAdapterRule } from "./no-portless-adapter.rule.ts";
+import { NoThrownFailureRule } from "./no-thrown-failure.rule.ts";
 import type { Rule } from "./rule.ts";
 
 export class Rules {
 	public static all(): Rule[] {
 		return [
-			new BcIsolationRule(),
-			new DomainPurityRule(),
-			new LayerDirectionRule(),
-			new DrivenAdaptersExtendPortRule(),
-			new ReferenceByIdentityRule(),
-			new CommandQuerySeparationRule(),
-			new ErrorsAsValuesRule(),
-			new PlacementRule(),
-			new BuildingBlocksOnlyRule(),
+			new NoCrossContextImportRule(),
+			new NoImpureDomainRule(),
+			new NoOutwardImportRule(),
+			new NoPortlessAdapterRule(),
+			new NoAggregateReferenceRule(),
+			new NoMixedHandlerRule(),
+			new NoThrownFailureRule(),
+			new NoMisplacedClassRule(),
+			new NoPlainClassRule(),
 		];
 	}
 }

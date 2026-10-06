@@ -6,8 +6,8 @@ import type { Violation } from "./violation.ts";
 
 const exempt: ReadonlySet<string> = new Set(["equals", "toSnapshot"]);
 
-export class ErrorsAsValuesRule extends Rule {
-	public readonly id: RuleId = "errors-as-values";
+export class NoThrownFailureRule extends Rule {
+	public readonly id: RuleId = "tactical/no-thrown-failure";
 
 	public check(codebase: Codebase): Violation[] {
 		const violations: Violation[] = [];

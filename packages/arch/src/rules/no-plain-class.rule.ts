@@ -11,8 +11,8 @@ const blocksOf: Readonly<Record<string, string>> = {
 	domain: "AggregateRoot, Entity, ValueObject, Identifier, DomainEvent, DomainError, DomainService or a Port",
 };
 
-export class BuildingBlocksOnlyRule extends Rule {
-	public readonly id: RuleId = "building-blocks-only";
+export class NoPlainClassRule extends Rule {
+	public readonly id: RuleId = "tactical/no-plain-class";
 
 	public check(codebase: Codebase): Violation[] {
 		const violations: Violation[] = [];

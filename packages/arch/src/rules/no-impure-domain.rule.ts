@@ -3,8 +3,8 @@ import { CoreApi } from "../codebase/index.ts";
 import type { RuleId } from "../config/index.ts";
 import { ImportRule } from "./import-rule.ts";
 
-export class DomainPurityRule extends ImportRule {
-	public readonly id: RuleId = "domain-purity";
+export class NoImpureDomainRule extends ImportRule {
+	public readonly id: RuleId = "layers/no-impure-domain";
 
 	protected appliesTo(file: CodeFile): boolean {
 		return file.location.layer === "domain";

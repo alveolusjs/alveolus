@@ -3,8 +3,8 @@ import type { RuleId } from "../config/index.ts";
 import { ClassRule } from "./class-rule.ts";
 import type { Problem } from "./problem.ts";
 
-export class DrivenAdaptersExtendPortRule extends ClassRule {
-	public readonly id: RuleId = "driven-adapters-extend-port";
+export class NoPortlessAdapterRule extends ClassRule {
+	public readonly id: RuleId = "layers/no-portless-adapter";
 
 	protected problemsWith(codeClass: CodeClass, file: CodeFile): Problem[] {
 		const location = file.location;

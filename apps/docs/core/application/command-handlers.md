@@ -1,64 +1,346 @@
 # Command handlers
 
-A command handler is the application service of one use case that changes the system. It loads an
-aggregate through a command repository, calls it, saves it, and returns the outcome in a
-[`Result`](../utilities/result.md). The business rules stay in the aggregate.
+A command handler runs one use case that changes the system: it loads an aggregate, calls one of its
+methods and saves it.
+
+<dl class="al-glance">
+	<dt>Layer</dt><dd>Application</dd>
+	<dt>File</dt><dd><code>application/commands/place-order.command.ts</code></dd>
+	<dt>Extends</dt><dd><a href="#api"><code>CommandHandler&lt;Input, Output, Error&gt;</code></a></dd>
+	<dt>Called by</dt><dd>Driving adapters: controllers, message consumers, scripts</dd>
+	<dt>Checked by</dt><dd><a href="/rules/tactical/no-misplaced-class"><code>tactical/no-misplaced-class</code></a>, <a href="/rules/tactical/no-mixed-handler"><code>tactical/no-mixed-handler</code></a>, <a href="/rules/layers/no-outward-import"><code>layers/no-outward-import</code></a></dd>
+</dl>
+
+## Why
+
+Placing an order takes more than calling `order.place()`: load the order, get an id and the time,
+save it, hand over its events. If the HTTP controller does all that, the message consumer and the
+admin script do it again, each a little differently. Sooner or later one of them forgets to save
+the events, or checks a business rule the aggregate never sees.
+
+::: tip The fix
+A command handler does these steps once, in a plain class that knows no framework. Every entry
+point calls it. The handler coordinates and the [aggregate](../domain/aggregates.md) decides, so the
+rules stay in one place.
+:::
+
+## How it works
+
+A command handler receives a command, the data of one request, and returns a
+[`Result`](../utilities/result.md). In between, it follows four steps:
+
+<div class="al-cards al-cards-2">
+<div class="al-card"><span class="al-card-title"><span class="al-card-step">1</span>Load</span>Find the aggregate through its <a href="/core/domain/repositories">command repository</a>. When it is missing, return a domain error.</div>
+<div class="al-card"><span class="al-card-title"><span class="al-card-step">2</span>Call</span>Call one business method, with the ids and the date from the <code>IdGenerator</code> and <code>Clock</code> <a href="/core/domain/ports">ports</a>. A failure is returned as is.</div>
+<div class="al-card"><span class="al-card-title"><span class="al-card-step">3</span>Save</span>Store the aggregate through the same repository.</div>
+<div class="al-card"><span class="al-card-title"><span class="al-card-step">4</span>Hand over the events</span>Translate the recorded events and add them to the <a href="/core/application/outbox">outbox</a>, in the same <a href="/core/application/unit-of-work">unit of work</a>.</div>
+</div>
 
 ```ts
-export class PlaceOrderHandler extends CommandHandler<PlaceOrder, void, PlaceOrderError> {
-	async handle({ orderId, total }: PlaceOrder): Promise<Result<void, PlaceOrderError>> {
-		const order = await this.orders.findById(new OrderId(orderId));
+async handle({
+		orderId,
+	}: PlaceOrder): Promise<Result<void, PlaceOrderError>> {
+	const order = await this.orders.findById(new OrderId(orderId));
+	if (order === undefined) {
+		return err(new OrderNotFound({ orderId }));
+	}
+	const placed = order.place(this.ids.next(), this.clock.now());
+	if (!placed.ok) {
+		return placed;
+	}
+	await this.orders.save(order);
+	return ok();
+}
+```
+
+## Where it fits
+
+The command handler sits between the outside world and the domain. A driving adapter builds the
+command and calls `handle`; the handler talks to the domain only through repositories, ports and
+the aggregate.
+
+<div class="al-diagram">
+<svg viewBox="0 0 680 300" role="img" aria-label="A controller calls the PlaceOrderHandler, which in one unit of work loads the Order from the repository, calls order.place, saves the order and adds its events to the outbox.">
+	<defs>
+		<marker id="command-flow-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+			<path class="arrow" d="M 0 0 L 10 5 L 0 10 z" />
+		</marker>
+	</defs>
+	<rect class="box" x="8" y="122" width="130" height="56" rx="8" />
+	<text class="label" x="73" y="146" text-anchor="middle">Controller</text>
+	<text class="note" x="73" y="166" text-anchor="middle">driving adapter</text>
+	<path class="link" d="M 138 150 L 178 150" marker-end="url(#command-flow-arrow)" />
+	<rect class="boundary" x="180" y="122" width="180" height="56" rx="8" />
+	<text class="label" x="270" y="146" text-anchor="middle">PlaceOrderHandler</text>
+	<text class="note" x="270" y="166" text-anchor="middle">this page</text>
+	<text class="note" x="270" y="204" text-anchor="middle">one unit of work</text>
+	<rect class="box" x="440" y="24" width="232" height="48" rx="8" />
+	<text class="label" x="556" y="44" text-anchor="middle">1 · orders.findById(id)</text>
+	<text class="note" x="556" y="62" text-anchor="middle">command repository</text>
+	<rect class="box" x="440" y="92" width="232" height="48" rx="8" />
+	<text class="label" x="556" y="112" text-anchor="middle">2 · order.place(…)</text>
+	<text class="note" x="556" y="130" text-anchor="middle">the aggregate decides</text>
+	<rect class="box" x="440" y="160" width="232" height="48" rx="8" />
+	<text class="label" x="556" y="180" text-anchor="middle">3 · orders.save(order)</text>
+	<text class="note" x="556" y="198" text-anchor="middle">command repository</text>
+	<rect class="box" x="440" y="228" width="232" height="48" rx="8" />
+	<text class="label" x="556" y="248" text-anchor="middle">4 · outbox.add(events)</text>
+	<text class="note" x="556" y="266" text-anchor="middle">translated events</text>
+	<path class="link" d="M 360 150 L 438 48" marker-end="url(#command-flow-arrow)" />
+	<path class="link" d="M 360 150 L 438 116" marker-end="url(#command-flow-arrow)" />
+	<path class="link" d="M 360 150 L 438 184" marker-end="url(#command-flow-arrow)" />
+	<path class="link" d="M 360 150 L 438 252" marker-end="url(#command-flow-arrow)" />
+</svg>
+</div>
+
+::: tip
+The controller turns HTTP into a command and a `Result` into a response. The handler turns a command
+into calls to the domain. Neither holds a business rule.
+:::
+
+## API
+
+```ts
+import { CommandHandler } from "@alveolus/core";
+// or: import { CommandHandler } from "@alveolus/core/command-handlers";
+```
+
+### Type parameters
+
+```ts
+abstract class CommandHandler<
+	Input,
+	Output = void,
+	Error extends AnyDomainError = never,
+> { … }
+```
+
+| Parameter | What it is | Constraint |
+| --- | --- | --- |
+| `Input` | The command: the data the handler needs. | any type |
+| `Output` | What a success returns, such as the id of what was created. | `void` by default |
+| `Error` | The union of the [domain errors](../domain/domain-errors.md) it may return. | extends `DomainError`; `never` by default |
+
+### `constructor(…)` <Badge type="tip" text="you implement it" />
+
+```ts
+constructor(
+	private readonly orders: Orders,
+	private readonly clock: Clock,
+	private readonly ids: IdGenerator,
+) {
+	super();
+}
+```
+
+`CommandHandler` declares no constructor: yours takes the dependencies as abstract classes, such
+as repositories, ports, the unit of work and the outbox, and calls `super()`.
+
+### `handle(command)` <Badge type="info" text="abstract" /> <Badge type="tip" text="you implement it" /> <Badge type="tip" text="called by a driving adapter" />
+
+```ts
+abstract handle(command: Input): Promise<Result<Output, Error>>
+```
+
+Runs the use case and returns its outcome. The driving adapter that calls it turns the `Result`
+into a response.
+
+::: warning Caveats
+- `Error` only accepts `DomainError` subclasses. A technical failure, such as a lost database
+  connection, is thrown and handled like any other exception.
+- Alveolus provides no bus and no container: wire handlers in the composition root, by hand or
+  with the container of your framework. See [Integrations](../../integrations/index.md).
+- The events recorded by the aggregate stay on it after `save`: hand them over through the
+  [outbox](./outbox.md).
+:::
+
+## Usage
+
+Build the handler that places an order, one responsibility at a time. Each step shows the whole file: added lines are highlighted, replaced lines are struck out.
+
+<div class="al-cards">
+<div class="al-card"><span class="al-card-title"><span class="al-card-step">1</span><a href="#_1-declare-the-command">Declare the command</a></span>Say what the caller provides and what can fail.</div>
+<div class="al-card"><span class="al-card-title"><span class="al-card-step">2</span><a href="#_2-declare-the-handler">Declare the handler</a></span>One class, one use case.</div>
+<div class="al-card"><span class="al-card-title"><span class="al-card-step">3</span><a href="#_3-call-the-aggregate">Call the aggregate</a></span>Let the aggregate decide.</div>
+<div class="al-card"><span class="al-card-title"><span class="al-card-step">4</span><a href="#_4-save-it">Save it</a></span>Store the changed aggregate.</div>
+<div class="al-card"><span class="al-card-title"><span class="al-card-step">5</span><a href="#_5-hand-over-its-events">Hand over its events</a></span>Translate and add them to the outbox.</div>
+<div class="al-card"><span class="al-card-title"><span class="al-card-step">6</span><a href="#_6-make-it-atomic">Make it atomic</a></span>One transaction for the change and its events.</div>
+<div class="al-card"><span class="al-card-title"><span class="al-card-step">7</span><a href="#_7-call-it-from-a-driving-adapter">Call it from a driving adapter</a></span>Turn the Result into a response.</div>
+<div class="al-card"><span class="al-card-title"><span class="al-card-step">8</span><a href="#_8-check-it">Check it</a></span>Let the rules keep it that way.</div>
+</div>
+
+### 1. Declare the command
+
+So that a driving adapter knows what to provide and what to handle, the command is a plain type named in the imperative, next to the union of every failure it can return.
+
+```ts [src/ordering/application/commands/place-order.command.ts]
+import type { EmptyOrder } from "../../domain/errors/empty-order.error";
+import type {
+	OrderAlreadyPlaced,
+} from "../../domain/errors/order-already-placed.error";
+import { OrderNotFound } from "../../domain/errors/order-not-found.error";
+
+export interface PlaceOrder {
+	readonly orderId: string;
+}
+
+export type PlaceOrderError =
+	| OrderNotFound
+	| OrderAlreadyPlaced
+	| EmptyOrder;
+```
+
+### 2. Declare the handler
+
+The handler extends `CommandHandler` with the command, its output and its errors. It receives its dependencies as abstract classes, so that any framework can build it, and loads the aggregate through its repository. A missing order is a failure it declares, not an exception.
+
+```ts [src/ordering/application/commands/place-order.command.ts]
+import { CommandHandler, err, ok, type Result } from "@alveolus/core"; // [!code ++]
+
+import type { EmptyOrder } from "../../domain/errors/empty-order.error";
+import type {
+	OrderAlreadyPlaced,
+} from "../../domain/errors/order-already-placed.error";
+import { OrderNotFound } from "../../domain/errors/order-not-found.error";
+import { Orders } from "../../domain/repositories/orders.repository"; // [!code ++]
+import { OrderId } from "../../domain/value-objects/order-id.identifier"; // [!code ++]
+
+export interface PlaceOrder {
+	readonly orderId: string;
+}
+
+export type PlaceOrderError =
+	| OrderNotFound
+	| OrderAlreadyPlaced
+	| EmptyOrder;
+
+export class PlaceOrderHandler extends CommandHandler< // [!code ++]
+	PlaceOrder, // [!code ++]
+	void, // [!code ++]
+	PlaceOrderError // [!code ++]
+> { // [!code ++]
+	constructor( // [!code ++]
+		private readonly orders: Orders, // [!code ++]
+	) { // [!code ++]
+		super(); // [!code ++]
+	} // [!code ++]
+
+	async handle({ // [!code ++]
+		orderId, // [!code ++]
+	}: PlaceOrder): Promise<Result<void, PlaceOrderError>> { // [!code ++]
+		const order = await this.orders.findById( // [!code ++]
+			new OrderId(orderId), // [!code ++]
+		); // [!code ++]
+		if (order === undefined) { // [!code ++]
+			return err(new OrderNotFound({ orderId })); // [!code ++]
+		} // [!code ++]
+		return ok(); // [!code ++]
+	} // [!code ++]
+} // [!code ++]
+```
+
+### 3. Call the aggregate
+
+The handler decides nothing: it calls one business method and returns its failure as is. The event id and the date come from the `Clock` and `IdGenerator` [ports](../domain/ports.md), so the aggregate never reads them itself.
+
+```ts [src/ordering/application/commands/place-order.command.ts]
+import { CommandHandler, err, ok, type Result } from "@alveolus/core"; // [!code --]
+import { // [!code ++]
+	Clock, // [!code ++]
+	CommandHandler, // [!code ++]
+	err, // [!code ++]
+	IdGenerator, // [!code ++]
+	ok, // [!code ++]
+	type Result, // [!code ++]
+} from "@alveolus/core"; // [!code ++]
+
+import type { EmptyOrder } from "../../domain/errors/empty-order.error";
+import type {
+	OrderAlreadyPlaced,
+} from "../../domain/errors/order-already-placed.error";
+import { OrderNotFound } from "../../domain/errors/order-not-found.error";
+import { Orders } from "../../domain/repositories/orders.repository";
+import { OrderId } from "../../domain/value-objects/order-id.identifier";
+
+export interface PlaceOrder {
+	readonly orderId: string;
+}
+
+export type PlaceOrderError =
+	| OrderNotFound
+	| OrderAlreadyPlaced
+	| EmptyOrder;
+
+export class PlaceOrderHandler extends CommandHandler<
+	PlaceOrder,
+	void,
+	PlaceOrderError
+> {
+	constructor(
+		private readonly orders: Orders,
+		private readonly clock: Clock, // [!code ++]
+		private readonly ids: IdGenerator, // [!code ++]
+	) {
+		super();
+	}
+
+	async handle({
+		orderId,
+	}: PlaceOrder): Promise<Result<void, PlaceOrderError>> {
+		const order = await this.orders.findById(
+			new OrderId(orderId),
+		);
 		if (order === undefined) {
 			return err(new OrderNotFound({ orderId }));
 		}
-		const placed = order.place(total, this.ids.next(), this.clock.now());
-		if (!placed.ok) {
-			return placed;
-		}
-		await this.orders.save(order);
+		const placed = order.place( // [!code ++]
+			this.ids.next(), // [!code ++]
+			this.clock.now(), // [!code ++]
+		); // [!code ++]
+		if (!placed.ok) { // [!code ++]
+			return placed; // [!code ++]
+		} // [!code ++]
 		return ok();
 	}
 }
 ```
 
-## When to use
+### 4. Save it
 
-Write one command handler per request that changes state: create an order, place it, cancel it.
-Reads go through a [query handler](./query-handlers.md). A handler coordinates; when you catch it
-deciding a business rule, move that rule into the [aggregate](../domain/aggregates.md) or a
-[domain service](../domain/domain-services.md).
-
-## Usage
-
-### Declare the command
-
-The command is the input of the handler: a plain type named after the request, in the imperative,
-in the same file as its handler. It is what a driving adapter has to provide.
+Only a successful change is saved: when `place` fails, the handler has already returned and the order stays as it was in storage.
 
 ```ts [src/ordering/application/commands/place-order.command.ts]
-export interface PlaceOrder {
-	readonly orderId: string;
-	readonly total: number;
-}
+import {
+	Clock,
+	CommandHandler,
+	err,
+	IdGenerator,
+	ok,
+	type Result,
+} from "@alveolus/core";
 
-export type PlaceOrderError = OrderNotFound | InvalidTotal | OrderAlreadyPlaced;
-```
-
-### Write the handler
-
-The handler receives its dependencies in its constructor, as abstract classes: repositories, ports,
-the [unit of work](./unit-of-work.md), the [outbox](./outbox.md). It imports no framework: no
-decorator, no container. The composition root builds it, by hand or with the container of your
-framework, and the abstract classes double as injection tokens: see [Integrations](../../integrations/index.md).
-
-```ts [src/ordering/application/commands/place-order.command.ts]
-import { Clock, CommandHandler, err, IdGenerator, ok, type Result } from "@alveolus/core";
-
+import type { EmptyOrder } from "../../domain/errors/empty-order.error";
+import type {
+	OrderAlreadyPlaced,
+} from "../../domain/errors/order-already-placed.error";
 import { OrderNotFound } from "../../domain/errors/order-not-found.error";
 import { Orders } from "../../domain/repositories/orders.repository";
 import { OrderId } from "../../domain/value-objects/order-id.identifier";
 
-export class PlaceOrderHandler extends CommandHandler<PlaceOrder, void, PlaceOrderError> {
+export interface PlaceOrder {
+	readonly orderId: string;
+}
+
+export type PlaceOrderError =
+	| OrderNotFound
+	| OrderAlreadyPlaced
+	| EmptyOrder;
+
+export class PlaceOrderHandler extends CommandHandler<
+	PlaceOrder,
+	void,
+	PlaceOrderError
+> {
 	constructor(
 		private readonly orders: Orders,
 		private readonly clock: Clock,
@@ -67,158 +349,261 @@ export class PlaceOrderHandler extends CommandHandler<PlaceOrder, void, PlaceOrd
 		super();
 	}
 
-	async handle({ orderId, total }: PlaceOrder): Promise<Result<void, PlaceOrderError>> {
-		const order = await this.orders.findById(new OrderId(orderId));
+	async handle({
+		orderId,
+	}: PlaceOrder): Promise<Result<void, PlaceOrderError>> {
+		const order = await this.orders.findById(
+			new OrderId(orderId),
+		);
 		if (order === undefined) {
 			return err(new OrderNotFound({ orderId }));
 		}
-		const placed = order.place(total, this.ids.next(), this.clock.now());
+		const placed = order.place(
+			this.ids.next(),
+			this.clock.now(),
+		);
 		if (!placed.ok) {
 			return placed;
 		}
-		await this.orders.save(order);
+		await this.orders.save(order); // [!code ++]
 		return ok();
 	}
 }
 ```
 
-### Return the failure of the aggregate as is
+### 5. Hand over its events
 
-The error union of the handler includes the errors of the aggregate. A failed `Result` is returned
-unchanged: no re-wrapping, no exception.
+Other contexts must learn that the order was placed. After saving, the handler pulls the recorded events, translates each one into the published language and adds them to the [outbox](./outbox.md).
 
-<div class="al-compare">
+```ts [src/ordering/application/commands/place-order.command.ts]
+import {
+	Clock,
+	CommandHandler,
+	err,
+	IdGenerator,
+	ok,
+	Outbox, // [!code ++]
+	type Result,
+} from "@alveolus/core";
 
-```ts [❌ Avoid]
-const placed = order.place(total, this.ids.next(), this.clock.now());
-if (!placed.ok) {
-	throw new Error(placed.error.type);
+import type { EmptyOrder } from "../../domain/errors/empty-order.error";
+import type {
+	OrderAlreadyPlaced,
+} from "../../domain/errors/order-already-placed.error";
+import { OrderNotFound } from "../../domain/errors/order-not-found.error";
+import { Orders } from "../../domain/repositories/orders.repository";
+import { OrderId } from "../../domain/value-objects/order-id.identifier";
+import { // [!code ++]
+	OrderEventsTranslator, // [!code ++]
+} from "../translators/order-events.translator"; // [!code ++]
+
+export interface PlaceOrder {
+	readonly orderId: string;
 }
-```
 
-```ts [✅ Prefer]
-const placed = order.place(total, this.ids.next(), this.clock.now());
-if (!placed.ok) {
-	return placed;
-}
-```
+export type PlaceOrderError =
+	| OrderNotFound
+	| OrderAlreadyPlaced
+	| EmptyOrder;
 
-</div>
-
-### Change state and record events atomically
-
-When the change produces events for other contexts, save the aggregate and add its translated
-events to the outbox in one unit of work.
-
-```ts
-async handle({ orderId, total }: PlaceOrder): Promise<Result<void, PlaceOrderError>> {
-	return this.unitOfWork.run(async () => {
-		const order = await this.orders.findById(new OrderId(orderId));
-		if (order === undefined) {
-			return err(new OrderNotFound({ orderId }));
-		}
-		const placed = order.place(total, this.ids.next(), this.clock.now());
-		if (!placed.ok) {
-			return placed;
-		}
-		await this.orders.save(order);
-		await this.outbox.add(order.pullDomainEvents().map((event) => this.translator.translate(event, { correlationId: orderId })));
-		return ok();
-	});
-}
-```
-
-### Return data
-
-A command may return data, such as the identifier of what it created. Set `Output`. A command that
-cannot fail may narrow its return type to `Ok`, so callers read the value without checking.
-
-```ts [src/ordering/application/commands/create-order.command.ts]
-export class CreateOrderHandler extends CommandHandler<void, OrderId> {
+export class PlaceOrderHandler extends CommandHandler<
+	PlaceOrder,
+	void,
+	PlaceOrderError
+> {
 	constructor(
 		private readonly orders: Orders,
+		private readonly outbox: Outbox, // [!code ++]
+		private readonly translator: OrderEventsTranslator, // [!code ++]
+		private readonly clock: Clock,
 		private readonly ids: IdGenerator,
 	) {
 		super();
 	}
 
-	async handle(): Promise<Ok<OrderId>> {
-		const order = Order.create(new OrderId(this.ids.next()));
+	async handle({
+		orderId,
+	}: PlaceOrder): Promise<Result<void, PlaceOrderError>> {
+		const order = await this.orders.findById(
+			new OrderId(orderId),
+		);
+		if (order === undefined) {
+			return err(new OrderNotFound({ orderId }));
+		}
+		const placed = order.place(
+			this.ids.next(),
+			this.clock.now(),
+		);
+		if (!placed.ok) {
+			return placed;
+		}
 		await this.orders.save(order);
-		return ok(order.id);
+		const events = order // [!code ++]
+			.pullDomainEvents() // [!code ++]
+			.map((event) => // [!code ++]
+				this.translator.translate(event, { // [!code ++]
+					correlationId: orderId, // [!code ++]
+				}), // [!code ++]
+			); // [!code ++]
+		await this.outbox.add(events); // [!code ++]
+		return ok();
 	}
 }
 ```
 
-### Call it from a driving adapter
+### 6. Make it atomic
 
-A controller builds the command, calls `handle` and turns the `Result` into a response. Domain
-errors become HTTP errors there, and nowhere else.
+If saving the order succeeds and adding its events fails, the rest of the system never hears of it. The [unit of work](./unit-of-work.md) runs both in one transaction, and rolls back when the work returns a failure.
+
+```ts [src/ordering/application/commands/place-order.command.ts]
+import {
+	Clock,
+	CommandHandler,
+	err,
+	IdGenerator,
+	ok,
+	Outbox,
+	type Result,
+	UnitOfWork, // [!code ++]
+} from "@alveolus/core";
+
+import type { EmptyOrder } from "../../domain/errors/empty-order.error";
+import type {
+	OrderAlreadyPlaced,
+} from "../../domain/errors/order-already-placed.error";
+import { OrderNotFound } from "../../domain/errors/order-not-found.error";
+import { Orders } from "../../domain/repositories/orders.repository";
+import { OrderId } from "../../domain/value-objects/order-id.identifier";
+import {
+	OrderEventsTranslator,
+} from "../translators/order-events.translator";
+
+export interface PlaceOrder {
+	readonly orderId: string;
+}
+
+export type PlaceOrderError =
+	| OrderNotFound
+	| OrderAlreadyPlaced
+	| EmptyOrder;
+
+export class PlaceOrderHandler extends CommandHandler<
+	PlaceOrder,
+	void,
+	PlaceOrderError
+> {
+	constructor(
+		private readonly orders: Orders,
+		private readonly unitOfWork: UnitOfWork, // [!code ++]
+		private readonly outbox: Outbox,
+		private readonly translator: OrderEventsTranslator,
+		private readonly clock: Clock,
+		private readonly ids: IdGenerator,
+	) {
+		super();
+	}
+
+	async handle({
+		orderId,
+	}: PlaceOrder): Promise<Result<void, PlaceOrderError>> {
+		const order = await this.orders.findById( // [!code --]
+			new OrderId(orderId), // [!code --]
+		); // [!code --]
+		if (order === undefined) { // [!code --]
+			return err(new OrderNotFound({ orderId })); // [!code --]
+		} // [!code --]
+		const placed = order.place( // [!code --]
+			this.ids.next(), // [!code --]
+			this.clock.now(), // [!code --]
+		); // [!code --]
+		if (!placed.ok) { // [!code --]
+			return placed; // [!code --]
+		} // [!code --]
+		await this.orders.save(order); // [!code --]
+		const events = order // [!code --]
+			.pullDomainEvents() // [!code --]
+			.map((event) => // [!code --]
+				this.translator.translate(event, { // [!code --]
+					correlationId: orderId, // [!code --]
+				}), // [!code --]
+		return this.unitOfWork.run(async () => { // [!code ++]
+			const order = await this.orders.findById( // [!code ++]
+				new OrderId(orderId), // [!code ++]
+			);
+		await this.outbox.add(events); // [!code --]
+		return ok(); // [!code --]
+			if (order === undefined) { // [!code ++]
+				return err(new OrderNotFound({ orderId })); // [!code ++]
+			} // [!code ++]
+			const placed = order.place( // [!code ++]
+				this.ids.next(), // [!code ++]
+				this.clock.now(), // [!code ++]
+			); // [!code ++]
+			if (!placed.ok) { // [!code ++]
+				return placed; // [!code ++]
+			} // [!code ++]
+			await this.orders.save(order); // [!code ++]
+			const events = order // [!code ++]
+				.pullDomainEvents() // [!code ++]
+				.map((event) => // [!code ++]
+					this.translator.translate(event, { // [!code ++]
+						correlationId: orderId, // [!code ++]
+					}), // [!code ++]
+				); // [!code ++]
+			await this.outbox.add(events); // [!code ++]
+			return ok(); // [!code ++]
+		}); // [!code ++]
+	}
+}
+```
+
+This is the complete handler.
+
+### 7. Call it from a driving adapter
+
+So that HTTP stays out of the application, a controller builds the command, calls `handle` and turns the `Result` into a response. Domain errors become HTTP errors there, and nowhere else.
 
 ```ts [src/ordering/driving/http/controllers/orders.controller.ts]
-const placed = await this.placeOrder.handle({ orderId, total: body.total });
+const placed = await this.placeOrder.handle({ orderId });
 if (!placed.ok) {
-	return { status: 422, body: { error: placed.error.type, details: placed.error.payload } };
+	return {
+		status: 422,
+		body: {
+			error: placed.error.type,
+			details: placed.error.payload,
+		},
+	};
 }
 return { status: 204 };
 ```
 
-### Keep to the command side
+### 8. Check it
 
-A command handler loads aggregates through command repositories. It never receives a query
-repository: decisions come from aggregates, not from views.
+Run the checks. Three rules keep the handler the way it is now:
 
-<div class="al-compare">
-
-```ts [❌ Avoid]
-constructor(private readonly summaries: OrderSummaries) {
-	super();
-}
+```sh
+npx alveolus arch check
 ```
 
-```ts [✅ Prefer]
-constructor(private readonly orders: Orders) {
-	super();
-}
-```
-
+<div class="al-cards">
+<div class="al-card"><span class="al-card-title"><a href="../../rules/tactical/no-mixed-handler"><code>no-mixed-handler</code></a></span>It receives no query repository: commands and queries stay apart.</div>
+<div class="al-card"><span class="al-card-title"><a href="../../rules/tactical/no-misplaced-class"><code>no-misplaced-class</code></a></span>It stays alone in <code>application/commands/*.command.ts</code>.</div>
+<div class="al-card"><span class="al-card-title"><a href="../../rules/layers/no-outward-import"><code>no-outward-import</code></a></span>It imports the domain and the application, never an adapter.</div>
 </div>
 
-Checked by [`command-query-separation`](../../rules/command-query-separation.md).
+A query repository added to its constructor is reported:
 
-## Reference
-
-```ts
-abstract class CommandHandler<Input, Output = void, Error extends AnyDomainError = never> {
-	abstract handle(command: Input): Promise<Result<Output, Error>>;
-}
 ```
-
-| Type parameter | Description |
-| --- | --- |
-| `Input` | The command: the data the handler needs. |
-| `Output` | What a success returns. Defaults to `void`. |
-| `Error` | Union of the domain errors the handler may return. Defaults to `never`. |
-
-| Member | Type | Description |
-| --- | --- | --- |
-| `handle(command)` | `Promise<Result<Output, Error>>` | Runs the use case and returns its outcome. |
-
-**Caveats**
-
-- `Error` only accepts `DomainError` subclasses. A technical failure, such as a lost database
-  connection, is thrown and handled like any other exception.
-- Call `super()` in the constructor of your handler.
-- Alveolus provides no bus and no container: wire handlers in the composition root, by hand or
-  with the container of your framework.
-- The events recorded by the aggregate stay on it after `save`; publish them through the
-  [outbox](./outbox.md).
-
-Import from `@alveolus/core` or `@alveolus/core/command-handlers`.
+src/ordering/application/commands/place-order.command.ts:46
+  tactical/no-mixed-handler: The CommandHandler PlaceOrderHandler
+  receives OrderSummaries, a QueryRepository: keep commands and
+  queries apart.
+```
 
 ## See also
 
+- [Aggregates](../domain/aggregates.md), which hold the rules the handler calls
 - [Repositories](../domain/repositories.md), to load and save aggregates
 - [Unit of Work](./unit-of-work.md) and [Outbox](./outbox.md), to change and record atomically
 - [Query handlers](./query-handlers.md), for requests that only read
-- [`command-query-separation`](../../rules/command-query-separation.md), [`layer-direction`](../../rules/layer-direction.md)
+- Rules: [`tactical/no-mixed-handler`](../../rules/tactical/no-mixed-handler.md), [`layers/no-outward-import`](../../rules/layers/no-outward-import.md), [`tactical/no-misplaced-class`](../../rules/tactical/no-misplaced-class.md)

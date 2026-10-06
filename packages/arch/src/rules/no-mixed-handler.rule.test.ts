@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { TestCodebase } from "../../test/support/test-codebase.ts";
-import { CommandQuerySeparationRule } from "./command-query-separation.rule.ts";
+import { NoMixedHandlerRule } from "./no-mixed-handler.rule.ts";
 
 const ports = `import { AggregateRoot, CommandRepository, Identifier, QueryRepository, type View } from "@alveolus/core";
 class OrderId extends Identifier<string, "OrderId"> {}
@@ -9,7 +9,7 @@ class Order extends AggregateRoot<OrderId> { toSnapshot() { return { id: this.id
 export abstract class Orders extends CommandRepository<Order> {}
 export abstract class OrderSummaries extends QueryRepository<View<{ id: string }>> {}`;
 
-describe("CommandQuerySeparationRule", () => {
+describe("NoMixedHandlerRule", () => {
 	it("accepts handlers that stay on their side", () => {
 		const codebase = new TestCodebase().file("src/ordering/domain/repositories/ports.ts", ports).file(
 			"src/ordering/application/handlers.ts",
@@ -25,7 +25,7 @@ describe("CommandQuerySeparationRule", () => {
 			}`,
 		);
 
-		expect(codebase.check(new CommandQuerySeparationRule())).toEqual([]);
+		expect(codebase.check(new NoMixedHandlerRule())).toEqual([]);
 	});
 
 	it("rejects a command handler reading a query repository and a query handler writing", () => {
@@ -43,7 +43,7 @@ describe("CommandQuerySeparationRule", () => {
 			}`,
 		);
 
-		expect(codebase.check(new CommandQuerySeparationRule())).toEqual([
+		expect(codebase.check(new NoMixedHandlerRule())).toEqual([
 			"src/ordering/application/handlers.ts:4 PlaceOrder.summaries",
 			"src/ordering/application/handlers.ts:8 GetOrder.orders",
 			"src/ordering/application/handlers.ts:8 GetOrder.unitOfWork",

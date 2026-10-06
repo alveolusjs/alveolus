@@ -1,3 +1,4 @@
+import { transformerNotationWordHighlight } from "@shikijs/transformers";
 import { defineConfig } from "vitepress";
 import { groupIconMdPlugin, groupIconVitePlugin } from "vitepress-plugin-group-icons";
 import llmstxt from "vitepress-plugin-llms";
@@ -20,63 +21,84 @@ const sidebar = [
 		text: "Integrations",
 	},
 	{
-		items: [{ link: "/core/", text: "Overview" }],
+		items: [
+			{ link: "/core/", text: "Overview" },
+			{
+				collapsed: false,
+				items: [
+					{ link: "/core/domain/", text: "Overview" },
+					{ link: "/core/domain/aggregates", text: "Aggregates" },
+					{ link: "/core/domain/entities", text: "Entities" },
+					{ link: "/core/domain/value-objects", text: "Value objects" },
+					{ link: "/core/domain/domain-events", text: "Domain events" },
+					{ link: "/core/domain/domain-errors", text: "Domain errors" },
+					{ link: "/core/domain/domain-services", text: "Domain services" },
+					{ link: "/core/domain/ports", text: "Ports" },
+					{ link: "/core/domain/repositories", text: "Repositories" },
+					{ link: "/core/domain/views", text: "Views" },
+				],
+				text: "Domain",
+			},
+			{
+				collapsed: false,
+				items: [
+					{ link: "/core/application/", text: "Overview" },
+					{ link: "/core/application/command-handlers", text: "Command handlers" },
+					{ link: "/core/application/query-handlers", text: "Query handlers" },
+					{ link: "/core/application/event-translators", text: "Event translators" },
+					{ link: "/core/application/integration-events", text: "Integration events" },
+					{ link: "/core/application/event-publishers", text: "Event publishers" },
+					{ link: "/core/application/unit-of-work", text: "Unit of Work" },
+					{ link: "/core/application/outbox", text: "Outbox" },
+				],
+				text: "Application",
+			},
+			{
+				collapsed: false,
+				items: [
+					{ link: "/core/strategic/", text: "Overview" },
+					{ link: "/core/strategic/published-language", text: "Published Language" },
+					{ link: "/core/strategic/open-host-services", text: "Open host services" },
+					{ link: "/core/strategic/anti-corruption-layers", text: "Anti-corruption layers" },
+				],
+				text: "Strategic",
+			},
+			{
+				collapsed: false,
+				items: [{ link: "/core/utilities/result", text: "Result" }],
+				text: "Utilities",
+			},
+		],
 		text: "Building blocks",
-	},
-	{
-		collapsed: false,
-		items: [
-			{ link: "/core/domain/aggregates", text: "Aggregates" },
-			{ link: "/core/domain/entities", text: "Entities" },
-			{ link: "/core/domain/value-objects", text: "Value objects" },
-			{ link: "/core/domain/domain-events", text: "Domain events" },
-			{ link: "/core/domain/domain-errors", text: "Domain errors" },
-			{ link: "/core/domain/domain-services", text: "Domain services" },
-			{ link: "/core/domain/ports", text: "Ports" },
-			{ link: "/core/domain/repositories", text: "Repositories" },
-			{ link: "/core/domain/views", text: "Views" },
-		],
-		text: "Domain",
-	},
-	{
-		collapsed: false,
-		items: [
-			{ link: "/core/application/command-handlers", text: "Command handlers" },
-			{ link: "/core/application/query-handlers", text: "Query handlers" },
-			{ link: "/core/application/event-translators", text: "Event translators" },
-			{ link: "/core/application/integration-events", text: "Integration events" },
-			{ link: "/core/application/event-publishers", text: "Event publishers" },
-			{ link: "/core/application/unit-of-work", text: "Unit of Work" },
-			{ link: "/core/application/outbox", text: "Outbox" },
-		],
-		text: "Application",
-	},
-	{
-		collapsed: false,
-		items: [
-			{ link: "/core/strategic/published-language", text: "Published Language" },
-			{ link: "/core/strategic/open-host-services", text: "Open host services" },
-			{ link: "/core/strategic/anti-corruption-layers", text: "Anti-corruption layers" },
-		],
-		text: "Strategic",
-	},
-	{
-		collapsed: false,
-		items: [{ link: "/core/utilities/result", text: "Result" }],
-		text: "Utilities",
 	},
 	{
 		items: [
 			{ link: "/rules/", text: "Overview" },
-			{ link: "/rules/bc-isolation", text: "bc-isolation" },
-			{ link: "/rules/domain-purity", text: "domain-purity" },
-			{ link: "/rules/layer-direction", text: "layer-direction" },
-			{ link: "/rules/driven-adapters-extend-port", text: "driven-adapters-extend-port" },
-			{ link: "/rules/building-blocks-only", text: "building-blocks-only" },
-			{ link: "/rules/placement", text: "placement" },
-			{ link: "/rules/reference-by-identity", text: "reference-by-identity" },
-			{ link: "/rules/command-query-separation", text: "command-query-separation" },
-			{ link: "/rules/errors-as-values", text: "errors-as-values" },
+			{
+				collapsed: false,
+				items: [{ link: "/rules/strategic/no-cross-context-import", text: "no-cross-context-import" }],
+				text: "Strategic",
+			},
+			{
+				collapsed: false,
+				items: [
+					{ link: "/rules/layers/no-impure-domain", text: "no-impure-domain" },
+					{ link: "/rules/layers/no-outward-import", text: "no-outward-import" },
+					{ link: "/rules/layers/no-portless-adapter", text: "no-portless-adapter" },
+				],
+				text: "Layers",
+			},
+			{
+				collapsed: false,
+				items: [
+					{ link: "/rules/tactical/no-aggregate-reference", text: "no-aggregate-reference" },
+					{ link: "/rules/tactical/no-misplaced-class", text: "no-misplaced-class" },
+					{ link: "/rules/tactical/no-mixed-handler", text: "no-mixed-handler" },
+					{ link: "/rules/tactical/no-plain-class", text: "no-plain-class" },
+					{ link: "/rules/tactical/no-thrown-failure", text: "no-thrown-failure" },
+				],
+				text: "Tactical",
+			},
 		],
 		text: "Rules",
 	},
@@ -99,6 +121,7 @@ export default defineConfig({
 	lastUpdated: true,
 
 	markdown: {
+		codeTransformers: [transformerNotationWordHighlight()],
 		config(md) {
 			md.use(groupIconMdPlugin);
 		},
@@ -115,6 +138,7 @@ export default defineConfig({
 		},
 		logo: "/logo.svg",
 		nav: [{ activeMatch: "^/(guide|integrations|core|rules)/", link: "/guide/getting-started", text: "Guide" }],
+		outline: { level: "deep" },
 		search: { provider: "local" },
 		sidebar,
 		socialLinks: [{ icon: "github", link: repository }],
