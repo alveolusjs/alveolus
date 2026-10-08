@@ -2,10 +2,7 @@ import type { Layer } from "../../conventions/index.ts";
 
 export type Area = "context" | "shared-kernel" | "root" | "outside";
 
-/** Why the analysis does not see an imported file. */
 export type Unseen = "ignored" | "unresolved";
-
-/** Where a file sits in the architecture: its bounded context, its layer and its folder. */
 
 export interface LocationProps {
 	readonly area: Area;
@@ -23,7 +20,6 @@ export class Location {
 	public readonly context: string | undefined;
 	public readonly layer: Layer | undefined;
 	public readonly folder: string | undefined;
-	/** The folders between the layer and the file: `["pg", "adapters"]` for `driven/pg/adapters/`. */
 	public readonly foldersInLayer: readonly string[];
 	public readonly fileName: string;
 	public readonly isCompositionRoot: boolean;

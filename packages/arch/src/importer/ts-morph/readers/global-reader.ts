@@ -13,7 +13,6 @@ interface Effect {
 
 const ecmaScriptLibrary = /^lib\.(es|decorators).*\.d\.ts$/;
 
-/** Reads the globals a file uses, resolved by the type checker so that a local variable never counts. */
 export class GlobalReader {
 	public constructor(private readonly projectDir: string) {}
 
@@ -46,7 +45,6 @@ export class GlobalReader {
 		return declaration.getSourceFile();
 	}
 
-	/** A declaration is global when it is a top-level statement of a script, or of a `declare global` block. */
 	private isGlobalScope(declaration: Node): boolean {
 		const statement = Node.isVariableDeclaration(declaration) ? declaration.getVariableStatement() : declaration;
 		const container = statement?.getParent();

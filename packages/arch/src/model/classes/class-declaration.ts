@@ -17,10 +17,8 @@ export class ClassDeclaration {
 	public readonly name: string;
 	public readonly line: number;
 	public readonly isAbstract: boolean;
-	/** The class as a type, with its lineage. */
 	public readonly type: ClassType;
 	public readonly heritage: Heritage | undefined;
-	/** The types of its `implements` clause. */
 	public readonly implemented: readonly NamedType[];
 	public readonly members: readonly Member[];
 
@@ -34,12 +32,10 @@ export class ClassDeclaration {
 		this.members = props.members;
 	}
 
-	/** What the class holds: its fields and its constructor parameters, a parameter property once. */
 	public get heldMembers(): Member[] {
 		return this.members.filter((member) => member.kind === "field" || member.kind === "constructor parameter");
 	}
 
-	/** The public members other code sees on an instance: methods, fields and getters, constructor parameters that declare a field. */
 	public get publicSurface(): Member[] {
 		return this.members.filter((member) => member.isPublicInstance && member.kind !== "setter" && this.isDeclared(member));
 	}
@@ -52,13 +48,11 @@ export class ClassDeclaration {
 		return this.heritage === undefined || this.heritage.isByName;
 	}
 
-	/** Every member is static: a bag of functions. A class without members is not. */
 	public get isStaticOnly(): boolean {
 		const members = this.members.filter((member) => this.isDeclared(member));
 		return members.length > 0 && members.every((member) => member.isStatic);
 	}
 
-	/** A member of the class itself: a constructor parameter counts only when it declares a field. */
 	private isDeclared(member: Member): boolean {
 		return member.kind !== "constructor parameter" || member.isParameterProperty;
 	}

@@ -5,7 +5,6 @@ import type { ClassType, Heritage, ReturnShape, TypeArgument, Visibility } from 
 import { ClassDeclaration, Member } from "../../../model/index.ts";
 import type { TypeReader } from "./type-reader.ts";
 
-/** What a member's types say, as far as its kind has any. */
 interface MemberTypes {
 	readonly isCallable?: boolean;
 	readonly parameterTypes?: readonly ClassType[];
@@ -13,7 +12,6 @@ interface MemberTypes {
 	readonly valueTypes?: readonly ClassType[];
 }
 
-/** Reads a class declaration: its lineage, its `extends` and `implements` clauses, and its members in source order. */
 export class ClassReader {
 	public constructor(private readonly types: TypeReader) {}
 
@@ -110,10 +108,6 @@ export class ClassReader {
 		return { isByName: this.namesAClass(clause.getExpression()), typeArguments };
 	}
 
-	/**
-	 * `extends Order` or `extends core.Order` naming a class declaration, rather than a call, a cast or a constant.
-	 * A name that resolves to nothing, such as a broken import, is still a name: what it is stays unknown, not hidden.
-	 */
 	private namesAClass(expression: Node): boolean {
 		if (!Node.isIdentifier(expression) && !Node.isPropertyAccessExpression(expression)) {
 			return false;

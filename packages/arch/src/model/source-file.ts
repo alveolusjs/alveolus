@@ -16,12 +16,10 @@ export interface SourceFileProps {
 	readonly disables: readonly DisableComment[];
 }
 
-/** What a file of the project contains, as facts: no convention of Alveolus applies here. */
 export class SourceFile {
 	public readonly path: string;
 	public readonly dependencies: readonly Dependency[];
 	public readonly classes: readonly ClassDeclaration[];
-	/** The top-level statements that are no import, export, class, type or constant of data. */
 	public readonly statements: readonly TopLevelStatement[];
 	public readonly throws: readonly Throw[];
 	public readonly globals: readonly GlobalUse[];
@@ -39,12 +37,10 @@ export class SourceFile {
 		this.lines = props.text.split(/\r?\n/);
 	}
 
-	/** The text of a line, counted from 1. */
 	public lineText(line: number): string {
 		return this.lines[line - 1] ?? "";
 	}
 
-	/** The disable comment written just above a line, if any. */
 	public disableAbove(line: number): DisableComment | undefined {
 		return this.disables.find((comment) => comment.target === line);
 	}

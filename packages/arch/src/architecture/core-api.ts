@@ -2,13 +2,11 @@ import type { CoreKind, CoreMarker } from "../conventions/index.ts";
 import { coreDomainSymbols, coreKinds, coreMarkers, corePackageName, corePublishedLanguageSymbols } from "../conventions/index.ts";
 import type { ClassType, NamedType, ReturnShape } from "../model/index.ts";
 
-/** Recognises what `@alveolus/core` exports in the facts of the model: building blocks, markers, `Result`. */
 export class CoreApi {
 	public get packageName(): string {
 		return corePackageName;
 	}
 
-	/** The building blocks a class extends, the most specific first: `QueryRepository` before `Port`. */
 	public kindsOf(type: ClassType): CoreKind[] {
 		const kinds: CoreKind[] = [];
 		for (const ancestor of type.lineage) {
@@ -29,7 +27,6 @@ export class CoreApi {
 		return markers;
 	}
 
-	/** A `Result` of core, written as the alias or as its union of `Ok` and `Err`. */
 	public isResult(shape: ReturnShape): boolean {
 		if (shape.alias !== undefined && shape.alias.name === "Result" && this.isCore(shape.alias)) {
 			return true;

@@ -4,7 +4,6 @@ import type { Expression, SourceFile, Statement, VariableDeclaration, VariableSt
 import type { StatementKind } from "../../../model/index.ts";
 import { TopLevelStatement } from "../../../model/index.ts";
 
-/** Statements that only declare what other files import or what TypeScript checks. */
 const declarative: ReadonlySet<SyntaxKind> = new Set([
 	SyntaxKind.ImportDeclaration,
 	SyntaxKind.ImportEqualsDeclaration,
@@ -26,7 +25,6 @@ const literals: ReadonlySet<SyntaxKind> = new Set([
 	SyntaxKind.NullKeyword,
 ]);
 
-/** Reads the top-level statements of a file that are neither a class, a type, an import nor a constant of plain data. */
 export class StatementReader {
 	public read(file: SourceFile): TopLevelStatement[] {
 		return file.getStatements().flatMap((statement) => this.declarationsOf(statement));
@@ -82,7 +80,6 @@ export class StatementReader {
 		return this.isData(initializer) ? undefined : "computed constant";
 	}
 
-	/** Plain data: literals, arrays and objects of data, arithmetic on data, and references to values that cannot be called. */
 	private isData(expression: Expression): boolean {
 		const value = this.unwrapped(expression);
 		if (literals.has(value.getKind())) {
@@ -123,7 +120,6 @@ export class StatementReader {
 		return false;
 	}
 
-	/** Looks through parentheses, `as`, `satisfies` and `!`, which change the type but not the value. */
 	private unwrapped(expression: Expression): Expression {
 		if (Node.isParenthesizedExpression(expression) || Node.isAsExpression(expression) || Node.isSatisfiesExpression(expression) || Node.isNonNullExpression(expression)) {
 			return this.unwrapped(expression.getExpression());

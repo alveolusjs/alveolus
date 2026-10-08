@@ -1,7 +1,4 @@
-/** Each package and what may be imported from it: `true` for everything, or the allowed names. */
 export type PackageDependencies = Readonly<Record<string, true | readonly string[]>>;
-
-/** The packages a layer may import, and which of their names. */
 
 export class AllowedPackages {
 	public constructor(private readonly packages: PackageDependencies = {}) {}

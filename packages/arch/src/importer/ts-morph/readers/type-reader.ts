@@ -6,15 +6,9 @@ import type { NamedType, ReturnShape } from "../../../model/index.ts";
 import { ClassType } from "../../../model/index.ts";
 import type { PackageNames } from "../package-names.ts";
 
-/** Turns the types of the type checker into the types of the model. */
 export class TypeReader {
 	public constructor(private readonly packageNames: PackageNames) {}
 
-	/**
-	 * The classes a type holds, however deep: unions and intersections, type arguments (of generics and of aliases such as `Pick`),
-	 * tuple elements, the properties of object types declared by the project, and what a function returns.
-	 * The parameters of a function are not followed: receiving a value is not holding it.
-	 */
 	public classTypesIn(type: Type): ClassType[] {
 		const found: ClassType[] = [];
 		this.collectClassTypes(type, found, new Set());
@@ -32,7 +26,6 @@ export class TypeReader {
 		return symbol === undefined ? { name: type.getText(), packageName: undefined } : this.namedSymbol(symbol);
 	}
 
-	/** How a result type is spelled, once a `Promise` is unwrapped. */
 	public returnShapeOf(type: Type): ReturnShape {
 		if (type.getSymbol()?.getName() === "Promise") {
 			const [inner] = type.getTypeArguments();
@@ -48,7 +41,6 @@ export class TypeReader {
 		};
 	}
 
-	/** The class itself, then each class it extends, nearest first. */
 	private lineageOf(type: Type): NamedType[] {
 		const classType = type.getTargetType() ?? type;
 		const symbol = classType.getSymbol();
@@ -110,7 +102,6 @@ export class TypeReader {
 		return inner;
 	}
 
-	/** An object type of the project, such as an interface or `{ customer: Customer }`; libraries are not walked into. */
 	private isDeclaredByProject(type: Type): boolean {
 		if (!type.isObject() || type.isClass()) {
 			return false;

@@ -3,7 +3,6 @@ import type { SourceFile } from "ts-morph";
 
 import { Throw } from "../../../model/index.ts";
 
-/** Reads the failures a file raises instead of returning: `throw` statements and `Promise.reject` calls. */
 export class ThrowReader {
 	public read(file: SourceFile): Throw[] {
 		const throws: Throw[] = [];

@@ -1,6 +1,5 @@
 export const corePackageName = "@alveolus/core";
 
-/** The building blocks a class may extend, as `@alveolus/core` names them. */
 export const coreKinds = [
 	"AggregateRoot",
 	"Entity",
@@ -22,12 +21,10 @@ export const coreKinds = [
 
 export type CoreKind = (typeof coreKinds)[number];
 
-/** The marker interfaces a class may implement. */
 export const coreMarkers = ["OpenHostService", "AntiCorruptionLayer"] as const;
 
 export type CoreMarker = (typeof coreMarkers)[number];
 
-/** What the domain may import from core: its building blocks, and `Result`. */
 export const coreDomainSymbols: readonly string[] = [
 	"AggregateRoot",
 	"AnyAggregateRoot",
@@ -63,5 +60,4 @@ export const coreDomainSymbols: readonly string[] = [
 	"ok",
 ];
 
-/** What the published language may import from core. */
 export const corePublishedLanguageSymbols: readonly string[] = ["AnyIntegrationEvent", "IntegrationEvent", "JsonValue", "PublishedLanguage"];

@@ -1,7 +1,6 @@
 import type { Layer } from "../conventions/index.ts";
 import { layerImports, layers } from "../conventions/index.ts";
 
-/** The layers of a bounded context, and which layers each one may import. */
 export class Layers {
 	public isLayer(name: string): name is Layer {
 		return (layers as readonly string[]).includes(name);

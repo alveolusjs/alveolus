@@ -54,7 +54,6 @@ export class NoCrossContextImportRule extends ImportRule<"strategic/no-cross-con
 		return undefined;
 	}
 
-	/** Every imported name is a class of the target file that implements `OpenHostService`. */
 	private importsOnlyOpenHostServices(dependency: Dependency, path: string, architecture: Architecture): boolean {
 		const target = architecture.project.file(path);
 		if (target === undefined || dependency.names.length === 0) {

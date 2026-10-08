@@ -29,7 +29,6 @@ export class NoLeakyHostServiceRule extends ClassRule<"strategic/no-leaky-host-s
 		return [...findings.values()];
 	}
 
-	/** A class of the project leaks the model; a class of a package or of the shared kernel is shared on purpose. */
 	private leaks(type: ClassType, architecture: Architecture): boolean {
 		if (type.isInstalled) {
 			return false;

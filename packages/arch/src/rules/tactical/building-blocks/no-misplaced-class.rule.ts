@@ -6,7 +6,6 @@ import { Rule } from "../../framework/index.ts";
 
 type MessageId = "sharedFile" | "misplacedMarker" | "misplacedKind";
 
-/** Where a marked class belongs, as the project layout writes it. */
 const markerWording: Readonly<Record<CoreMarker, string>> = {
 	AntiCorruptionLayer: "driven/<technology>/adapters/*.adapter.ts, as an adapter of a port",
 	OpenHostService: "driving/<technology>/",
@@ -36,7 +35,6 @@ export class NoMisplacedClassRule extends Rule<"tactical/no-misplaced-class", Me
 		return findings;
 	}
 
-	/** One class per file: every class after the first is reported, and its place is checked once it has a file of its own. */
 	private extraClasses(file: SourceFile): Finding<MessageId>[] {
 		const [first, ...others] = file.classes;
 		const findings: Finding<MessageId>[] = [];
@@ -46,7 +44,6 @@ export class NoMisplacedClassRule extends Rule<"tactical/no-misplaced-class", Me
 		return findings;
 	}
 
-	/** A marker decides the place first; otherwise the most specific building block the class extends does. */
 	private misplacement(codeClass: ClassDeclaration, file: SourceFile, location: Location, architecture: Architecture): Finding<MessageId> | undefined {
 		for (const { marker, place } of architecture.blocks.markedPlacesOf(codeClass)) {
 			if (!place.fits(location)) {

@@ -6,7 +6,6 @@ import { DisableDirective } from "./disable-directive.ts";
 
 type MessageId = "noRule" | "unknownRule" | "noReason" | "unused";
 
-/** A disable comment that names no known rule, gives no reason, or disables nothing. */
 export class NoLooseDisableRule extends Rule<"tooling/no-loose-disable", MessageId> {
 	public readonly meta: RuleMeta<"tooling/no-loose-disable", MessageId> = {
 		description: "A disable comment that names no known rule, gives no reason, or disables nothing.",
@@ -36,7 +35,6 @@ export class NoLooseDisableRule extends Rule<"tooling/no-loose-disable", Message
 		return findings;
 	}
 
-	/** A complete comment whose next line breaks no rule: the checker finds those once the rules have run. */
 	public unused(file: SourceFile, comment: DisableComment): Finding<MessageId> {
 		const directive = new DisableDirective(comment.text);
 		return this.finding(file, comment.line, "alveolus-disable-next-line", "unused", { rule: directive.rule ?? "" });

@@ -4,7 +4,6 @@ import type { ClassDeclaration } from "./classes/class-declaration.ts";
 import type { ClassType } from "./classes/class-type.ts";
 import type { SourceFile } from "./source-file.ts";
 
-/** The analysed files of a project. */
 export class Project {
 	private readonly filesByPath: ReadonlyMap<string, SourceFile>;
 
@@ -19,7 +18,6 @@ export class Project {
 		return this.filesByPath.get(path);
 	}
 
-	/** The declaration of a class type, when the project declares it in an analysed file. */
 	public classOf(type: ClassType): ClassDeclaration | undefined {
 		if (type.declaredIn === undefined) {
 			return undefined;
@@ -27,7 +25,6 @@ export class Project {
 		return this.file(type.declaredIn)?.classNamed(type.name);
 	}
 
-	/** A path relative to the project, with forward slashes, as reports show it. */
 	public relativePath(path: string): string {
 		return relative(this.directory, path).split(sep).join("/");
 	}

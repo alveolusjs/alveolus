@@ -3,17 +3,12 @@ import type { SourceFile } from "../../model/index.ts";
 import type { Finding, FindingData } from "./finding.ts";
 import { Wording } from "./wording.ts";
 
-/** What a rule says about itself: its id, what it reports, and its messages, with `{placeholders}` filled by each finding. */
 export interface RuleMeta<Id extends string, MessageId extends string> {
 	readonly id: Id;
 	readonly description: string;
 	readonly messages: Readonly<Record<MessageId, string>>;
 }
 
-/**
- * An architecture rule. It reads the project through the conventions of Alveolus and returns what it finds;
- * the checker turns findings into violations, with their message.
- */
 export abstract class Rule<Id extends string = string, MessageId extends string = string> {
 	public abstract readonly meta: RuleMeta<Id, MessageId>;
 

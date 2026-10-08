@@ -17,7 +17,6 @@ type MessageId =
 	| "undeclaredPackage"
 	| "packageName";
 
-/** Which way a dependency between two files may not point. */
 interface LayerProblem {
 	readonly messageId: MessageId;
 	readonly data: FindingData;
@@ -76,7 +75,6 @@ export class NoOutwardImportRule extends ImportRule<"layers/no-outward-import", 
 		return undefined;
 	}
 
-	/** A file outside every context, outside the layers, or in a folder its layer does not expect. */
 	private misplacedFiles(architecture: Architecture): Finding<MessageId>[] {
 		const findings: Finding<MessageId>[] = [];
 		for (const file of architecture.files) {
@@ -105,7 +103,6 @@ export class NoOutwardImportRule extends ImportRule<"layers/no-outward-import", 
 		return {};
 	}
 
-	/** A context, or a feature of the shared kernel, has one composition root: the files of its folder that match the glob. */
 	private extraCompositionRoots(architecture: Architecture): Finding<MessageId>[] {
 		const byFolder = new Map<string, SourceFile[]>();
 		for (const file of architecture.files) {
@@ -150,7 +147,6 @@ export class NoOutwardImportRule extends ImportRule<"layers/no-outward-import", 
 		return { data: { allowed: allowed.join(", "), layer }, messageId: "outwardLayer" };
 	}
 
-	/** The application imports core, and the packages its configuration allows, with their allowed names. */
 	private applicationPackageFinding(dependency: Dependency, packageName: string, file: SourceFile, architecture: Architecture): Finding<MessageId> | undefined {
 		if (packageName === architecture.core.packageName) {
 			return undefined;

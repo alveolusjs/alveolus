@@ -7,24 +7,20 @@ import { DisableDirective, NoLooseDisableRule } from "../rules/index.ts";
 import { Fingerprint } from "./fingerprint.ts";
 import type { Violation } from "./violation.ts";
 
-/** Everything a check needs to know about the project: what to read, its architecture, and the rules it turns off. */
 export interface CheckSettings extends ImportScope, Settings {
 	isEnabled(rule: RuleId): boolean;
 }
 
-/** A violation a disable comment turns off, and the reason the comment gives. */
 export interface Suppressed {
 	readonly violation: Violation;
 	readonly reason: string;
 }
 
 export interface CheckOutcome {
-	/** Sorted by file and line. */
 	readonly violations: Violation[];
 	readonly suppressed: Suppressed[];
 }
 
-/** Reads the project, runs the enabled rules, applies the disable comments, and turns what the rules find into violations. */
 export class Checker {
 	private readonly fingerprint = new Fingerprint();
 
@@ -50,12 +46,10 @@ export class Checker {
 		return outcome;
 	}
 
-	/** The violations of one rule, in the order the rule found them, disable comments aside. */
 	public run(rule: Rule<RuleId>, architecture: Architecture): Violation[] {
 		return rule.check(architecture).map((finding) => this.violationOf(rule, finding, architecture));
 	}
 
-	/** Each finding becomes a violation, unless the line above it carries a complete disable comment naming the rule. */
 	private collect(rule: Rule<RuleId>, architecture: Architecture, outcome: CheckOutcome, used: Set<string>): void {
 		for (const finding of rule.check(architecture)) {
 			const violation = this.violationOf(rule, finding, architecture);
@@ -70,7 +64,6 @@ export class Checker {
 		}
 	}
 
-	/** A complete disable comment that turned nothing off is reported, so that none outlives its violation. */
 	private collectUnusedDisables(architecture: Architecture, settings: CheckSettings, outcome: CheckOutcome, used: Set<string>): void {
 		const rule = this.rules.find((candidate) => candidate instanceof NoLooseDisableRule);
 		if (!(rule instanceof NoLooseDisableRule) || !settings.isEnabled(rule.meta.id)) {
@@ -96,7 +89,6 @@ export class Checker {
 		};
 	}
 
-	/** The rule's message for the finding, each `{placeholder}` filled from its data; a placeholder left unfilled is a bug of the rule. */
 	private messageOf(rule: Rule<RuleId>, finding: Finding): string {
 		const template = rule.meta.messages[finding.messageId];
 		if (template === undefined) {

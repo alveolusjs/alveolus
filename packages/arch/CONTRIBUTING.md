@@ -261,8 +261,11 @@ rest is review.
 - **No loose functions.** A helper is a method of the class that owns it. Tables are `as const`
   data; there are no classes made of static members.
 - **Readable over clever.** Loops and early returns rather than nested `flatMap` and ternaries;
-  small methods with a name that says what they answer; a one-line comment where the *why* is not
-  obvious.
+  small methods with a name that says what they answer.
+- **No comments.** The code says what it does through its names and its shape; a line that needs
+  a comment needs a better name or a method of its own. The *why* lives in ARCHITECTURE.md, in the
+  rule pages and in commit messages. The only `//` lines are directives for the tools, such as
+  `@ts-expect-error`.
 - **Immutable by default.** `readonly` on every field and every member of a data type; `private`
   unless something outside needs it.
 - **Tests next to the code.** `x.test.ts` beside `x.ts`; the few tests of the package as a whole

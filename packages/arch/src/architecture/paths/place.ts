@@ -1,7 +1,6 @@
 import type { Layer, PlaceSpec } from "../../conventions/index.ts";
 import type { Location } from "./location.ts";
 
-/** Where a class belongs: a layer, and optionally a folder and a file suffix. */
 export class Place {
 	public readonly layer: Layer;
 	public readonly folder: string | undefined;

@@ -20,13 +20,11 @@ type MessageId =
 
 const guarded: ReadonlySet<Layer | undefined> = new Set<Layer>(["domain", "application"]);
 
-/** The building blocks each layer holds, as the message names them. */
 const expectedBlocks: Readonly<Record<string, string>> = {
 	application: "CommandHandler, QueryHandler or EventTranslator",
 	domain: "AggregateRoot, Entity, ValueObject, Identifier, DomainEvent, DomainError, DomainService or a Port",
 };
 
-/** The message each kind of top-level statement gets in the domain and the application. */
 const statementMessages: Readonly<Record<StatementKind, MessageId>> = {
 	"class expression": "classExpression",
 	"computed constant": "computedConstant",
@@ -96,7 +94,6 @@ export class NoLooseCodeRule extends Rule<"tactical/no-loose-code", MessageId> {
 		return file.statements.map((statement) => this.statementFinding(file, statement, statementMessages[statement.kind]));
 	}
 
-	/** The composition root holds its module class: the statements around it are reported, whatever they are. */
 	private compositionRootStatements(file: SourceFile): Finding<MessageId>[] {
 		return file.statements.map((statement) => this.statementFinding(file, statement, statement.kind === "statement" ? "compositionRootStatement" : "compositionRootDeclaration"));
 	}

@@ -14,7 +14,6 @@ import { NoStatefulServiceRule } from "./tactical/domain-services/no-stateful-se
 import { NoForeignQueryDependencyRule } from "./tactical/query-handlers/no-foreign-query-dependency.rule.ts";
 import { NoLooseDisableRule } from "./tooling/no-loose-disable.rule.ts";
 
-/** Every rule, by id, in the order the rules run. The type of a rule id derives from this list. */
 export const ruleIds = [
 	"strategic/no-cross-context-import",
 	"strategic/no-leaky-host-service",
@@ -34,7 +33,6 @@ export const ruleIds = [
 
 export type RuleId = (typeof ruleIds)[number];
 
-/** The rules themselves: one instance per id above, in the same order. A rule whose id is not in the list does not compile. */
 export class RuleRegistry {
 	public readonly rules: readonly Rule<RuleId>[] = [
 		new NoCrossContextImportRule(),
@@ -53,7 +51,6 @@ export class RuleRegistry {
 		new NoLooseDisableRule(ruleIds),
 	];
 
-	/** The rule that reports disable comments; the checker also uses it for the comments that disable nothing. */
 	public get looseDisable(): NoLooseDisableRule {
 		return this.rules.find((rule) => rule instanceof NoLooseDisableRule) as NoLooseDisableRule;
 	}

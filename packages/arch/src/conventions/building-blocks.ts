@@ -1,7 +1,6 @@
 import type { CoreKind, CoreMarker } from "./core-api.ts";
 import type { Layer } from "./layers.ts";
 
-/** Where a class belongs: a layer, and optionally a folder and a file suffix. */
 export interface PlaceSpec {
 	readonly layer: Layer;
 	readonly folder?: string;
@@ -10,7 +9,6 @@ export interface PlaceSpec {
 
 export interface BuildingBlockPlace extends PlaceSpec {
 	readonly kind: CoreKind;
-	/** Only a concrete class goes there: a concrete `Port` is an adapter, an abstract one is a port. */
 	readonly concreteOnly?: boolean;
 }
 
@@ -18,7 +16,6 @@ export interface MarkerPlace extends PlaceSpec {
 	readonly marker: CoreMarker;
 }
 
-/** Where each building block lives, as the project layout describes it. The first entry a class matches wins: a repository is a `Port` too. */
 export const buildingBlockPlaces: readonly BuildingBlockPlace[] = [
 	{ folder: "aggregates", kind: "AggregateRoot", layer: "domain", suffix: ".aggregate.ts" },
 	{ folder: "entities", kind: "Entity", layer: "domain", suffix: ".entity.ts" },
@@ -36,11 +33,9 @@ export const buildingBlockPlaces: readonly BuildingBlockPlace[] = [
 	{ folder: "ports", kind: "Port", layer: "domain", suffix: ".port.ts" },
 ];
 
-/** A marker fixes the place of its class, whatever the class extends. */
 export const markerPlaces: readonly MarkerPlace[] = [
 	{ folder: "adapters", layer: "driven", marker: "AntiCorruptionLayer", suffix: ".adapter.ts" },
 	{ layer: "driving", marker: "OpenHostService" },
 ];
 
-/** The folders of the domain that hold no class: the view types queries return. */
 export const extraDomainFolders: readonly string[] = ["views"];

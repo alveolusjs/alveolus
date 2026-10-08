@@ -17,10 +17,6 @@ import { StatementReader } from "./readers/statement-reader.ts";
 import { ThrowReader } from "./readers/throw-reader.ts";
 import { TypeReader } from "./readers/type-reader.ts";
 
-/**
- * Reads a TypeScript project with ts-morph: each reader turns one family of syntax into facts of the model.
- * ts-morph writes every path with forward slashes; the model keeps the paths of the platform, as the configuration resolves them.
- */
 export class TsMorphImporter extends Importer {
 	private readonly classes: ClassReader;
 	private readonly statements = new StatementReader();
@@ -71,7 +67,6 @@ export class TsMorphImporter extends Importer {
 		});
 	}
 
-	/** Globals declared outside the project; those of the project become dependencies on the declaring file. */
 	private globalUsesOf(references: readonly GlobalReference[]): GlobalUse[] {
 		const uses: GlobalUse[] = [];
 		for (const reference of references) {

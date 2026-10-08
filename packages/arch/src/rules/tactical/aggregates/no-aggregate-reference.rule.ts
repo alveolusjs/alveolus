@@ -6,14 +6,12 @@ import { Rule } from "../../framework/index.ts";
 
 type MessageId = "heldAggregate" | "aggregateInTypeArgument" | "sharedEntity";
 
-/** Something a class holds: a member, or a type argument given to the class it extends. */
 interface Held {
 	readonly name: string;
 	readonly line: number;
 	readonly types: readonly ClassType[];
 }
 
-/** An entity that an aggregate holds, directly or through its entities and value objects. */
 interface Holding {
 	readonly aggregate: ClassDeclaration;
 	readonly file: SourceFile;
@@ -21,7 +19,6 @@ interface Holding {
 	readonly entity: ClassType;
 }
 
-/** The building blocks that may not hold an aggregate: an aggregate is an entity, so it is one of them. */
 const holders: readonly CoreKind[] = ["Entity", "ValueObject", "DomainEvent"];
 
 export class NoAggregateReferenceRule extends Rule<"tactical/no-aggregate-reference", MessageId> {
@@ -46,7 +43,6 @@ export class NoAggregateReferenceRule extends Rule<"tactical/no-aggregate-refere
 		return findings;
 	}
 
-	/** An entity, a value object or a domain event holds no aggregate, in a member or in the props it gives its base class. */
 	private heldAggregates(codeClass: ClassDeclaration, file: SourceFile, architecture: Architecture): Finding<MessageId>[] {
 		if (!holders.some((kind) => architecture.is(codeClass, kind))) {
 			return [];
@@ -71,7 +67,6 @@ export class NoAggregateReferenceRule extends Rule<"tactical/no-aggregate-refere
 		return findings;
 	}
 
-	/** An entity other than a root belongs to one aggregate: one held by two is reported at each of them. */
 	private sharedEntities(architecture: Architecture): Finding<MessageId>[] {
 		const holdings = this.holdingsIn(architecture);
 		const findings: Finding<MessageId>[] = [];
@@ -116,7 +111,6 @@ export class NoAggregateReferenceRule extends Rule<"tactical/no-aggregate-refere
 		return holdings;
 	}
 
-	/** The entities other than roots reached from a type, going through the entities and value objects it holds. */
 	private entitiesReachedFrom(type: ClassType, architecture: Architecture, visited: Set<string>): ClassType[] {
 		if (architecture.is(type, "AggregateRoot") || visited.has(type.key)) {
 			return [];

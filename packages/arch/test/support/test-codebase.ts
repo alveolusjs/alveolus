@@ -40,7 +40,6 @@ export class TestCodebase {
 		this.installCore();
 	}
 
-	/** Adds a file, or replaces it when a fixture already has one at this path. */
 	public file(path: string, content: string): this {
 		this.project.createSourceFile(join(projectDir, path), content, { overwrite: true });
 		return this;
@@ -50,12 +49,10 @@ export class TestCodebase {
 		return new TsMorphImporter(this.project);
 	}
 
-	/** The facts the importer reads, before any convention applies. */
 	public read(): ReadProject {
 		return new TsMorphImporter(this.project).read(this.config);
 	}
 
-	/** The facts of one file, by its path in the project. */
 	public readFile(path: string): SourceFile {
 		const file = this.read().file(join(projectDir, path));
 		if (file === undefined) {
@@ -64,12 +61,10 @@ export class TestCodebase {
 		return file;
 	}
 
-	/** The project read through the conventions, as rules see it. */
 	public architecture(): Architecture {
 		return new Architecture(this.read(), this.config);
 	}
 
-	/** What one rule reports, in the order it finds it, as `file:line symbol`. */
 	public check(rule: Rule<RuleId>): string[] {
 		return this.run(rule).map((violation) => this.format(violation));
 	}

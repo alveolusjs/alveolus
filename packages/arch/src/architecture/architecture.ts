@@ -15,10 +15,6 @@ import type { Settings } from "./settings.ts";
 
 type FileTarget = Extract<DependencyTarget, { kind: "file" }>;
 
-/**
- * The project read through the conventions of Alveolus: where each file sits, which building block each class is.
- * Rules ask it their questions; it knows nothing of how the sources were read.
- */
 export class Architecture {
 	public readonly core: CoreApi = new CoreApi();
 	public readonly layers: Layers = new Layers();
@@ -51,7 +47,6 @@ export class Architecture {
 		return this.locate(file.path);
 	}
 
-	/** Where a dependency points; a file the analysis does not see lies outside the layers, whatever its folder. */
 	public locationOfTarget(target: FileTarget): Location {
 		if (target.visibility !== "analysed") {
 			return new Location({ area: "outside", fileName: basename(target.path), unseen: target.visibility });
@@ -59,7 +54,6 @@ export class Architecture {
 		return this.locate(target.path);
 	}
 
-	/** How a file breaks the folders its layer expects, if it does. */
 	public shapeIssueOf(location: Location): ShapeIssue | undefined {
 		return this.shape.issueWith(location);
 	}
@@ -68,7 +62,6 @@ export class Architecture {
 		return this.project.relativePath(path);
 	}
 
-	/** The building blocks a class extends, the most specific first. */
 	public kindsOf(subject: ClassType | ClassDeclaration): CoreKind[] {
 		return this.core.kindsOf(this.typeOf(subject));
 	}
@@ -93,7 +86,6 @@ export class Architecture {
 		return member.returns !== undefined && this.core.isResult(member.returns);
 	}
 
-	/** The declaration of a class, when an analysed file of the project declares it. */
 	public classOf(type: ClassType): ClassDeclaration | undefined {
 		return this.project.classOf(type);
 	}

@@ -3,7 +3,6 @@ import { readFile, writeFile } from "node:fs/promises";
 
 import type { Violation } from "./violation.ts";
 
-/** A baselined violation; `fingerprint` is missing from baselines written before it existed. */
 type Entry = Pick<Violation, "rule" | "file" | "symbol"> & { readonly fingerprint?: string };
 
 export class Baseline {
@@ -23,7 +22,6 @@ export class Baseline {
 		return new Baseline(content.violations ?? []);
 	}
 
-	/** Entries written before fingerprints: they match nothing until the baseline is written again. */
 	public get outdatedEntries(): number {
 		return this.entries.filter((entry) => entry.fingerprint === undefined).length;
 	}
@@ -32,7 +30,6 @@ export class Baseline {
 		return this.match(violations).fresh;
 	}
 
-	/** The entries that match no violation any more: fixed since the baseline was written, and ready to be dropped. */
 	public staleEntries(violations: readonly Violation[]): number {
 		return this.match(violations).stale;
 	}

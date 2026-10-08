@@ -5,7 +5,6 @@ import { layers } from "../../conventions/index.ts";
 import type { ContextFolder, Settings } from "../settings.ts";
 import { Location } from "./location.ts";
 
-/** Where a path sits: its bounded context, its layer and the folders below the layer. */
 export class Layout {
 	public constructor(private readonly settings: Settings) {}
 
@@ -41,7 +40,6 @@ export class Layout {
 		return new Location({ area, context, fileName, foldersInLayer, layer, ...(subfolder === undefined ? {} : { folder: subfolder }) });
 	}
 
-	/** The layer is the first folder of a context, or the second one in a feature of the shared kernel. */
 	private layerIndexOf(directories: readonly string[], isSharedKernel: boolean): number | undefined {
 		if (this.isLayer(directories[0] ?? "")) {
 			return 0;

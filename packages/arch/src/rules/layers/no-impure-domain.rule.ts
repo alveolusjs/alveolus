@@ -58,7 +58,6 @@ export class NoImpureDomainRule extends ImportRule<"layers/no-impure-domain", Me
 		return this.finding(file, line, label, "packageName", { allowed: allowed.allowedNames(target.name).join(", "), names: forbidden.join(", "), package: target.name });
 	}
 
-	/** A global of the host, or a built-in that reads the clock or draws a random value. */
 	private impureGlobals(file: SourceFile): Finding<MessageId>[] {
 		const findings: Finding<MessageId>[] = [];
 		for (const use of file.globals) {

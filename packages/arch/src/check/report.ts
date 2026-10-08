@@ -5,18 +5,14 @@ import type { Suppressed } from "./checker.ts";
 import type { Violation } from "./violation.ts";
 
 export interface ReportInput {
-	/** The violations to report: those the baseline does not cover. */
 	readonly violations: readonly Violation[];
 	readonly suppressed: readonly Suppressed[];
-	/** How many current violations the baseline covers. */
 	readonly baselined: number;
-	/** How many entries of the baseline match nothing any more. */
 	readonly stale: number;
 }
 
 const docsUrl = "https://alveolus.dev/";
 
-/** The violations as the CLI prints them: text grouped by file, JSON for tools, SARIF for code scanning. */
 export class Report {
 	private readonly colors: ReturnType<typeof picocolors.createColors>;
 
@@ -41,7 +37,6 @@ export class Report {
 		return `${JSON.stringify({ baselined, stale, suppressed: disabled, violations }, null, "\t")}\n`;
 	}
 
-	/** SARIF 2.1.0, as GitHub code scanning and the other analysers read it; the fingerprint lets them track a result across commits. */
 	public sarif(rules: readonly RuleMeta<string, string>[]): string {
 		const driver = {
 			informationUri: docsUrl,
@@ -59,7 +54,6 @@ export class Report {
 		return `${JSON.stringify(log, null, "\t")}\n`;
 	}
 
-	/** The violations of each file, in the order they come: the checker sorts them by file and line already. */
 	private byFile(): Map<string, Violation[]> {
 		const byFile = new Map<string, Violation[]>();
 		for (const violation of this.input.violations) {
@@ -74,7 +68,6 @@ export class Report {
 		return [bold(file), ...lines].join("\n");
 	}
 
-	/** `3 violations (12 in the baseline, 4 fixed, 2 disabled)`, each part only when it counts. */
 	private summary(): string {
 		const { dim, green, red } = this.colors;
 		const count = this.input.violations.length;

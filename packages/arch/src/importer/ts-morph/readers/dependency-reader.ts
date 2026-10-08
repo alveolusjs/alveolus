@@ -8,7 +8,6 @@ import { Dependency } from "../../../model/index.ts";
 import type { ImportScope } from "../../importer.ts";
 import type { GlobalReference } from "./global-reference.ts";
 
-/** A module reference as written in the source: `specifier` is undefined when it is computed at runtime. */
 interface ModuleReference {
 	readonly line: number;
 	readonly form: DependencyForm;
@@ -19,10 +18,6 @@ interface ModuleReference {
 
 const everything: readonly string[] = ["*"];
 
-/**
- * Reads every module a file depends on: import and export declarations, `import("…")` types, dynamic `import()`, `require()`,
- * `import … = require()`, and the files of the project that declare the globals it uses.
- */
 export class DependencyReader {
 	public constructor(
 		private readonly project: Project,
@@ -119,7 +114,6 @@ export class DependencyReader {
 		return { form, line: node.getStartLineNumber(), names, specifier: isLiteral ? specifierNode.getLiteralValue() : undefined, text: specifierNode.getText() };
 	}
 
-	/** A file of the project when the specifier resolves inside it, an unresolved file when it does not, a package otherwise. */
 	private targetOf(reference: ModuleReference, file: SourceFile): DependencyTarget {
 		const directory = file.getDirectoryPath();
 		if (reference.specifier === undefined) {

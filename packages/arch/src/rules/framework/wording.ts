@@ -3,9 +3,7 @@ import type { DependencyTarget } from "../../model/index.ts";
 
 type FileTarget = Extract<DependencyTarget, { kind: "file" }>;
 
-/** How rules name places and locations in their messages. */
 export class Wording {
-	/** `src/ordering/driven/pg/adapters/pg-orders.adapter.ts (ordering driven)` */
 	public target(target: FileTarget, architecture: Architecture): string {
 		return `${architecture.relativePath(target.path)} (${this.location(architecture.locationOfTarget(target))})`;
 	}
@@ -27,7 +25,6 @@ export class Wording {
 		return `${location.context} ${role}`;
 	}
 
-	/** `domain/aggregates/*.aggregate.ts` */
 	public place(place: Place): string {
 		return place.folder === undefined ? `${place.layer}/` : `${place.layer}/${place.folder}/*${place.suffix ?? ".ts"}`;
 	}

@@ -6,17 +6,14 @@ import type { CheckSettings } from "../check/index.ts";
 import type { RuleId } from "../rules/index.ts";
 import type { AlveolusConfig } from "./alveolus-config.ts";
 
-/** Tests and their companions: never production code, whatever the configuration says. */
 const testFiles: readonly string[] = ["**/*.spec.ts", "**/*.test.ts", "**/*.e2e-spec.ts", "**/*.fixture.ts", "**/*.fixtures.ts", "**/*.stories.ts", "**/__tests__/**", "**/__mocks__/**"];
 
-/** The configuration of a project, resolved against its directory: what a check reads and how. */
 export class Config implements CheckSettings {
 	public readonly projectDir: string;
 	public readonly rootDir: string;
 	public readonly tsConfigPath: string;
 	public readonly compositionRoot: string;
 	public readonly domainDependencies: AllowedPackages;
-	/** The packages the application may import: its own, and those of the domain. */
 	public readonly applicationDependencies: AllowedPackages;
 	public readonly contextFolders: readonly ContextFolder[];
 	public readonly extraFolders: ExtraFolders;

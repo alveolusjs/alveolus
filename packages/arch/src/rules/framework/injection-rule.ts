@@ -4,15 +4,9 @@ import type { ClassDeclaration, ClassType, SourceFile } from "../../model/index.
 import { ClassRule } from "./class-rule.ts";
 import type { Finding } from "./finding.ts";
 
-/**
- * A rule on what a building block receives: each class its fields and constructor parameters hold is checked against a list.
- * A class of an installed package that is no building block is left to the allowed dependencies of the configuration.
- */
 export abstract class InjectionRule<Id extends string = string> extends ClassRule<Id, "foreign"> {
-	/** The building block whose fields and constructor parameters are checked. */
 	protected abstract readonly holder: CoreKind;
 
-	/** Reported even when it also extends an allowed kind: a `QueryRepository` is a `Port` too. */
 	protected abstract readonly forbidden: readonly CoreKind[];
 
 	protected abstract readonly allowed: readonly CoreKind[];

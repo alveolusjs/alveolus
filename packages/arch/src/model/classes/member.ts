@@ -18,25 +18,16 @@ export interface MemberProps {
 	readonly returns: ReturnShape | undefined;
 }
 
-/** A member of a class, with the classes its type mentions. */
 export class Member {
 	public readonly name: string;
 	public readonly line: number;
 	public readonly kind: MemberKind;
 	public readonly visibility: Visibility;
 	public readonly isStatic: boolean;
-	/** A constructor parameter declared `private readonly x`: a field too. */
 	public readonly isParameterProperty: boolean;
-	/** A field that holds a function, such as `place = () => …`. */
 	public readonly isCallable: boolean;
-	/**
-	 * The classes its value holds, followed in depth through generics, tuples and object types: the type of a field or a parameter,
-	 * what a method or a getter returns. The parameters of a callback are not followed: receiving a value is not holding it.
-	 */
 	public readonly valueTypes: readonly ClassType[];
-	/** The classes in the parameters of a method. */
 	public readonly parameterTypes: readonly ClassType[];
-	/** How the result of a method, a getter or a callable field is spelled. */
 	public readonly returns: ReturnShape | undefined;
 
 	public constructor(props: MemberProps) {
@@ -56,7 +47,6 @@ export class Member {
 		return this.visibility === "public" && !this.isStatic;
 	}
 
-	/** A field, or a constructor parameter that declares one. */
 	public get isField(): boolean {
 		return this.kind === "field" || this.isParameterProperty;
 	}

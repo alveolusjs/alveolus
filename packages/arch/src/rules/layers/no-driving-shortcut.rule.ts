@@ -4,7 +4,6 @@ import type { ClassDeclaration, Dependency, SourceFile } from "../../model/index
 import type { Finding, RuleMeta } from "../framework/index.ts";
 import { ImportRule } from "../framework/index.ts";
 
-/** What a driving adapter reaches through the application, never directly. */
 const shortcuts: readonly CoreKind[] = ["CommandRepository", "QueryRepository", "Port", "AggregateRoot", "Entity", "DomainService"];
 
 export class NoDrivingShortcutRule extends ImportRule<"layers/no-driving-shortcut", "shortcut"> {
@@ -38,7 +37,6 @@ export class NoDrivingShortcutRule extends ImportRule<"layers/no-driving-shortcu
 		return undefined;
 	}
 
-	/** The classes the dependency brings in: the named ones, or every class of the file for `import *`. */
 	private importedClasses(dependency: Dependency, target: SourceFile): ClassDeclaration[] {
 		if (dependency.names.includes("*")) {
 			return [...target.classes];

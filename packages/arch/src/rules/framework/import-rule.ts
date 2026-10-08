@@ -3,7 +3,6 @@ import type { Dependency, SourceFile } from "../../model/index.ts";
 import type { Finding } from "./finding.ts";
 import { Rule } from "./rule.ts";
 
-/** A rule that looks at each dependency of the files it applies to. */
 export abstract class ImportRule<Id extends string = string, MessageId extends string = string> extends Rule<Id, MessageId> {
 	public check(architecture: Architecture): Finding<MessageId>[] {
 		const findings: Finding<MessageId>[] = [];
