@@ -145,15 +145,6 @@ export class Order extends AggregateRoot<OrderId> {
 			expect(codebase.checkAllRules()).toEqual([]);
 		});
 
-		it("leave adapters free under their technology", () => {
-			const codebase = shop().file(
-				"src/ordering/driven/pg/helpers/sql.ts",
-				`import { Pool } from "pg";\nexport const pool = new Pool();\nexport function run(sql: string) { return pool.query(sql); }`,
-			);
-
-			expect(codebase.checkAllRules()).toEqual([]);
-		});
-
 		it("do not read the methods of the module class", () => {
 			const codebase = shop().file("src/ordering/ordering.module.ts", `export class OrderingModule { public discount(total: number): number { return total > 100 ? 0.1 : 0; } }`);
 

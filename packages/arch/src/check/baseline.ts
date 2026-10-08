@@ -22,6 +22,10 @@ export class Baseline {
 		return new Baseline(content.violations ?? []);
 	}
 
+	public get size(): number {
+		return this.entries.length;
+	}
+
 	public get outdatedEntries(): number {
 		return this.entries.filter((entry) => entry.fingerprint === undefined).length;
 	}

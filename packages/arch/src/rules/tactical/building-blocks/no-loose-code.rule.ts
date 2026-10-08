@@ -16,9 +16,13 @@ type MessageId =
 	| "namespace"
 	| "statement"
 	| "compositionRootDeclaration"
-	| "compositionRootStatement";
+	| "compositionRootStatement"
+	| "adapterDeclaration"
+	| "adapterStatement";
 
 const guarded: ReadonlySet<Layer | undefined> = new Set<Layer>(["domain", "application"]);
+
+const adapters: ReadonlySet<Layer | undefined> = new Set<Layer>(["driven", "driving"]);
 
 const expectedBlocks: Readonly<Record<string, string>> = {
 	application: "CommandHandler, QueryHandler or EventTranslator",
@@ -37,9 +41,11 @@ const statementMessages: Readonly<Record<StatementKind, MessageId>> = {
 
 export class NoLooseCodeRule extends Rule<"tactical/no-loose-code", MessageId> {
 	public readonly meta: RuleMeta<"tactical/no-loose-code", MessageId> = {
-		description: "Code outside a building block in the domain or the application, anything but the module class in a composition root.",
+		description: "Code outside a building block in the domain or the application, outside a class in an adapter layer, anything but the module class in a composition root.",
 		id: "tactical/no-loose-code",
 		messages: {
+			adapterDeclaration: "The {kind} {name} has no place in an adapter layer: adapters are classes; make it a method of the adapter, or a mapper class of its own.",
+			adapterStatement: "A statement runs when the module loads: an adapter layer holds classes, which the composition root wires.",
 			classExpression: "{name} is a class expression: declare it as a class that extends a building block.",
 			compositionRootDeclaration: "The {kind} {name} has no place in a composition root: it holds its module class only.",
 			compositionRootStatement: "A statement runs when the module loads: the composition root holds its module class only.",
@@ -64,6 +70,8 @@ export class NoLooseCodeRule extends Rule<"tactical/no-loose-code", MessageId> {
 				findings.push(...this.looseStatements(file));
 			} else if (location.isCompositionRoot && location.isInBoundedContext) {
 				findings.push(...this.compositionRootStatements(file));
+			} else if (adapters.has(location.layer)) {
+				findings.push(...this.adapterStatements(file));
 			}
 		}
 		return findings;
@@ -96,6 +104,10 @@ export class NoLooseCodeRule extends Rule<"tactical/no-loose-code", MessageId> {
 
 	private compositionRootStatements(file: SourceFile): Finding<MessageId>[] {
 		return file.statements.map((statement) => this.statementFinding(file, statement, statement.kind === "statement" ? "compositionRootStatement" : "compositionRootDeclaration"));
+	}
+
+	private adapterStatements(file: SourceFile): Finding<MessageId>[] {
+		return file.statements.map((statement) => this.statementFinding(file, statement, statement.kind === "statement" ? "adapterStatement" : "adapterDeclaration"));
 	}
 
 	private statementFinding(file: SourceFile, statement: TopLevelStatement, messageId: MessageId): Finding<MessageId> {

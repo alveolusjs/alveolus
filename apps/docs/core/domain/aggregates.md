@@ -12,7 +12,7 @@ their rules.
 	<dt>File</dt><dd><code>domain/aggregates/order.aggregate.ts</code></dd>
 	<dt>Extends</dt><dd><a href="#api"><code>AggregateRoot&lt;Id, Event, Snapshot&gt;</code></a></dd>
 	<dt>Called by</dt><dd><a href="/core/application/command-handlers">Command handlers</a></dd>
-	<dt>Checked by</dt><dd><a href="/rules/tactical/no-misplaced-class"><code>tactical/no-misplaced-class</code></a>, <a href="/rules/tactical/no-thrown-failure"><code>tactical/no-thrown-failure</code></a>, <a href="/rules/tactical/no-aggregate-reference"><code>tactical/no-aggregate-reference</code></a></dd>
+	<dt>Checked by</dt><dd><a href="/rules/tactical/no-misplaced-class"><code>tactical/no-misplaced-class</code></a>, <a href="/rules/tactical/no-thrown-failure"><code>tactical/no-thrown-failure</code></a>, <a href="/rules/tactical/no-aggregate-reference"><code>tactical/no-aggregate-reference</code></a>, <a href="/rules/tactical/no-public-field"><code>tactical/no-public-field</code></a></dd>
 </dl>
 
 ## Why

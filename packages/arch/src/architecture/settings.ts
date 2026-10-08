@@ -1,4 +1,5 @@
 import type { AllowedPackages } from "./allowed-packages.ts";
+import type { ContextMap } from "./context-map.ts";
 
 export interface ContextFolder {
 	readonly name: string;
@@ -13,6 +14,7 @@ export interface Settings {
 	readonly contextFolders: readonly ContextFolder[];
 	readonly compositionRoot: string;
 	readonly extraFolders: ExtraFolders;
+	readonly contextMap: ContextMap | undefined;
 	readonly domainDependencies: AllowedPackages;
 	readonly applicationDependencies: AllowedPackages;
 }

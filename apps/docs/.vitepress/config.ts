@@ -82,7 +82,9 @@ const sidebar = [
 				collapsed: false,
 				items: [
 					{ link: "/rules/strategic/no-cross-context-import", text: "no-cross-context-import" },
+					{ link: "/rules/strategic/no-fat-shared-kernel", text: "no-fat-shared-kernel" },
 					{ link: "/rules/strategic/no-leaky-host-service", text: "no-leaky-host-service" },
+					{ link: "/rules/strategic/no-unmapped-context", text: "no-unmapped-context" },
 				],
 				text: "Strategic",
 			},
@@ -104,6 +106,7 @@ const sidebar = [
 					{ link: "/rules/tactical/no-foreign-query-dependency", text: "no-foreign-query-dependency" },
 					{ link: "/rules/tactical/no-loose-code", text: "no-loose-code" },
 					{ link: "/rules/tactical/no-misplaced-class", text: "no-misplaced-class" },
+					{ link: "/rules/tactical/no-public-field", text: "no-public-field" },
 					{ link: "/rules/tactical/no-stateful-service", text: "no-stateful-service" },
 					{ link: "/rules/tactical/no-thrown-failure", text: "no-thrown-failure" },
 				],

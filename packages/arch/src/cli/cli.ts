@@ -1,5 +1,6 @@
 import { Command, CommanderError } from "commander";
 
+import { existsSync } from "node:fs";
 import { join, resolve } from "node:path";
 
 import type { CheckOutcome } from "../check/index.ts";
@@ -17,6 +18,7 @@ interface Options {
 	readonly project: string;
 	readonly config?: string;
 	readonly tsconfig?: string;
+	readonly allowGrowth?: boolean;
 	readonly format: "text" | "json" | "sarif";
 }
 
@@ -31,6 +33,7 @@ export class Cli {
 	) {}
 
 	public async run(args: readonly string[]): Promise<number> {
+		this.exitCode = 0;
 		try {
 			await this.program().parseAsync([...args], { from: "user" });
 		} catch (error) {
@@ -47,7 +50,9 @@ export class Cli {
 		const arch = program.command("arch").description("Check the architecture of a Domain-Driven Design project");
 
 		this.withOptions(arch.command("check").description("Report the violations that are not in the baseline")).action((options: Options) => this.check(options));
-		this.withOptions(arch.command("baseline").description(`Write the current violations to ${Baseline.fileName}`)).action((options: Options) => this.baseline(options));
+		this.withOptions(arch.command("baseline").description(`Write the current violations to ${Baseline.fileName}`))
+			.option("--allow-growth", "write the baseline even when it holds more entries than before")
+			.action((options: Options) => this.baseline(options));
 
 		return program;
 	}
@@ -94,7 +99,14 @@ export class Cli {
 
 	private async baseline(options: Options): Promise<void> {
 		const { config, outcome } = await this.analyze(options);
-		await Baseline.of(outcome.violations).save(join(config.projectDir, Baseline.fileName));
+		const path = join(config.projectDir, Baseline.fileName);
+		const previous = (await Baseline.load(path)).size;
+		if (existsSync(path) && outcome.violations.length > previous && options.allowGrowth !== true) {
+			this.stderr.write(`The baseline would grow from ${previous} to ${outcome.violations.length} entries: fix the new violations, or pass --allow-growth.\n`);
+			this.exitCode = 1;
+			return;
+		}
+		await Baseline.of(outcome.violations).save(path);
 		this.stdout.write(`${outcome.violations.length} violations written to ${Baseline.fileName}\n`);
 	}
 

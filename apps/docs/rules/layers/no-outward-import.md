@@ -160,9 +160,9 @@ The packages of `domainDependencies` are allowed in the application too.
 ## Limits
 
 ::: warning What the rule cannot see
-- Below its technology, an adapter layer is free: `driven/pg/helpers/sql.ts` may hold functions,
-  constants or a connection pool, and `driving/http/` any folders. Only the layer and the
-  technology folder are checked.
+- Below its technology, an adapter layer may hold any folder: `driving/http/controllers/v1/` is
+  fine. What those folders contain is checked by
+  [`tactical/no-loose-code`](../tactical/no-loose-code.md): classes only.
 - A file that matches `ignore` in `alveolus.config.ts` is not analysed at all. Review a change to
   `ignore` as you would review a rule turned off.
 :::

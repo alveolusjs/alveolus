@@ -155,7 +155,10 @@ into a response.
 - Alveolus provides no bus and no container: wire handlers in the composition root, by hand or
   with the container of your framework. See [Integrations](../../integrations/index.md).
 - The events recorded by the aggregate stay on it after `save`: hand them over through the
-  [outbox](./outbox.md).
+  [outbox](./outbox.md). A handler never receives an `EventPublisher`: the relay publishes.
+- A command changes one aggregate. When a second one must change too, it reacts to the event of
+  the first, in its own transaction (Vernon, *DDD Distilled*, chapter 5). The rules do not check
+  this: a handler that receives two command repositories is a review item.
 :::
 
 ## Usage

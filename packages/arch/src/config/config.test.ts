@@ -50,4 +50,16 @@ describe("Config", () => {
 		expect(new Config({ boundedContexts: {}, root: "src" }, "/project").tsConfigPath).toBe("/project/tsconfig.json");
 		expect(new Config({ boundedContexts: {}, root: "src", tsconfig: "tsconfig.build.json" }, "/project").tsConfigPath).toBe("/project/tsconfig.build.json");
 	});
+
+	it("refuses a context map that names an unknown context, or that has a cycle", () => {
+		const contexts = { ledger: "ledger", payments: "payments" };
+
+		expect(() => new Config({ boundedContexts: contexts, contextMap: { payments: ["billing"] }, root: "src" }, "/project")).toThrow(
+			"contextMap names billing, which boundedContexts does not declare.",
+		);
+		expect(() => new Config({ boundedContexts: contexts, contextMap: { ledger: ["payments"], payments: ["ledger"] }, root: "src" }, "/project")).toThrow(
+			"contextMap has a cycle: ledger → payments → ledger.",
+		);
+		expect(new Config({ boundedContexts: contexts, contextMap: { payments: ["ledger"] }, root: "src" }, "/project").contextMap?.allows("payments", "ledger")).toBe(true);
+	});
 });

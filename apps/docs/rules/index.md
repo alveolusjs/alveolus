@@ -43,7 +43,9 @@ architecture it guards, the rest says what a violation is.
 | Rule | Reports |
 | --- | --- |
 | [`strategic/no-cross-context-import`](./strategic/no-cross-context-import.md) | An import from another bounded context that is not its open host service, a composition root that re-exports. |
+| [`strategic/no-fat-shared-kernel`](./strategic/no-fat-shared-kernel.md) | An aggregate, a repository or a handler in the shared kernel. |
 | [`strategic/no-leaky-host-service`](./strategic/no-leaky-host-service.md) | An open host service that exposes a class of its context instead of the published language. |
+| [`strategic/no-unmapped-context`](./strategic/no-unmapped-context.md) | A context consuming one the context map does not allow, or two contexts that depend on each other. |
 
 ## Layers
 
@@ -63,6 +65,7 @@ architecture it guards, the rest says what a violation is.
 | [`tactical/no-foreign-query-dependency`](./tactical/no-foreign-query-dependency.md) | A query handler receiving what writes or changes state. |
 | [`tactical/no-loose-code`](./tactical/no-loose-code.md) | Code outside a building block in the domain or the application: a plain or static-only class, a class that extends an expression, a function, an enum, a namespace, module state, a computed constant; anything but the module in a composition root. |
 | [`tactical/no-misplaced-class`](./tactical/no-misplaced-class.md) | A class in the wrong folder or file, two classes in one file. |
+| [`tactical/no-public-field`](./tactical/no-public-field.md) | A public field on an aggregate, an entity, a value object or an identifier. |
 | [`tactical/no-stateful-service`](./tactical/no-stateful-service.md) | A domain service holding a port, a repository or another service. |
 | [`tactical/no-thrown-failure`](./tactical/no-thrown-failure.md) | A business failure thrown instead of returned. |
 

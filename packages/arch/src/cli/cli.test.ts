@@ -140,4 +140,14 @@ describe("Cli", () => {
 		expect(stdout.text).toBe("No violation (1 fixed, 1 disabled)\n");
 		expect(stderr.text).toContain("1 entry of the baseline match nothing any more: run alveolus arch baseline to drop it.");
 	});
+
+	it("refuses to write a baseline that grows, unless asked to", async () => {
+		sandbox.write("src/ordering/driven/smtp/adapters/mailer.adapter.ts", "export class Mailer {}\n");
+		expect(await cli.run(["arch", "baseline"])).toBe(0);
+		sandbox.write("src/ordering/driven/smtp/adapters/sms.adapter.ts", "export class Sms {}\n");
+
+		expect(await cli.run(["arch", "baseline"])).toBe(1);
+		expect(stderr.text).toContain("The baseline would grow from 1 to 2 entries: fix the new violations, or pass --allow-growth.");
+		expect(await cli.run(["arch", "baseline", "--allow-growth"])).toBe(0);
+	});
 });

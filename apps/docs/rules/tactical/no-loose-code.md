@@ -51,7 +51,8 @@ application, `CommandHandler`, `QueryHandler` or `EventTranslator`.
 <div class="al-cards">
 <div class="al-card"><span class="al-card-title">Allowed</span>Types, interfaces and constants holding data, and functions written inside a method. A static factory next to instance members.</div>
 <div class="al-card"><span class="al-card-title">Composition roots</span>Its module class, imports and constants of data: a function, a computed constant or a statement around it is reported.</div>
-<div class="al-card"><span class="al-card-title">Not checked</span>Adapters in <code>driven/</code> and <code>driving/</code> may hold any class or function, and so may the files at the root of <code>src/</code>.</div>
+<div class="al-card"><span class="al-card-title">Adapter layers</span><code>driven/</code> and <code>driving/</code> hold classes: adapters, mappers, controllers, any class. A function, a computed constant or module state is reported there too.</div>
+<div class="al-card"><span class="al-card-title">Not checked</span>The files at the root of <code>src/</code>, such as <code>main.ts</code>.</div>
 </div>
 
 ## What it reports

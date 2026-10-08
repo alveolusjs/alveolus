@@ -35,11 +35,12 @@ generics and objects such as `deps: { … }`:
 | Receives | Allowed |
 | --- | --- |
 | A `CommandRepository` | ✅ |
-| A `Port`: `Clock`, `IdGenerator`, `UnitOfWork`, `Outbox`, `EventPublisher`, your own ports | ✅ |
+| A `Port`: `Clock`, `IdGenerator`, `UnitOfWork`, `Outbox`, your own ports | ✅ |
 | An `EventTranslator`, a `DomainService` | ✅ |
 | A value object, an identifier, a plain value such as a `number` | ✅ |
 | A class of a package listed in `applicationDependencies` | ✅ |
 | A `QueryRepository`, even though it is a `Port` | ❌ |
+| An `EventPublisher`, even though it is a `Port`: events leave through the outbox, and the relay publishes them | ❌ |
 | A `CommandHandler` or a `QueryHandler` | ❌ |
 | Any other class of the project | ❌ |
 

@@ -16,6 +16,7 @@ const schema = z.strictObject({
 	applicationDependencies: packageDependencies.exactOptional(),
 	boundedContexts: z.record(z.string(), z.string()),
 	compositionRoot: z.string().exactOptional(),
+	contextMap: z.record(z.string(), z.array(z.string())).exactOptional(),
 	domainDependencies: packageDependencies.exactOptional(),
 	ignore: z.array(z.string()).exactOptional(),
 	layout: z.strictObject({ extraFolders: z.strictObject({ application: z.array(z.string()).exactOptional(), domain: z.array(z.string()).exactOptional() }).exactOptional() }).exactOptional(),

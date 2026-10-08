@@ -18,7 +18,7 @@ export class Helper {}`;
 function handler(members: string): TestCodebase {
 	return new TestCodebase().file("src/ordering/domain/blocks.ts", blocks).file(
 		"src/ordering/application/commands/place-order.command.ts",
-		`import { CommandHandler, type Clock, type Outbox, ok, type Result } from "@alveolus/core";
+		`import { CommandHandler, type Clock, type EventPublisher, type Outbox, ok, type Result } from "@alveolus/core";
 		import type { Decimal } from "decimal.js";
 		import type { GetOrder, Helper, Money, OrderEvents, OrderLimit, OrderSummaries, Orders, PayOrder } from "../../domain/blocks.ts";
 		export class PlaceOrder extends CommandHandler<void> {
@@ -50,10 +50,10 @@ describe("NoForeignCommandDependencyRule", () => {
 		);
 
 		expect(codebase.messages(new NoForeignCommandDependencyRule())).toEqual([
-			"The CommandHandler PlaceOrder receives Helper, a class that extends no building block: a command handler receives command repositories, ports, event translators, domain services and value objects.",
-			"The CommandHandler PlaceOrder receives OrderSummaries, a QueryRepository: a command handler receives command repositories, ports, event translators, domain services and value objects.",
-			"The CommandHandler PlaceOrder receives GetOrder, a QueryHandler: a command handler receives command repositories, ports, event translators, domain services and value objects.",
-			"The CommandHandler PlaceOrder receives PayOrder, a CommandHandler: a command handler receives command repositories, ports, event translators, domain services and value objects.",
+			"The CommandHandler PlaceOrder receives Helper, a class that extends no building block: a command handler receives command repositories, ports, event translators, domain services and value objects; events leave through the outbox, never a publisher.",
+			"The CommandHandler PlaceOrder receives OrderSummaries, a QueryRepository: a command handler receives command repositories, ports, event translators, domain services and value objects; events leave through the outbox, never a publisher.",
+			"The CommandHandler PlaceOrder receives GetOrder, a QueryHandler: a command handler receives command repositories, ports, event translators, domain services and value objects; events leave through the outbox, never a publisher.",
+			"The CommandHandler PlaceOrder receives PayOrder, a CommandHandler: a command handler receives command repositories, ports, event translators, domain services and value objects; events leave through the outbox, never a publisher.",
 		]);
 	});
 
@@ -64,5 +64,11 @@ describe("NoForeignCommandDependencyRule", () => {
 			"src/ordering/application/commands/place-order.command.ts:5 PlaceOrder.slice",
 			"src/ordering/application/commands/place-order.command.ts:5 PlaceOrder.deps",
 		]);
+	});
+
+	it("rejects an event publisher: events leave through the outbox", () => {
+		const codebase = handler(`constructor(private readonly publisher: EventPublisher) { super(); }`);
+
+		expect(codebase.check(new NoForeignCommandDependencyRule())).toEqual(["src/ordering/application/commands/place-order.command.ts:5 PlaceOrder.publisher"]);
 	});
 });

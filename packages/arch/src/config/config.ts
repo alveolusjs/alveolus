@@ -1,7 +1,7 @@
 import { matchesGlob, relative, resolve, sep } from "node:path";
 
-import type { ContextFolder, ExtraFolders } from "../architecture/index.ts";
-import { AllowedPackages } from "../architecture/index.ts";
+import type { ContextFolder, ExtraFolders, Upstreams } from "../architecture/index.ts";
+import { AllowedPackages, ContextMap } from "../architecture/index.ts";
 import type { CheckSettings } from "../check/index.ts";
 import type { RuleId } from "../rules/index.ts";
 import type { AlveolusConfig } from "./alveolus-config.ts";
@@ -17,6 +17,7 @@ export class Config implements CheckSettings {
 	public readonly applicationDependencies: AllowedPackages;
 	public readonly contextFolders: readonly ContextFolder[];
 	public readonly extraFolders: ExtraFolders;
+	public readonly contextMap: ContextMap | undefined;
 	private readonly ignored: readonly string[];
 	private readonly rules: AlveolusConfig["rules"];
 
@@ -29,6 +30,7 @@ export class Config implements CheckSettings {
 		this.applicationDependencies = this.domainDependencies.with(new AllowedPackages(config.applicationDependencies));
 		this.ignored = [...testFiles, ...(config.ignore ?? [])];
 		this.extraFolders = config.layout?.extraFolders ?? {};
+		this.contextMap = config.contextMap === undefined ? undefined : this.validContextMap(config.contextMap, Object.keys(config.boundedContexts));
 		this.rules = config.rules;
 
 		const sharedKernel = config.sharedKernel ?? "shared-kernel";
@@ -36,6 +38,19 @@ export class Config implements CheckSettings {
 			...Object.entries(config.boundedContexts).map(([name, folder]) => ({ dir: resolve(this.rootDir, folder), isSharedKernel: false, name })),
 			{ dir: resolve(this.rootDir, sharedKernel), isSharedKernel: true, name: "shared kernel" },
 		];
+	}
+
+	private validContextMap(upstreams: Upstreams, contexts: readonly string[]): ContextMap {
+		const map = new ContextMap(upstreams);
+		const unknown = map.contexts.filter((name) => !contexts.includes(name));
+		if (unknown.length > 0) {
+			throw new Error(`contextMap names ${unknown.join(", ")}, which boundedContexts does not declare.`);
+		}
+		const cycle = map.cycle();
+		if (cycle !== undefined) {
+			throw new Error(`contextMap has a cycle: ${cycle.join(" → ")}. Two contexts that depend on each other can no longer change alone: reverse one dependency.`);
+		}
+		return map;
 	}
 
 	public isIgnored(path: string): boolean {

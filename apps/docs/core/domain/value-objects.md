@@ -12,7 +12,7 @@ identifier.
 	<dt>File</dt><dd><code>domain/value-objects/money.value-object.ts</code>, <code>domain/value-objects/order-id.identifier.ts</code></dd>
 	<dt>Extends</dt><dd><a href="#api"><code>ValueObject&lt;Props&gt;</code></a> or <a href="#identifier"><code>Identifier&lt;T, Tag&gt;</code></a></dd>
 	<dt>Used by</dt><dd><a href="/core/domain/aggregates">Aggregates</a>, <a href="/core/domain/entities">entities</a>, <a href="/core/domain/domain-events">domain events</a>, <a href="/core/application/command-handlers">command handlers</a></dd>
-	<dt>Checked by</dt><dd><a href="/rules/tactical/no-misplaced-class"><code>tactical/no-misplaced-class</code></a>, <a href="/rules/tactical/no-loose-code"><code>tactical/no-loose-code</code></a>, <a href="/rules/tactical/no-aggregate-reference"><code>tactical/no-aggregate-reference</code></a></dd>
+	<dt>Checked by</dt><dd><a href="/rules/tactical/no-misplaced-class"><code>tactical/no-misplaced-class</code></a>, <a href="/rules/tactical/no-loose-code"><code>tactical/no-loose-code</code></a>, <a href="/rules/tactical/no-aggregate-reference"><code>tactical/no-aggregate-reference</code></a>, <a href="/rules/tactical/no-public-field"><code>tactical/no-public-field</code></a></dd>
 </dl>
 
 ## Why

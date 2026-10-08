@@ -5,6 +5,7 @@ import type { ClassType, DependencyTarget, Member, Project, SourceFile } from ".
 import { ClassDeclaration } from "../model/index.ts";
 import type { AllowedPackages } from "./allowed-packages.ts";
 import { BuildingBlocks } from "./building-blocks.ts";
+import type { ContextMap } from "./context-map.ts";
 import { CoreApi } from "./core-api.ts";
 import { Layers } from "./layers.ts";
 import type { ShapeIssue } from "./paths/layer-shape.ts";
@@ -41,6 +42,10 @@ export class Architecture {
 
 	public get applicationDependencies(): AllowedPackages {
 		return this.settings.applicationDependencies;
+	}
+
+	public get contextMap(): ContextMap | undefined {
+		return this.settings.contextMap;
 	}
 
 	public locationOf(file: SourceFile): Location {

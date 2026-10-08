@@ -124,6 +124,7 @@ export default defineConfig({
 | `tsconfig` | `"tsconfig.json"` | The TypeScript configuration the sources are read with, relative to the project folder. |
 | `boundedContexts` | required | Each bounded context and its folder, relative to `root`. `"modules/ordering"` works. |
 | `sharedKernel` | `"shared-kernel"` | The folder shared by every bounded context, relative to `root`. |
+| `contextMap` | none | For each bounded context, the ones it consumes: `{ payments: ["ledger"] }`. Checked for cycles; without it, only cycles are reported. |
 | `compositionRoot` | `"*.module.ts"` | The file, at the root of a bounded context, that wires it. |
 | `domainDependencies` | `{}` | npm packages the domain may import, besides `@alveolus/core`. |
 | `applicationDependencies` | `{}` | npm packages the application may import, besides `@alveolus/core` and `domainDependencies`. |
@@ -197,7 +198,7 @@ today, and fix the past over time:
 <div class="al-card"><span class="al-card-title"><span class="al-card-step">1</span>Record the current violations</span>Run <code>npx alveolus arch baseline</code>: it writes them to <code>alveolus.baseline.json</code>.</div>
 <div class="al-card"><span class="al-card-title"><span class="al-card-step">2</span>Commit the file</span>From then on, <code>check</code> fails only on violations that are not in the baseline, and says how many it ignored.</div>
 <div class="al-card"><span class="al-card-title"><span class="al-card-step">3</span>Fix them over time</span>Each fix removes a violation from what the baseline covers. New code keeps every rule.</div>
-<div class="al-card"><span class="al-card-title"><span class="al-card-step">4</span>Record it again</span>Run <code>baseline</code> after a round of fixes: the file only shrinks.</div>
+<div class="al-card"><span class="al-card-title"><span class="al-card-step">4</span>Record it again</span>Run <code>baseline</code> after a round of fixes: the file only shrinks. It refuses to grow, unless you pass <code>--allow-growth</code>.</div>
 </div>
 
 ### How a violation is recognised

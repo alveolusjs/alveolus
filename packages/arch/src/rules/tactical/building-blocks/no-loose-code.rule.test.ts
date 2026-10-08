@@ -54,12 +54,29 @@ describe("NoLooseCodeRule", () => {
 		]);
 	});
 
-	it("leaves adapters and composition roots alone", () => {
+	it("leaves plain classes in adapters, the composition root and the root of src alone", () => {
 		const codebase = new TestCodebase()
-			.file("src/ordering/driving/http/orders.controller.ts", `export class OrdersController {}\nexport function helper(): void {}`)
-			.file("src/ordering/ordering.module.ts", `export class OrderingModule {}`);
+			.file("src/ordering/driving/http/orders.controller.ts", `export class OrdersController {}\nexport const routes = ["orders"];`)
+			.file("src/ordering/driven/pg/mappers/order.mapper.ts", `export class OrderMapper {}`)
+			.file("src/ordering/ordering.module.ts", `export class OrderingModule {}`)
+			.file("src/main.ts", `export function bootstrap(): void {}\nbootstrap();`);
 
 		expect(codebase.check(new NoLooseCodeRule())).toEqual([]);
+	});
+
+	it("rejects loose code in an adapter layer", () => {
+		const codebase = new TestCodebase().file(
+			"src/ordering/driven/pg/helpers/sql.ts",
+			`export const pool = { query(sql: string) { return sql; } };
+			export function run(sql: string) { return pool.query(sql); }
+			pool.query("select 1");`,
+		);
+
+		expect(codebase.messages(new NoLooseCodeRule())).toEqual([
+			"The computed constant pool has no place in an adapter layer: adapters are classes; make it a method of the adapter, or a mapper class of its own.",
+			"The function run has no place in an adapter layer: adapters are classes; make it a method of the adapter, or a mapper class of its own.",
+			"A statement runs when the module loads: an adapter layer holds classes, which the composition root wires.",
+		]);
 	});
 
 	it("rejects namespaces, objects of functions, computed constants, class expressions, module state and statements", () => {
