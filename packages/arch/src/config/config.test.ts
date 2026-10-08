@@ -1,23 +1,27 @@
 import { describe, expect, it } from "vitest";
 
+import { join, resolve } from "node:path";
+
 import { Config } from "./config.ts";
+
+const project = resolve("/project");
 
 describe("Config", () => {
 	it("applies the defaults of the convention", () => {
 		const config = new Config({ boundedContexts: { ordering: "ordering" }, root: "src" }, "/project");
 
-		expect([config.rootDir, config.compositionRoot]).toEqual(["/project/src", "*.module.ts"]);
+		expect([config.rootDir, config.compositionRoot]).toEqual([join(project, "src"), "*.module.ts"]);
 		expect([config.domainDependencies.has("decimal.js"), config.applicationDependencies.has("decimal.js")]).toEqual([false, false]);
 		expect(config.contextFolders).toEqual([
-			{ dir: "/project/src/ordering", isSharedKernel: false, name: "ordering" },
-			{ dir: "/project/src/shared-kernel", isSharedKernel: true, name: "shared kernel" },
+			{ dir: join(project, "src", "ordering"), isSharedKernel: false, name: "ordering" },
+			{ dir: join(project, "src", "shared-kernel"), isSharedKernel: true, name: "shared kernel" },
 		]);
 	});
 
 	it("accepts nested bounded contexts and a shared kernel anywhere under the root", () => {
 		const config = new Config({ boundedContexts: { ordering: "modules/ordering" }, root: "src", sharedKernel: "shared" }, "/project");
 
-		expect(config.contextFolders.map((folder) => folder.dir)).toEqual(["/project/src/modules/ordering", "/project/src/shared"]);
+		expect(config.contextFolders.map((folder) => folder.dir)).toEqual([join(project, "src", "modules", "ordering"), join(project, "src", "shared")]);
 	});
 
 	it("ignores test files by default, and the globs it is given", () => {
@@ -49,8 +53,8 @@ describe("Config", () => {
 	});
 
 	it("reads the sources with tsconfig.json, or the configuration named", () => {
-		expect(new Config({ boundedContexts: {}, root: "src" }, "/project").tsConfigPath).toBe("/project/tsconfig.json");
-		expect(new Config({ boundedContexts: {}, root: "src", tsconfig: "tsconfig.build.json" }, "/project").tsConfigPath).toBe("/project/tsconfig.build.json");
+		expect(new Config({ boundedContexts: {}, root: "src" }, "/project").tsConfigPath).toBe(join(project, "tsconfig.json"));
+		expect(new Config({ boundedContexts: {}, root: "src", tsconfig: "tsconfig.build.json" }, "/project").tsConfigPath).toBe(join(project, "tsconfig.build.json"));
 	});
 
 	it("refuses a context map that names an unknown context, or that has a cycle", () => {

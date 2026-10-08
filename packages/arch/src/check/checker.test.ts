@@ -26,7 +26,7 @@ describe("Checker", () => {
 	it("refuses to check a project from which @alveolus/core cannot be imported", () => {
 		const config = new Config({ boundedContexts: {}, root: "src" }, "/project");
 
-		expect(() => new Checker(new FakeImporter(false), []).check(config)).toThrow("@alveolus/core cannot be imported from /project/src");
+		expect(() => new Checker(new FakeImporter(false), []).check(config)).toThrow(`@alveolus/core cannot be imported from ${config.rootDir}`);
 		expect(new Checker(new FakeImporter(true), []).check(config)).toEqual({ files: 1, suppressed: [], violations: [] });
 	});
 

@@ -1,4 +1,4 @@
-import { basename, dirname, isAbsolute, matchesGlob, relative, sep } from "node:path";
+import { basename, dirname, isAbsolute, matchesGlob, relative, resolve, sep } from "node:path";
 
 import type { Layer } from "../../conventions/index.ts";
 import { layers } from "../../conventions/index.ts";
@@ -9,17 +9,18 @@ export class Layout {
 	public constructor(private readonly settings: Settings) {}
 
 	public locate(path: string): Location {
-		const fileName = basename(path);
-		const folder = this.contextFolderOf(path);
+		const file = resolve(path);
+		const fileName = basename(file);
+		const folder = this.contextFolderOf(file);
 
 		if (folder === undefined) {
-			const isAtRoot = dirname(path) === this.settings.rootDir;
+			const isAtRoot = dirname(file) === this.settings.rootDir;
 			return new Location({ area: isAtRoot ? "root" : "outside", fileName });
 		}
 
 		const area = folder.isSharedKernel ? "shared-kernel" : "context";
 		const context = folder.name;
-		const directories = this.directoriesBetween(folder.dir, path);
+		const directories = this.directoriesBetween(folder.dir, file);
 
 		if (directories.length === 0) {
 			return new Location({ area, context, fileName, isCompositionRoot: this.isCompositionRoot(fileName) });

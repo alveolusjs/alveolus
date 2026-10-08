@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest";
 
+import { normalize } from "node:path";
+
 import { TestCodebase } from "../../../test/support/test-codebase.ts";
 
 const path = "src/ordering/domain/aggregates/order.aggregate.ts";
@@ -20,10 +22,10 @@ describe("TsMorphImporter", () => {
 			.readFile(path);
 
 		expect(file.dependencies.map((dependency) => [dependency.line, dependency.form, dependency.label, dependency.target])).toEqual([
-			[1, "import", "Money", { kind: "file", path: "/project/src/ordering/domain/value-objects/money.value-object.ts", visibility: "analysed" }],
-			[2, "re-export", "Money", { kind: "file", path: "/project/src/ordering/domain/value-objects/money.value-object.ts", visibility: "analysed" }],
+			[1, "import", "Money", { kind: "file", path: normalize("/project/src/ordering/domain/value-objects/money.value-object.ts"), visibility: "analysed" }],
+			[2, "re-export", "Money", { kind: "file", path: normalize("/project/src/ordering/domain/value-objects/money.value-object.ts"), visibility: "analysed" }],
 			[3, "inline type", "Pool", { kind: "package", name: "pg" }],
-			[4, "dynamic import", "*", { kind: "file", path: "/project/src/ordering/domain/aggregates/missing.ts", visibility: "unresolved" }],
+			[4, "dynamic import", "*", { kind: "file", path: normalize("/project/src/ordering/domain/aggregates/missing.ts"), visibility: "unresolved" }],
 			[5, "require", "*", { kind: "package", name: "pg" }],
 			[6, "require", "*", { kind: "package", name: "pg" }],
 		]);
