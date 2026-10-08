@@ -25,9 +25,10 @@ const schema = z.strictObject({
 			"layers/no-portless-adapter": ruleSetting.exactOptional(),
 			"strategic/no-cross-context-import": ruleSetting.exactOptional(),
 			"tactical/no-aggregate-reference": ruleSetting.exactOptional(),
+			"tactical/no-command-in-query": ruleSetting.exactOptional(),
 			"tactical/no-misplaced-class": ruleSetting.exactOptional(),
-			"tactical/no-mixed-handler": ruleSetting.exactOptional(),
 			"tactical/no-plain-class": ruleSetting.exactOptional(),
+			"tactical/no-query-in-command": ruleSetting.exactOptional(),
 			"tactical/no-thrown-failure": ruleSetting.exactOptional(),
 		})
 		.exactOptional(),

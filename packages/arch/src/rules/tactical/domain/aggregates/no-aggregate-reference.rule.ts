@@ -1,7 +1,7 @@
-import type { CodeClass, TypeUsage } from "../codebase/index.ts";
-import type { RuleId } from "../config/index.ts";
-import { ClassRule } from "./class-rule.ts";
-import type { Problem } from "./problem.ts";
+import type { CodeClass, TypeUsage } from "../../../../codebase/index.ts";
+import type { RuleId } from "../../../../config/index.ts";
+import { ClassRule } from "../../../class-rule.ts";
+import type { Problem } from "../../../problem.ts";
 
 export class NoAggregateReferenceRule extends ClassRule {
 	public readonly id: RuleId = "tactical/no-aggregate-reference";

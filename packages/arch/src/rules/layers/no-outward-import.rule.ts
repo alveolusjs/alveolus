@@ -1,8 +1,8 @@
-import type { Codebase, CodeFile, Import, Layer, Location } from "../codebase/index.ts";
-import { CoreApi } from "../codebase/index.ts";
-import type { Config, RuleId } from "../config/index.ts";
-import { ImportRule } from "./import-rule.ts";
-import type { Violation } from "./violation.ts";
+import type { Codebase, CodeFile, Import, Layer, Location } from "../../codebase/index.ts";
+import { CoreApi } from "../../codebase/index.ts";
+import type { Config, RuleId } from "../../config/index.ts";
+import { ImportRule } from "../import-rule.ts";
+import type { Violation } from "../violation.ts";
 
 type OuterLayer = Exclude<Layer, "domain">;
 

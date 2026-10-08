@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from "vitest";
 
-import { TestCodebase } from "../../test/support/test-codebase.ts";
+import { TestCodebase } from "../../../test/support/test-codebase.ts";
 import { NoCrossContextImportRule } from "./no-cross-context-import.rule.ts";
 
 describe("NoCrossContextImportRule", () => {

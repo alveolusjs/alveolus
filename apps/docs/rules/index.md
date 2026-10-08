@@ -57,9 +57,10 @@ architecture it guards, the rest says what a violation is.
 | Rule | Reports |
 | --- | --- |
 | [`tactical/no-aggregate-reference`](./tactical/no-aggregate-reference.md) | An aggregate holding another aggregate instead of its identifier. |
+| [`tactical/no-command-in-query`](./tactical/no-command-in-query.md) | A query handler receiving what writes. |
 | [`tactical/no-misplaced-class`](./tactical/no-misplaced-class.md) | A class in the wrong folder or file, two classes in one file. |
-| [`tactical/no-mixed-handler`](./tactical/no-mixed-handler.md) | A command reading views, a query changing aggregates. |
 | [`tactical/no-plain-class`](./tactical/no-plain-class.md) | A plain class, a free function or an enum in the domain or the application. |
+| [`tactical/no-query-in-command`](./tactical/no-query-in-command.md) | A command handler reading views. |
 | [`tactical/no-thrown-failure`](./tactical/no-thrown-failure.md) | A business failure thrown instead of returned. |
 
 ## Read a violation

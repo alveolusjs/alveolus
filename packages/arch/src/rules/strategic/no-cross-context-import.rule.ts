@@ -1,6 +1,6 @@
-import type { Codebase, CodeFile, Import } from "../codebase/index.ts";
-import type { RuleId } from "../config/index.ts";
-import { ImportRule } from "./import-rule.ts";
+import type { Codebase, CodeFile, Import } from "../../codebase/index.ts";
+import type { RuleId } from "../../config/index.ts";
+import { ImportRule } from "../import-rule.ts";
 
 export class NoCrossContextImportRule extends ImportRule {
 	public readonly id: RuleId = "strategic/no-cross-context-import";

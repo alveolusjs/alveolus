@@ -12,7 +12,7 @@ methods and saves it.
 	<dt>File</dt><dd><code>application/commands/place-order.command.ts</code></dd>
 	<dt>Extends</dt><dd><a href="#api"><code>CommandHandler&lt;Input, Output, Error&gt;</code></a></dd>
 	<dt>Called by</dt><dd>Driving adapters: controllers, message consumers, scripts</dd>
-	<dt>Checked by</dt><dd><a href="/rules/tactical/no-misplaced-class"><code>tactical/no-misplaced-class</code></a>, <a href="/rules/tactical/no-mixed-handler"><code>tactical/no-mixed-handler</code></a>, <a href="/rules/layers/no-outward-import"><code>layers/no-outward-import</code></a></dd>
+	<dt>Checked by</dt><dd><a href="/rules/tactical/no-misplaced-class"><code>tactical/no-misplaced-class</code></a>, <a href="/rules/tactical/no-query-in-command"><code>tactical/no-query-in-command</code></a>, <a href="/rules/layers/no-outward-import"><code>layers/no-outward-import</code></a></dd>
 </dl>
 
 ## Why
@@ -590,7 +590,7 @@ npx alveolus arch check
 ```
 
 <div class="al-cards">
-<div class="al-card"><span class="al-card-title"><a href="../../rules/tactical/no-mixed-handler"><code>no-mixed-handler</code></a></span>It receives no query repository: commands and queries stay apart.</div>
+<div class="al-card"><span class="al-card-title"><a href="../../rules/tactical/no-query-in-command"><code>no-query-in-command</code></a></span>It receives no query repository: commands and queries stay apart.</div>
 <div class="al-card"><span class="al-card-title"><a href="../../rules/tactical/no-misplaced-class"><code>no-misplaced-class</code></a></span>It stays alone in <code>application/commands/*.command.ts</code>.</div>
 <div class="al-card"><span class="al-card-title"><a href="../../rules/layers/no-outward-import"><code>no-outward-import</code></a></span>It imports the domain and the application, never an adapter.</div>
 </div>
@@ -599,9 +599,9 @@ A query repository added to its constructor is reported:
 
 ```
 src/ordering/application/commands/place-order.command.ts:46
-  tactical/no-mixed-handler: The CommandHandler PlaceOrderHandler
-  receives OrderSummaries, a QueryRepository: keep commands and
-  queries apart.
+  tactical/no-query-in-command: The CommandHandler PlaceOrderHandler
+  receives OrderSummaries, a QueryRepository: decide from the
+  aggregate, through a CommandRepository.
 ```
 
 ## See also
@@ -610,4 +610,4 @@ src/ordering/application/commands/place-order.command.ts:46
 - [Repositories](../domain/repositories.md), to load and save aggregates
 - [Unit of Work](./unit-of-work.md) and [Outbox](./outbox.md), to change and record atomically
 - [Query handlers](./query-handlers.md), for requests that only read
-- Rules: [`tactical/no-mixed-handler`](../../rules/tactical/no-mixed-handler.md), [`layers/no-outward-import`](../../rules/layers/no-outward-import.md), [`tactical/no-misplaced-class`](../../rules/tactical/no-misplaced-class.md)
+- Rules: [`tactical/no-query-in-command`](../../rules/tactical/no-query-in-command.md), [`layers/no-outward-import`](../../rules/layers/no-outward-import.md), [`tactical/no-misplaced-class`](../../rules/tactical/no-misplaced-class.md)

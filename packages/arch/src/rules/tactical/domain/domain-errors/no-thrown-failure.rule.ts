@@ -1,8 +1,8 @@
-import type { Codebase, CodeFile } from "../codebase/index.ts";
-import type { RuleId } from "../config/index.ts";
-import type { Problem } from "./problem.ts";
-import { Rule } from "./rule.ts";
-import type { Violation } from "./violation.ts";
+import type { Codebase, CodeFile } from "../../../../codebase/index.ts";
+import type { RuleId } from "../../../../config/index.ts";
+import type { Problem } from "../../../problem.ts";
+import { Rule } from "../../../rule.ts";
+import type { Violation } from "../../../violation.ts";
 
 const exempt: ReadonlySet<string> = new Set(["equals", "toSnapshot"]);
 

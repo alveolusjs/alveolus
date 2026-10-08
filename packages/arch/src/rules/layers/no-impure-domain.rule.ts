@@ -1,7 +1,7 @@
-import type { Codebase, CodeFile, Import, Location } from "../codebase/index.ts";
-import { CoreApi } from "../codebase/index.ts";
-import type { RuleId } from "../config/index.ts";
-import { ImportRule } from "./import-rule.ts";
+import type { Codebase, CodeFile, Import, Location } from "../../codebase/index.ts";
+import { CoreApi } from "../../codebase/index.ts";
+import type { RuleId } from "../../config/index.ts";
+import { ImportRule } from "../import-rule.ts";
 
 export class NoImpureDomainRule extends ImportRule {
 	public readonly id: RuleId = "layers/no-impure-domain";

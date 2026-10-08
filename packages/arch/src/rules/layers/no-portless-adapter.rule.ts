@@ -1,7 +1,7 @@
-import type { CodeClass, CodeFile, Location } from "../codebase/index.ts";
-import type { RuleId } from "../config/index.ts";
-import { ClassRule } from "./class-rule.ts";
-import type { Problem } from "./problem.ts";
+import type { CodeClass, CodeFile, Location } from "../../codebase/index.ts";
+import type { RuleId } from "../../config/index.ts";
+import { ClassRule } from "../class-rule.ts";
+import type { Problem } from "../problem.ts";
 
 export class NoPortlessAdapterRule extends ClassRule {
 	public readonly id: RuleId = "layers/no-portless-adapter";

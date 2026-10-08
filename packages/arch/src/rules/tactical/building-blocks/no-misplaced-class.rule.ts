@@ -1,9 +1,9 @@
-import type { Codebase, CodeClass, CodeFile, CoreKind } from "../codebase/index.ts";
-import type { RuleId } from "../config/index.ts";
-import { Place } from "./place.ts";
-import type { Problem } from "./problem.ts";
-import { Rule } from "./rule.ts";
-import type { Violation } from "./violation.ts";
+import type { Codebase, CodeClass, CodeFile, CoreKind } from "../../../codebase/index.ts";
+import type { RuleId } from "../../../config/index.ts";
+import { Place } from "../../place.ts";
+import type { Problem } from "../../problem.ts";
+import { Rule } from "../../rule.ts";
+import type { Violation } from "../../violation.ts";
 
 interface KindPlace {
 	readonly kind: CoreKind;

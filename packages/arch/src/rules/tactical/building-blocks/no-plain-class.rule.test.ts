@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { TestCodebase } from "../../test/support/test-codebase.ts";
+import { TestCodebase } from "../../../../test/support/test-codebase.ts";
 import { NoPlainClassRule } from "./no-plain-class.rule.ts";
 
 describe("NoPlainClassRule", () => {

@@ -96,9 +96,10 @@ const sidebar = [
 				collapsed: false,
 				items: [
 					{ link: "/rules/tactical/no-aggregate-reference", text: "no-aggregate-reference" },
+					{ link: "/rules/tactical/no-command-in-query", text: "no-command-in-query" },
 					{ link: "/rules/tactical/no-misplaced-class", text: "no-misplaced-class" },
-					{ link: "/rules/tactical/no-mixed-handler", text: "no-mixed-handler" },
 					{ link: "/rules/tactical/no-plain-class", text: "no-plain-class" },
+					{ link: "/rules/tactical/no-query-in-command", text: "no-query-in-command" },
 					{ link: "/rules/tactical/no-thrown-failure", text: "no-thrown-failure" },
 				],
 				text: "Tactical",

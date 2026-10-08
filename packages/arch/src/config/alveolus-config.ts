@@ -4,7 +4,8 @@ export type RuleId =
 	| "layers/no-outward-import"
 	| "layers/no-portless-adapter"
 	| "tactical/no-aggregate-reference"
-	| "tactical/no-mixed-handler"
+	| "tactical/no-query-in-command"
+	| "tactical/no-command-in-query"
 	| "tactical/no-thrown-failure"
 	| "tactical/no-misplaced-class"
 	| "tactical/no-plain-class";

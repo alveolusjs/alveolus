@@ -12,7 +12,7 @@ repository, without loading the aggregate and without changing anything.
 	<dt>File</dt><dd><code>application/queries/get-order-summary.query.ts</code></dd>
 	<dt>Extends</dt><dd><a href="#api"><code>QueryHandler&lt;Input, Output, Error&gt;</code></a></dd>
 	<dt>Called by</dt><dd>Driving adapters: controllers, resolvers, scripts</dd>
-	<dt>Checked by</dt><dd><a href="/rules/tactical/no-misplaced-class"><code>tactical/no-misplaced-class</code></a>, <a href="/rules/tactical/no-mixed-handler"><code>tactical/no-mixed-handler</code></a>, <a href="/rules/layers/no-outward-import"><code>layers/no-outward-import</code></a></dd>
+	<dt>Checked by</dt><dd><a href="/rules/tactical/no-misplaced-class"><code>tactical/no-misplaced-class</code></a>, <a href="/rules/tactical/no-command-in-query"><code>tactical/no-command-in-query</code></a>, <a href="/rules/layers/no-outward-import"><code>layers/no-outward-import</code></a></dd>
 </dl>
 
 ## Why
@@ -269,7 +269,7 @@ npx alveolus arch check
 ```
 
 <div class="al-cards">
-<div class="al-card"><span class="al-card-title"><a href="../../rules/tactical/no-mixed-handler"><code>no-mixed-handler</code></a></span>It receives no command repository, outbox or unit of work: a read never writes.</div>
+<div class="al-card"><span class="al-card-title"><a href="../../rules/tactical/no-command-in-query"><code>no-command-in-query</code></a></span>It receives no command repository, outbox or unit of work: a read never writes.</div>
 <div class="al-card"><span class="al-card-title"><a href="../../rules/tactical/no-misplaced-class"><code>no-misplaced-class</code></a></span>It stays alone in <code>application/queries/*.query.ts</code>.</div>
 <div class="al-card"><span class="al-card-title"><a href="../../rules/layers/no-outward-import"><code>no-outward-import</code></a></span>It imports the domain and the application, never an adapter.</div>
 </div>
@@ -278,9 +278,9 @@ A command repository added to its constructor is reported:
 
 ```
 src/ordering/application/queries/get-order-summary.query.ts:20
-  tactical/no-mixed-handler: The QueryHandler
-  GetOrderSummaryHandler receives Orders, a CommandRepository:
-  keep commands and queries apart.
+  tactical/no-command-in-query: The QueryHandler
+  GetOrderSummaryHandler receives Orders, a CommandRepository: a
+  query reads views and writes nothing.
 ```
 
 ## See also
@@ -288,4 +288,4 @@ src/ordering/application/queries/get-order-summary.query.ts:20
 - [Views](../domain/views.md), what a query returns
 - [Repositories](../domain/repositories.md), for `QueryRepository`
 - [Command handlers](./command-handlers.md), for requests that change state
-- Rules: [`tactical/no-mixed-handler`](../../rules/tactical/no-mixed-handler.md), [`tactical/no-misplaced-class`](../../rules/tactical/no-misplaced-class.md)
+- Rules: [`tactical/no-command-in-query`](../../rules/tactical/no-command-in-query.md), [`tactical/no-misplaced-class`](../../rules/tactical/no-misplaced-class.md)

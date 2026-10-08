@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { TestCodebase } from "../../test/support/test-codebase.ts";
+import { TestCodebase } from "../../../../../test/support/test-codebase.ts";
 import { NoAggregateReferenceRule } from "./no-aggregate-reference.rule.ts";
 
 const customer = `import { AggregateRoot, Identifier } from "@alveolus/core";
