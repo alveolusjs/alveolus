@@ -8,6 +8,8 @@ export class Import {
 		public readonly specifier: string,
 		public readonly names: readonly string[],
 		public readonly target: ImportTarget,
+		/** `export … from`: the file passes on what it imports. */
+		public readonly isReexport: boolean = false,
 	) {}
 
 	public get label(): string {

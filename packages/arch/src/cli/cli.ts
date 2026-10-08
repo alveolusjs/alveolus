@@ -61,10 +61,18 @@ export class Cli {
 		const { config, violations } = await this.analyze(options);
 		const baseline = await Baseline.load(join(config.projectDir, Baseline.fileName));
 		const fresh = baseline.newViolations(violations);
+		if (baseline.outdatedEntries > 0) {
+			this.warnOutdated(baseline.outdatedEntries);
+		}
 		const report = new Report(fresh, violations.length - fresh.length, this.colored);
 
 		this.stdout.write(options.format === "json" ? report.json() : report.text());
 		this.exitCode = fresh.length === 0 ? 0 : 1;
+	}
+
+	private warnOutdated(count: number): void {
+		const entries = count === 1 ? "1 entry of the baseline has no fingerprint and matches" : `${count} entries of the baseline have no fingerprint and match`;
+		this.stderr.write(`${entries} nothing: run alveolus arch baseline to write ${Baseline.fileName} again.\n`);
 	}
 
 	private async baseline(options: Options): Promise<void> {

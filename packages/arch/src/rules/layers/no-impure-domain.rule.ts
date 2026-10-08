@@ -1,10 +1,15 @@
-import type { Codebase, CodeFile, Import, Location } from "../../codebase/index.ts";
+import type { Codebase, CodeFile, GlobalUse, Import, Location } from "../../codebase/index.ts";
 import { CoreApi } from "../../codebase/index.ts";
 import type { RuleId } from "../../config/index.ts";
 import { ImportRule } from "../import-rule.ts";
+import type { Violation } from "../violation.ts";
 
 export class NoImpureDomainRule extends ImportRule {
 	public readonly id: RuleId = "layers/no-impure-domain";
+
+	public override check(codebase: Codebase): Violation[] {
+		return [...super.check(codebase), ...this.impureGlobals(codebase)];
+	}
 
 	protected appliesTo(file: CodeFile): boolean {
 		return file.location.layer === "domain";
@@ -37,6 +42,35 @@ export class NoImpureDomainRule extends ImportRule {
 			return undefined;
 		}
 		return `The domain imports ${forbidden.join(", ")} from ${target.name}: domainDependencies only allows ${allowed.allowedNames(target.name).join(", ")}.`;
+	}
+
+	private impureGlobals(codebase: Codebase): Violation[] {
+		const violations: Violation[] = [];
+		for (const file of codebase.files) {
+			if (!this.appliesTo(file)) {
+				continue;
+			}
+			for (const use of file.globals) {
+				const message = this.globalProblem(use);
+				if (message !== undefined) {
+					violations.push(this.violation(codebase, file, { line: use.line, message, symbol: use.name }));
+				}
+			}
+		}
+		return violations;
+	}
+
+	private globalProblem(use: GlobalUse): string | undefined {
+		if (use.origin === "host") {
+			return `The domain uses ${use.name}, a global of the host: reach it through a port.`;
+		}
+		if (use.effect === "clock") {
+			return `The domain reads the system clock with ${use.name}: receive the time from the Clock port.`;
+		}
+		if (use.effect === "randomness") {
+			return `The domain draws a random value with ${use.name}: receive it from a port, such as IdGenerator.`;
+		}
+		return undefined;
 	}
 
 	private isDomainReachableFrom(to: Location, from: Location): boolean {

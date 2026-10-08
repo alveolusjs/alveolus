@@ -12,7 +12,7 @@ collection: aggregates for commands, views for queries.
 	<dt>File</dt><dd><code>domain/repositories/orders.repository.ts</code></dd>
 	<dt>Extends</dt><dd><a href="#api"><code>CommandRepository&lt;Aggregate&gt;</code></a>, <a href="#api"><code>QueryRepository&lt;View&gt;</code></a></dd>
 	<dt>Used by</dt><dd><a href="/core/application/command-handlers">Command handlers</a>, <a href="/core/application/query-handlers">query handlers</a></dd>
-	<dt>Checked by</dt><dd><a href="/rules/tactical/no-misplaced-class"><code>tactical/no-misplaced-class</code></a>, <a href="/rules/tactical/no-query-in-command"><code>tactical/no-query-in-command</code></a>, <a href="/rules/tactical/no-command-in-query"><code>tactical/no-command-in-query</code></a>, <a href="/rules/layers/no-portless-adapter"><code>layers/no-portless-adapter</code></a></dd>
+	<dt>Checked by</dt><dd><a href="/rules/tactical/no-misplaced-class"><code>tactical/no-misplaced-class</code></a>, <a href="/rules/tactical/no-foreign-command-dependency"><code>tactical/no-foreign-command-dependency</code></a>, <a href="/rules/tactical/no-foreign-query-dependency"><code>tactical/no-foreign-query-dependency</code></a>, <a href="/rules/layers/no-portless-adapter"><code>layers/no-portless-adapter</code></a></dd>
 </dl>
 
 ## Why
@@ -165,7 +165,7 @@ are called by the query handler and hand out the view, or a collection of it.
 - `findById` only accepts the identifier of its aggregate: passing an `OrderId` to a
   `Customers` repository does not compile.
 - A command handler depends on command repositories only, a query handler on query repositories
-  only ([`tactical/no-query-in-command`](../../rules/tactical/no-query-in-command.md), [`tactical/no-command-in-query`](../../rules/tactical/no-command-in-query.md)).
+  only ([`tactical/no-foreign-command-dependency`](../../rules/tactical/no-foreign-command-dependency.md), [`tactical/no-foreign-query-dependency`](../../rules/tactical/no-foreign-query-dependency.md)).
 - No version is kept: to prevent lost updates, put a `version` in the snapshot and check it in the
   adapter's `UPDATE`.
 :::
@@ -312,7 +312,7 @@ npx alveolus arch check
 
 <div class="al-cards">
 <div class="al-card"><span class="al-card-title"><a href="../../rules/layers/no-portless-adapter"><code>no-portless-adapter</code></a></span><code>PgOrders</code> extends <code>Orders</code>, declared in <code>domain/repositories/</code>.</div>
-<div class="al-card"><span class="al-card-title"><a href="../../rules/tactical/no-command-in-query"><code>no-command-in-query</code></a></span>Only command handlers receive <code>Orders</code>; queries read views.</div>
+<div class="al-card"><span class="al-card-title"><a href="../../rules/tactical/no-foreign-query-dependency"><code>no-foreign-query-dependency</code></a></span>Only command handlers receive <code>Orders</code>; queries read views.</div>
 <div class="al-card"><span class="al-card-title"><a href="../../rules/tactical/no-misplaced-class"><code>no-misplaced-class</code></a></span>It stays alone in <code>domain/repositories/*.repository.ts</code>.</div>
 </div>
 
@@ -320,9 +320,10 @@ A query handler that receives it is reported:
 
 ```
 src/ordering/application/queries/get-order-summary.query.ts:20
-  tactical/no-command-in-query: The QueryHandler
+  tactical/no-foreign-query-dependency: The QueryHandler
   GetOrderSummaryHandler receives Orders, a CommandRepository: a
-  query reads views and writes nothing.
+  query handler receives query repositories, ports that do not
+  write, and value objects.
 ```
 
 ## See also
@@ -330,5 +331,5 @@ src/ordering/application/queries/get-order-summary.query.ts:20
 - [Aggregates](./aggregates.md), what a command repository holds, and their snapshots
 - [Views](./views.md), what a query repository returns
 - [Ports](./ports.md), the other dependencies of the domain
-- Rules: [`tactical/no-query-in-command`](../../rules/tactical/no-query-in-command.md), [`tactical/no-command-in-query`](../../rules/tactical/no-command-in-query.md), [`layers/no-portless-adapter`](../../rules/layers/no-portless-adapter.md)
+- Rules: [`tactical/no-foreign-command-dependency`](../../rules/tactical/no-foreign-command-dependency.md), [`tactical/no-foreign-query-dependency`](../../rules/tactical/no-foreign-query-dependency.md), [`layers/no-portless-adapter`](../../rules/layers/no-portless-adapter.md)
 - Vaughn Vernon, *Implementing Domain-Driven Design*, chapter 12, "Repositories"

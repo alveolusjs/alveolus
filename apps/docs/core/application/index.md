@@ -96,4 +96,4 @@ events. The save and the events commit together, and the events are sent after.
 
 - [Domain](../domain/index.md), what the handlers call
 - [Strategic](../strategic/index.md), how contexts meet
-- Rules: [`layers/no-outward-import`](../../rules/layers/no-outward-import.md), [`tactical/no-query-in-command`](../../rules/tactical/no-query-in-command.md), [`tactical/no-command-in-query`](../../rules/tactical/no-command-in-query.md)
+- Rules: [`layers/no-outward-import`](../../rules/layers/no-outward-import.md), [`tactical/no-foreign-command-dependency`](../../rules/tactical/no-foreign-command-dependency.md), [`tactical/no-foreign-query-dependency`](../../rules/tactical/no-foreign-query-dependency.md)

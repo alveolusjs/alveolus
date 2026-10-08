@@ -37,33 +37,35 @@ describe("Cli", () => {
 	});
 
 	it("fails and reports each violation", async () => {
-		sandbox.write("src/ordering/driven/adapters/mailer.adapter.ts", "export class Mailer {}\n");
+		sandbox.write("src/ordering/driven/smtp/adapters/mailer.adapter.ts", "export class Mailer {}\n");
 
 		expect(await cli.run(["arch", "check"])).toBe(1);
 		expect(stdout.text).toBe(
-			"src/ordering/driven/adapters/mailer.adapter.ts:1\n  layers/no-portless-adapter: Mailer is a driven adapter but extends no Port: extend the port it implements.\n\n1 violation\n",
+			"src/ordering/driven/smtp/adapters/mailer.adapter.ts:1\n  layers/no-portless-adapter: Mailer is a driven adapter but extends no Port: extend the port it implements.\n\n1 violation\n",
 		);
 	});
 
 	it("reports in JSON", async () => {
-		sandbox.write("src/ordering/driven/adapters/mailer.adapter.ts", "export class Mailer {}\n");
+		sandbox.write("src/ordering/driven/smtp/adapters/mailer.adapter.ts", "export class Mailer {}\n");
 
 		await cli.run(["arch", "check", "--format", "json"]);
 
 		expect(JSON.parse(stdout.text)).toEqual({
 			baselined: 0,
-			violations: [{ file: "src/ordering/driven/adapters/mailer.adapter.ts", line: 1, message: expect.any(String), rule: "layers/no-portless-adapter", symbol: "Mailer" }],
+			violations: [
+				{ file: "src/ordering/driven/smtp/adapters/mailer.adapter.ts", fingerprint: expect.any(String), line: 1, message: expect.any(String), rule: "layers/no-portless-adapter", symbol: "Mailer" },
+			],
 		});
 	});
 
 	it("ignores the violations of the baseline and catches new ones", async () => {
-		sandbox.write("src/ordering/driven/adapters/mailer.adapter.ts", "export class Mailer {}\n");
+		sandbox.write("src/ordering/driven/smtp/adapters/mailer.adapter.ts", "export class Mailer {}\n");
 
 		expect(await cli.run(["arch", "baseline"])).toBe(0);
 		expect(existsSync(join(sandbox.dir, "alveolus.baseline.json"))).toBe(true);
 		expect(await cli.run(["arch", "check"])).toBe(0);
 
-		sandbox.write("src/ordering/driven/adapters/sms.adapter.ts", "export class Sms {}\n");
+		sandbox.write("src/ordering/driven/smtp/adapters/sms.adapter.ts", "export class Sms {}\n");
 		stdout.text = "";
 
 		expect(await cli.run(["arch", "check"])).toBe(1);
@@ -71,8 +73,16 @@ describe("Cli", () => {
 		expect(stdout.text).toContain("1 violation (1 in the baseline)");
 	});
 
+	it("asks to write again a baseline from before fingerprints, whose entries match nothing", async () => {
+		sandbox.write("src/ordering/driven/smtp/adapters/mailer.adapter.ts", "export class Mailer {}\n");
+		sandbox.write("alveolus.baseline.json", JSON.stringify({ violations: [{ file: "src/ordering/driven/smtp/adapters/mailer.adapter.ts", rule: "layers/no-portless-adapter", symbol: "Mailer" }] }));
+
+		expect(await cli.run(["arch", "check"])).toBe(1);
+		expect(stderr.text).toContain("1 entry of the baseline has no fingerprint and matches nothing: run alveolus arch baseline to write alveolus.baseline.json again.");
+	});
+
 	it("turns a rule off from the configuration", async () => {
-		sandbox.write("src/ordering/driven/adapters/mailer.adapter.ts", "export class Mailer {}\n");
+		sandbox.write("src/ordering/driven/smtp/adapters/mailer.adapter.ts", "export class Mailer {}\n");
 		sandbox.write("alveolus.config.ts", `export default { boundedContexts: { catalog: "catalog", ordering: "ordering" }, root: "src", rules: { "layers/no-portless-adapter": "off" } };\n`);
 
 		expect(await cli.run(["arch", "check"])).toBe(0);

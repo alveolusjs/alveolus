@@ -3,7 +3,8 @@ import { readFile, writeFile } from "node:fs/promises";
 
 import type { Violation } from "../rules/index.ts";
 
-type Entry = Pick<Violation, "rule" | "file" | "symbol">;
+/** A baselined violation; `fingerprint` is missing from baselines written before it existed. */
+type Entry = Pick<Violation, "rule" | "file" | "symbol"> & { readonly fingerprint?: string };
 
 export class Baseline {
 	public static readonly fileName = "alveolus.baseline.json";
@@ -11,7 +12,7 @@ export class Baseline {
 	private constructor(private readonly entries: readonly Entry[]) {}
 
 	public static of(violations: readonly Violation[]): Baseline {
-		return new Baseline(violations.map(({ file, rule, symbol }) => ({ file, rule, symbol })));
+		return new Baseline(violations.map(({ file, fingerprint, rule, symbol }) => ({ file, fingerprint, rule, symbol })));
 	}
 
 	public static async load(path: string): Promise<Baseline> {
@@ -20,6 +21,11 @@ export class Baseline {
 		}
 		const content: { violations?: Entry[] } = JSON.parse(await readFile(path, "utf8"));
 		return new Baseline(content.violations ?? []);
+	}
+
+	/** Entries written before fingerprints: they match nothing until the baseline is written again. */
+	public get outdatedEntries(): number {
+		return this.entries.filter((entry) => entry.fingerprint === undefined).length;
 	}
 
 	public newViolations(violations: readonly Violation[]): Violation[] {
@@ -47,6 +53,6 @@ export class Baseline {
 	}
 
 	private keyOf(entry: Entry): string {
-		return [entry.rule, entry.file, entry.symbol].join("\n");
+		return [entry.rule, entry.file, entry.symbol, entry.fingerprint ?? ""].join("\n");
 	}
 }

@@ -13,7 +13,7 @@ A domain event records something that happened in the domain, named in the past 
 	<dt>Extends</dt><dd><a href="#api"><code>DomainEvent&lt;Id, Payload&gt;</code></a></dd>
 	<dt>Recorded by</dt><dd><a href="/core/domain/aggregates">Aggregates</a></dd>
 	<dt>Read by</dt><dd><a href="/core/application/command-handlers">Command handlers</a>, <a href="/core/application/event-translators">event translators</a></dd>
-	<dt>Checked by</dt><dd><a href="/rules/tactical/no-misplaced-class"><code>tactical/no-misplaced-class</code></a></dd>
+	<dt>Checked by</dt><dd><a href="/rules/tactical/no-misplaced-class"><code>tactical/no-misplaced-class</code></a>, <a href="/rules/tactical/no-aggregate-reference"><code>tactical/no-aggregate-reference</code></a></dd>
 </dl>
 
 ## Why
@@ -271,7 +271,7 @@ npx alveolus arch check
 <div class="al-cards">
 <div class="al-card"><span class="al-card-title"><a href="../../rules/tactical/no-misplaced-class"><code>no-misplaced-class</code></a></span>It stays alone in <code>domain/events/*.event.ts</code>.</div>
 <div class="al-card"><span class="al-card-title"><a href="../../rules/layers/no-impure-domain"><code>no-impure-domain</code></a></span>Its payload uses domain types and plain data, no framework.</div>
-<div class="al-card"><span class="al-card-title"><a href="../../rules/tactical/no-plain-class"><code>no-plain-class</code></a></span>The fact is a <code>DomainEvent</code>, not a plain class.</div>
+<div class="al-card"><span class="al-card-title"><a href="../../rules/tactical/no-loose-code"><code>no-loose-code</code></a></span>The fact is a <code>DomainEvent</code>, not a plain class.</div>
 </div>
 
 An event declared next to its aggregate is reported:

@@ -119,7 +119,9 @@ src/
 ```
 
 Only create a folder when it gets its first file: a small context may have no `entities/`,
-`services/` or `driving/rabbitmq/`.
+`services/` or `driving/rabbitmq/`. No other folder is expected: a file directly in `domain/`, in a
+folder such as `domain/helpers/`, or one level too deep is reported by
+[`layers/no-outward-import`](../rules/layers/no-outward-import.md#folders-inside-a-layer).
 
 ## Bounded contexts
 
@@ -213,8 +215,8 @@ domain: checked by [`layers/no-portless-adapter`](../rules/layers/no-portless-ad
 
 ::: tip
 Inside `domain/` and `application/`, every class extends a building block of `@alveolus/core`:
-there are no free functions and no plain classes. Checked by
-[`tactical/no-plain-class`](../rules/tactical/no-plain-class.md).
+there are no free functions, no plain classes and no module state. Checked by
+[`tactical/no-loose-code`](../rules/tactical/no-loose-code.md).
 :::
 
 ## Folders and file names
@@ -263,7 +265,9 @@ Tests sit next to the code they test and keep its name: `order.aggregate.spec.ts
 ## Composition root
 
 Each bounded context has one file at its root that wires its adapters into its use cases, its
-module: `ordering.module.ts`. It is a class that builds everything with `new`, or the module of your
+module: `ordering.module.ts`. A second one is reported by
+[`layers/no-outward-import`](../rules/layers/no-outward-import.md), and it re-exports nothing:
+see [`strategic/no-cross-context-import`](../rules/strategic/no-cross-context-import.md). It is a class that builds everything with `new`, or the module of your
 framework's container, such as a NestJS `@Module`: see [Integrations](../integrations/index.md).
 
 ::: tip
@@ -291,4 +295,4 @@ with `@alveolus/core`; only their adapters live here.
 - [Getting started](./getting-started.md), to configure and run the checks
 - [Building blocks](../core/index.md), the classes each folder holds
 - [Integrations](../integrations/index.md), to write the composition root with your framework
-- Rules: [`layers/no-outward-import`](../rules/layers/no-outward-import.md), [`tactical/no-misplaced-class`](../rules/tactical/no-misplaced-class.md), [`strategic/no-cross-context-import`](../rules/strategic/no-cross-context-import.md), [`layers/no-impure-domain`](../rules/layers/no-impure-domain.md), [`tactical/no-plain-class`](../rules/tactical/no-plain-class.md), [`layers/no-portless-adapter`](../rules/layers/no-portless-adapter.md)
+- Rules: [`layers/no-outward-import`](../rules/layers/no-outward-import.md), [`tactical/no-misplaced-class`](../rules/tactical/no-misplaced-class.md), [`strategic/no-cross-context-import`](../rules/strategic/no-cross-context-import.md), [`layers/no-impure-domain`](../rules/layers/no-impure-domain.md), [`tactical/no-loose-code`](../rules/tactical/no-loose-code.md), [`layers/no-portless-adapter`](../rules/layers/no-portless-adapter.md)

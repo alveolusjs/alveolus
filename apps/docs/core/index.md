@@ -92,7 +92,7 @@ The use cases, and the contracts that make them atomic and reliable. Everything 
 - **You extend, nothing is configured.** No decorator, no registry, no reflection: the class you
   extend says what your class is. A class extending your own base class counts too.
 - **Business errors are values.** An expected failure is a `DomainError` returned in a `Result`,
-  never thrown. Each signature lists what can go wrong. Exceptions stay for bugs.
+  never thrown. Each signature lists what can go wrong. Exceptions stay in adapters.
 - **The domain never reads the clock nor generates ids.** Dates and ids are parameters of business
   methods; `Clock` and `IdGenerator` give them to the application.
 - **No infrastructure.** No bus, no container, no ORM. Repositories, ports and publishers are

@@ -1,21 +1,23 @@
 import { Project, SyntaxKind } from "ts-morph";
-import type { ExportDeclaration, ImportDeclaration, SourceFile } from "ts-morph";
+import type { SourceFile } from "ts-morph";
 
 import { isAbsolute, join, relative } from "node:path";
 
-import type { ImportTarget } from "../codebase/index.ts";
-import { Codebase, CodeFile, Declaration, Import, Layout } from "../codebase/index.ts";
+import { Codebase, CodeFile, GlobalUse, Layout, Throw } from "../codebase/index.ts";
 import type { Config } from "../config/index.ts";
 import { ClassReader } from "./class-reader.ts";
 import { CodeAnalyzer } from "./code-analyzer.ts";
+import { DependencyReader } from "./dependency-reader.ts";
+import { GlobalReader } from "./global-reader.ts";
+import type { GlobalReference } from "./global-reference.ts";
 import { PackageNames } from "./package-names.ts";
+import { TopLevelReader } from "./top-level-reader.ts";
 import { TypeInspector } from "./type-inspector.ts";
-
-type ModuleDeclaration = ImportDeclaration | ExportDeclaration;
 
 export class TsMorphAnalyzer extends CodeAnalyzer {
 	private readonly types: TypeInspector;
 	private readonly classes: ClassReader;
+	private readonly topLevel = new TopLevelReader();
 
 	public constructor(private readonly project: Project) {
 		super();
@@ -29,84 +31,48 @@ export class TsMorphAnalyzer extends CodeAnalyzer {
 
 	public analyze(config: Config): Codebase {
 		const layout = new Layout(config);
+		const dependencies = new DependencyReader(this.project, config, layout);
+		const globals = new GlobalReader(config.projectDir);
 		const files = this.project
 			.getSourceFiles()
 			.filter((file) => this.isInside(config.rootDir, file.getFilePath()) && !config.isIgnored(file.getFilePath()))
-			.map((file) => this.read(file, config, layout));
+			.map((file) => this.read(file, layout, dependencies, globals));
 		return new Codebase(files, config);
 	}
 
-	private read(file: SourceFile, config: Config, layout: Layout): CodeFile {
+	private read(file: SourceFile, layout: Layout, dependencies: DependencyReader, globals: GlobalReader): CodeFile {
 		const path = file.getFilePath();
-		const imports = this.moduleDeclarationsOf(file).map((declaration) => this.readImport(declaration, config, layout));
+		const globalReferences = globals.read(file);
 		const classes = file.getClasses().map((declaration) => this.classes.read(declaration));
 		return new CodeFile({
 			classes,
-			declarations: this.declarationsOf(file),
-			domainErrorThrows: this.domainErrorThrowsOf(file),
-			imports,
+			declarations: this.topLevel.read(file),
+			globals: this.globalUsesOf(globalReferences),
+			imports: dependencies.read(file, globalReferences),
+			lines: file.getFullText().split(/\r?\n/),
 			location: layout.locate(path),
 			path,
+			throws: this.throwsOf(file),
 		});
 	}
 
-	private declarationsOf(file: SourceFile): Declaration[] {
-		const functions = file.getFunctions().map((declaration) => new Declaration("function", declaration.getName() ?? "default", declaration.getStartLineNumber()));
-		const functionConstants = file
-			.getVariableDeclarations()
-			.filter((declaration) => declaration.getInitializerIfKind(SyntaxKind.ArrowFunction) !== undefined || declaration.getInitializerIfKind(SyntaxKind.FunctionExpression) !== undefined)
-			.map((declaration) => new Declaration("function", declaration.getName(), declaration.getStartLineNumber()));
-		const enums = file.getEnums().map((declaration) => new Declaration("enum", declaration.getName(), declaration.getStartLineNumber()));
-		return [...functions, ...functionConstants, ...enums];
-	}
-
-	private moduleDeclarationsOf(file: SourceFile): ModuleDeclaration[] {
-		const reexports = file.getExportDeclarations().filter((declaration) => declaration.hasModuleSpecifier());
-		return [...file.getImportDeclarations(), ...reexports];
-	}
-
-	private readImport(declaration: ModuleDeclaration, config: Config, layout: Layout): Import {
-		const specifier = declaration.getModuleSpecifierValue() ?? "";
-		return new Import(declaration.getStartLineNumber(), specifier, this.importedNames(declaration), this.targetOf(declaration, specifier, config, layout));
-	}
-
-	private importedNames(declaration: ModuleDeclaration): string[] {
-		if (declaration.isKind(SyntaxKind.ExportDeclaration)) {
-			return declaration.isNamespaceExport() ? ["*"] : declaration.getNamedExports().map((named) => named.getName());
+	private globalUsesOf(references: readonly GlobalReference[]): GlobalUse[] {
+		const uses: GlobalUse[] = [];
+		for (const reference of references) {
+			if (reference.origin !== "project") {
+				uses.push(new GlobalUse(reference.line, reference.name, reference.origin, reference.effect));
+			}
 		}
-		const names = declaration.getNamedImports().map((named) => named.getName());
-		if (declaration.getDefaultImport() !== undefined) {
-			names.unshift("default");
-		}
-		if (declaration.getNamespaceImport() !== undefined) {
-			names.unshift("*");
-		}
-		return names;
+		return uses;
 	}
 
-	private targetOf(declaration: ModuleDeclaration, specifier: string, config: Config, layout: Layout): ImportTarget {
-		const resolved = declaration.getModuleSpecifierSourceFile()?.getFilePath();
-		if (resolved !== undefined && this.isInside(config.projectDir, resolved)) {
-			return { kind: "file", location: layout.locate(resolved), path: resolved };
-		}
-		if (specifier.startsWith(".")) {
-			const path = join(declaration.getSourceFile().getDirectoryPath(), specifier);
-			return { kind: "file", location: layout.locate(path), path };
-		}
-		return { kind: "package", name: this.packageNameOf(specifier) };
-	}
-
-	private packageNameOf(specifier: string): string {
-		const segments = specifier.split("/");
-		const length = specifier.startsWith("@") ? 2 : 1;
-		return segments.slice(0, length).join("/");
-	}
-
-	private domainErrorThrowsOf(file: SourceFile): number[] {
-		return file
-			.getDescendantsOfKind(SyntaxKind.ThrowStatement)
-			.filter((statement) => this.types.kindsOf(statement.getExpression().getType()).includes("DomainError"))
-			.map((statement) => statement.getStartLineNumber());
+	private throwsOf(file: SourceFile): Throw[] {
+		const statements = file.getDescendantsOfKind(SyntaxKind.ThrowStatement).map((statement) => new Throw(statement.getStartLineNumber(), "throw"));
+		const rejections = file
+			.getDescendantsOfKind(SyntaxKind.CallExpression)
+			.filter((call) => call.getExpression().getText() === "Promise.reject")
+			.map((call) => new Throw(call.getStartLineNumber(), "Promise.reject"));
+		return [...statements, ...rejections].sort((left, right) => left.line - right.line);
 	}
 
 	private isInside(directory: string, path: string): boolean {

@@ -38,8 +38,9 @@ export class TestCodebase {
 		this.installCore();
 	}
 
+	/** Adds a file, or replaces it when a fixture already has one at this path. */
 	public file(path: string, content: string): this {
-		this.project.createSourceFile(join(projectDir, path), content);
+		this.project.createSourceFile(join(projectDir, path), content, { overwrite: true });
 		return this;
 	}
 

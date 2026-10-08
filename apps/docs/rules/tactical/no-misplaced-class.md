@@ -17,7 +17,7 @@ file.
 
 ## Why
 
-`OrderId` and `Order` are declared together in `domain/order.ts`, because that is where the task
+`OrderId` and `Order` are declared together in `domain/aggregates/order.ts`, because that is where the task
 started. The next developer looks for the identifier in `value-objects/` and does not find it; the
 next agent creates a second one there. The shared layout only helps if it holds.
 
@@ -52,22 +52,24 @@ Two things, in every file:
 | `EventTranslator` | `application/translators/` | `.translator.ts` |
 | a port, concrete | `driven/<technology>/adapters/` | `.adapter.ts` |
 
-A class that implements `OpenHostService` or `AntiCorruptionLayer` without extending a port lives
-under `driving/`, with any file name. Classes that extend no building block, such as a controller
+A marker fixes the place of its class, whatever the class extends: a class that implements
+`AntiCorruptionLayer` is an adapter in `driven/<technology>/adapters/*.adapter.ts`, a class that
+implements `OpenHostService` lives under `driving/<technology>/`, with any file name. A command
+handler marked as an anti-corruption layer is reported. Classes that extend no building block, such as a controller
 or a module, are not placed by this rule.
 
 ## What it reports
 
 ```
-src/ordering/domain/order.ts:3
+src/ordering/domain/aggregates/order.ts:3
   tactical/no-misplaced-class: OrderId belongs in
   domain/value-objects/*.identifier.ts.
 
-src/ordering/domain/order.ts:5
+src/ordering/domain/aggregates/order.ts:5
   tactical/no-misplaced-class: Order shares its file
   with OrderId: one class per file.
 
-src/ordering/domain/order.ts:5
+src/ordering/domain/aggregates/order.ts:5
   tactical/no-misplaced-class: Order belongs in
   domain/aggregates/*.aggregate.ts.
 ```
@@ -81,7 +83,7 @@ others from their new place.
 
 <div class="al-compare">
 
-```ts [❌ Avoid: src/ordering/domain/order.ts]
+```ts [❌ Avoid: src/ordering/domain/aggregates/order.ts]
 import { AggregateRoot, Identifier } from "@alveolus/core";
 
 export class OrderId extends Identifier<string, "OrderId"> {}
@@ -133,5 +135,5 @@ new code keeps the layout while you move the old one.
 ## See also
 
 - [Project layout: folders and file names](../../guide/project-layout.md#folders-and-file-names)
-- [`tactical/no-plain-class`](./no-plain-class.md), so that every class has a kind
+- [`tactical/no-loose-code`](./no-loose-code.md), so that every class has a kind
 - [Rules](../index.md), every rule by category

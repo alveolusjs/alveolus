@@ -8,7 +8,7 @@ export abstract class ClassRule extends Rule {
 		const violations: Violation[] = [];
 		for (const file of codebase.files) {
 			for (const codeClass of file.classes) {
-				for (const problem of this.problemsWith(codeClass, file)) {
+				for (const problem of this.problemsWith(codeClass, file, codebase)) {
 					violations.push(this.violation(codebase, file, problem));
 				}
 			}
@@ -16,5 +16,5 @@ export abstract class ClassRule extends Rule {
 		return violations;
 	}
 
-	protected abstract problemsWith(codeClass: CodeClass, file: CodeFile): Problem[];
+	protected abstract problemsWith(codeClass: CodeClass, file: CodeFile, codebase: Codebase): Problem[];
 }

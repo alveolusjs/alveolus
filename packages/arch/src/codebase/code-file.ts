@@ -1,7 +1,9 @@
 import type { CodeClass } from "./code-class.ts";
 import type { Declaration } from "./declaration.ts";
+import type { GlobalUse } from "./global-use.ts";
 import type { Import } from "./import.ts";
 import type { Location } from "./location.ts";
+import type { Throw } from "./throw.ts";
 
 export interface CodeFileProps {
 	readonly path: string;
@@ -9,7 +11,9 @@ export interface CodeFileProps {
 	readonly imports: readonly Import[];
 	readonly classes: readonly CodeClass[];
 	readonly declarations: readonly Declaration[];
-	readonly domainErrorThrows: readonly number[];
+	readonly throws: readonly Throw[];
+	readonly globals: readonly GlobalUse[];
+	readonly lines: readonly string[];
 }
 
 export class CodeFile {
@@ -18,7 +22,10 @@ export class CodeFile {
 	public readonly imports: readonly Import[];
 	public readonly classes: readonly CodeClass[];
 	public readonly declarations: readonly Declaration[];
-	public readonly domainErrorThrows: readonly number[];
+	public readonly throws: readonly Throw[];
+	/** The globals the file uses that are declared outside the project; those of the project are read as imports. */
+	public readonly globals: readonly GlobalUse[];
+	private readonly lines: readonly string[];
 
 	public constructor(props: CodeFileProps) {
 		this.path = props.path;
@@ -26,7 +33,14 @@ export class CodeFile {
 		this.imports = props.imports;
 		this.classes = props.classes;
 		this.declarations = props.declarations;
-		this.domainErrorThrows = props.domainErrorThrows;
+		this.throws = props.throws;
+		this.globals = props.globals;
+		this.lines = props.lines;
+	}
+
+	/** The text of a line, counted from 1 as violations are. */
+	public lineText(line: number): string {
+		return this.lines[line - 1] ?? "";
 	}
 
 	public declaresOpenHostService(name: string): boolean {

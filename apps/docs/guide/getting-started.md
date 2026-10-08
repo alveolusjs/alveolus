@@ -195,6 +195,20 @@ today, and fix the past over time:
 <div class="al-card"><span class="al-card-title"><span class="al-card-step">4</span>Record it again</span>Run <code>baseline</code> after a round of fixes: the file only shrinks.</div>
 </div>
 
+### How a violation is recognised
+
+Each entry of the baseline keeps the rule, the file, the symbol and a fingerprint of the reported
+line: a short hash of its text, blind to indentation and spacing.
+
+<div class="al-cards al-cards-2">
+<div class="al-card"><span class="al-card-title">Still baselined</span>The code around it moves, the file is reformatted: the line keeps its text, so its fingerprint.</div>
+<div class="al-card"><span class="al-card-title">Reported again</span>The line itself changes. Touching a baselined line is the moment to fix it.</div>
+</div>
+
+A new violation never hides behind a fixed one: a second `throw` in the same file has another
+line, so another fingerprint. A baseline written before fingerprints existed matches nothing:
+`check` says so, and `baseline` writes it again.
+
 ## See also
 
 - [Learning path](./learning-path.md), the order in which to read the docs when you are new to DDD

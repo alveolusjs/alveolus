@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { Report } from "./report.ts";
 
-const violation = { file: "src/a.ts", line: 4, message: "Explained.", rule: "tactical/no-misplaced-class", symbol: "A" } as const;
+const violation = { file: "src/a.ts", fingerprint: "0a1b2c3d", line: 4, message: "Explained.", rule: "tactical/no-misplaced-class", symbol: "A" } as const;
 
 describe("Report", () => {
 	it("lists the violations and sums them up", () => {

@@ -42,7 +42,8 @@ architecture it guards, the rest says what a violation is.
 
 | Rule | Reports |
 | --- | --- |
-| [`strategic/no-cross-context-import`](./strategic/no-cross-context-import.md) | An import from another bounded context that is not its open host service. |
+| [`strategic/no-cross-context-import`](./strategic/no-cross-context-import.md) | An import from another bounded context that is not its open host service, a composition root that re-exports. |
+| [`strategic/no-leaky-host-service`](./strategic/no-leaky-host-service.md) | An open host service that exposes a class of its context instead of the published language. |
 
 ## Layers
 
@@ -56,11 +57,12 @@ architecture it guards, the rest says what a violation is.
 
 | Rule | Reports |
 | --- | --- |
-| [`tactical/no-aggregate-reference`](./tactical/no-aggregate-reference.md) | An aggregate holding another aggregate instead of its identifier. |
-| [`tactical/no-command-in-query`](./tactical/no-command-in-query.md) | A query handler receiving what writes. |
+| [`tactical/no-aggregate-reference`](./tactical/no-aggregate-reference.md) | An aggregate holding another aggregate instead of its identifier, an entity held by two aggregates. |
+| [`tactical/no-foreign-command-dependency`](./tactical/no-foreign-command-dependency.md) | A command handler receiving a query repository, another handler or a plain class. |
+| [`tactical/no-foreign-query-dependency`](./tactical/no-foreign-query-dependency.md) | A query handler receiving what writes or changes state. |
+| [`tactical/no-loose-code`](./tactical/no-loose-code.md) | Code outside a building block in the domain or the application: a plain or static-only class, a class that extends an expression, a function, an enum, a namespace, module state, a computed constant; anything but the module in a composition root. |
 | [`tactical/no-misplaced-class`](./tactical/no-misplaced-class.md) | A class in the wrong folder or file, two classes in one file. |
-| [`tactical/no-plain-class`](./tactical/no-plain-class.md) | A plain class, a free function or an enum in the domain or the application. |
-| [`tactical/no-query-in-command`](./tactical/no-query-in-command.md) | A command handler reading views. |
+| [`tactical/no-stateful-service`](./tactical/no-stateful-service.md) | A domain service holding a port, a repository or another service. |
 | [`tactical/no-thrown-failure`](./tactical/no-thrown-failure.md) | A business failure thrown instead of returned. |
 
 ## Read a violation
@@ -88,6 +90,35 @@ There are no decorators or naming conventions to learn: the class says what it i
 take it at its word.
 :::
 
+## Every import counts
+
+The rules that check imports read every way a file can depend on another one, not only
+`import … from`:
+
+```ts
+import { Pool } from "pg";
+export { Pool } from "pg";
+type Pool = import("pg").Pool;
+const pg = await import("pg");
+const pg = require("pg");
+import pg = require("pg");
+```
+
+A global declared by the project, in a `declare global` block, counts as an import of the file that
+declares it.
+
+An import the analysis cannot see through counts as a file outside the project: one that does not
+resolve, such as a `.js` file without types, one whose path is computed at runtime, or one that is
+ignored, such as a test file. No layer imports it: only the composition root and the files at the
+root of `src/` may.
+
+```
+src/ordering/domain/services/pricing.service.ts:2
+  layers/no-impure-domain: The domain imports
+  src/ordering/domain/services/db.spec.ts (ignored by the analysis):
+  it may only import the domain.
+```
+
 ## Turn a rule off
 
 Every rule is on by default. Turn one off in `alveolus.config.ts`, with its full name:
@@ -103,7 +134,16 @@ export default defineConfig({
 To adopt the rules on an existing project without turning them off, record the current violations
 in a baseline: see [Getting started](../guide/getting-started.md#adopt-it-on-an-existing-project).
 
-Test files (`*.spec.ts`, `*.test.ts`, `__tests__/`) are never checked.
+Test files (`*.spec.ts`, `*.test.ts`, `__tests__/`) are never checked, and production code may not
+import them.
+
+## What the rules cannot see
+
+The rules read the code, not what it does at run time: a port whose adapter reads the views, an
+interface shaped like an aggregate, or an anti-corruption layer that passes data through untouched
+all look right. Each rule page lists its limits in a **Limits** section, with what to watch for in
+review. A file that matches `ignore` in `alveolus.config.ts` is not analysed at all: review a
+change to `ignore` as you would review a rule turned off.
 
 ## See also
 

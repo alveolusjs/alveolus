@@ -12,7 +12,7 @@ owns.
 	<dt>File</dt><dd><code>domain/services/order-limit.service.ts</code></dd>
 	<dt>Extends</dt><dd><a href="#api"><code>DomainService</code></a></dd>
 	<dt>Called by</dt><dd><a href="/core/application/command-handlers">Command handlers</a></dd>
-	<dt>Checked by</dt><dd><a href="/rules/tactical/no-misplaced-class"><code>tactical/no-misplaced-class</code></a>, <a href="/rules/tactical/no-plain-class"><code>tactical/no-plain-class</code></a>, <a href="/rules/layers/no-impure-domain"><code>layers/no-impure-domain</code></a></dd>
+	<dt>Checked by</dt><dd><a href="/rules/tactical/no-misplaced-class"><code>tactical/no-misplaced-class</code></a>, <a href="/rules/tactical/no-loose-code"><code>tactical/no-loose-code</code></a>, <a href="/rules/layers/no-impure-domain"><code>layers/no-impure-domain</code></a>, <a href="/rules/tactical/no-stateful-service"><code>tactical/no-stateful-service</code></a></dd>
 </dl>
 
 ## Why
@@ -226,7 +226,7 @@ npx alveolus arch check
 ```
 
 <div class="al-cards">
-<div class="al-card"><span class="al-card-title"><a href="../../rules/tactical/no-plain-class"><code>no-plain-class</code></a></span>The rule is a method of a <code>DomainService</code>, not a free function.</div>
+<div class="al-card"><span class="al-card-title"><a href="../../rules/tactical/no-loose-code"><code>no-loose-code</code></a></span>The rule is a method of a <code>DomainService</code>, not a free function.</div>
 <div class="al-card"><span class="al-card-title"><a href="../../rules/tactical/no-misplaced-class"><code>no-misplaced-class</code></a></span>It stays alone in <code>domain/services/*.service.ts</code>.</div>
 <div class="al-card"><span class="al-card-title"><a href="../../rules/layers/no-impure-domain"><code>no-impure-domain</code></a></span>It imports the domain only: no adapter, no framework.</div>
 </div>
@@ -234,8 +234,8 @@ npx alveolus arch check
 The same rule written as a function is reported:
 
 ```
-src/ordering/domain/order-limit.ts:5
-  tactical/no-plain-class: The function checkOrderLimit floats
+src/ordering/domain/services/order-limit.ts:5
+  tactical/no-loose-code: The function checkOrderLimit floats
   outside any class: make it a method of a value object or of a
   DomainService.
 ```
@@ -245,5 +245,5 @@ src/ordering/domain/order-limit.ts:5
 - [Aggregates](./aggregates.md), where most rules belong
 - [Value objects](./value-objects.md), the other home for calculations
 - [Command handlers](../application/command-handlers.md), which call domain services
-- Rules: [`tactical/no-plain-class`](../../rules/tactical/no-plain-class.md), [`tactical/no-misplaced-class`](../../rules/tactical/no-misplaced-class.md)
+- Rules: [`tactical/no-loose-code`](../../rules/tactical/no-loose-code.md), [`tactical/no-misplaced-class`](../../rules/tactical/no-misplaced-class.md)
 - Vaughn Vernon, *Implementing Domain-Driven Design*, chapter 7, "Services"

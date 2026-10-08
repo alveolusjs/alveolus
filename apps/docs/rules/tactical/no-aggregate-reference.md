@@ -9,8 +9,8 @@ An aggregate refers to another aggregate by its identifier, never by holding it.
 <dl class="al-glance">
 	<dt>Rule</dt><dd><code>tactical/no-aggregate-reference</code></dd>
 	<dt>Category</dt><dd><a href="/rules/#tactical">Tactical</a>: how building blocks are written</dd>
-	<dt>Reports</dt><dd>A property or constructor parameter typed with another aggregate</dd>
-	<dt>Applies to</dt><dd>Every class that extends <code>AggregateRoot</code> or <code>Entity</code></dd>
+	<dt>Reports</dt><dd>A building block holding another aggregate, an entity held by two aggregates</dd>
+	<dt>Applies to</dt><dd>Every class that extends <code>AggregateRoot</code>, <code>Entity</code>, <code>ValueObject</code> or <code>DomainEvent</code></dd>
 	<dt>Turn off</dt><dd><a href="#turn-it-off"><code>"tactical/no-aggregate-reference": "off"</code></a></dd>
 </dl>
 
@@ -29,17 +29,28 @@ changes to it happen in their own transaction, usually in reaction to an event.
 
 ## What it checks
 
-In every class that extends `AggregateRoot` or `Entity`, no property and no constructor parameter is
-typed with another aggregate:
+### No aggregate held
+
+In every aggregate, entity, value object and domain event, no property, no constructor parameter,
+no value object props and no event payload holds another aggregate, however deep it is:
 
 <div class="al-cards">
-<div class="al-card"><span class="al-card-title">Alone</span><code>customer: Customer</code></div>
-<div class="al-card"><span class="al-card-title">In a collection</span>An array, a <code>Map</code>, a <code>Set</code> or a <code>Promise</code> of <code>Customer</code>.</div>
-<div class="al-card"><span class="al-card-title">In a union</span><code>customer: Customer | undefined</code></div>
+<div class="al-card"><span class="al-card-title">Alone or in a union</span><code>customer: Customer | undefined</code></div>
+<div class="al-card"><span class="al-card-title">In a generic</span>An array, a tuple, a <code>Map</code>, a <code>Record</code>, a <code>Pick</code>, a <code>Promise</code>, or a generic of your own.</div>
+<div class="al-card"><span class="al-card-title">In an object type</span><code>{ customer: Customer }</code>, or an interface of the project.</div>
+<div class="al-card"><span class="al-card-title">Loaded lazily</span><code>load: () =&gt; Promise&lt;Customer&gt;</code>: what a function returns counts.</div>
+<div class="al-card"><span class="al-card-title">In value object props</span><code>ValueObject&lt;{ customer: Customer }&gt;</code></div>
+<div class="al-card"><span class="al-card-title">In an event payload</span><code>DomainEvent&lt;OrderId, { customer: Customer }&gt;</code></div>
 </div>
 
-An entity inside an aggregate follows the same rule: an `OrderLine` cannot hold a `Customer`
-either.
+The parameters of a function do not count: `onChange: (customer: Customer) => void` receives a
+customer, it does not hold one.
+
+### One owner per entity
+
+An entity other than a root belongs to one aggregate. The rule finds every entity each aggregate
+holds, directly or through its entities and value objects, and reports an entity held by two
+aggregates: the `Address` of a `Customer` cannot be held by an `Order` too.
 
 ## What it reports
 
@@ -47,6 +58,15 @@ either.
 src/ordering/domain/aggregates/order.aggregate.ts:6
   tactical/no-aggregate-reference: Order.customer holds the
   aggregate Customer: reference it by its identifier instead.
+
+src/ordering/domain/value-objects/buyer.value-object.ts:3
+  tactical/no-aggregate-reference: Buyer holds the aggregate
+  Customer in its Props: reference it by its identifier instead.
+
+src/ordering/domain/aggregates/order.aggregate.ts:8
+  tactical/no-aggregate-reference: Order.shipping holds the entity
+  Address, which Customer holds too: an entity belongs to one
+  aggregate.
 ```
 
 ## Fix it
@@ -81,12 +101,27 @@ export class Order extends AggregateRoot<OrderId> {
 
 </div>
 
+### Give each aggregate its own entity
+
+When two aggregates need the same kind of data, each one owns its own: the customer keeps its
+`Address` entity, the order keeps a `ShippingAddress` value object copied from it when the order
+is placed. Changing the customer's address no longer changes past orders.
+
 ### Load the other aggregate in the handler
 
 When a rule needs data from the other aggregate, the
 [command handler](../../core/application/command-handlers.md) loads it through its repository and
 passes what the rule needs to the business method. When the other aggregate must change too, a
 second handler does it on the event, in its own transaction.
+
+## Limits
+
+::: warning What the rule cannot see
+- An interface with the shape of another aggregate, such as `CustomerLike`: TypeScript types are
+  structural, so the rule cannot tell that a `Customer` will be passed in. Hold the identifier.
+- The parameters of a callback are not followed: `onChange: (customer: Customer) => void` is
+  accepted, and a closure can still capture the aggregate it receives.
+:::
 
 ## Turn it off
 

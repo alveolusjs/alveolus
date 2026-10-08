@@ -69,4 +69,23 @@ describe("NoCrossContextImportRule", () => {
 
 		expect(codebase.check(new NoCrossContextImportRule())).toEqual(["src/shared-kernel/domain/value-objects/sku.value-object.ts:1 CatalogApi"]);
 	});
+
+	it("reads import types and dynamic imports of another context", () => {
+		const codebase = catalog.file(
+			"src/ordering/driven/adapters/prices.adapter.ts",
+			`type ProductId = import("../../../catalog/domain/value-objects/product-id.identifier.ts").ProductId;
+			const load = () => import("../../../catalog/domain/value-objects/product-id.identifier.ts");`,
+		);
+
+		expect(codebase.check(new NoCrossContextImportRule())).toEqual(["src/ordering/driven/adapters/prices.adapter.ts:1 ProductId", "src/ordering/driven/adapters/prices.adapter.ts:2 *"]);
+	});
+
+	it("keeps a composition root from re-exporting what other contexts would reach through it", () => {
+		const codebase = catalog
+			.file("src/catalog/domain/aggregates/product.aggregate.ts", `export class Product {}`)
+			.file("src/catalog/catalog.module.ts", `export class CatalogModule {}\nexport { Product } from "./domain/aggregates/product.aggregate.ts";`)
+			.file("src/ordering/ordering.module.ts", `import { CatalogModule } from "../catalog/catalog.module.ts";`);
+
+		expect(codebase.check(new NoCrossContextImportRule())).toEqual(["src/catalog/catalog.module.ts:2 Product"]);
+	});
 });

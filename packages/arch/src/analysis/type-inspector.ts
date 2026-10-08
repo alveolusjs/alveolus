@@ -1,10 +1,8 @@
-import type { Symbol as MorphSymbol, Type } from "ts-morph";
+import type { Symbol as MorphSymbol, Type, ts } from "ts-morph";
 
 import type { CoreKind, CoreMarker } from "../codebase/index.ts";
 import { CoreApi } from "../codebase/index.ts";
 import type { PackageNames } from "./package-names.ts";
-
-const containers: ReadonlySet<string> = new Set(["Array", "ReadonlyArray", "Map", "ReadonlyMap", "Set", "ReadonlySet", "Readonly", "Promise"]);
 
 export class TypeInspector {
 	public constructor(private readonly packageNames: PackageNames) {}
@@ -36,7 +34,12 @@ export class TypeInspector {
 		return CoreApi.isMarker(name) && this.isCore(symbol) ? name : undefined;
 	}
 
+	/** Whether a type is a `Result`, or a `Promise` of one. */
 	public isResult(type: Type): boolean {
+		if (type.getSymbol()?.getName() === "Promise") {
+			const [inner] = type.getTypeArguments();
+			return inner !== undefined && this.isResult(inner);
+		}
 		const alias = type.getAliasSymbol();
 		if (alias !== undefined && alias.getName() === "Result" && this.isCore(alias)) {
 			return true;
@@ -45,26 +48,70 @@ export class TypeInspector {
 		return members.every((member) => this.isOkOrErr(member));
 	}
 
+	/**
+	 * The class types a type holds, however deep: unions and intersections, type arguments (of generics and of aliases such as
+	 * `Pick`), tuple elements, the properties of object types declared by the project, and what a function returns.
+	 * The parameters of a function are not followed: receiving a value is not holding it.
+	 */
 	public classTypesIn(type: Type): Type[] {
-		if (type.isUnion()) {
-			return type.getUnionTypes().flatMap((member) => this.classTypesIn(member));
-		}
-		if (type.isIntersection()) {
-			return type.getIntersectionTypes().flatMap((member) => this.classTypesIn(member));
-		}
-		const element = type.getArrayElementType();
-		if (element !== undefined) {
-			return this.classTypesIn(element);
-		}
-		if (this.isContainer(type)) {
-			return [...type.getTypeArguments(), ...type.getAliasTypeArguments()].flatMap((argument) => this.classTypesIn(argument));
-		}
-		return type.isClass() ? [type] : [];
+		const found: Type[] = [];
+		this.collectClassTypes(type, found, new Set());
+		return found;
 	}
 
-	private isContainer(type: Type): boolean {
-		const name = type.getSymbol()?.getName() ?? type.getAliasSymbol()?.getName();
-		return name !== undefined && containers.has(name);
+	private collectClassTypes(type: Type, found: Type[], seen: Set<ts.Type>): void {
+		if (seen.has(type.compilerType)) {
+			return;
+		}
+		seen.add(type.compilerType);
+
+		if (type.isUnion()) {
+			for (const member of type.getUnionTypes()) {
+				this.collectClassTypes(member, found, seen);
+			}
+			return;
+		}
+		if (type.isIntersection()) {
+			for (const member of type.getIntersectionTypes()) {
+				this.collectClassTypes(member, found, seen);
+			}
+			return;
+		}
+		if (type.isClass()) {
+			found.push(type);
+		}
+		for (const inner of this.innerTypesOf(type)) {
+			this.collectClassTypes(inner, found, seen);
+		}
+	}
+
+	private innerTypesOf(type: Type): Type[] {
+		const inner = [...type.getTypeArguments(), ...type.getAliasTypeArguments(), ...type.getTupleElements()];
+		for (const signature of type.getCallSignatures()) {
+			inner.push(signature.getReturnType());
+		}
+		if (this.isDeclaredByProject(type)) {
+			for (const property of type.getProperties()) {
+				const declaration = property.getDeclarations()[0];
+				if (declaration !== undefined) {
+					inner.push(declaration.getType());
+				}
+			}
+		}
+		return inner;
+	}
+
+	/** An object type of the project, such as an interface or `{ customer: Customer }`; libraries are not walked into. */
+	private isDeclaredByProject(type: Type): boolean {
+		if (!type.isObject() || type.isClass()) {
+			return false;
+		}
+		const declaration = (type.getSymbol() ?? type.getAliasSymbol())?.getDeclarations()[0];
+		if (declaration === undefined) {
+			return false;
+		}
+		const file = declaration.getSourceFile();
+		return !file.isInNodeModules() && !file.isDeclarationFile();
 	}
 
 	private isOkOrErr(type: Type): boolean {

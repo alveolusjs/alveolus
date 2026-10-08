@@ -10,6 +10,9 @@ export class NoCrossContextImportRule extends ImportRule {
 	}
 
 	protected problemWith(imported: Import, file: CodeFile, codebase: Codebase): string | undefined {
+		if (file.location.isCompositionRoot && imported.isReexport) {
+			return `The composition root re-exports ${imported.label}: it exports its own module only, so that no other context reaches through it.`;
+		}
 		if (imported.target.kind !== "file") {
 			return undefined;
 		}

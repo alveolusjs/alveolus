@@ -12,7 +12,7 @@ instead of thrown.
 	<dt>File</dt><dd><code>domain/errors/order-already-placed.error.ts</code></dd>
 	<dt>Extends</dt><dd><a href="#api"><code>DomainError&lt;Payload&gt;</code></a></dd>
 	<dt>Returned by</dt><dd><a href="/core/domain/aggregates">Aggregates</a>, <a href="/core/domain/entities">entities</a>, <a href="/core/domain/value-objects">value objects</a>, <a href="/core/application/command-handlers">command handlers</a></dd>
-	<dt>Checked by</dt><dd><a href="/rules/tactical/no-thrown-failure"><code>tactical/no-thrown-failure</code></a>, <a href="/rules/tactical/no-plain-class"><code>tactical/no-plain-class</code></a>, <a href="/rules/tactical/no-misplaced-class"><code>tactical/no-misplaced-class</code></a></dd>
+	<dt>Checked by</dt><dd><a href="/rules/tactical/no-thrown-failure"><code>tactical/no-thrown-failure</code></a>, <a href="/rules/tactical/no-loose-code"><code>tactical/no-loose-code</code></a>, <a href="/rules/tactical/no-misplaced-class"><code>tactical/no-misplaced-class</code></a></dd>
 </dl>
 
 ## Why
@@ -129,8 +129,9 @@ The class name, such as `"EmptyOrder"`: what a driving adapter puts in its respo
 - `type` is the class name: a bundler that minifies class names changes it. Keep class names in
   your build (`keep_classnames` in Terser, `keepNames` in esbuild), or narrow with `instanceof`.
 - A `DomainError` does not extend `Error`. In the domain and the application, `class X extends
-  Error` is reported by [`tactical/no-plain-class`](../../rules/tactical/no-plain-class.md): a bug is
-  thrown as `new Error("…")`.
+  Error` is reported by [`tactical/no-loose-code`](../../rules/tactical/no-loose-code.md), and
+  nothing is thrown there ([`tactical/no-thrown-failure`](../../rules/tactical/no-thrown-failure.md)):
+  only adapters throw, for technical failures.
 :::
 
 ## Usage
@@ -224,7 +225,7 @@ npx alveolus arch check
 
 <div class="al-cards">
 <div class="al-card"><span class="al-card-title"><a href="../../rules/tactical/no-thrown-failure"><code>no-thrown-failure</code></a></span>Nothing throws a <code>DomainError</code>: it is returned in a <code>Result</code>.</div>
-<div class="al-card"><span class="al-card-title"><a href="../../rules/tactical/no-plain-class"><code>no-plain-class</code></a></span>It extends <code>DomainError</code>, not <code>Error</code>.</div>
+<div class="al-card"><span class="al-card-title"><a href="../../rules/tactical/no-loose-code"><code>no-loose-code</code></a></span>It extends <code>DomainError</code>, not <code>Error</code>.</div>
 <div class="al-card"><span class="al-card-title"><a href="../../rules/tactical/no-misplaced-class"><code>no-misplaced-class</code></a></span>It stays alone in <code>domain/errors/*.error.ts</code>.</div>
 </div>
 
@@ -232,8 +233,8 @@ A thrown error is reported:
 
 ```
 src/ordering/domain/entities/order-line.entity.ts:41
-  tactical/no-thrown-failure: A DomainError is thrown: return
-  it in a Result instead.
+  tactical/no-thrown-failure: A failure is thrown: return it in a
+  Result instead.
 ```
 
 ## Troubleshooting
@@ -247,4 +248,4 @@ declared with a payload requires it.
 - [Result](../utilities/result.md), how errors are returned and combined
 - [Aggregates](./aggregates.md), [Entities](./entities.md) and [Value objects](./value-objects.md), which return them
 - [Command handlers](../application/command-handlers.md), which declare them
-- Rules: [`tactical/no-thrown-failure`](../../rules/tactical/no-thrown-failure.md), [`tactical/no-plain-class`](../../rules/tactical/no-plain-class.md), [`tactical/no-misplaced-class`](../../rules/tactical/no-misplaced-class.md)
+- Rules: [`tactical/no-thrown-failure`](../../rules/tactical/no-thrown-failure.md), [`tactical/no-loose-code`](../../rules/tactical/no-loose-code.md), [`tactical/no-misplaced-class`](../../rules/tactical/no-misplaced-class.md)

@@ -1,14 +1,16 @@
 export type RuleId =
 	| "strategic/no-cross-context-import"
+	| "strategic/no-leaky-host-service"
 	| "layers/no-impure-domain"
 	| "layers/no-outward-import"
 	| "layers/no-portless-adapter"
 	| "tactical/no-aggregate-reference"
-	| "tactical/no-query-in-command"
-	| "tactical/no-command-in-query"
+	| "tactical/no-foreign-command-dependency"
+	| "tactical/no-foreign-query-dependency"
+	| "tactical/no-stateful-service"
 	| "tactical/no-thrown-failure"
 	| "tactical/no-misplaced-class"
-	| "tactical/no-plain-class";
+	| "tactical/no-loose-code";
 
 /** Each package and what may be imported from it: `true` for everything, or the allowed names. */
 export type PackageDependencies = Readonly<Record<string, true | readonly string[]>>;

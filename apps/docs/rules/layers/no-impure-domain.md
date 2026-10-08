@@ -10,7 +10,7 @@ domain building blocks of `@alveolus/core`.
 <dl class="al-glance">
 	<dt>Rule</dt><dd><code>layers/no-impure-domain</code></dd>
 	<dt>Category</dt><dd><a href="/rules/#layers">Layers</a>: what each layer may depend on</dd>
-	<dt>Reports</dt><dd>The domain importing a framework, a database, another layer or a package not allowed</dd>
+	<dt>Reports</dt><dd>The domain importing a framework, a database, another layer or a package not allowed, using a global of the host, reading the clock or drawing a random value</dd>
 	<dt>Applies to</dt><dd>Every file in <code>domain/</code>, in every bounded context and the shared kernel</dd>
 	<dt>Turn off</dt><dd><a href="#turn-it-off"><code>"layers/no-impure-domain": "off"</code></a></dd>
 </dl>
@@ -39,6 +39,22 @@ Every import of a file in `domain/`, in a bounded context or in the shared kerne
 
 Importing from the root `@alveolus/core` is fine: the rule checks each imported name, not the path.
 
+Every form of import counts, see [Every import counts](../index.md#every-import-counts).
+
+### Globals
+
+A global is used without an import, so the rule reads every global the domain uses:
+
+| Global | Allowed when |
+| --- | --- |
+| An ECMAScript built-in: `Array`, `Map`, `JSON`, `Math`, `Promise`, `Intl`… | Always, except `Date.now()`, `new Date()` without argument, `Date()` and `Math.random()`, which read the clock or draw a random value. |
+| A global of the host: `fetch`, `process`, `console`, `setTimeout`, `crypto`, a DOM type such as `Response`… | Never. |
+| A global declared by the project, in a `declare global` block | As if the domain imported the file that declares it. |
+
+The rule tells them apart by where they are declared: the ECMAScript library of TypeScript, the
+types of the host (DOM, Node), or a file of the project. A local variable named `fetch` is not a
+global.
+
 ## What it reports
 
 ```
@@ -54,6 +70,22 @@ src/ordering/domain/aggregates/order.aggregate.ts:5
   layers/no-impure-domain: The domain imports
   src/ordering/driven/smtp/adapters/mailer.adapter.ts
   (ordering driven): it may only import the domain.
+```
+
+A global of the host, the clock and randomness:
+
+```
+src/ordering/domain/services/pricing.service.ts:3
+  layers/no-impure-domain: The domain uses fetch, a global of the
+  host: reach it through a port.
+
+src/ordering/domain/aggregates/order.aggregate.ts:12
+  layers/no-impure-domain: The domain reads the system clock with
+  Date.now: receive the time from the Clock port.
+
+src/ordering/domain/aggregates/order.aggregate.ts:13
+  layers/no-impure-domain: The domain draws a random value with
+  Math.random: receive it from a port, such as IdGenerator.
 ```
 
 A name not allowed from a restricted package is reported as well:
@@ -90,6 +122,30 @@ import { InvalidTotal } from "../errors/invalid-total.error";
 
 </div>
 
+### Receive the time and random values
+
+So that a rule about dates gives the same answer in a test as in production, the domain never
+reads the clock or draws a random value itself. The command handler asks the
+[`Clock` and `IdGenerator` ports](../../core/domain/ports.md) and passes the values in.
+
+<div class="al-compare">
+
+```ts [❌ Avoid: src/ordering/domain/aggregates/order.aggregate.ts]
+public place(): Result<void, never> {
+	this.placedAt = new Date();
+	return ok(undefined);
+}
+```
+
+```ts [✅ Prefer: src/ordering/domain/aggregates/order.aggregate.ts]
+public place(at: Date): Result<void, never> {
+	this.placedAt = at;
+	return ok(undefined);
+}
+```
+
+</div>
+
 ### Map storage outside the domain
 
 So that the aggregate is not shaped by its table, it exposes a snapshot, and the repository
@@ -112,6 +168,15 @@ export default defineConfig({
 ```
 
 The packages of `domainDependencies` are allowed in the application too.
+
+## Limits
+
+::: warning What the rule cannot see
+- `domainDependencies` is not transitive: a package you allow may import anything itself. Allow
+  small, pure packages, such as a decimal or a date library.
+- A file that matches `ignore` in `alveolus.config.ts` is not analysed at all, and the domain may
+  import it: review a change to `ignore` as you would review a rule turned off.
+:::
 
 ## Turn it off
 

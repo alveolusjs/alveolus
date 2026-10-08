@@ -52,4 +52,12 @@ describe("Layout", () => {
 		expect(nested.locate("/project/src/shared/time/nested/time.module.ts").isCompositionRoot).toBe(false);
 		expect(nested.locate("/project/src/ordering/pricing/pricing.module.ts").isCompositionRoot).toBe(false);
 	});
+
+	it("takes the layer from the first folder of a context only, and keeps the folders below it", () => {
+		const nested = layout.locate("/project/src/ordering/legacy/domain/aggregates/order.aggregate.ts");
+		const adapter = layout.locate("/project/src/ordering/driven/pg/adapters/pg-orders.adapter.ts");
+
+		expect(nested.layer).toBeUndefined();
+		expect(adapter.foldersInLayer).toEqual(["pg", "adapters"]);
+	});
 });

@@ -12,7 +12,7 @@ A view is the read-only shape a query returns, built for the screen or the API t
 	<dt>Type</dt><dd><a href="#api"><code>View&lt;Props&gt;</code></a></dd>
 	<dt>Read by</dt><dd><a href="/core/domain/repositories">Query repositories</a></dd>
 	<dt>Returned by</dt><dd><a href="/core/application/query-handlers">Query handlers</a></dd>
-	<dt>Checked by</dt><dd><a href="/rules/tactical/no-query-in-command"><code>tactical/no-query-in-command</code></a></dd>
+	<dt>Checked by</dt><dd><a href="/rules/tactical/no-foreign-command-dependency"><code>tactical/no-foreign-command-dependency</code></a></dd>
 </dl>
 
 ## Why
@@ -242,7 +242,7 @@ npx alveolus arch check
 ```
 
 <div class="al-cards">
-<div class="al-card"><span class="al-card-title"><a href="../../rules/tactical/no-query-in-command"><code>no-query-in-command</code></a></span>Only query handlers receive <code>OrderSummaries</code>.</div>
+<div class="al-card"><span class="al-card-title"><a href="../../rules/tactical/no-foreign-command-dependency"><code>no-foreign-command-dependency</code></a></span>Only query handlers receive <code>OrderSummaries</code>.</div>
 <div class="al-card"><span class="al-card-title"><a href="../../rules/layers/no-portless-adapter"><code>no-portless-adapter</code></a></span><code>PgOrderSummaries</code> extends the query repository it implements.</div>
 </div>
 
@@ -250,9 +250,10 @@ A command handler that reads it is reported:
 
 ```
 src/ordering/application/commands/place-order.command.ts:47
-  tactical/no-query-in-command: The CommandHandler PlaceOrderHandler
-  receives OrderSummaries, a QueryRepository: decide from the
-  aggregate, through a CommandRepository.
+  tactical/no-foreign-command-dependency: The CommandHandler
+  PlaceOrderHandler receives OrderSummaries, a QueryRepository: a
+  command handler receives command repositories, ports, event
+  translators, domain services and value objects.
 ```
 
 ## See also
@@ -261,4 +262,4 @@ src/ordering/application/commands/place-order.command.ts:47
 - [Query handlers](../application/query-handlers.md), which return views
 - [Aggregates](./aggregates.md), the write side of the same data
 - [Published Language](../strategic/published-language.md), when a view leaves the context
-- Rules: [`tactical/no-query-in-command`](../../rules/tactical/no-query-in-command.md)
+- Rules: [`tactical/no-foreign-command-dependency`](../../rules/tactical/no-foreign-command-dependency.md)

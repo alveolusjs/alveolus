@@ -1,7 +1,7 @@
 import { basename, dirname, isAbsolute, matchesGlob, relative, sep } from "node:path";
 
 import type { Config, ContextFolder } from "../config/index.ts";
-import type { Layer } from "./location.ts";
+import type { Layer, Unseen } from "./location.ts";
 import { Location } from "./location.ts";
 
 const layers: ReadonlySet<string> = new Set<Layer>(["domain", "application", "published-language", "driven", "driving"]);
@@ -26,15 +26,32 @@ export class Layout {
 			return new Location({ area, context, fileName, isCompositionRoot: this.isCompositionRoot(fileName) });
 		}
 
-		const layerIndex = directories.findIndex((directory) => layers.has(directory));
-		if (layerIndex === -1) {
+		const layerIndex = this.layerIndexOf(directories, folder.isSharedKernel);
+		if (layerIndex === undefined) {
 			const isFeatureRoot = folder.isSharedKernel && directories.length === 1;
 			return new Location({ area, context, fileName, isCompositionRoot: isFeatureRoot && this.isCompositionRoot(fileName) });
 		}
 
 		const layer = directories[layerIndex] as Layer;
-		const subfolder = directories.length - 1 > layerIndex ? directories.at(-1) : undefined;
-		return new Location({ area, context, fileName, layer, ...(subfolder === undefined ? {} : { folder: subfolder }) });
+		const foldersInLayer = directories.slice(layerIndex + 1);
+		const subfolder = foldersInLayer.at(-1);
+		return new Location({ area, context, fileName, foldersInLayer, layer, ...(subfolder === undefined ? {} : { folder: subfolder }) });
+	}
+
+	/** The layer is the first folder of a context, or the second one in a feature of the shared kernel. */
+	private layerIndexOf(directories: readonly string[], isSharedKernel: boolean): number | undefined {
+		if (layers.has(directories[0] ?? "")) {
+			return 0;
+		}
+		if (isSharedKernel && layers.has(directories[1] ?? "")) {
+			return 1;
+		}
+		return undefined;
+	}
+
+	/** An imported file the analysis does not see: it lies outside the layers, whatever its folder. */
+	public unseen(path: string, reason: Unseen): Location {
+		return new Location({ area: "outside", fileName: basename(path), unseen: reason });
 	}
 
 	private isCompositionRoot(fileName: string): boolean {

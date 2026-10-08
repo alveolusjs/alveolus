@@ -2,13 +2,18 @@ export type Layer = "domain" | "application" | "published-language" | "driven" |
 
 export type Area = "context" | "shared-kernel" | "root" | "outside";
 
+/** Why the analysis does not see an imported file. */
+export type Unseen = "ignored" | "unresolved";
+
 export interface LocationProps {
 	readonly area: Area;
 	readonly context?: string;
 	readonly layer?: Layer;
 	readonly folder?: string;
+	readonly foldersInLayer?: readonly string[];
 	readonly fileName: string;
 	readonly isCompositionRoot?: boolean;
+	readonly unseen?: Unseen;
 }
 
 export class Location {
@@ -16,16 +21,21 @@ export class Location {
 	public readonly context: string | undefined;
 	public readonly layer: Layer | undefined;
 	public readonly folder: string | undefined;
+	/** The folders between the layer and the file: `["pg", "adapters"]` for `driven/pg/adapters/`. */
+	public readonly foldersInLayer: readonly string[];
 	public readonly fileName: string;
 	public readonly isCompositionRoot: boolean;
+	public readonly unseen: Unseen | undefined;
 
 	public constructor(props: LocationProps) {
 		this.area = props.area;
 		this.context = props.context;
 		this.layer = props.layer;
 		this.folder = props.folder;
+		this.foldersInLayer = props.foldersInLayer ?? [];
 		this.fileName = props.fileName;
 		this.isCompositionRoot = props.isCompositionRoot ?? false;
+		this.unseen = props.unseen;
 	}
 
 	public get isInBoundedContext(): boolean {
@@ -57,6 +67,12 @@ export class Location {
 	}
 
 	public describe(): string {
+		if (this.unseen === "ignored") {
+			return "ignored by the analysis";
+		}
+		if (this.unseen === "unresolved") {
+			return "not resolved by the analysis";
+		}
 		if (this.isOutside) {
 			return "outside the declared bounded contexts and shared kernel";
 		}

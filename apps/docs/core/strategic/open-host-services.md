@@ -12,7 +12,7 @@ contexts may call, answering in the [published language](./published-language.md
 	<dt>File</dt><dd><code>src/catalog/driving/in-process/catalog-api.ts</code></dd>
 	<dt>Implements</dt><dd><a href="#api"><code>OpenHostService</code></a></dd>
 	<dt>Called by</dt><dd><a href="/core/strategic/anti-corruption-layers">Anti-corruption layers</a> of other contexts</dd>
-	<dt>Checked by</dt><dd><a href="/rules/strategic/no-cross-context-import"><code>strategic/no-cross-context-import</code></a>, <a href="/rules/tactical/no-misplaced-class"><code>tactical/no-misplaced-class</code></a></dd>
+	<dt>Checked by</dt><dd><a href="/rules/strategic/no-cross-context-import"><code>strategic/no-cross-context-import</code></a>, <a href="/rules/strategic/no-leaky-host-service"><code>strategic/no-leaky-host-service</code></a>, <a href="/rules/tactical/no-misplaced-class"><code>tactical/no-misplaced-class</code></a></dd>
 </dl>
 
 ## Why
@@ -257,7 +257,7 @@ export class OrderingModule {
 
 ### 6. Check it
 
-Run the checks. Two rules keep the service the only door of the catalog:
+Run the checks. Three rules keep the service the only door of the catalog:
 
 ```sh
 npx alveolus arch check
@@ -265,6 +265,7 @@ npx alveolus arch check
 
 <div class="al-cards">
 <div class="al-card"><span class="al-card-title"><a href="../../rules/strategic/no-cross-context-import"><code>strategic/no-cross-context-import</code></a></span>Another context imports this class, and nothing else of the catalog.</div>
+<div class="al-card"><span class="al-card-title"><a href="../../rules/strategic/no-leaky-host-service"><code>strategic/no-leaky-host-service</code></a></span>It answers in the published language, never with a class of the catalog.</div>
 <div class="al-card"><span class="al-card-title"><a href="../../rules/tactical/no-misplaced-class"><code>tactical/no-misplaced-class</code></a></span>It stays under <code>driving/</code>.</div>
 </div>
 
@@ -283,4 +284,4 @@ src/ordering/driven/catalog/adapters/catalog-price-list.adapter.ts:4
 - [Anti-corruption layers](./anti-corruption-layers.md), how another context reads it
 - [Query handlers](../application/query-handlers.md), what it usually calls
 - [Project layout: bounded contexts](../../guide/project-layout.md#bounded-contexts)
-- Rules: [`strategic/no-cross-context-import`](../../rules/strategic/no-cross-context-import.md), [`tactical/no-misplaced-class`](../../rules/tactical/no-misplaced-class.md)
+- Rules: [`strategic/no-cross-context-import`](../../rules/strategic/no-cross-context-import.md), [`strategic/no-leaky-host-service`](../../rules/strategic/no-leaky-host-service.md), [`tactical/no-misplaced-class`](../../rules/tactical/no-misplaced-class.md)

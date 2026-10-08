@@ -12,7 +12,7 @@ identifier.
 	<dt>File</dt><dd><code>domain/value-objects/money.value-object.ts</code>, <code>domain/value-objects/order-id.identifier.ts</code></dd>
 	<dt>Extends</dt><dd><a href="#api"><code>ValueObject&lt;Props&gt;</code></a> or <a href="#identifier"><code>Identifier&lt;T, Tag&gt;</code></a></dd>
 	<dt>Used by</dt><dd><a href="/core/domain/aggregates">Aggregates</a>, <a href="/core/domain/entities">entities</a>, <a href="/core/domain/domain-events">domain events</a>, <a href="/core/application/command-handlers">command handlers</a></dd>
-	<dt>Checked by</dt><dd><a href="/rules/tactical/no-misplaced-class"><code>tactical/no-misplaced-class</code></a>, <a href="/rules/tactical/no-plain-class"><code>tactical/no-plain-class</code></a></dd>
+	<dt>Checked by</dt><dd><a href="/rules/tactical/no-misplaced-class"><code>tactical/no-misplaced-class</code></a>, <a href="/rules/tactical/no-loose-code"><code>tactical/no-loose-code</code></a>, <a href="/rules/tactical/no-aggregate-reference"><code>tactical/no-aggregate-reference</code></a></dd>
 </dl>
 
 ## Why
@@ -402,7 +402,7 @@ npx alveolus arch check
 ```
 
 <div class="al-cards">
-<div class="al-card"><span class="al-card-title"><a href="../../rules/tactical/no-plain-class"><code>no-plain-class</code></a></span>Behaviour on a value lives in its class, not in a free function.</div>
+<div class="al-card"><span class="al-card-title"><a href="../../rules/tactical/no-loose-code"><code>no-loose-code</code></a></span>Behaviour on a value lives in its class, not in a free function.</div>
 <div class="al-card"><span class="al-card-title"><a href="../../rules/tactical/no-misplaced-class"><code>no-misplaced-class</code></a></span><code>*.value-object.ts</code> and <code>*.identifier.ts</code>, in <code>domain/value-objects/</code>.</div>
 <div class="al-card"><span class="al-card-title"><a href="../../rules/layers/no-impure-domain"><code>no-impure-domain</code></a></span>It imports the domain only, or a package listed in <code>domainDependencies</code>.</div>
 </div>
@@ -410,8 +410,8 @@ npx alveolus arch check
 An operation written as a function is reported:
 
 ```
-src/ordering/domain/money.ts:3
-  tactical/no-plain-class: The function addMoney floats outside
+src/ordering/domain/value-objects/money.ts:3
+  tactical/no-loose-code: The function addMoney floats outside
   any class: make it a method of a value object or of a
   DomainService.
 ```
@@ -421,5 +421,5 @@ src/ordering/domain/money.ts:3
 - [Entities](./entities.md) and [Aggregates](./aggregates.md), identified by identifiers
 - [Domain errors](./domain-errors.md), returned by factories
 - [Result](../utilities/result.md), to combine several factories
-- Rules: [`tactical/no-plain-class`](../../rules/tactical/no-plain-class.md), [`tactical/no-misplaced-class`](../../rules/tactical/no-misplaced-class.md)
+- Rules: [`tactical/no-loose-code`](../../rules/tactical/no-loose-code.md), [`tactical/no-misplaced-class`](../../rules/tactical/no-misplaced-class.md)
 - Vaughn Vernon, *Implementing Domain-Driven Design*, chapter 6, "Value Objects"

@@ -1,4 +1,4 @@
-import type { Codebase, CodeClass, CodeFile, CoreKind } from "../../../codebase/index.ts";
+import type { Codebase, CodeClass, CodeFile, CoreKind, CoreMarker } from "../../../codebase/index.ts";
 import type { RuleId } from "../../../config/index.ts";
 import { Place } from "../../place.ts";
 import type { Problem } from "../../problem.ts";
@@ -30,7 +30,17 @@ const kindPlaces: readonly KindPlace[] = [
 	{ kind: "Port", place: new Place("domain", "ports", ".port.ts") },
 ];
 
-const markedPlace = new Place("driving");
+interface MarkerPlace {
+	readonly marker: CoreMarker;
+	readonly place: Place;
+	readonly where: string;
+}
+
+/** A marker fixes the place of its class, whatever the class extends. */
+const markerPlaces: readonly MarkerPlace[] = [
+	{ marker: "AntiCorruptionLayer", place: new Place("driven", "adapters", ".adapter.ts"), where: "driven/<technology>/adapters/*.adapter.ts, as an adapter of a port" },
+	{ marker: "OpenHostService", place: new Place("driving"), where: "driving/<technology>/" },
+];
 
 export class NoMisplacedClassRule extends Rule {
 	public readonly id: RuleId = "tactical/no-misplaced-class";
@@ -53,19 +63,24 @@ export class NoMisplacedClassRule extends Rule {
 	private misplacedClasses(file: CodeFile): Problem[] {
 		const problems: Problem[] = [];
 		for (const codeClass of file.classes) {
-			const place = this.placeOf(codeClass);
-			if (place !== undefined && !place.fits(file.location)) {
-				problems.push({ line: codeClass.line, message: `${codeClass.name} belongs in ${place.describe()}.`, symbol: codeClass.name });
+			const message = this.markerProblem(codeClass, file) ?? this.kindProblem(codeClass, file);
+			if (message !== undefined) {
+				problems.push({ line: codeClass.line, message, symbol: codeClass.name });
 			}
 		}
 		return problems;
 	}
 
-	private placeOf(codeClass: CodeClass): Place | undefined {
+	private markerProblem(codeClass: CodeClass, file: CodeFile): string | undefined {
+		const misplaced = markerPlaces.find((entry) => codeClass.implements(entry.marker) && !entry.place.fits(file.location));
+		return misplaced === undefined ? undefined : `${codeClass.name} implements ${misplaced.marker}: it belongs in ${misplaced.where}.`;
+	}
+
+	private kindProblem(codeClass: CodeClass, file: CodeFile): string | undefined {
 		const match = kindPlaces.find((entry) => codeClass.is(entry.kind) && !(entry.concreteOnly === true && codeClass.isAbstract));
-		if (match !== undefined) {
-			return match.place;
+		if (match === undefined || match.place.fits(file.location)) {
+			return undefined;
 		}
-		return codeClass.hasMarker ? markedPlace : undefined;
+		return `${codeClass.name} belongs in ${match.place.describe()}.`;
 	}
 }

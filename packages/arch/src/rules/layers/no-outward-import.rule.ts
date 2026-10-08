@@ -1,7 +1,10 @@
+import { basename, dirname } from "node:path";
+
 import type { Codebase, CodeFile, Import, Layer, Location } from "../../codebase/index.ts";
 import { CoreApi } from "../../codebase/index.ts";
 import type { Config, RuleId } from "../../config/index.ts";
 import { ImportRule } from "../import-rule.ts";
+import { LayerShape } from "../layer-shape.ts";
 import type { Violation } from "../violation.ts";
 
 type OuterLayer = Exclude<Layer, "domain">;
@@ -15,9 +18,10 @@ const allowedLayers: Readonly<Record<OuterLayer, readonly Layer[]>> = {
 
 export class NoOutwardImportRule extends ImportRule {
 	public readonly id: RuleId = "layers/no-outward-import";
+	private readonly shape = new LayerShape();
 
 	public override check(codebase: Codebase): Violation[] {
-		return [...this.filesOutsideLayers(codebase), ...super.check(codebase)];
+		return [...this.filesOutsideLayers(codebase), ...this.extraCompositionRoots(codebase), ...super.check(codebase)];
 	}
 
 	protected appliesTo(file: CodeFile): boolean {
@@ -52,6 +56,32 @@ export class NoOutwardImportRule extends ImportRule {
 						symbol: location.fileName,
 					}),
 				);
+			} else if (location.isInLayer) {
+				const message = this.shape.problemWith(location);
+				if (message !== undefined) {
+					violations.push(this.violation(codebase, file, { line: 1, message, symbol: location.fileName }));
+				}
+			}
+		}
+		return violations;
+	}
+
+	/** A context, or a feature of the shared kernel, has one composition root: the files of its folder that match the glob. */
+	private extraCompositionRoots(codebase: Codebase): Violation[] {
+		const byFolder = new Map<string, CodeFile[]>();
+		for (const file of codebase.files.filter((candidate) => candidate.location.isCompositionRoot)) {
+			const folder = dirname(file.path);
+			byFolder.set(folder, [...(byFolder.get(folder) ?? []), file]);
+		}
+		const violations: Violation[] = [];
+		for (const roots of byFolder.values()) {
+			if (roots.length < 2) {
+				continue;
+			}
+			const names = roots.map((root) => basename(root.path)).sort();
+			for (const root of roots) {
+				const message = `${root.location.context} has ${roots.length} composition roots (${names.join(", ")}): keep one, and move the rest into the layers.`;
+				violations.push(this.violation(codebase, root, { line: 1, message, symbol: root.location.fileName }));
 			}
 		}
 		return violations;

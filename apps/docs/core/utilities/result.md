@@ -214,7 +214,7 @@ failure in order. The error type is the union of the errors of every result.
   works as for any union.
 - `combine` stops at the first failure in order: it does not collect every error.
 - A `Result` carries expected failures. Technical failures, such as a lost connection, are thrown
-  and handled like any other exception.
+  by adapters and handled like any other exception; the domain and the application never throw.
 :::
 
 ## Usage
@@ -393,14 +393,14 @@ npx alveolus arch check
 ```
 
 <div class="al-cards">
-<div class="al-card"><span class="al-card-title"><a href="../../rules/tactical/no-thrown-failure"><code>tactical/no-thrown-failure</code></a></span>Public methods of aggregates and entities return a <code>Result</code>, and no domain error is thrown.</div>
+<div class="al-card"><span class="al-card-title"><a href="../../rules/tactical/no-thrown-failure"><code>tactical/no-thrown-failure</code></a></span>Public methods of aggregates and entities return a <code>Result</code>, and nothing is thrown in the domain or the application.</div>
 </div>
 
-A domain error thrown instead of returned is reported:
+A failure thrown instead of returned is reported:
 
 ```
 src/ordering/domain/aggregates/order.aggregate.ts:58
-  tactical/no-thrown-failure: A DomainError is thrown: return it in a
+  tactical/no-thrown-failure: A failure is thrown: return it in a
   Result instead.
 ```
 

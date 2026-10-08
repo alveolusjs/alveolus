@@ -10,7 +10,7 @@ file belongs to a layer.
 <dl class="al-glance">
 	<dt>Rule</dt><dd><code>layers/no-outward-import</code></dd>
 	<dt>Category</dt><dd><a href="/rules/#layers">Layers</a>: what each layer may depend on</dd>
-	<dt>Reports</dt><dd>An import that points away from the domain, a package the application may not use, a file outside the layers</dd>
+	<dt>Reports</dt><dd>An import that points away from the domain, a package the application may not use, a file outside the layers or in the wrong folder of its layer</dd>
 	<dt>Applies to</dt><dd><code>application/</code>, <code>published-language/</code>, <code>driven/</code>, <code>driving/</code>, composition roots and files at the root of <code>src/</code></dd>
 	<dt>Turn off</dt><dd><a href="#turn-it-off"><code>"layers/no-outward-import": "off"</code></a></dd>
 </dl>
@@ -47,12 +47,30 @@ No layer imports a composition root. The domain has its own rule,
 [`layers/no-impure-domain`](./no-impure-domain.md); imports from another context are checked by
 [`strategic/no-cross-context-import`](../strategic/no-cross-context-import.md).
 
+Every form of import counts, see [Every import counts](../index.md#every-import-counts).
+
 ### Files outside the layers
 
 <div class="al-cards al-cards-2">
-<div class="al-card"><span class="al-card-title">Inside a context</span>A file directly in a context that is not its composition root belongs to no layer.</div>
+<div class="al-card"><span class="al-card-title">Inside a context</span>A file directly in a context that is not its composition root belongs to no layer. A context, or a feature of the shared kernel, has a single composition root.</div>
 <div class="al-card"><span class="al-card-title">Outside every context</span>A file under <code>src/</code>, outside every declared context and the shared kernel, and not at the root.</div>
 </div>
+
+The layer is the first folder of a context, or the second one in a feature of the shared kernel:
+`ordering/legacy/domain/` is no layer.
+
+### Folders inside a layer
+
+Each layer expects the folders of the [project layout](../../guide/project-layout.md#the-tree).
+A file in another folder keeps its layer for every other rule, and is reported here:
+
+| Layer | Expected | Reported |
+| --- | --- | --- |
+| `domain/` | One folder of a kind: `aggregates/`, `entities/`, `value-objects/`, `events/`, `errors/`, `services/`, `repositories/`, `ports/`, `views/` | A file directly in `domain/`, a deeper folder, another folder name |
+| `application/` | One folder of a kind: `commands/`, `queries/`, `translators/` | The same |
+| `published-language/` | The files directly | Any folder |
+| `driven/` | `<technology>/<folder>/`, such as `pg/adapters/` | A file without a technology, a deeper folder |
+| `driving/` | `<technology>/`, any folders below, such as `http/controllers/` | A file without a technology |
 
 ## What it reports
 
@@ -72,6 +90,10 @@ src/ordering/helpers.ts:1
   layers/no-outward-import: The file is outside the layers:
   move it to domain/, application/, published-language/,
   driven/ or driving/.
+
+src/ordering/domain/legacy/v1/aggregates/order.aggregate.ts:1
+  layers/no-outward-import: The file is nested too deep: domain/
+  holds one folder per kind, such as domain/aggregates/.
 ```
 
 The rule also reports:
@@ -80,9 +102,13 @@ The rule also reports:
 | --- | --- |
 | A layer imports a composition root | `Imports … : only the composition root wires the layers.` |
 | A file at the root imports inside a context | `Files at the root import composition roots only, not ….` |
+| Two composition roots in a context | `ordering has 2 composition roots (ordering.module.ts, pricing.module.ts): keep one, and move the rest into the layers.` |
 | The published language imports another name from core | `The published language imports … from @alveolus/core: only published-language types are allowed.` |
 | A name not allowed from a restricted package | `The application imports Controller from @nestjs/common: applicationDependencies only allows Injectable.` |
 | A file outside the declared contexts | `The file is outside the bounded contexts and the shared kernel declared in alveolus.config.ts: move it, or add it to ignore.` |
+| A file directly in `domain/` or `application/` | `The file sits directly in domain/: put it in the folder of its kind, such as domain/aggregates/.` |
+| A folder that is no kind | `domain/helpers/ is no folder of the domain: use aggregates/, entities/, …` |
+| An adapter without a technology | `The file is not under a technology: driven/ holds driven/<technology>/<folder>/, such as driven/pg/adapters/.` |
 
 ## Fix it
 
@@ -107,10 +133,11 @@ import { Orders } from "../../domain/repositories/orders.repository";
 
 </div>
 
-### Give every file a layer
+### Give every file a layer and a folder
 
 So that every file has a known place, move a helper into the layer that uses it, as a building
-block. A file that has nothing to do with the architecture, such as a script, can be left out with
+block, in the folder of its kind. A barrel such as `domain/index.ts` is not needed: import each
+file from its folder. A file that has nothing to do with the architecture, such as a script, can be left out with
 `ignore` in `alveolus.config.ts`.
 
 ## Allow a package
@@ -130,6 +157,16 @@ export default defineConfig({
 ```
 
 The packages of `domainDependencies` are allowed in the application too.
+
+## Limits
+
+::: warning What the rule cannot see
+- Below its technology, an adapter layer is free: `driven/pg/helpers/sql.ts` may hold functions,
+  constants or a connection pool, and `driving/http/` any folders. Only the layer and the
+  technology folder are checked.
+- A file that matches `ignore` in `alveolus.config.ts` is not analysed at all. Review a change to
+  `ignore` as you would review a rule turned off.
+:::
 
 ## Turn it off
 

@@ -792,7 +792,7 @@ npx alveolus arch check
 
 <div class="al-cards">
 <div class="al-card"><span class="al-card-title"><a href="../../rules/tactical/no-misplaced-class"><code>no-misplaced-class</code></a></span>It stays alone in <code>domain/aggregates/*.aggregate.ts</code>.</div>
-<div class="al-card"><span class="al-card-title"><a href="../../rules/tactical/no-thrown-failure"><code>no-thrown-failure</code></a></span>Its public methods return a <code>Result</code>, and nothing throws a domain error.</div>
+<div class="al-card"><span class="al-card-title"><a href="../../rules/tactical/no-thrown-failure"><code>no-thrown-failure</code></a></span>Its public methods return a <code>Result</code>, and nothing is thrown.</div>
 <div class="al-card"><span class="al-card-title"><a href="../../rules/tactical/no-aggregate-reference"><code>no-aggregate-reference</code></a></span>It keeps a <code>CustomerId</code>, never a <code>Customer</code>.</div>
 </div>
 

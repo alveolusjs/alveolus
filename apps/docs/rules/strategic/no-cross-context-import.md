@@ -35,11 +35,13 @@ When a file of one bounded context imports a file of another one:
 <div class="al-cards al-cards-2">
 <div class="al-card"><span class="al-card-title"><span class="al-card-step">1</span>Only open host services</span>Every imported name is a class that implements <code>OpenHostService</code>.</div>
 <div class="al-card"><span class="al-card-title"><span class="al-card-step">2</span>Only from an anti-corruption layer</span>The importing file declares a class that implements <code>AntiCorruptionLayer</code>, or is the composition root of its context.</div>
-<div class="al-card"><span class="al-card-title"><span class="al-card-step">3</span>Composition roots meet freely</span>A composition root may import another context's composition root, to reach its open host services.</div>
+<div class="al-card"><span class="al-card-title"><span class="al-card-step">3</span>Composition roots meet freely</span>A composition root may import another context's composition root, to reach its open host services. It re-exports nothing, so that no other context reaches its model through it.</div>
 <div class="al-card"><span class="al-card-title"><span class="al-card-step">4</span>No foreign published language</span>The published language of another context is never imported, not even its types.</div>
 </div>
 
 The shared kernel imports no bounded context at all. Every context may import the shared kernel.
+
+Every form of import counts, see [Every import counts](../index.md#every-import-counts).
 
 ## What it reports
 
@@ -58,6 +60,11 @@ src/ordering/driven/pg/adapters/stock.adapter.ts:3
   strategic/no-cross-context-import: Uses the open host service of
   catalog outside an AntiCorruptionLayer: translate it in an
   anti-corruption layer.
+
+src/catalog/catalog.module.ts:2
+  strategic/no-cross-context-import: The composition root
+  re-exports Product: it exports its own module only, so that no
+  other context reaches through it.
 
 src/shared-kernel/domain/value-objects/money.value-object.ts:1
   strategic/no-cross-context-import: The shared kernel imports no
@@ -109,6 +116,15 @@ TypeScript still checks that both shapes match, at the anti-corruption layer and
 
 So that a change in one context never reaches all the others, the shared kernel imports no
 bounded context. Move what it needs into the shared kernel, or keep it in the context that owns it.
+
+## Limits
+
+::: warning What the rule cannot see
+- The rule checks what an anti-corruption layer imports, not what it does with it: an adapter that
+  returns the open host service's answer as is, untranslated, is accepted. In review, the ACL
+  should build values of its own context.
+- A file that matches `ignore` in `alveolus.config.ts` is not analysed at all.
+:::
 
 ## Turn it off
 
