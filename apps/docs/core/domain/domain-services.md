@@ -235,7 +235,7 @@ The same rule written as a function is reported:
 
 ```
 src/ordering/domain/services/order-limit.ts
-  5  tactical/no-loose-code: The function checkOrderLimit floats
+  5  error  tactical/no-loose-code: The function checkOrderLimit floats
   outside any class: make it a method of a value object or of a
   DomainService.
 ```

@@ -2,9 +2,10 @@ import picocolors from "picocolors";
 
 import type { RuleMeta } from "../rules/index.ts";
 import type { Suppressed } from "./checker.ts";
-import type { Violation } from "./violation.ts";
+import type { Severity, Violation } from "./violation.ts";
 
 export interface ReportInput {
+	readonly files: number;
 	readonly violations: readonly Violation[];
 	readonly suppressed: readonly Suppressed[];
 	readonly baselined: number;
@@ -12,6 +13,8 @@ export interface ReportInput {
 }
 
 const docsUrl = "https://alveolus.dev/";
+
+const sarifLevels: Readonly<Record<Severity, string>> = { error: "error", info: "note", warn: "warning" };
 
 export class Report {
 	private readonly colors: ReturnType<typeof picocolors.createColors>;
@@ -32,9 +35,9 @@ export class Report {
 	}
 
 	public json(): string {
-		const { baselined, stale, suppressed, violations } = this.input;
+		const { baselined, files, stale, suppressed, violations } = this.input;
 		const disabled = suppressed.map(({ reason, violation }) => ({ ...violation, reason }));
-		return `${JSON.stringify({ baselined, stale, suppressed: disabled, violations }, null, "\t")}\n`;
+		return `${JSON.stringify({ baselined, files, stale, suppressed: disabled, violations }, null, "\t")}\n`;
 	}
 
 	public sarif(rules: readonly RuleMeta<string, string>[]): string {
@@ -44,7 +47,7 @@ export class Report {
 			rules: rules.map((rule) => ({ helpUri: `${docsUrl}rules/${rule.id}`, id: rule.id, shortDescription: { text: rule.description } })),
 		};
 		const results = this.input.violations.map((violation) => ({
-			level: "error",
+			level: sarifLevels[violation.severity],
 			locations: [{ physicalLocation: { artifactLocation: { uri: violation.file, uriBaseId: "%SRCROOT%" }, region: { startLine: violation.line } } }],
 			message: { text: violation.message },
 			partialFingerprints: { "alveolus/v1": violation.fingerprint },
@@ -63,15 +66,25 @@ export class Report {
 	}
 
 	private block(file: string, violations: readonly Violation[]): string {
-		const { bold, red } = this.colors;
-		const lines = violations.map((violation) => `  ${violation.line}  ${red(violation.rule)}: ${violation.message}`);
-		return [bold(file), ...lines].join("\n");
+		const lines = violations.map((violation) => `  ${violation.line}  ${this.severity(violation.severity)}  ${violation.rule}: ${violation.message}`);
+		return [this.colors.bold(file), ...lines].join("\n");
+	}
+
+	private severity(severity: Severity): string {
+		const { dim, red, yellow } = this.colors;
+		if (severity === "error") {
+			return red("error");
+		}
+		if (severity === "warn") {
+			return yellow("warn");
+		}
+		return dim("info");
 	}
 
 	private summary(): string {
-		const { dim, green, red } = this.colors;
-		const count = this.input.violations.length;
-		const head = count === 0 ? green("No violation") : red(`${count} violation${count === 1 ? "" : "s"}`);
+		const { dim, green } = this.colors;
+		const counted = this.counts();
+		const head = counted.length === 0 ? green("No violation") : counted.join(", ");
 		const parts: string[] = [];
 		if (this.input.baselined > 0) {
 			parts.push(`${this.input.baselined} in the baseline`);
@@ -82,6 +95,25 @@ export class Report {
 		if (this.input.suppressed.length > 0) {
 			parts.push(`${this.input.suppressed.length} disabled`);
 		}
-		return parts.length === 0 ? head : `${head}${dim(` (${parts.join(", ")})`)}`;
+		const where = ` in ${this.input.files} file${this.input.files === 1 ? "" : "s"}`;
+		return parts.length === 0 ? `${head}${where}` : `${head}${where}${dim(` (${parts.join(", ")})`)}`;
+	}
+
+	private counts(): string[] {
+		const { dim, red, yellow } = this.colors;
+		const errors = this.input.violations.filter((violation) => violation.severity === "error").length;
+		const warnings = this.input.violations.filter((violation) => violation.severity === "warn").length;
+		const infos = this.input.violations.filter((violation) => violation.severity === "info").length;
+		const counted: string[] = [];
+		if (errors > 0) {
+			counted.push(red(`${errors} error${errors === 1 ? "" : "s"}`));
+		}
+		if (warnings > 0) {
+			counted.push(yellow(`${warnings} warning${warnings === 1 ? "" : "s"}`));
+		}
+		if (infos > 0) {
+			counted.push(dim(`${infos} info${infos === 1 ? "" : "s"}`));
+		}
+		return counted;
 	}
 }

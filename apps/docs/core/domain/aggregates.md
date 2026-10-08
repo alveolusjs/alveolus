@@ -800,7 +800,7 @@ A setter added later is reported:
 
 ```
 src/ordering/domain/aggregates/order.aggregate.ts
-  42  tactical/no-thrown-failure: Order.setStatus must return a
+  42  error  tactical/no-thrown-failure: Order.setStatus must return a
   Result: expose reads as getters and return business failures
   as values.
 ```

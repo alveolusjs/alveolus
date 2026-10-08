@@ -46,7 +46,7 @@ counts too, since a dependency injected by type is a dependency. Every form of i
 
 ```
 src/ordering/driving/http/orders.controller.ts
-  3  layers/no-driving-shortcut: Imports Orders, a CommandRepository:
+  3  error  layers/no-driving-shortcut: Imports Orders, a CommandRepository:
      a driving adapter calls the command and query handlers, never
      the ports, repositories or aggregates of the domain.
 ```

@@ -30,11 +30,13 @@ describe("Config", () => {
 		expect(config.isIgnored("/project/src/ordering/domain/order.aggregate.ts")).toBe(false);
 	});
 
-	it("enables every rule unless it is turned off", () => {
-		const config = new Config({ boundedContexts: {}, root: "src", rules: { "tactical/no-misplaced-class": "off" } }, "/project");
+	it("reports every rule as an error, unless the configuration lowers it or turns it off", () => {
+		const config = new Config({ boundedContexts: {}, root: "src", rules: { "tactical/no-loose-code": "info", "tactical/no-misplaced-class": "off", "tactical/no-public-field": "warn" } }, "/project");
 
-		expect(config.isEnabled("tactical/no-misplaced-class")).toBe(false);
-		expect(config.isEnabled("strategic/no-cross-context-import")).toBe(true);
+		expect(config.severityOf("tactical/no-misplaced-class")).toBe("off");
+		expect(config.severityOf("tactical/no-public-field")).toBe("warn");
+		expect(config.severityOf("tactical/no-loose-code")).toBe("info");
+		expect(config.severityOf("strategic/no-cross-context-import")).toBe("error");
 	});
 
 	it("ignores the companions of tests too: end-to-end specs, fixtures, stories and mocks", () => {

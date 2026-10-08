@@ -130,7 +130,7 @@ export default defineConfig({
 | `applicationDependencies` | `{}` | npm packages the application may import, besides `@alveolus/core` and `domainDependencies`. |
 | `ignore` | test files | More files to leave out, as globs from the project folder. |
 | `layout.extraFolders` | `{}` | Folders of your own under `domain/` or `application/`, besides those of the building blocks: `{ domain: ["specifications"] }`. |
-| `rules` | every rule on | Turns a rule off: `{ "tactical/no-misplaced-class": "off" }`. |
+| `rules` | every rule `"error"` | The level of a rule: `"error"` fails the check, `"warn"` and `"info"` only report, `"off"` silences it: `{ "tactical/no-public-field": "warn" }`. |
 
 `domainDependencies` and `applicationDependencies` take `true` for every name of a package, or the
 list of names allowed:
@@ -153,7 +153,7 @@ Otherwise it lists each violation, with what is allowed instead, and exits with 
 
 ```
 src/ordering/domain/aggregates/order.aggregate.ts
-  1  layers/no-impure-domain: The domain imports @nestjs/common: add it
+  1  error  layers/no-impure-domain: The domain imports @nestjs/common: add it
   to domainDependencies if the domain really needs it.
 
 1 violation
@@ -170,6 +170,11 @@ Each violation names its rule: the [rules](../rules/index.md) explain what each 
 | `--tsconfig <file>` | The TypeScript configuration the sources are read with. Defaults to `tsconfig.json`, or to the `tsconfig` of the configuration file. |
 | `--format json` | Prints the violations as JSON, for tools and agents. |
 | `--format sarif` | Prints SARIF 2.1.0, for GitHub code scanning and the other analysers: upload it with `github/codeql-action/upload-sarif`. |
+
+The exit code says what happened: `0` when no error is reported (warnings and infos never fail
+the check), `1` when at least one error is, `2` when the configuration or the analysis itself
+failed, with the reason on stderr. The summary counts the files analysed: `No violation in 142
+files` on `0 files` would hide a wrong `root`.
 
 ### Run it in continuous integration
 
@@ -190,6 +195,8 @@ the agent can fix its own code before you review it.
 :::
 
 ## Adopt it on an existing project
+
+The short version; the [guide for an existing project](./existing-project.md) has the whole path.
 
 An existing project rarely keeps every rule from the start. A baseline lets you turn the checks on
 today, and fix the past over time:

@@ -273,7 +273,7 @@ An import that reaches past it, into the catalog's domain, is reported:
 
 ```
 src/ordering/driven/catalog/adapters/catalog-price-list.adapter.ts
-  4  strategic/no-cross-context-import: Imports
+  4  error  strategic/no-cross-context-import: Imports
   src/catalog/domain/aggregates/product.aggregate.ts (catalog domain):
   only an OpenHostService of another bounded context may be imported.
 ```

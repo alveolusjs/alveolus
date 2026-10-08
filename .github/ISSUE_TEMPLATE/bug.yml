@@ -1,0 +1,25 @@
+name: Bug
+description: Something reports wrongly, crashes, or behaves differently from its page
+labels: [bug]
+body:
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      placeholder: "@alveolus/arch 0.1.0-alpha.0, Node 24.1, macOS"
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: The command, its output, and what you expected. For a rule, the violation as printed and the code it points to.
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: How to reproduce
+      description: The smallest file and configuration that show it. A link to a repository is best.
+    validations:
+      required: true

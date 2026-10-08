@@ -1,0 +1,23 @@
+name: Rule proposal
+description: A drift the checks should report, or one they report wrongly
+labels: [rule]
+body:
+  - type: textarea
+    id: drift
+    attributes:
+      label: The drift
+      description: What ends up written, and what it costs later. A short example of the code.
+    validations:
+      required: true
+  - type: textarea
+    id: source
+    attributes:
+      label: Where it comes from
+      description: The chapter of Domain-Driven Design Distilled, or the practice, that says it should not happen.
+    validations:
+      required: true
+  - type: textarea
+    id: report
+    attributes:
+      label: What the rule would report
+      description: The message, as you would like to read it in the terminal.

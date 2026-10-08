@@ -233,7 +233,7 @@ A thrown error is reported:
 
 ```
 src/ordering/domain/entities/order-line.entity.ts
-  41  tactical/no-thrown-failure: A failure is thrown: return it in a
+  41  error  tactical/no-thrown-failure: A failure is thrown: return it in a
   Result instead.
 ```
 

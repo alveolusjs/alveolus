@@ -339,7 +339,7 @@ A transaction class declared in the same file is reported:
 
 ```
 src/shared-kernel/driven/pg/adapters/pg-unit-of-work.adapter.ts
-  30  tactical/no-misplaced-class: PgTransaction shares its file
+  30  error  tactical/no-misplaced-class: PgTransaction shares its file
   with PgUnitOfWork: one class per file.
 ```
 

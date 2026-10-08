@@ -1,5 +1,8 @@
 {
 	"description": "Domain-Driven Design building blocks for TypeScript",
+	"engines": {
+		"node": ">=24"
+	},
 	"exports": {
 		".": {
 			"@alveolus/source": "./src/index.ts",
@@ -144,6 +147,7 @@
 		"build": "tsdown",
 		"typecheck": "tsc -p tsconfig.json"
 	},
+	"sideEffects": false,
 	"type": "module",
 	"version": "0.1.0-alpha.0"
 }

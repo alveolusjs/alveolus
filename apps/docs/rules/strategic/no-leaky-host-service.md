@@ -46,7 +46,7 @@ them.
 
 ```
 src/catalog/driving/in-process/catalog-api.ts
-  6  strategic/no-leaky-host-service: CatalogApi.product exposes
+  6  error  strategic/no-leaky-host-service: CatalogApi.product exposes
   Product, an AggregateRoot of catalog: an open host service speaks
   the published language.
 ```
@@ -78,6 +78,16 @@ export class CatalogApi implements OpenHostService {
 ```
 
 </div>
+
+## Limits
+
+::: warning What the rule cannot see
+- What a method returns as `unknown`, `any` or a plain object typed by hand with the fields of the
+  aggregate: the rule follows classes. In review, a method of an open host service returns a type of
+  `published-language/`.
+- A DTO class of the context is a leak too, on purpose: the published language is made of types,
+  not classes.
+:::
 
 ## Turn it off
 

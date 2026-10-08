@@ -51,7 +51,7 @@ A parameter counts by what its type extends: `OrderSummaries` extends
 
 ```
 src/ordering/application/commands/place-order.command.ts
-  2  tactical/no-foreign-command-dependency: The CommandHandler
+  2  error  tactical/no-foreign-command-dependency: The CommandHandler
   PlaceOrderHandler receives OrderSummaries, a QueryRepository: a
   command handler receives command repositories, ports, event
   translators, domain services and value objects.

@@ -411,7 +411,7 @@ A setter added later is reported:
 
 ```
 src/ordering/domain/entities/order-line.entity.ts
-  38  tactical/no-thrown-failure: OrderLine.setQuantity must return
+  38  error  tactical/no-thrown-failure: OrderLine.setQuantity must return
   a Result: expose reads as getters and return business failures
   as values.
 ```

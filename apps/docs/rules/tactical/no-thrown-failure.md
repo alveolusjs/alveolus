@@ -39,12 +39,12 @@ worked; reads are getters.
 
 ```
 src/ordering/domain/aggregates/order.aggregate.ts
-  2  tactical/no-thrown-failure: Order.place must return a Result:
+  2  error  tactical/no-thrown-failure: Order.place must return a Result:
   expose reads as getters and return business failures as
   values.
-  4  tactical/no-thrown-failure: A failure is thrown: return it in a
+  4  error  tactical/no-thrown-failure: A failure is thrown: return it in a
   Result instead.
-  9  tactical/no-thrown-failure: Order.status is a setter: change the
+  9  error  tactical/no-thrown-failure: Order.status is a setter: change the
   state through a business method that returns a Result.
 ```
 

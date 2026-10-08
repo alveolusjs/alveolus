@@ -1,4 +1,4 @@
-import { Command, CommanderError } from "commander";
+import { Command, CommanderError, Option } from "commander";
 
 import { existsSync } from "node:fs";
 import { join, resolve } from "node:path";
@@ -62,7 +62,7 @@ export class Cli {
 			.option("--project <dir>", "project directory", ".")
 			.option("--config <file>", "configuration file", ConfigLoader.fileName)
 			.option("--tsconfig <file>", "TypeScript configuration, tsconfig.json or the one set in the configuration file")
-			.option("--format <format>", "text, json or sarif", "text");
+			.addOption(new Option("--format <format>", "how violations are printed").choices(["text", "json", "sarif"]).default("text"));
 	}
 
 	private async check(options: Options): Promise<void> {
@@ -76,10 +76,10 @@ export class Cli {
 		if (stale > 0) {
 			this.stderr.write(`${stale} ${stale === 1 ? "entry" : "entries"} of the baseline match nothing any more: run alveolus arch baseline to drop ${stale === 1 ? "it" : "them"}.\n`);
 		}
-		const report = new Report({ baselined: outcome.violations.length - fresh.length, stale, suppressed: outcome.suppressed, violations: fresh }, this.colored);
+		const report = new Report({ baselined: outcome.violations.length - fresh.length, files: outcome.files, stale, suppressed: outcome.suppressed, violations: fresh }, this.colored);
 
 		this.stdout.write(this.render(report, options.format, registry));
-		this.exitCode = fresh.length === 0 ? 0 : 1;
+		this.exitCode = fresh.some((violation) => violation.severity === "error") ? 1 : 0;
 	}
 
 	private render(report: Report, format: Options["format"], registry: RuleRegistry): string {

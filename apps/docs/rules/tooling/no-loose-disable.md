@@ -45,10 +45,10 @@ is reported as well.
 
 ```
 src/ordering/domain/services/pricing.service.ts
-  1  tooling/no-loose-disable: The disable comment gives no reason:
+  1  error  tooling/no-loose-disable: The disable comment gives no reason:
      write `// alveolus-disable-next-line layers/no-impure-domain:
      <why this line keeps its violation>`.
-  4  tooling/no-loose-disable: The disable comment disables nothing:
+  4  error  tooling/no-loose-disable: The disable comment disables nothing:
      the line below breaks layers/no-impure-domain no more; remove
      the comment.
 ```

@@ -13,6 +13,7 @@ const sidebar = [
 		items: [
 			{ link: "/guide/learning-path", text: "Learning path" },
 			{ link: "/guide/getting-started", text: "Getting started" },
+			{ link: "/guide/existing-project", text: "Existing project" },
 			{ link: "/guide/project-layout", text: "Project layout" },
 		],
 		text: "Guide",

@@ -41,11 +41,11 @@ extend a port.
 
 ```
 src/ordering/driven/smtp/adapters/mailer.adapter.ts
-  1  layers/no-portless-adapter: Mailer is a driven adapter but
+  1  error  layers/no-portless-adapter: Mailer is a driven adapter but
   extends no Port: extend the port it implements.
 
 src/ordering/application/commands/notifications.ts
-  3  layers/no-portless-adapter: The port Notifications is declared
+  3  error  layers/no-portless-adapter: The port Notifications is declared
   outside the domain: move it to domain/ports/ or
   domain/repositories/.
 ```
@@ -95,6 +95,15 @@ export abstract class Notifications extends Port {
 ```
 
 </div>
+
+## Limits
+
+::: warning What the rule cannot see
+- A class in `driven/<technology>/` outside `adapters/`, such as a mapper or an ORM entity: it is
+  not an adapter, so it needs no port, and nothing checks what it talks to.
+- A port written as an interface: a port is an abstract class that extends `Port`, and an adapter
+  that `implements` an interface is reported as extending no port.
+:::
 
 ## Turn it off
 

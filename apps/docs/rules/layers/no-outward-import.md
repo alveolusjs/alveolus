@@ -77,21 +77,21 @@ your own goes in `layout.extraFolders` of `alveolus.config.ts`: `{ domain: ["spe
 
 ```
 src/ordering/application/commands/place-order.command.ts
-  1  layers/no-outward-import: The application imports
+  1  error  layers/no-outward-import: The application imports
   @nestjs/common: add it to applicationDependencies if the
   application really needs it.
-  3  layers/no-outward-import: The application layer imports
+  3  error  layers/no-outward-import: The application layer imports
   src/ordering/driven/pg/adapters/pg-orders.adapter.ts
   (ordering driven): it may only import domain, application,
   published-language.
 
 src/ordering/helpers.ts
-  1  layers/no-outward-import: The file is outside the layers:
+  1  error  layers/no-outward-import: The file is outside the layers:
   move it to domain/, application/, published-language/,
   driven/ or driving/.
 
 src/ordering/domain/legacy/v1/aggregates/order.aggregate.ts
-  1  layers/no-outward-import: The file is nested too deep: domain/
+  1  error  layers/no-outward-import: The file is nested too deep: domain/
   holds one folder per kind, such as domain/aggregates/.
 ```
 

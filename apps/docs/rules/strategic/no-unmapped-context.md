@@ -45,7 +45,7 @@ Imports of the shared kernel are not consumptions: every context may import it.
 
 ```
 src/ledger/driven/payments/adapters/payment-status.adapter.ts
-  2  strategic/no-unmapped-context: ledger consumes payments, which the
+  2  error  strategic/no-unmapped-context: ledger consumes payments, which the
      context map does not allow: add payments to contextMap.ledger, or
      reverse the dependency.
 ```
@@ -54,7 +54,7 @@ Without a map:
 
 ```
 src/ledger/driven/payments/adapters/payment-status.adapter.ts
-  2  strategic/no-unmapped-context: ledger consumes payments, which
+  2  error  strategic/no-unmapped-context: ledger consumes payments, which
      consumes ledger back: two contexts that depend on each other can
      no longer change alone; declare a contextMap and reverse one
      dependency.

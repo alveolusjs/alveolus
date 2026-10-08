@@ -271,7 +271,7 @@ An adapter that forgets its port is reported:
 
 ```
 src/ordering/driven/stripe/adapters/stripe-payments.adapter.ts
-  16  layers/no-portless-adapter: StripePayments is a driven adapter
+  16  error  layers/no-portless-adapter: StripePayments is a driven adapter
   but extends no Port: extend the port it implements.
 ```
 

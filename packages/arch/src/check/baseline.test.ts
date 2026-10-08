@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import { Baseline } from "./baseline.ts";
 import type { Violation } from "./violation.ts";
 
-const throwOnLine3: Violation = { file: "src/order.aggregate.ts", fingerprint: "aaaa1111", line: 3, message: "", rule: "tactical/no-thrown-failure", symbol: "throw" };
+const throwOnLine3: Violation = { file: "src/order.aggregate.ts", fingerprint: "aaaa1111", line: 3, message: "", rule: "tactical/no-thrown-failure", severity: "error", symbol: "throw" };
 const throwOnLine7: Violation = { ...throwOnLine3, line: 7 };
 const otherThrow: Violation = { ...throwOnLine3, fingerprint: "bbbb2222", line: 12 };
 

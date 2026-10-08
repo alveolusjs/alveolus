@@ -65,6 +65,7 @@
 		"build": "tsdown",
 		"typecheck": "tsc -p tsconfig.json"
 	},
+	"sideEffects": false,
 	"type": "module",
 	"version": "0.1.0-alpha.0"
 }

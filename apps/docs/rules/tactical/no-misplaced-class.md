@@ -62,9 +62,9 @@ or a module, are not placed by this rule.
 
 ```
 src/ordering/domain/aggregates/order.ts
-  3  tactical/no-misplaced-class: OrderId belongs in
+  3  error  tactical/no-misplaced-class: OrderId belongs in
   domain/value-objects/*.identifier.ts.
-  5  tactical/no-misplaced-class: Order shares its file
+  5  error  tactical/no-misplaced-class: Order shares its file
   with OrderId: one class per file.
 ```
 
@@ -119,6 +119,16 @@ export class PlaceOrderHandler extends CommandHandler<
 	PlaceOrderError
 > { … }
 ```
+
+## Limits
+
+::: warning What the rule cannot see
+- A class that extends no building block: it has no place to be in, so the rule leaves it alone;
+  `tactical/no-loose-code` reports it in the domain and the application.
+- The file name and the class name: `order.aggregate.ts` may declare `Invoice`. The suffix is
+  checked, the stem is not.
+- Types and interfaces: a `View` in `domain/views/` is a type, and the rule places classes.
+:::
 
 ## Turn it off
 

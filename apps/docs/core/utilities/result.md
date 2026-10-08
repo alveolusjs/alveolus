@@ -400,7 +400,7 @@ A failure thrown instead of returned is reported:
 
 ```
 src/ordering/domain/aggregates/order.aggregate.ts
-  58  tactical/no-thrown-failure: A failure is thrown: return it in a
+  58  error  tactical/no-thrown-failure: A failure is thrown: return it in a
   Result instead.
 ```
 

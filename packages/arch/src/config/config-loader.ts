@@ -10,7 +10,7 @@ import { Config } from "./config.ts";
 
 const packageDependencies = z.record(z.string(), z.union([z.literal(true), z.array(z.string())]));
 
-const ruleSetting = z.enum(["error", "off"]);
+const ruleSetting = z.enum(["error", "warn", "info", "off"]);
 
 const schema = z.strictObject({
 	applicationDependencies: packageDependencies.exactOptional(),

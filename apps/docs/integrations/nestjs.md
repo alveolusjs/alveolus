@@ -113,6 +113,47 @@ export class OrderingModule {}
 Exporting a repository or a handler would let another context reach the model behind the open host
 service. Checked by [`strategic/no-cross-context-import`](../rules/strategic/no-cross-context-import.md).
 
+### Answer with a `Result`
+
+So that a controller stays a translation, it calls the handler, and maps the `Result` to a
+response: a success to the status code, a failure to the HTTP error the client can act on. The
+mapping lives once, in an exception filter or a small mapper class of `driving/http/`.
+
+```ts [src/ordering/driving/http/orders.controller.ts]
+@Controller("orders")
+export class OrdersController {
+	constructor(private readonly placeOrder: PlaceOrderHandler) {}
+
+	@Post(":id/place")
+	async place(@Param("id") id: string): Promise<void> {
+		const result = await this.placeOrder.handle({ orderId: id });
+		if (!result.ok) {
+			throw new HttpFailure(result.error);
+		}
+	}
+}
+```
+
+`HttpFailure` is a class of `driving/http/` that turns a `DomainError` into an `HttpException`
+by its `type`: `EmptyOrder` to `422`, `OrderNotFound` to `404`. The domain never knows HTTP.
+
+### Run the check with your lint
+
+So that a violation is seen before the review, the check runs where the lint runs:
+
+```json [package.json]
+{
+	"scripts": {
+		"lint": "biome check . && alveolus arch check",
+		"lint:arch": "alveolus arch check --format sarif > arch.sarif"
+	}
+}
+```
+
+In CI, `alveolus arch check` fails the job on an error; `--format sarif` and
+`github/codeql-action/upload-sarif` put each violation on the line it concerns in the pull
+request.
+
 ## Troubleshooting
 
 **`Nest can't resolve dependencies of PlaceOrderHandler (?, …)`**: the handler is listed as a plain

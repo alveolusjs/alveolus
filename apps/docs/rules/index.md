@@ -82,7 +82,7 @@ instead:
 
 ```
 src/ordering/application/commands/place-order.command.ts
-  4  layers/no-outward-import: The application layer imports
+  4  error  layers/no-outward-import: The application layer imports
   src/ordering/driven/pg/adapters/mailer.adapter.ts (ordering driven):
   it may only import domain, application, published-language.
 ```
@@ -125,22 +125,27 @@ root of `src/` may.
 
 ```
 src/ordering/domain/services/pricing.service.ts
-  2  layers/no-impure-domain: The domain imports
+  2  error  layers/no-impure-domain: The domain imports
   src/ordering/domain/services/db.spec.ts (ignored by the analysis):
   it may only import the domain.
 ```
 
-## Turn a rule off
+## Set the level of a rule
 
-Every rule is on by default. Turn one off in `alveolus.config.ts`, with its full name:
+Every rule reports an `error` by default, and an error fails the check. In `alveolus.config.ts`,
+lower a rule to `warn` or `info`, which report without failing, or turn it `off`, with its full
+name:
 
 ```ts [alveolus.config.ts]
 export default defineConfig({
 	boundedContexts: { ordering: "ordering" },
 	root: "src",
-	rules: { "tactical/no-misplaced-class": "off" },
+	rules: { "tactical/no-misplaced-class": "off", "tactical/no-public-field": "warn" },
 });
 ```
+
+`warn` and `info` are the way in on an existing project: a rule reports for a while, the team
+fixes, then it becomes an error.
 
 To turn one violation off where it stands, with a reason, write a disable comment above the line:
 see [Getting started](../guide/getting-started.md#turn-a-violation-off). To adopt the rules on an

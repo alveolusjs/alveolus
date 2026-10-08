@@ -42,7 +42,7 @@ Every constructor parameter and every field of each `DomainService`:
 
 ```
 src/ordering/domain/services/order-limit.service.ts
-  4  tactical/no-stateful-service: The DomainService OrderLimit holds
+  4  error  tactical/no-stateful-service: The DomainService OrderLimit holds
   Orders, a CommandRepository: a domain service holds configuration
   only; the command handler passes it what it needs.
 ```
@@ -76,6 +76,15 @@ export class OrderLimit extends DomainService {
 ```
 
 </div>
+
+## Limits
+
+::: warning What the rule cannot see
+- A port passed to a method of the service, call after call: the rule checks what the service
+  holds, not what it receives. In review, a domain service method takes aggregates and values.
+- State reached through a module: the service has no field, but reads a constant that holds a
+  connection. `tactical/no-loose-code` reports the constant; the rule does not see the read.
+:::
 
 ## Turn it off
 

@@ -335,7 +335,7 @@ A handler that calls the catalog directly is reported:
 
 ```
 src/ordering/application/commands/place-order.command.ts
-  3  strategic/no-cross-context-import: Uses the open host service of
+  3  error  strategic/no-cross-context-import: Uses the open host service of
   catalog outside an AntiCorruptionLayer: translate it in an
   anti-corruption layer.
 ```

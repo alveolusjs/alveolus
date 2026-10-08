@@ -403,7 +403,7 @@ The same class without <code>extends Outbox</code> is reported:
 
 ```
 src/shared-kernel/driven/pg/adapters/pg-outbox.adapter.ts
-  6  layers/no-portless-adapter: PgOutbox is a driven adapter
+  6  error  layers/no-portless-adapter: PgOutbox is a driven adapter
   but extends no Port: extend the port it implements.
 ```
 

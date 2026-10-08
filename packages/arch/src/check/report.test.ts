@@ -3,27 +3,27 @@ import { describe, expect, it } from "vitest";
 import { Report } from "./report.ts";
 import type { Violation } from "./violation.ts";
 
-const violation: Violation = { file: "src/a.ts", fingerprint: "0a1b2c3d", line: 4, message: "Explained.", rule: "tactical/no-misplaced-class", symbol: "A" };
+const violation: Violation = { file: "src/a.ts", fingerprint: "0a1b2c3d", line: 4, message: "Explained.", rule: "tactical/no-misplaced-class", severity: "error", symbol: "A" };
 
 describe("Report", () => {
-	it("groups the violations by file and sums them up", () => {
-		const other = { ...violation, file: "src/b.ts", line: 12 };
-		const report = new Report({ baselined: 0, stale: 0, suppressed: [], violations: [violation, { ...violation, line: 9 }, other] });
+	it("groups the violations by file, with their severity, and counts them by severity", () => {
+		const other = { ...violation, file: "src/b.ts", line: 12, severity: "info" as const };
+		const report = new Report({ baselined: 0, files: 20, stale: 0, suppressed: [], violations: [violation, { ...violation, line: 9, severity: "warn" }, other] });
 
 		expect(report.text()).toBe(
-			"src/a.ts\n  4  tactical/no-misplaced-class: Explained.\n  9  tactical/no-misplaced-class: Explained.\n\nsrc/b.ts\n  12  tactical/no-misplaced-class: Explained.\n\n3 violations\n",
+			"src/a.ts\n  4  error  tactical/no-misplaced-class: Explained.\n  9  warn  tactical/no-misplaced-class: Explained.\n\nsrc/b.ts\n  12  info  tactical/no-misplaced-class: Explained.\n\n1 error, 1 warning, 1 info in 20 files\n",
 		);
 	});
 
-	it("mentions the baseline, what it covers no more, and the disabled violations", () => {
-		const report = new Report({ baselined: 12, stale: 4, suppressed: [{ reason: "legacy", violation }], violations: [] });
+	it("mentions the files, the baseline, what it covers no more, and the disabled violations", () => {
+		const report = new Report({ baselined: 12, files: 1, stale: 4, suppressed: [{ reason: "legacy", violation }], violations: [] });
 
-		expect(report.text()).toBe("No violation (12 in the baseline, 4 fixed, 1 disabled)\n");
-		expect(JSON.parse(report.json())).toEqual({ baselined: 12, stale: 4, suppressed: [{ ...violation, reason: "legacy" }], violations: [] });
+		expect(report.text()).toBe("No violation in 1 file (12 in the baseline, 4 fixed, 1 disabled)\n");
+		expect(JSON.parse(report.json())).toEqual({ baselined: 12, files: 1, stale: 4, suppressed: [{ ...violation, reason: "legacy" }], violations: [] });
 	});
 
-	it("writes SARIF with the rules and a fingerprint per result", () => {
-		const report = new Report({ baselined: 0, stale: 0, suppressed: [], violations: [violation] });
+	it("writes SARIF with the rules, the level of each result and a fingerprint", () => {
+		const report = new Report({ baselined: 0, files: 1, stale: 0, suppressed: [], violations: [{ ...violation, severity: "warn" }] });
 		const rules = [{ description: "A class in the wrong place.", id: "tactical/no-misplaced-class", messages: {} }];
 
 		expect(JSON.parse(report.sarif(rules))).toEqual({
@@ -32,7 +32,7 @@ describe("Report", () => {
 				{
 					results: [
 						{
-							level: "error",
+							level: "warning",
 							locations: [{ physicalLocation: { artifactLocation: { uri: "src/a.ts", uriBaseId: "%SRCROOT%" }, region: { startLine: 4 } } }],
 							message: { text: "Explained." },
 							partialFingerprints: { "alveolus/v1": "0a1b2c3d" },

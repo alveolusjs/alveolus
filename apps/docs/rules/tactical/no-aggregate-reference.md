@@ -56,15 +56,15 @@ aggregates: the `Address` of a `Customer` cannot be held by an `Order` too.
 
 ```
 src/ordering/domain/aggregates/order.aggregate.ts
-  6  tactical/no-aggregate-reference: Order.customer holds the
+  6  error  tactical/no-aggregate-reference: Order.customer holds the
   aggregate Customer: reference it by its identifier instead.
 
 src/ordering/domain/value-objects/buyer.value-object.ts
-  3  tactical/no-aggregate-reference: Buyer holds the aggregate
+  3  error  tactical/no-aggregate-reference: Buyer holds the aggregate
   Customer in its Props: reference it by its identifier instead.
 
 src/ordering/domain/aggregates/order.aggregate.ts
-  8  tactical/no-aggregate-reference: Order.shipping holds the entity
+  8  error  tactical/no-aggregate-reference: Order.shipping holds the entity
   Address, which Customer holds too: an entity belongs to one
   aggregate.
 ```

@@ -222,7 +222,7 @@ The same class without <code>extends EventPublisher</code> is reported:
 
 ```
 src/shared-kernel/driven/kafka/adapters/kafka-event-publisher.adapter.ts
-  4  layers/no-portless-adapter: KafkaEventPublisher is a driven
+  4  error  layers/no-portless-adapter: KafkaEventPublisher is a driven
   adapter but extends no Port: extend the port it implements.
 ```
 

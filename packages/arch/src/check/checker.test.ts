@@ -16,7 +16,9 @@ describe("Checker", () => {
 	});
 
 	it("skips test files", () => {
-		const codebase = new TestCodebase().file("src/ordering/driven/adapters/mailer.adapter.spec.ts", "export class MailerSpec {}");
+		const codebase = new TestCodebase()
+			.file("src/ordering/ordering.module.ts", "export class OrderingModule {}")
+			.file("src/ordering/driven/adapters/mailer.adapter.spec.ts", "export class MailerSpec {}");
 
 		expect(codebase.checkAllRules()).toEqual([]);
 	});
@@ -25,7 +27,7 @@ describe("Checker", () => {
 		const config = new Config({ boundedContexts: {}, root: "src" }, "/project");
 
 		expect(() => new Checker(new FakeImporter(false), []).check(config)).toThrow("@alveolus/core cannot be imported from /project/src");
-		expect(new Checker(new FakeImporter(true), []).check(config)).toEqual({ suppressed: [], violations: [] });
+		expect(new Checker(new FakeImporter(true), []).check(config)).toEqual({ files: 1, suppressed: [], violations: [] });
 	});
 
 	it("turns a violation off under a complete disable comment, and reports a comment that disables nothing", () => {

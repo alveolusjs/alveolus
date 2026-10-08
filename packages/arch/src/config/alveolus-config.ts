@@ -1,7 +1,7 @@
 import type { PackageDependencies, Upstreams } from "../architecture/index.ts";
 import type { RuleId } from "../rules/index.ts";
 
-export type RuleSetting = "error" | "off";
+export type RuleSetting = "error" | "warn" | "info" | "off";
 
 interface LayoutConfig {
 	readonly extraFolders?: Readonly<Partial<Record<"domain" | "application", readonly string[]>>>;

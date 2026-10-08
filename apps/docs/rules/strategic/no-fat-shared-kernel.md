@@ -45,7 +45,7 @@ Every class in the shared kernel, by what it extends:
 
 ```
 src/shared-kernel/domain/aggregates/customer.aggregate.ts
-  3  strategic/no-fat-shared-kernel: Customer is an AggregateRoot in
+  3  error  strategic/no-fat-shared-kernel: Customer is an AggregateRoot in
      the shared kernel: it belongs to one bounded context; the shared
      kernel holds value objects, ports and their adapters.
 ```
@@ -58,6 +58,15 @@ So that one team owns it, move the aggregate, its repository and its handlers to
 decides its rules, and expose what the others need through an
 [open host service](../../core/strategic/open-host-services.md). The identifier stays in the
 shared kernel.
+
+## Limits
+
+::: warning What the rule cannot see
+- How big the shared kernel is: three hundred value objects pass. In review, a value object enters
+  the shared kernel when two contexts already have the same one, not before.
+- A folder declared as a bounded context named `shared` or `common` is a context, not the shared
+  kernel: the rule does not apply to it, and every other rule treats it as one more context.
+:::
 
 ## Turn it off
 

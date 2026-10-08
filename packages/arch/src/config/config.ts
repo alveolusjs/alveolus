@@ -2,7 +2,7 @@ import { matchesGlob, relative, resolve, sep } from "node:path";
 
 import type { ContextFolder, ExtraFolders, Upstreams } from "../architecture/index.ts";
 import { AllowedPackages, ContextMap } from "../architecture/index.ts";
-import type { CheckSettings } from "../check/index.ts";
+import type { CheckSettings, Severity } from "../check/index.ts";
 import type { RuleId } from "../rules/index.ts";
 import type { AlveolusConfig } from "./alveolus-config.ts";
 
@@ -58,7 +58,7 @@ export class Config implements CheckSettings {
 		return this.ignored.some((glob) => matchesGlob(projectPath, glob));
 	}
 
-	public isEnabled(rule: RuleId): boolean {
-		return this.rules?.[rule] !== "off";
+	public severityOf(rule: RuleId): Severity | "off" {
+		return this.rules?.[rule] ?? "error";
 	}
 }

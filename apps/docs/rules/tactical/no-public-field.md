@@ -47,7 +47,7 @@ getter keeps the shape of the class free to change.
 
 ```
 src/ledger/domain/aggregates/account.aggregate.ts
-  4  tactical/no-public-field: Account.balance is a public field:
+  4  error  tactical/no-public-field: Account.balance is a public field:
      keep the state private, and expose what callers need through a
      getter.
 ```
@@ -88,6 +88,14 @@ export class Account extends AggregateRoot<AccountId> {
 ```
 
 </div>
+
+## Limits
+
+::: warning What the rule cannot see
+- A getter that returns a mutable object, such as the array of lines: a caller can push into it.
+  Return a copy, or a readonly type.
+- A `protected` field: a subclass may change it. The rule stops the outside, not the hierarchy.
+:::
 
 ## Turn it off
 
