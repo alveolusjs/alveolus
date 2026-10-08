@@ -1,85 +1,107 @@
-import type { Codebase, CodeClass, CodeFile, Declaration, DeclarationKind, Layer } from "../../../codebase/index.ts";
-import type { RuleId } from "../../../config/index.ts";
-import type { Problem } from "../../problem.ts";
-import { Rule } from "../../rule.ts";
-import type { Violation } from "../../violation.ts";
+import type { Architecture } from "../../../architecture/index.ts";
+import type { Layer } from "../../../conventions/index.ts";
+import type { ClassDeclaration, SourceFile, StatementKind, TopLevelStatement } from "../../../model/index.ts";
+import type { Finding, RuleMeta } from "../../framework/index.ts";
+import { Rule } from "../../framework/index.ts";
+
+type MessageId =
+	| "extendsExpression"
+	| "plainClass"
+	| "staticOnly"
+	| "classExpression"
+	| "computedConstant"
+	| "enum"
+	| "function"
+	| "mutableVariable"
+	| "namespace"
+	| "statement"
+	| "compositionRootDeclaration"
+	| "compositionRootStatement";
 
 const guarded: ReadonlySet<Layer | undefined> = new Set<Layer>(["domain", "application"]);
 
-const blocksOf: Readonly<Record<string, string>> = {
+/** The building blocks each layer holds, as the message names them. */
+const expectedBlocks: Readonly<Record<string, string>> = {
 	application: "CommandHandler, QueryHandler or EventTranslator",
 	domain: "AggregateRoot, Entity, ValueObject, Identifier, DomainEvent, DomainError, DomainService or a Port",
 };
 
-const intoMethods = "make it a method of a value object or of a DomainService";
-
-const declarationMessages: Readonly<Record<DeclarationKind, (name: string) => string>> = {
-	"class expression": (name) => `${name} is a class expression: declare it as a class that extends a building block.`,
-	"computed constant": (name) => `The constant ${name} is computed when the module loads: keep top-level constants to plain data.`,
-	enum: (name) => `The enum ${name} has no place here: use a union of literal types, or a ValueObject when it has behaviour.`,
-	function: (name) => `The function ${name} floats outside any class: ${intoMethods}.`,
-	"mutable variable": (name) => `${name} is module state: keep state in aggregates, not in modules.`,
-	namespace: (name) => `The namespace ${name} groups loose code: ${intoMethods}.`,
-	statement: () => "A statement runs when the module loads: move it into a method.",
+/** The message each kind of top-level statement gets in the domain and the application. */
+const statementMessages: Readonly<Record<StatementKind, MessageId>> = {
+	"class expression": "classExpression",
+	"computed constant": "computedConstant",
+	enum: "enum",
+	function: "function",
+	"mutable variable": "mutableVariable",
+	namespace: "namespace",
+	statement: "statement",
 };
 
-export class NoLooseCodeRule extends Rule {
-	public readonly id: RuleId = "tactical/no-loose-code";
+export class NoLooseCodeRule extends Rule<"tactical/no-loose-code", MessageId> {
+	public readonly meta: RuleMeta<"tactical/no-loose-code", MessageId> = {
+		description: "Code outside a building block in the domain or the application, anything but the module class in a composition root.",
+		id: "tactical/no-loose-code",
+		messages: {
+			classExpression: "{name} is a class expression: declare it as a class that extends a building block.",
+			compositionRootDeclaration: "The {kind} {name} has no place in a composition root: it holds its module class only.",
+			compositionRootStatement: "A statement runs when the module loads: the composition root holds its module class only.",
+			computedConstant: "The constant {name} is computed when the module loads: keep top-level constants to plain data.",
+			enum: "The enum {name} has no place here: use a union of literal types, or a ValueObject when it has behaviour.",
+			extendsExpression: "{name} extends an expression: extend a class by its name, so that what it is stays readable.",
+			function: "The function {name} floats outside any class: make it a method of a value object or of a DomainService.",
+			mutableVariable: "{name} is module state: keep state in aggregates, not in modules.",
+			namespace: "The namespace {name} groups loose code: make it a method of a value object or of a DomainService.",
+			plainClass: "{name} extends no building block: extend {blocks}.",
+			statement: "A statement runs when the module loads: move it into a method.",
+			staticOnly: "{name} only has static members: a class of functions is no building block; make them methods of the value object they work on, or of a DomainService.",
+		},
+	};
 
-	public check(codebase: Codebase): Violation[] {
-		const violations: Violation[] = [];
-		for (const file of codebase.files) {
-			for (const problem of this.problemsIn(file)) {
-				violations.push(this.violation(codebase, file, problem));
+	public check(architecture: Architecture): Finding<MessageId>[] {
+		const findings: Finding<MessageId>[] = [];
+		for (const file of architecture.files) {
+			const location = architecture.locationOf(file);
+			if (guarded.has(location.layer)) {
+				findings.push(...this.looseClasses(file, location.layer ?? "domain", architecture));
+				findings.push(...this.looseStatements(file));
+			} else if (location.isCompositionRoot && location.isInBoundedContext) {
+				findings.push(...this.compositionRootStatements(file));
 			}
 		}
-		return violations;
+		return findings;
 	}
 
-	private problemsIn(file: CodeFile): Problem[] {
-		if (guarded.has(file.location.layer)) {
-			return [...this.looseClasses(file), ...file.declarations.map((declaration) => this.problemOf(declaration))];
-		}
-		if (file.location.isCompositionRoot && file.location.isInBoundedContext) {
-			return file.declarations.map((declaration) => this.compositionRootProblem(declaration));
-		}
-		return [];
-	}
-
-	/** The composition root holds its module class: the declarations around it are reported, whatever they are. */
-	private compositionRootProblem(declaration: Declaration): Problem {
-		const message = `The ${declaration.kind} ${declaration.name} has no place in a composition root: it holds its module class only.`;
-		if (declaration.kind === "statement") {
-			return { line: declaration.line, message: "A statement runs when the module loads: the composition root holds its module class only.", symbol: declaration.name };
-		}
-		return { line: declaration.line, message, symbol: declaration.name };
-	}
-
-	private looseClasses(file: CodeFile): Problem[] {
-		const problems: Problem[] = [];
+	private looseClasses(file: SourceFile, layer: Layer, architecture: Architecture): Finding<MessageId>[] {
+		const findings: Finding<MessageId>[] = [];
 		for (const codeClass of file.classes) {
-			const message = this.classMessage(codeClass, file);
-			if (message !== undefined) {
-				problems.push({ line: codeClass.line, message, symbol: codeClass.name });
+			const messageId = this.classMessage(codeClass, architecture);
+			if (messageId !== undefined) {
+				findings.push(this.finding(file, codeClass.line, codeClass.name, messageId, { blocks: expectedBlocks[layer] ?? "", name: codeClass.name }));
 			}
 		}
-		return problems;
+		return findings;
 	}
 
-	private classMessage(codeClass: CodeClass, file: CodeFile): string | undefined {
+	private classMessage(codeClass: ClassDeclaration, architecture: Architecture): MessageId | undefined {
 		if (!codeClass.extendsByName) {
-			return `${codeClass.name} extends an expression: extend a class by its name, so that what it is stays readable.`;
+			return "extendsExpression";
 		}
-		if (!codeClass.extendsBuildingBlock) {
-			return `${codeClass.name} extends no building block: extend ${blocksOf[file.location.layer ?? ""]}.`;
+		if (!architecture.isBuildingBlock(codeClass)) {
+			return "plainClass";
 		}
-		if (codeClass.isStaticOnly) {
-			return `${codeClass.name} only has static members: a class of functions is no building block; make them methods of the value object they work on, or of a DomainService.`;
-		}
-		return undefined;
+		return codeClass.isStaticOnly ? "staticOnly" : undefined;
 	}
 
-	private problemOf(declaration: Declaration): Problem {
-		return { line: declaration.line, message: declarationMessages[declaration.kind](declaration.name), symbol: declaration.name };
+	private looseStatements(file: SourceFile): Finding<MessageId>[] {
+		return file.statements.map((statement) => this.statementFinding(file, statement, statementMessages[statement.kind]));
+	}
+
+	/** The composition root holds its module class: the statements around it are reported, whatever they are. */
+	private compositionRootStatements(file: SourceFile): Finding<MessageId>[] {
+		return file.statements.map((statement) => this.statementFinding(file, statement, statement.kind === "statement" ? "compositionRootStatement" : "compositionRootDeclaration"));
+	}
+
+	private statementFinding(file: SourceFile, statement: TopLevelStatement, messageId: MessageId): Finding<MessageId> {
+		return this.finding(file, statement.line, statement.name, messageId, { kind: statement.kind, name: statement.name });
 	}
 }

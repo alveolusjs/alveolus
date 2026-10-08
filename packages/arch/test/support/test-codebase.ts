@@ -4,13 +4,15 @@ import { globSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { TsMorphAnalyzer } from "../../src/analysis/index.ts";
-import { ArchChecker } from "../../src/checker/index.ts";
-import type { Codebase } from "../../src/codebase/index.ts";
+import { Architecture } from "../../src/architecture/index.ts";
+import type { Violation } from "../../src/check/index.ts";
+import { Checker } from "../../src/check/index.ts";
 import type { AlveolusConfig } from "../../src/config/index.ts";
 import { Config } from "../../src/config/index.ts";
-import type { Rule, Violation } from "../../src/rules/index.ts";
-import { Rules } from "../../src/rules/index.ts";
+import { TsMorphImporter } from "../../src/importer/index.ts";
+import type { Project as ReadProject, SourceFile } from "../../src/model/index.ts";
+import type { Rule, RuleId } from "../../src/rules/index.ts";
+import { RuleRegistry } from "../../src/rules/index.ts";
 
 const coreDir = fileURLToPath(new URL("../../../core", import.meta.url));
 const installedCoreDir = "/node_modules/@alveolus/core";
@@ -44,21 +46,41 @@ export class TestCodebase {
 		return this;
 	}
 
-	public analyze(): Codebase {
-		return new TsMorphAnalyzer(this.project).analyze(this.config);
+	/** The facts the importer reads, before any convention applies. */
+	public read(): ReadProject {
+		return new TsMorphImporter(this.project).read(this.config);
 	}
 
-	public check(rule: Rule): string[] {
-		return rule.check(this.analyze()).map((violation) => this.format(violation));
+	/** The facts of one file, by its path in the project. */
+	public readFile(path: string): SourceFile {
+		const file = this.read().file(join(projectDir, path));
+		if (file === undefined) {
+			throw new Error(`${path} is not an analysed file of the project.`);
+		}
+		return file;
 	}
 
-	public messages(rule: Rule): string[] {
-		return rule.check(this.analyze()).map((violation) => violation.message);
+	/** The project read through the conventions, as rules see it. */
+	public architecture(): Architecture {
+		return new Architecture(this.read(), this.config);
+	}
+
+	/** What one rule reports, in the order it finds it, as `file:line symbol`. */
+	public check(rule: Rule<RuleId>): string[] {
+		return this.run(rule).map((violation) => this.format(violation));
+	}
+
+	public messages(rule: Rule<RuleId>): string[] {
+		return this.run(rule).map((violation) => violation.message);
 	}
 
 	public checkAllRules(): string[] {
-		const checker = new ArchChecker(new TsMorphAnalyzer(this.project), Rules.all());
+		const checker = new Checker(new TsMorphImporter(this.project), new RuleRegistry().rules);
 		return checker.check(this.config).map((violation) => this.format(violation));
+	}
+
+	private run(rule: Rule<RuleId>): Violation[] {
+		return new Checker(new TsMorphImporter(this.project), [rule]).run(rule, this.architecture());
 	}
 
 	private format(violation: Violation): string {

@@ -1,50 +1,72 @@
-import type { Codebase, CodeFile, Import } from "../../codebase/index.ts";
-import type { RuleId } from "../../config/index.ts";
-import { ImportRule } from "../import-rule.ts";
+import type { Architecture } from "../../architecture/index.ts";
+import type { Dependency, SourceFile } from "../../model/index.ts";
+import type { Finding, RuleMeta } from "../framework/index.ts";
+import { ImportRule } from "../framework/index.ts";
 
-export class NoCrossContextImportRule extends ImportRule {
-	public readonly id: RuleId = "strategic/no-cross-context-import";
+type MessageId = "reexport" | "sharedKernel" | "publishedLanguage" | "notOpenHostService" | "outsideAntiCorruptionLayer";
 
-	protected appliesTo(file: CodeFile): boolean {
-		return file.location.isInBoundedContext || file.location.isInSharedKernel;
+export class NoCrossContextImportRule extends ImportRule<"strategic/no-cross-context-import", MessageId> {
+	public readonly meta: RuleMeta<"strategic/no-cross-context-import", MessageId> = {
+		description: "An import from another bounded context that is not its open host service, a composition root that re-exports.",
+		id: "strategic/no-cross-context-import",
+		messages: {
+			notOpenHostService: "Imports {target}: only an OpenHostService of another bounded context may be imported.",
+			outsideAntiCorruptionLayer: "Uses the open host service of {context} outside an AntiCorruptionLayer: translate it in an anti-corruption layer.",
+			publishedLanguage: "Imports the published language of {context}: redeclare the fields you read in your own published-language/.",
+			reexport: "The composition root re-exports {names}: it exports its own module only, so that no other context reaches through it.",
+			sharedKernel: "The shared kernel imports no bounded context, but imports {target}.",
+		},
+	};
+
+	protected appliesTo(file: SourceFile, architecture: Architecture): boolean {
+		const location = architecture.locationOf(file);
+		return location.isInBoundedContext || location.isInSharedKernel;
 	}
 
-	protected problemWith(imported: Import, file: CodeFile, codebase: Codebase): string | undefined {
-		if (file.location.isCompositionRoot && imported.isReexport) {
-			return `The composition root re-exports ${imported.label}: it exports its own module only, so that no other context reaches through it.`;
+	protected findingFor(dependency: Dependency, file: SourceFile, architecture: Architecture): Finding<MessageId> | undefined {
+		const from = architecture.locationOf(file);
+		if (from.isCompositionRoot && dependency.form === "re-export") {
+			return this.finding(file, dependency.line, dependency.label, "reexport", { names: dependency.label });
 		}
-		if (imported.target.kind !== "file") {
+		const target = dependency.target;
+		if (target.kind !== "file") {
 			return undefined;
 		}
-		const from = file.location;
-		const to = imported.target.location;
-
+		const to = architecture.locationOfTarget(target);
 		if (!to.isOtherBoundedContextThan(from)) {
 			return undefined;
 		}
 		if (from.isInSharedKernel) {
-			return `The shared kernel imports no bounded context, but imports ${this.describeTarget(imported, codebase)}.`;
+			return this.finding(file, dependency.line, dependency.label, "sharedKernel", { target: this.wording.target(target, architecture) });
 		}
 		if (from.isCompositionRoot && to.isCompositionRoot) {
 			return undefined;
 		}
 		if (to.layer === "published-language") {
-			return `Imports the published language of ${to.context}: redeclare the fields you read in your own published-language/.`;
+			return this.finding(file, dependency.line, dependency.label, "publishedLanguage", { context: to.context ?? "" });
 		}
-		if (!this.importsOnlyOpenHostServices(imported, codebase)) {
-			return `Imports ${this.describeTarget(imported, codebase)}: only an OpenHostService of another bounded context may be imported.`;
+		if (!this.importsOnlyOpenHostServices(dependency, target.path, architecture)) {
+			return this.finding(file, dependency.line, dependency.label, "notOpenHostService", { target: this.wording.target(target, architecture) });
 		}
-		if (!from.isCompositionRoot && !file.declaresAntiCorruptionLayer) {
-			return `Uses the open host service of ${to.context} outside an AntiCorruptionLayer: translate it in an anti-corruption layer.`;
+		if (!from.isCompositionRoot && !this.declaresAntiCorruptionLayer(file, architecture)) {
+			return this.finding(file, dependency.line, dependency.label, "outsideAntiCorruptionLayer", { context: to.context ?? "" });
 		}
 		return undefined;
 	}
 
-	private importsOnlyOpenHostServices(imported: Import, codebase: Codebase): boolean {
-		if (imported.target.kind !== "file" || imported.names.length === 0) {
+	/** Every imported name is a class of the target file that implements `OpenHostService`. */
+	private importsOnlyOpenHostServices(dependency: Dependency, path: string, architecture: Architecture): boolean {
+		const target = architecture.project.file(path);
+		if (target === undefined || dependency.names.length === 0) {
 			return false;
 		}
-		const target = codebase.file(imported.target.path);
-		return target !== undefined && imported.names.every((name) => target.declaresOpenHostService(name));
+		return dependency.names.every((name) => {
+			const declaration = target.classNamed(name);
+			return declaration !== undefined && architecture.implementsMarker(declaration, "OpenHostService");
+		});
+	}
+
+	private declaresAntiCorruptionLayer(file: SourceFile, architecture: Architecture): boolean {
+		return file.classes.some((codeClass) => architecture.implementsMarker(codeClass, "AntiCorruptionLayer"));
 	}
 }

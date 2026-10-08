@@ -2,14 +2,12 @@ import { Command, CommanderError } from "commander";
 
 import { join, resolve } from "node:path";
 
-import { TsMorphAnalyzer } from "../analysis/index.ts";
-import { Baseline } from "../baseline/index.ts";
-import { ArchChecker } from "../checker/index.ts";
+import type { Violation } from "../check/index.ts";
+import { Baseline, Checker, Report } from "../check/index.ts";
 import type { Config } from "../config/index.ts";
 import { ConfigLoader } from "../config/index.ts";
-import { Report } from "../report/index.ts";
-import type { Violation } from "../rules/index.ts";
-import { Rules } from "../rules/index.ts";
+import { TsMorphImporter } from "../importer/index.ts";
+import { RuleRegistry } from "../rules/index.ts";
 
 interface Output {
 	write(text: string): unknown;
@@ -84,7 +82,7 @@ export class Cli {
 	private async analyze(options: Options): Promise<{ config: Config; violations: Violation[] }> {
 		const projectDir = resolve(this.cwd, options.project);
 		const config = await new ConfigLoader().load(projectDir, options.config);
-		const checker = new ArchChecker(TsMorphAnalyzer.fromTsConfig(config.projectDir), Rules.all());
+		const checker = new Checker(TsMorphImporter.fromTsConfig(config.projectDir), new RuleRegistry().rules);
 		return { config, violations: checker.check(config) };
 	}
 

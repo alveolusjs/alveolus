@@ -1,8 +1,7 @@
-export { CodeAnalyzer, TsMorphAnalyzer } from "./analysis/index.ts";
-export { Baseline } from "./baseline/index.ts";
-export { ArchChecker } from "./checker/index.ts";
+export { AllowedPackages, Architecture, type PackageDependencies, type Settings } from "./architecture/index.ts";
+export { Baseline, Checker, type CheckSettings, Report, type Violation } from "./check/index.ts";
 export { Cli } from "./cli/index.ts";
-export type { AlveolusConfig, PackageDependencies, RuleId, RuleSetting } from "./config/index.ts";
-export { AllowedPackages, Config, ConfigLoader, defineConfig } from "./config/index.ts";
-export { Report } from "./report/index.ts";
-export { Rule, Rules, type Violation } from "./rules/index.ts";
+export type { AlveolusConfig, RuleSetting } from "./config/index.ts";
+export { Config, ConfigLoader, defineConfig } from "./config/index.ts";
+export { Importer, type ImportScope, TsMorphImporter } from "./importer/index.ts";
+export { type Finding, type FindingData, Rule, type RuleId, type RuleMeta, RuleRegistry } from "./rules/index.ts";

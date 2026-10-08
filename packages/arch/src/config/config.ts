@@ -1,17 +1,15 @@
 import { matchesGlob, relative, resolve, sep } from "node:path";
 
-import { AllowedPackages } from "./allowed-packages.ts";
-import type { AlveolusConfig, RuleId } from "./alveolus-config.ts";
-
-export interface ContextFolder {
-	readonly name: string;
-	readonly dir: string;
-	readonly isSharedKernel: boolean;
-}
+import type { ContextFolder } from "../architecture/index.ts";
+import { AllowedPackages } from "../architecture/index.ts";
+import type { CheckSettings } from "../check/index.ts";
+import type { RuleId } from "../rules/index.ts";
+import type { AlveolusConfig } from "./alveolus-config.ts";
 
 const testFiles: readonly string[] = ["**/*.spec.ts", "**/*.test.ts", "**/__tests__/**"];
 
-export class Config {
+/** The configuration of a project, resolved against its directory: what a check reads and how. */
+export class Config implements CheckSettings {
 	public readonly projectDir: string;
 	public readonly rootDir: string;
 	public readonly compositionRoot: string;

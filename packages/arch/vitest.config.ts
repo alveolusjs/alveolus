@@ -7,7 +7,7 @@ export default defineProject({
 		},
 	},
 	test: {
-		include: ["src/**/*.test.ts"],
+		include: ["src/**/*.test.ts", "test/*.test.ts"],
 		name: "arch",
 		testTimeout: 30000,
 	},

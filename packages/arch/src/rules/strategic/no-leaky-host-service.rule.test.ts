@@ -45,10 +45,10 @@ describe("NoLeakyHostServiceRule", () => {
 		);
 
 		expect(codebase.messages(new NoLeakyHostServiceRule())).toEqual([
+			"CatalogApi.products exposes Product, an AggregateRoot of catalog: an open host service speaks the published language.",
 			"CatalogApi.product exposes ProductId, an Identifier of catalog: an open host service speaks the published language.",
 			"CatalogApi.product exposes Product, an AggregateRoot of catalog: an open host service speaks the published language.",
 			"CatalogApi.first exposes Product, an AggregateRoot of catalog: an open host service speaks the published language.",
-			"CatalogApi.products exposes Product, an AggregateRoot of catalog: an open host service speaks the published language.",
 		]);
 	});
 });

@@ -1,19 +1,28 @@
-import type { CodeClass, CodeFile, Location } from "../../codebase/index.ts";
-import type { RuleId } from "../../config/index.ts";
-import { ClassRule } from "../class-rule.ts";
-import type { Problem } from "../problem.ts";
+import type { Architecture, Location } from "../../architecture/index.ts";
+import type { ClassDeclaration, SourceFile } from "../../model/index.ts";
+import type { Finding, RuleMeta } from "../framework/index.ts";
+import { ClassRule } from "../framework/index.ts";
 
-export class NoPortlessAdapterRule extends ClassRule {
-	public readonly id: RuleId = "layers/no-portless-adapter";
+type MessageId = "portless" | "portOutsideDomain";
 
-	protected problemsWith(codeClass: CodeClass, file: CodeFile): Problem[] {
-		const location = file.location;
+export class NoPortlessAdapterRule extends ClassRule<"layers/no-portless-adapter", MessageId> {
+	public readonly meta: RuleMeta<"layers/no-portless-adapter", MessageId> = {
+		description: "A driven adapter that extends no port, a port declared outside the domain.",
+		id: "layers/no-portless-adapter",
+		messages: {
+			portless: "{class} is a driven adapter but extends no Port: extend the port it implements.",
+			portOutsideDomain: "The port {class} is declared outside the domain: move it to domain/ports/ or domain/repositories/.",
+		},
+	};
 
-		if (this.isAdaptersFolder(location) && !codeClass.is("Port")) {
-			return [{ line: codeClass.line, message: `${codeClass.name} is a driven adapter but extends no Port: extend the port it implements.`, symbol: codeClass.name }];
+	protected findingsFor(codeClass: ClassDeclaration, file: SourceFile, architecture: Architecture): Finding<MessageId>[] {
+		const location = architecture.locationOf(file);
+		const isPort = architecture.is(codeClass, "Port");
+		if (this.isAdaptersFolder(location) && !isPort) {
+			return [this.finding(file, codeClass.line, codeClass.name, "portless", { class: codeClass.name })];
 		}
-		if (codeClass.is("Port") && codeClass.isAbstract && !this.isPortsFolder(location) && !this.isAdaptersFolder(location)) {
-			return [{ line: codeClass.line, message: `The port ${codeClass.name} is declared outside the domain: move it to domain/ports/ or domain/repositories/.`, symbol: codeClass.name }];
+		if (isPort && codeClass.isAbstract && !this.isPortsFolder(location) && !this.isAdaptersFolder(location)) {
+			return [this.finding(file, codeClass.line, codeClass.name, "portOutsideDomain", { class: codeClass.name })];
 		}
 		return [];
 	}

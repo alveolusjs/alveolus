@@ -1,86 +1,64 @@
-import type { Codebase, CodeClass, CodeFile, CoreKind, CoreMarker } from "../../../codebase/index.ts";
-import type { RuleId } from "../../../config/index.ts";
-import { Place } from "../../place.ts";
-import type { Problem } from "../../problem.ts";
-import { Rule } from "../../rule.ts";
-import type { Violation } from "../../violation.ts";
+import type { Architecture, Location } from "../../../architecture/index.ts";
+import type { CoreMarker } from "../../../conventions/index.ts";
+import type { ClassDeclaration, SourceFile } from "../../../model/index.ts";
+import type { Finding, RuleMeta } from "../../framework/index.ts";
+import { Rule } from "../../framework/index.ts";
 
-interface KindPlace {
-	readonly kind: CoreKind;
-	readonly place: Place;
-	readonly concreteOnly?: boolean;
-}
+type MessageId = "sharedFile" | "misplacedMarker" | "misplacedKind";
 
-const repositories = new Place("domain", "repositories", ".repository.ts");
+/** Where a marked class belongs, as the project layout writes it. */
+const markerWording: Readonly<Record<CoreMarker, string>> = {
+	AntiCorruptionLayer: "driven/<technology>/adapters/*.adapter.ts, as an adapter of a port",
+	OpenHostService: "driving/<technology>/",
+};
 
-const kindPlaces: readonly KindPlace[] = [
-	{ kind: "AggregateRoot", place: new Place("domain", "aggregates", ".aggregate.ts") },
-	{ kind: "Entity", place: new Place("domain", "entities", ".entity.ts") },
-	{ kind: "Identifier", place: new Place("domain", "value-objects", ".identifier.ts") },
-	{ kind: "ValueObject", place: new Place("domain", "value-objects", ".value-object.ts") },
-	{ kind: "DomainEvent", place: new Place("domain", "events", ".event.ts") },
-	{ kind: "DomainError", place: new Place("domain", "errors", ".error.ts") },
-	{ kind: "DomainService", place: new Place("domain", "services", ".service.ts") },
-	{ kind: "CommandHandler", place: new Place("application", "commands", ".command.ts") },
-	{ kind: "QueryHandler", place: new Place("application", "queries", ".query.ts") },
-	{ kind: "EventTranslator", place: new Place("application", "translators", ".translator.ts") },
-	{ concreteOnly: true, kind: "Port", place: new Place("driven", "adapters", ".adapter.ts") },
-	{ kind: "CommandRepository", place: repositories },
-	{ kind: "QueryRepository", place: repositories },
-	{ kind: "Port", place: new Place("domain", "ports", ".port.ts") },
-];
+export class NoMisplacedClassRule extends Rule<"tactical/no-misplaced-class", MessageId> {
+	public readonly meta: RuleMeta<"tactical/no-misplaced-class", MessageId> = {
+		description: "A class in the wrong folder or file, two classes in one file.",
+		id: "tactical/no-misplaced-class",
+		messages: {
+			misplacedKind: "{name} belongs in {place}.",
+			misplacedMarker: "{name} implements {marker}: it belongs in {place}.",
+			sharedFile: "{name} shares its file with {first}: one class per file.",
+		},
+	};
 
-interface MarkerPlace {
-	readonly marker: CoreMarker;
-	readonly place: Place;
-	readonly where: string;
-}
-
-/** A marker fixes the place of its class, whatever the class extends. */
-const markerPlaces: readonly MarkerPlace[] = [
-	{ marker: "AntiCorruptionLayer", place: new Place("driven", "adapters", ".adapter.ts"), where: "driven/<technology>/adapters/*.adapter.ts, as an adapter of a port" },
-	{ marker: "OpenHostService", place: new Place("driving"), where: "driving/<technology>/" },
-];
-
-export class NoMisplacedClassRule extends Rule {
-	public readonly id: RuleId = "tactical/no-misplaced-class";
-
-	public check(codebase: Codebase): Violation[] {
-		const violations: Violation[] = [];
-		for (const file of codebase.files) {
-			for (const problem of [...this.extraClasses(file), ...this.misplacedClasses(file)]) {
-				violations.push(this.violation(codebase, file, problem));
+	public check(architecture: Architecture): Finding<MessageId>[] {
+		const findings: Finding<MessageId>[] = [];
+		for (const file of architecture.files) {
+			findings.push(...this.extraClasses(file));
+			const location = architecture.locationOf(file);
+			for (const codeClass of file.classes) {
+				const finding = this.misplacement(codeClass, file, location, architecture);
+				if (finding !== undefined) {
+					findings.push(finding);
+				}
 			}
 		}
-		return violations;
+		return findings;
 	}
 
-	private extraClasses(file: CodeFile): Problem[] {
+	/** One class per file: every class after the first is reported. */
+	private extraClasses(file: SourceFile): Finding<MessageId>[] {
 		const [first, ...others] = file.classes;
-		return others.map((codeClass) => ({ line: codeClass.line, message: `${codeClass.name} shares its file with ${first?.name}: one class per file.`, symbol: codeClass.name }));
+		const findings: Finding<MessageId>[] = [];
+		for (const codeClass of others) {
+			findings.push(this.finding(file, codeClass.line, codeClass.name, "sharedFile", { first: first?.name ?? "", name: codeClass.name }));
+		}
+		return findings;
 	}
 
-	private misplacedClasses(file: CodeFile): Problem[] {
-		const problems: Problem[] = [];
-		for (const codeClass of file.classes) {
-			const message = this.markerProblem(codeClass, file) ?? this.kindProblem(codeClass, file);
-			if (message !== undefined) {
-				problems.push({ line: codeClass.line, message, symbol: codeClass.name });
+	/** A marker decides the place first; otherwise the most specific building block the class extends does. */
+	private misplacement(codeClass: ClassDeclaration, file: SourceFile, location: Location, architecture: Architecture): Finding<MessageId> | undefined {
+		for (const { marker, place } of architecture.blocks.markedPlacesOf(codeClass)) {
+			if (!place.fits(location)) {
+				return this.finding(file, codeClass.line, codeClass.name, "misplacedMarker", { marker, name: codeClass.name, place: markerWording[marker] });
 			}
 		}
-		return problems;
-	}
-
-	private markerProblem(codeClass: CodeClass, file: CodeFile): string | undefined {
-		const misplaced = markerPlaces.find((entry) => codeClass.implements(entry.marker) && !entry.place.fits(file.location));
-		return misplaced === undefined ? undefined : `${codeClass.name} implements ${misplaced.marker}: it belongs in ${misplaced.where}.`;
-	}
-
-	private kindProblem(codeClass: CodeClass, file: CodeFile): string | undefined {
-		const match = kindPlaces.find((entry) => codeClass.is(entry.kind) && !(entry.concreteOnly === true && codeClass.isAbstract));
-		if (match === undefined || match.place.fits(file.location)) {
+		const place = architecture.blocks.placeOf(codeClass);
+		if (place === undefined || place.fits(location)) {
 			return undefined;
 		}
-		return `${codeClass.name} belongs in ${match.place.describe()}.`;
+		return this.finding(file, codeClass.line, codeClass.name, "misplacedKind", { name: codeClass.name, place: this.wording.place(place) });
 	}
 }

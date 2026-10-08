@@ -1,0 +1,12 @@
+export { ClassDeclaration } from "./classes/class-declaration.ts";
+export { ClassType } from "./classes/class-type.ts";
+export type { Heritage, TypeArgument } from "./classes/heritage.ts";
+export { Member, type Visibility } from "./classes/member.ts";
+export type { NamedType } from "./classes/named-type.ts";
+export type { ReturnShape } from "./classes/return-shape.ts";
+export { Dependency, type DependencyForm, type DependencyTarget } from "./dependencies/dependency.ts";
+export { type GlobalEffect, GlobalUse } from "./dependencies/global-use.ts";
+export { Project } from "./project.ts";
+export { SourceFile } from "./source-file.ts";
+export { Throw } from "./statements/throw.ts";
+export { type StatementKind, TopLevelStatement } from "./statements/top-level-statement.ts";

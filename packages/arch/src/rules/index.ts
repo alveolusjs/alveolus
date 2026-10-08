@@ -1,3 +1,2 @@
-export { Rule } from "./rule.ts";
-export { Rules } from "./rules.ts";
-export type { Violation } from "./violation.ts";
+export { type Finding, type FindingData, Rule, type RuleMeta } from "./framework/index.ts";
+export { type RuleId, RuleRegistry } from "./registry.ts";

@@ -4,6 +4,7 @@ import { z } from "zod";
 import { existsSync } from "node:fs";
 import { resolve } from "node:path";
 
+import { RuleRegistry } from "../rules/index.ts";
 import type { AlveolusConfig } from "./alveolus-config.ts";
 import { Config } from "./config.ts";
 
@@ -18,22 +19,7 @@ const schema = z.strictObject({
 	domainDependencies: packageDependencies.exactOptional(),
 	ignore: z.array(z.string()).exactOptional(),
 	root: z.string(),
-	rules: z
-		.strictObject({
-			"layers/no-impure-domain": ruleSetting.exactOptional(),
-			"layers/no-outward-import": ruleSetting.exactOptional(),
-			"layers/no-portless-adapter": ruleSetting.exactOptional(),
-			"strategic/no-cross-context-import": ruleSetting.exactOptional(),
-			"strategic/no-leaky-host-service": ruleSetting.exactOptional(),
-			"tactical/no-aggregate-reference": ruleSetting.exactOptional(),
-			"tactical/no-foreign-command-dependency": ruleSetting.exactOptional(),
-			"tactical/no-foreign-query-dependency": ruleSetting.exactOptional(),
-			"tactical/no-loose-code": ruleSetting.exactOptional(),
-			"tactical/no-misplaced-class": ruleSetting.exactOptional(),
-			"tactical/no-stateful-service": ruleSetting.exactOptional(),
-			"tactical/no-thrown-failure": ruleSetting.exactOptional(),
-		})
-		.exactOptional(),
+	rules: z.strictObject(Object.fromEntries(new RuleRegistry().ids.map((id) => [id, ruleSetting.exactOptional()]))).exactOptional(),
 	sharedKernel: z.string().exactOptional(),
 });
 

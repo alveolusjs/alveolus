@@ -1,22 +1,9 @@
-export type RuleId =
-	| "strategic/no-cross-context-import"
-	| "strategic/no-leaky-host-service"
-	| "layers/no-impure-domain"
-	| "layers/no-outward-import"
-	| "layers/no-portless-adapter"
-	| "tactical/no-aggregate-reference"
-	| "tactical/no-foreign-command-dependency"
-	| "tactical/no-foreign-query-dependency"
-	| "tactical/no-stateful-service"
-	| "tactical/no-thrown-failure"
-	| "tactical/no-misplaced-class"
-	| "tactical/no-loose-code";
-
-/** Each package and what may be imported from it: `true` for everything, or the allowed names. */
-export type PackageDependencies = Readonly<Record<string, true | readonly string[]>>;
+import type { PackageDependencies } from "../architecture/index.ts";
+import type { RuleId } from "../rules/index.ts";
 
 export type RuleSetting = "error" | "off";
 
+/** The content of `alveolus.config.ts`. */
 export interface AlveolusConfig {
 	readonly root: string;
 	readonly boundedContexts: Readonly<Record<string, string>>;

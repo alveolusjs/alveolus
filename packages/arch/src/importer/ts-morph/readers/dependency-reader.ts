@@ -1,0 +1,157 @@
+import { SyntaxKind, ts } from "ts-morph";
+import type { CallExpression, ExportDeclaration, ImportDeclaration, ImportEqualsDeclaration, ImportTypeNode, Node, Project, SourceFile } from "ts-morph";
+
+import { isAbsolute, join, relative } from "node:path";
+
+import type { DependencyForm, DependencyTarget } from "../../../model/index.ts";
+import { Dependency } from "../../../model/index.ts";
+import type { ImportScope } from "../../importer.ts";
+import type { GlobalReference } from "./global-reference.ts";
+
+/** A module reference as written in the source: `specifier` is undefined when it is computed at runtime. */
+interface ModuleReference {
+	readonly line: number;
+	readonly form: DependencyForm;
+	readonly specifier: string | undefined;
+	readonly text: string;
+	readonly names: readonly string[];
+}
+
+const everything: readonly string[] = ["*"];
+
+/**
+ * Reads every module a file depends on: import and export declarations, `import("…")` types, dynamic `import()`, `require()`,
+ * `import … = require()`, and the files of the project that declare the globals it uses.
+ */
+export class DependencyReader {
+	public constructor(
+		private readonly project: Project,
+		private readonly scope: ImportScope,
+	) {}
+
+	public read(file: SourceFile, globals: readonly GlobalReference[]): Dependency[] {
+		const dependencies: Dependency[] = [];
+		for (const reference of this.referencesOf(file)) {
+			dependencies.push(new Dependency(reference.line, reference.form, reference.specifier ?? reference.text, reference.names, this.targetOf(reference, file)));
+		}
+		for (const global of globals) {
+			if (global.origin === "project") {
+				dependencies.push(new Dependency(global.line, "global", global.declaredIn, [global.name], this.fileTarget(global.declaredIn)));
+			}
+		}
+		return dependencies.sort((left, right) => left.line - right.line);
+	}
+
+	private referencesOf(file: SourceFile): ModuleReference[] {
+		const references: ModuleReference[] = [];
+		for (const declaration of file.getImportDeclarations()) {
+			references.push(this.fromDeclaration(declaration, "import"));
+		}
+		for (const declaration of file.getExportDeclarations()) {
+			if (declaration.hasModuleSpecifier()) {
+				references.push(this.fromDeclaration(declaration, "re-export"));
+			}
+		}
+		for (const declaration of file.getDescendantsOfKind(SyntaxKind.ImportEqualsDeclaration)) {
+			references.push(...this.fromImportEquals(declaration));
+		}
+		for (const node of file.getDescendantsOfKind(SyntaxKind.ImportType)) {
+			references.push(this.fromImportType(node));
+		}
+		for (const call of file.getDescendantsOfKind(SyntaxKind.CallExpression)) {
+			references.push(...this.fromCall(call));
+		}
+		return references;
+	}
+
+	private fromDeclaration(declaration: ImportDeclaration | ExportDeclaration, form: DependencyForm): ModuleReference {
+		const specifier = declaration.getModuleSpecifierValue() ?? "";
+		return { form, line: declaration.getStartLineNumber(), names: this.declaredNames(declaration), specifier, text: specifier };
+	}
+
+	private declaredNames(declaration: ImportDeclaration | ExportDeclaration): string[] {
+		if (declaration.isKind(SyntaxKind.ExportDeclaration)) {
+			return declaration.isNamespaceExport() ? [...everything] : declaration.getNamedExports().map((named) => named.getName());
+		}
+		const names = declaration.getNamedImports().map((named) => named.getName());
+		if (declaration.getDefaultImport() !== undefined) {
+			names.unshift("default");
+		}
+		if (declaration.getNamespaceImport() !== undefined) {
+			names.unshift("*");
+		}
+		return names;
+	}
+
+	private fromImportEquals(declaration: ImportEqualsDeclaration): ModuleReference[] {
+		const reference = declaration.getModuleReference();
+		if (!reference.isKind(SyntaxKind.ExternalModuleReference)) {
+			return [];
+		}
+		return [this.reference(declaration, "require", reference.getExpressionOrThrow(), everything)];
+	}
+
+	private fromImportType(node: ImportTypeNode): ModuleReference {
+		const argument = node.getArgument();
+		const literal = argument.isKind(SyntaxKind.LiteralType) ? argument.getLiteral() : argument;
+		const qualifier = node.getQualifier();
+		const names = qualifier === undefined ? everything : [qualifier.getText().split(".")[0] ?? "*"];
+		return this.reference(node, "inline type", literal, names);
+	}
+
+	private fromCall(call: CallExpression): ModuleReference[] {
+		const callee = call.getExpression();
+		const [argument] = call.getArguments();
+		if (argument === undefined) {
+			return [];
+		}
+		if (callee.isKind(SyntaxKind.ImportKeyword)) {
+			return [this.reference(call, "dynamic import", argument, everything)];
+		}
+		if (callee.isKind(SyntaxKind.Identifier) && callee.getText() === "require") {
+			return [this.reference(call, "require", argument, everything)];
+		}
+		return [];
+	}
+
+	private reference(node: Node, form: DependencyForm, specifierNode: Node, names: readonly string[]): ModuleReference {
+		const isLiteral = specifierNode.isKind(SyntaxKind.StringLiteral) || specifierNode.isKind(SyntaxKind.NoSubstitutionTemplateLiteral);
+		return { form, line: node.getStartLineNumber(), names, specifier: isLiteral ? specifierNode.getLiteralValue() : undefined, text: specifierNode.getText() };
+	}
+
+	/** A file of the project when the specifier resolves inside it, an unresolved file when it does not, a package otherwise. */
+	private targetOf(reference: ModuleReference, file: SourceFile): DependencyTarget {
+		const directory = file.getDirectoryPath();
+		if (reference.specifier === undefined) {
+			return { kind: "file", path: join(directory, reference.text), visibility: "unresolved" };
+		}
+		const resolved = this.resolve(reference.specifier, file);
+		if (resolved !== undefined && this.isInsideProject(resolved)) {
+			return this.fileTarget(resolved);
+		}
+		if (reference.specifier.startsWith(".")) {
+			return { kind: "file", path: join(directory, reference.specifier), visibility: "unresolved" };
+		}
+		return { kind: "package", name: this.packageNameOf(reference.specifier) };
+	}
+
+	private fileTarget(path: string): DependencyTarget {
+		return { kind: "file", path, visibility: this.scope.isIgnored(path) ? "ignored" : "analysed" };
+	}
+
+	private resolve(specifier: string, file: SourceFile): string | undefined {
+		const resolution = ts.resolveModuleName(specifier, file.getFilePath(), this.project.getCompilerOptions(), this.project.getModuleResolutionHost());
+		return resolution.resolvedModule?.resolvedFileName;
+	}
+
+	private packageNameOf(specifier: string): string {
+		const segments = specifier.split("/");
+		const length = specifier.startsWith("@") ? 2 : 1;
+		return segments.slice(0, length).join("/");
+	}
+
+	private isInsideProject(path: string): boolean {
+		const offset = relative(this.scope.projectDir, path);
+		return offset !== "" && !offset.startsWith("..") && !isAbsolute(offset) && !offset.split(/[\\/]/).includes("node_modules");
+	}
+}
