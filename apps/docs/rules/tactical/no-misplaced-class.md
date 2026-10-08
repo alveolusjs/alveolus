@@ -61,18 +61,15 @@ or a module, are not placed by this rule.
 ## What it reports
 
 ```
-src/ordering/domain/aggregates/order.ts:3
-  tactical/no-misplaced-class: OrderId belongs in
+src/ordering/domain/aggregates/order.ts
+  3  tactical/no-misplaced-class: OrderId belongs in
   domain/value-objects/*.identifier.ts.
-
-src/ordering/domain/aggregates/order.ts:5
-  tactical/no-misplaced-class: Order shares its file
+  5  tactical/no-misplaced-class: Order shares its file
   with OrderId: one class per file.
-
-src/ordering/domain/aggregates/order.ts:5
-  tactical/no-misplaced-class: Order belongs in
-  domain/aggregates/*.aggregate.ts.
 ```
+
+A class that shares its file is reported for that only: its place is checked once it has a file
+of its own.
 
 ## Fix it
 

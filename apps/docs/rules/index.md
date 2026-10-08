@@ -49,6 +49,7 @@ architecture it guards, the rest says what a violation is.
 
 | Rule | Reports |
 | --- | --- |
+| [`layers/no-driving-shortcut`](./layers/no-driving-shortcut.md) | A driving adapter reaching a repository, a port or an aggregate instead of calling a handler. |
 | [`layers/no-impure-domain`](./layers/no-impure-domain.md) | The domain importing a framework, a database or another layer. |
 | [`layers/no-outward-import`](./layers/no-outward-import.md) | A dependency pointing away from the domain, and a file outside the layers. |
 | [`layers/no-portless-adapter`](./layers/no-portless-adapter.md) | A driven adapter that extends no port, a port declared outside the domain. |
@@ -65,13 +66,20 @@ architecture it guards, the rest says what a violation is.
 | [`tactical/no-stateful-service`](./tactical/no-stateful-service.md) | A domain service holding a port, a repository or another service. |
 | [`tactical/no-thrown-failure`](./tactical/no-thrown-failure.md) | A business failure thrown instead of returned. |
 
+## Tooling
+
+| Rule | Reports |
+| --- | --- |
+| [`tooling/no-loose-disable`](./tooling/no-loose-disable.md) | A disable comment that names no known rule, gives no reason, or disables nothing. |
+
 ## Read a violation
 
-Each violation gives the file and the line, the rule, what is wrong and what is allowed instead:
+Violations are grouped by file. Each one gives the line, the rule, what is wrong and what is allowed
+instead:
 
 ```
-src/ordering/application/commands/place-order.command.ts:4
-  layers/no-outward-import: The application layer imports
+src/ordering/application/commands/place-order.command.ts
+  4  layers/no-outward-import: The application layer imports
   src/ordering/driven/pg/adapters/mailer.adapter.ts (ordering driven):
   it may only import domain, application, published-language.
 ```
@@ -113,8 +121,8 @@ ignored, such as a test file. No layer imports it: only the composition root and
 root of `src/` may.
 
 ```
-src/ordering/domain/services/pricing.service.ts:2
-  layers/no-impure-domain: The domain imports
+src/ordering/domain/services/pricing.service.ts
+  2  layers/no-impure-domain: The domain imports
   src/ordering/domain/services/db.spec.ts (ignored by the analysis):
   it may only import the domain.
 ```
@@ -131,10 +139,13 @@ export default defineConfig({
 });
 ```
 
-To adopt the rules on an existing project without turning them off, record the current violations
-in a baseline: see [Getting started](../guide/getting-started.md#adopt-it-on-an-existing-project).
+To turn one violation off where it stands, with a reason, write a disable comment above the line:
+see [Getting started](../guide/getting-started.md#turn-a-violation-off). To adopt the rules on an
+existing project without turning them off, record the current violations in a baseline: see
+[Getting started](../guide/getting-started.md#adopt-it-on-an-existing-project).
 
-Test files (`*.spec.ts`, `*.test.ts`, `__tests__/`) are never checked, and production code may not
+Tests and their companions (`*.spec.ts`, `*.test.ts`, `*.e2e-spec.ts`, `*.fixture.ts`, `*.stories.ts`,
+`__tests__/`, `__mocks__/`) are never checked, and production code may not
 import them.
 
 ## What the rules cannot see

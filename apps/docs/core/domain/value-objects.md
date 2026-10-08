@@ -410,8 +410,8 @@ npx alveolus arch check
 An operation written as a function is reported:
 
 ```
-src/ordering/domain/value-objects/money.ts:3
-  tactical/no-loose-code: The function addMoney floats outside
+src/ordering/domain/value-objects/money.ts
+  3  tactical/no-loose-code: The function addMoney floats outside
   any class: make it a method of a value object or of a
   DomainService.
 ```

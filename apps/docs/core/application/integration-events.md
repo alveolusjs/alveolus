@@ -262,8 +262,8 @@ npx alveolus arch check
 A consumer that imports it from ordering is reported:
 
 ```
-src/shipping/published-language/order-placed.representation.ts:1
-  strategic/no-cross-context-import: Imports the published
+src/shipping/published-language/order-placed.representation.ts
+  1  strategic/no-cross-context-import: Imports the published
   language of ordering: redeclare the fields you read in your
   own published-language/.
 ```

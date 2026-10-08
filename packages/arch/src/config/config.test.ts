@@ -36,4 +36,18 @@ describe("Config", () => {
 		expect(config.isEnabled("tactical/no-misplaced-class")).toBe(false);
 		expect(config.isEnabled("strategic/no-cross-context-import")).toBe(true);
 	});
+
+	it("ignores the companions of tests too: end-to-end specs, fixtures, stories and mocks", () => {
+		const config = new Config({ boundedContexts: { ordering: "ordering" }, root: "src" }, "/project");
+
+		expect(config.isIgnored("/project/src/ordering/driving/http/orders.e2e-spec.ts")).toBe(true);
+		expect(config.isIgnored("/project/src/ordering/domain/order.fixture.ts")).toBe(true);
+		expect(config.isIgnored("/project/src/ordering/driving/http/orders.stories.ts")).toBe(true);
+		expect(config.isIgnored("/project/src/ordering/__mocks__/orders.ts")).toBe(true);
+	});
+
+	it("reads the sources with tsconfig.json, or the configuration named", () => {
+		expect(new Config({ boundedContexts: {}, root: "src" }, "/project").tsConfigPath).toBe("/project/tsconfig.json");
+		expect(new Config({ boundedContexts: {}, root: "src", tsconfig: "tsconfig.build.json" }, "/project").tsConfigPath).toBe("/project/tsconfig.build.json");
+	});
 });

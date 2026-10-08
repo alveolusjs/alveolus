@@ -92,4 +92,21 @@ describe("NoThrownFailureRule", () => {
 			"src/ordering/application/commands/place-order.command.ts:3 Promise.reject",
 		]);
 	});
+
+	it("leaves the protocol methods alone: toString, toJSON, valueOf and Symbol methods", () => {
+		const codebase = new TestCodebase().file(
+			"src/ordering/domain/aggregates/order.aggregate.ts",
+			`import { AggregateRoot, Identifier } from "@alveolus/core";
+			class OrderId extends Identifier<string, "OrderId"> {}
+			export class Order extends AggregateRoot<OrderId> {
+				toString(): string { return this.id.value; }
+				toJSON(): object { return { id: this.id.value }; }
+				valueOf(): number { return 0; }
+				*[Symbol.iterator](): Iterator<number> { yield 0; }
+				toSnapshot() { return { id: this.id.value }; }
+			}`,
+		);
+
+		expect(codebase.check(new NoThrownFailureRule())).toEqual([]);
+	});
 });

@@ -11,4 +11,7 @@ export interface ImportScope {
 /** Reads the sources of a project into the model. */
 export abstract class Importer {
 	public abstract read(scope: ImportScope): Project;
+
+	/** Whether a package can be imported from the analysed sources: installed, or mapped in the compiler options. */
+	public abstract resolves(packageName: string, scope: ImportScope): boolean;
 }

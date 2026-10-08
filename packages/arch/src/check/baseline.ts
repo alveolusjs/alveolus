@@ -29,6 +29,15 @@ export class Baseline {
 	}
 
 	public newViolations(violations: readonly Violation[]): Violation[] {
+		return this.match(violations).fresh;
+	}
+
+	/** The entries that match no violation any more: fixed since the baseline was written, and ready to be dropped. */
+	public staleEntries(violations: readonly Violation[]): number {
+		return this.match(violations).stale;
+	}
+
+	private match(violations: readonly Violation[]): { readonly fresh: Violation[]; readonly stale: number } {
 		const remaining = new Map<string, number>();
 		for (const entry of this.entries) {
 			remaining.set(this.keyOf(entry), (remaining.get(this.keyOf(entry)) ?? 0) + 1);
@@ -44,7 +53,11 @@ export class Baseline {
 				fresh.push(violation);
 			}
 		}
-		return fresh;
+		let stale = 0;
+		for (const count of remaining.values()) {
+			stale += count;
+		}
+		return { fresh, stale };
 	}
 
 	public async save(path: string): Promise<void> {

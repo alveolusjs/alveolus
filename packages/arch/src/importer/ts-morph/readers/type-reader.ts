@@ -1,5 +1,7 @@
 import type { Symbol as MorphSymbol, Type, ts } from "ts-morph";
 
+import { normalize } from "node:path";
+
 import type { NamedType, ReturnShape } from "../../../model/index.ts";
 import { ClassType } from "../../../model/index.ts";
 import type { PackageNames } from "../package-names.ts";
@@ -22,7 +24,7 @@ export class TypeReader {
 	public classTypeOf(type: Type): ClassType {
 		const symbol = type.getSymbol();
 		const declaredIn = symbol?.getDeclarations()[0]?.getSourceFile().getFilePath();
-		return new ClassType(symbol?.getName() ?? type.getText(), declaredIn, this.lineageOf(type));
+		return new ClassType(symbol?.getName() ?? type.getText(), declaredIn === undefined ? undefined : normalize(declaredIn), this.lineageOf(type));
 	}
 
 	public namedTypeOf(type: Type): NamedType {

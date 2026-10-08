@@ -19,4 +19,11 @@ describe("Baseline", () => {
 	it("catches a new violation that takes the place of a fixed one with the same symbol", () => {
 		expect(Baseline.of([throwOnLine3]).newViolations([otherThrow])).toEqual([otherThrow]);
 	});
+
+	it("counts the entries that match no violation any more", () => {
+		const baseline = Baseline.of([throwOnLine3, otherThrow]);
+
+		expect(baseline.staleEntries([throwOnLine7])).toBe(1);
+		expect(baseline.staleEntries([])).toBe(2);
+	});
 });

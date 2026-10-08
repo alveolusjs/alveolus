@@ -1,7 +1,8 @@
-import { Project as MorphProject } from "ts-morph";
+import { Project as MorphProject, ts } from "ts-morph";
 import type { SourceFile as MorphFile } from "ts-morph";
 
-import { isAbsolute, join, relative } from "node:path";
+import { existsSync } from "node:fs";
+import { isAbsolute, join, normalize, relative } from "node:path";
 
 import { GlobalUse, Project, SourceFile } from "../../model/index.ts";
 import type { ImportScope } from "../importer.ts";
@@ -9,16 +10,21 @@ import { Importer } from "../importer.ts";
 import { PackageNames } from "./package-names.ts";
 import { ClassReader } from "./readers/class-reader.ts";
 import { DependencyReader } from "./readers/dependency-reader.ts";
+import { DisableReader } from "./readers/disable-reader.ts";
 import { GlobalReader } from "./readers/global-reader.ts";
 import type { GlobalReference } from "./readers/global-reference.ts";
 import { StatementReader } from "./readers/statement-reader.ts";
 import { ThrowReader } from "./readers/throw-reader.ts";
 import { TypeReader } from "./readers/type-reader.ts";
 
-/** Reads a TypeScript project with ts-morph: each reader turns one family of syntax into facts of the model. */
+/**
+ * Reads a TypeScript project with ts-morph: each reader turns one family of syntax into facts of the model.
+ * ts-morph writes every path with forward slashes; the model keeps the paths of the platform, as the configuration resolves them.
+ */
 export class TsMorphImporter extends Importer {
 	private readonly classes: ClassReader;
 	private readonly statements = new StatementReader();
+	private readonly disables = new DisableReader();
 	private readonly throws = new ThrowReader();
 
 	public constructor(private readonly sources: MorphProject) {
@@ -26,8 +32,17 @@ export class TsMorphImporter extends Importer {
 		this.classes = new ClassReader(new TypeReader(new PackageNames(sources.getFileSystem())));
 	}
 
-	public static fromTsConfig(projectDir: string): TsMorphImporter {
-		return new TsMorphImporter(new MorphProject({ tsConfigFilePath: join(projectDir, "tsconfig.json") }));
+	public static fromTsConfig(tsConfigFilePath: string): TsMorphImporter {
+		if (!existsSync(tsConfigFilePath)) {
+			throw new Error(`No TypeScript configuration found at ${tsConfigFilePath}: pass --tsconfig, or set tsconfig in alveolus.config.ts.`);
+		}
+		return new TsMorphImporter(new MorphProject({ tsConfigFilePath }));
+	}
+
+	public resolves(packageName: string, scope: ImportScope): boolean {
+		const from = join(scope.rootDir, "index.ts");
+		const resolution = ts.resolveModuleName(packageName, from, this.sources.getCompilerOptions(), this.sources.getModuleResolutionHost());
+		return resolution.resolvedModule !== undefined;
 	}
 
 	public read(scope: ImportScope): Project {
@@ -47,8 +62,9 @@ export class TsMorphImporter extends Importer {
 		return new SourceFile({
 			classes: file.getClasses().map((declaration) => this.classes.read(declaration)),
 			dependencies: dependencies.read(file, globalReferences),
+			disables: this.disables.read(file),
 			globals: this.globalUsesOf(globalReferences),
-			path: file.getFilePath(),
+			path: normalize(file.getFilePath()),
 			statements: this.statements.read(file),
 			text: file.getFullText(),
 			throws: this.throws.read(file),

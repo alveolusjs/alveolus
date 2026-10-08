@@ -46,28 +46,24 @@ Every form of import counts, see [Every import counts](../index.md#every-import-
 ## What it reports
 
 ```
-src/ordering/driven/pg/adapters/stock.adapter.ts:1
-  strategic/no-cross-context-import: Imports
+src/ordering/driven/pg/adapters/stock.adapter.ts
+  1  strategic/no-cross-context-import: Imports
   src/catalog/domain/aggregates/product.aggregate.ts (catalog domain):
   only an OpenHostService of another bounded context may be imported.
-
-src/ordering/driven/pg/adapters/stock.adapter.ts:2
-  strategic/no-cross-context-import: Imports the published language
+  2  strategic/no-cross-context-import: Imports the published language
   of catalog: redeclare the fields you read in your own
   published-language/.
-
-src/ordering/driven/pg/adapters/stock.adapter.ts:3
-  strategic/no-cross-context-import: Uses the open host service of
+  3  strategic/no-cross-context-import: Uses the open host service of
   catalog outside an AntiCorruptionLayer: translate it in an
   anti-corruption layer.
 
-src/catalog/catalog.module.ts:2
-  strategic/no-cross-context-import: The composition root
+src/catalog/catalog.module.ts
+  2  strategic/no-cross-context-import: The composition root
   re-exports Product: it exports its own module only, so that no
   other context reaches through it.
 
-src/shared-kernel/domain/value-objects/money.value-object.ts:1
-  strategic/no-cross-context-import: The shared kernel imports no
+src/shared-kernel/domain/value-objects/money.value-object.ts
+  1  strategic/no-cross-context-import: The shared kernel imports no
   bounded context, but imports
   src/catalog/domain/value-objects/currency.value-object.ts
   (catalog domain).

@@ -57,27 +57,21 @@ application, `CommandHandler`, `QueryHandler` or `EventTranslator`.
 ## What it reports
 
 ```
-src/ordering/domain/services/pricing.ts:1
-  tactical/no-loose-code: PriceHelper extends no building
+src/ordering/domain/services/pricing.ts
+  1  tactical/no-loose-code: PriceHelper extends no building
   block: extend AggregateRoot, Entity, ValueObject, Identifier,
   DomainEvent, DomainError, DomainService or a Port.
-
-src/ordering/domain/services/pricing.ts:3
-  tactical/no-loose-code: The function roundAmount floats
+  3  tactical/no-loose-code: The function roundAmount floats
   outside any class: make it a method of a value object or of
   a DomainService.
-
-src/ordering/domain/services/pricing.ts:7
-  tactical/no-loose-code: The enum OrderStatus has no place
+  7  tactical/no-loose-code: The enum OrderStatus has no place
   here: use a union of literal types, or a ValueObject when it
   has behaviour.
-
-src/ordering/domain/services/pricing.ts:12
-  tactical/no-loose-code: The constant Pricing is computed when
+  12  tactical/no-loose-code: The constant Pricing is computed when
   the module loads: keep top-level constants to plain data.
 
-src/ordering/domain/value-objects/utils.value-object.ts:3
-  tactical/no-loose-code: Utils only has static members: a class
+src/ordering/domain/value-objects/utils.value-object.ts
+  3  tactical/no-loose-code: Utils only has static members: a class
   of functions is no building block; make them methods of the
   value object they work on, or of a DomainService.
 ```

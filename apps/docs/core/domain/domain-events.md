@@ -277,8 +277,8 @@ npx alveolus arch check
 An event declared next to its aggregate is reported:
 
 ```
-src/ordering/domain/aggregates/order.aggregate.ts:12
-  tactical/no-misplaced-class: OrderPlaced belongs in
+src/ordering/domain/aggregates/order.aggregate.ts
+  12  tactical/no-misplaced-class: OrderPlaced belongs in
   domain/events/*.event.ts.
 ```
 

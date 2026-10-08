@@ -2,7 +2,7 @@ import { Command, CommanderError } from "commander";
 
 import { join, resolve } from "node:path";
 
-import type { Violation } from "../check/index.ts";
+import type { CheckOutcome } from "../check/index.ts";
 import { Baseline, Checker, Report } from "../check/index.ts";
 import type { Config } from "../config/index.ts";
 import { ConfigLoader } from "../config/index.ts";
@@ -16,7 +16,8 @@ interface Output {
 interface Options {
 	readonly project: string;
 	readonly config?: string;
-	readonly format: "text" | "json";
+	readonly tsconfig?: string;
+	readonly format: "text" | "json" | "sarif";
 }
 
 export class Cli {
@@ -52,20 +53,38 @@ export class Cli {
 	}
 
 	private withOptions(command: Command): Command {
-		return command.option("--project <dir>", "project directory", ".").option("--config <file>", "configuration file", ConfigLoader.fileName).option("--format <format>", "text or json", "text");
+		return command
+			.option("--project <dir>", "project directory", ".")
+			.option("--config <file>", "configuration file", ConfigLoader.fileName)
+			.option("--tsconfig <file>", "TypeScript configuration, tsconfig.json or the one set in the configuration file")
+			.option("--format <format>", "text, json or sarif", "text");
 	}
 
 	private async check(options: Options): Promise<void> {
-		const { config, violations } = await this.analyze(options);
+		const { config, registry, outcome } = await this.analyze(options);
 		const baseline = await Baseline.load(join(config.projectDir, Baseline.fileName));
-		const fresh = baseline.newViolations(violations);
+		const fresh = baseline.newViolations(outcome.violations);
+		const stale = baseline.staleEntries(outcome.violations);
 		if (baseline.outdatedEntries > 0) {
 			this.warnOutdated(baseline.outdatedEntries);
 		}
-		const report = new Report(fresh, violations.length - fresh.length, this.colored);
+		if (stale > 0) {
+			this.stderr.write(`${stale} ${stale === 1 ? "entry" : "entries"} of the baseline match nothing any more: run alveolus arch baseline to drop ${stale === 1 ? "it" : "them"}.\n`);
+		}
+		const report = new Report({ baselined: outcome.violations.length - fresh.length, stale, suppressed: outcome.suppressed, violations: fresh }, this.colored);
 
-		this.stdout.write(options.format === "json" ? report.json() : report.text());
+		this.stdout.write(this.render(report, options.format, registry));
 		this.exitCode = fresh.length === 0 ? 0 : 1;
+	}
+
+	private render(report: Report, format: Options["format"], registry: RuleRegistry): string {
+		if (format === "json") {
+			return report.json();
+		}
+		if (format === "sarif") {
+			return report.sarif(registry.rules.map((rule) => rule.meta));
+		}
+		return report.text();
 	}
 
 	private warnOutdated(count: number): void {
@@ -74,16 +93,18 @@ export class Cli {
 	}
 
 	private async baseline(options: Options): Promise<void> {
-		const { config, violations } = await this.analyze(options);
-		await Baseline.of(violations).save(join(config.projectDir, Baseline.fileName));
-		this.stdout.write(`${violations.length} violations written to ${Baseline.fileName}\n`);
+		const { config, outcome } = await this.analyze(options);
+		await Baseline.of(outcome.violations).save(join(config.projectDir, Baseline.fileName));
+		this.stdout.write(`${outcome.violations.length} violations written to ${Baseline.fileName}\n`);
 	}
 
-	private async analyze(options: Options): Promise<{ config: Config; violations: Violation[] }> {
+	private async analyze(options: Options): Promise<{ config: Config; registry: RuleRegistry; outcome: CheckOutcome }> {
 		const projectDir = resolve(this.cwd, options.project);
 		const config = await new ConfigLoader().load(projectDir, options.config);
-		const checker = new Checker(TsMorphImporter.fromTsConfig(config.projectDir), new RuleRegistry().rules);
-		return { config, violations: checker.check(config) };
+		const tsConfigPath = options.tsconfig === undefined ? config.tsConfigPath : resolve(config.projectDir, options.tsconfig);
+		const registry = new RuleRegistry();
+		const checker = new Checker(TsMorphImporter.fromTsConfig(tsConfigPath), registry.rules);
+		return { config, outcome: checker.check(config), registry };
 	}
 
 	private fail(error: unknown): number {

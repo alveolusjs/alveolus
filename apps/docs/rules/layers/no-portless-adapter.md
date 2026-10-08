@@ -40,12 +40,12 @@ extend a port.
 ## What it reports
 
 ```
-src/ordering/driven/smtp/adapters/mailer.adapter.ts:1
-  layers/no-portless-adapter: Mailer is a driven adapter but
+src/ordering/driven/smtp/adapters/mailer.adapter.ts
+  1  layers/no-portless-adapter: Mailer is a driven adapter but
   extends no Port: extend the port it implements.
 
-src/ordering/application/commands/notifications.ts:3
-  layers/no-portless-adapter: The port Notifications is declared
+src/ordering/application/commands/notifications.ts
+  3  layers/no-portless-adapter: The port Notifications is declared
   outside the domain: move it to domain/ports/ or
   domain/repositories/.
 ```

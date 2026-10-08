@@ -198,6 +198,10 @@ shared kernel.
 | **driving** | ✓ | ✓ | ✓ | ✕ | ✓ | ✕ |
 | **composition root** | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 
+A driving adapter calls the handlers of the application: it imports no repository, port, aggregate
+or domain service of the domain, checked by
+[`layers/no-driving-shortcut`](../rules/layers/no-driving-shortcut.md).
+
 Outside the project, the domain may import the domain building blocks of `@alveolus/core` and the
 packages listed in `domainDependencies`; the application adds the rest of `@alveolus/core` and
 `applicationDependencies`; the published language may import the published-language types of core

@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
-import { existsSync } from "node:fs";
+import { existsSync, readFileSync, rmSync } from "node:fs";
 import { join } from "node:path";
 
 import { Sandbox } from "../../test/support/sandbox.ts";
@@ -41,7 +41,7 @@ describe("Cli", () => {
 
 		expect(await cli.run(["arch", "check"])).toBe(1);
 		expect(stdout.text).toBe(
-			"src/ordering/driven/smtp/adapters/mailer.adapter.ts:1\n  layers/no-portless-adapter: Mailer is a driven adapter but extends no Port: extend the port it implements.\n\n1 violation\n",
+			"src/ordering/driven/smtp/adapters/mailer.adapter.ts\n  1  layers/no-portless-adapter: Mailer is a driven adapter but extends no Port: extend the port it implements.\n\n1 violation\n",
 		);
 	});
 
@@ -52,6 +52,8 @@ describe("Cli", () => {
 
 		expect(JSON.parse(stdout.text)).toEqual({
 			baselined: 0,
+			stale: 0,
+			suppressed: [],
 			violations: [
 				{ file: "src/ordering/driven/smtp/adapters/mailer.adapter.ts", fingerprint: expect.any(String), line: 1, message: expect.any(String), rule: "layers/no-portless-adapter", symbol: "Mailer" },
 			],
@@ -69,7 +71,7 @@ describe("Cli", () => {
 		stdout.text = "";
 
 		expect(await cli.run(["arch", "check"])).toBe(1);
-		expect(stdout.text).toContain("sms.adapter.ts:1");
+		expect(stdout.text).toContain("sms.adapter.ts\n  1  ");
 		expect(stdout.text).toContain("1 violation (1 in the baseline)");
 	});
 
@@ -104,5 +106,38 @@ describe("Cli", () => {
 	it("shows the usage on an unknown command", async () => {
 		expect(await cli.run(["arch", "unknown"])).toBe(2);
 		expect(stderr.text).toContain("unknown command");
+	});
+
+	it("reads the sources with the TypeScript configuration passed on the command line", async () => {
+		sandbox.write("tsconfig.build.json", readFileSync(join(sandbox.dir, "tsconfig.json"), "utf8"));
+		rmSync(join(sandbox.dir, "tsconfig.json"));
+
+		expect(await cli.run(["arch", "check", "--tsconfig", "tsconfig.build.json"])).toBe(0);
+		expect(await cli.run(["arch", "check"])).toBe(2);
+		expect(stderr.text).toContain("No TypeScript configuration found at");
+		expect(stderr.text).toContain("pass --tsconfig");
+	});
+
+	it("writes SARIF for code scanning", async () => {
+		sandbox.write("src/ordering/driven/smtp/adapters/mailer.adapter.ts", "export class Mailer {}\n");
+
+		await cli.run(["arch", "check", "--format", "sarif"]);
+		const log = JSON.parse(stdout.text);
+
+		expect(log.version).toBe("2.1.0");
+		expect(log.runs[0].results).toHaveLength(1);
+		expect(log.runs[0].results[0].ruleId).toBe("layers/no-portless-adapter");
+		expect(log.runs[0].tool.driver.rules.map((rule: { id: string }) => rule.id)).toContain("layers/no-portless-adapter");
+	});
+
+	it("counts the violations a disable comment turns off, and says when the baseline covers fixed ones", async () => {
+		sandbox.write("src/ordering/driven/smtp/adapters/mailer.adapter.ts", "export class Mailer {}\n");
+		expect(await cli.run(["arch", "baseline"])).toBe(0);
+		sandbox.write("src/ordering/driven/smtp/adapters/mailer.adapter.ts", "// alveolus-disable-next-line layers/no-portless-adapter: wrapped later\nexport class Mailer {}\n");
+		stdout.text = "";
+
+		expect(await cli.run(["arch", "check"])).toBe(0);
+		expect(stdout.text).toBe("No violation (1 fixed, 1 disabled)\n");
+		expect(stderr.text).toContain("1 entry of the baseline match nothing any more: run alveolus arch baseline to drop it.");
 	});
 });

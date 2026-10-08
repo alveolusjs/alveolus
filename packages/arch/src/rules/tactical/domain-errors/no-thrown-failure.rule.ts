@@ -6,8 +6,8 @@ import { Rule } from "../../framework/index.ts";
 
 type MessageId = "noResult" | "setter" | "thrown" | "rejected";
 
-/** Methods that answer a question about equality or storage, not a business operation. */
-const exempt: ReadonlySet<string> = new Set(["equals", "toSnapshot"]);
+/** Methods that answer equality, storage or a JavaScript protocol, not a business operation; a `[Symbol.…]` method counts too. */
+const exempt: ReadonlySet<string> = new Set(["equals", "toSnapshot", "toString", "toJSON", "valueOf"]);
 
 /** Adapters may still throw: a lost connection is no business failure. */
 const guarded: ReadonlySet<Layer | undefined> = new Set<Layer>(["domain", "application"]);
@@ -54,7 +54,7 @@ export class NoThrownFailureRule extends Rule<"tactical/no-thrown-failure", Mess
 	}
 
 	private messageFor(member: Member, architecture: Architecture): MessageId | undefined {
-		if (!member.isPublicInstance || exempt.has(member.name)) {
+		if (!member.isPublicInstance || exempt.has(member.name) || member.name.startsWith("[")) {
 			return undefined;
 		}
 		if (member.kind === "setter") {

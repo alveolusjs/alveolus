@@ -399,8 +399,8 @@ npx alveolus arch check
 A failure thrown instead of returned is reported:
 
 ```
-src/ordering/domain/aggregates/order.aggregate.ts:58
-  tactical/no-thrown-failure: A failure is thrown: return it in a
+src/ordering/domain/aggregates/order.aggregate.ts
+  58  tactical/no-thrown-failure: A failure is thrown: return it in a
   Result instead.
 ```
 

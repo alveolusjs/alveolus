@@ -45,8 +45,8 @@ A parameter counts by what its type extends: `Orders` extends `CommandRepository
 ## What it reports
 
 ```
-src/ordering/application/queries/get-order-summary.query.ts:3
-  tactical/no-foreign-query-dependency: The QueryHandler
+src/ordering/application/queries/get-order-summary.query.ts
+  3  tactical/no-foreign-query-dependency: The QueryHandler
   GetOrderSummaryHandler receives UnitOfWork, a UnitOfWork: a query
   handler receives query repositories, ports that do not write, and
   value objects.

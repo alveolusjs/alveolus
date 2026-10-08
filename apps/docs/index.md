@@ -79,12 +79,12 @@ export class PlaceOrderHandler extends CommandHandler<PlaceOrder, OrderPlaced, P
 
 ```sh
 $ npx alveolus arch check
-src/ordering/domain/aggregates/order.aggregate.ts:1
-  layers/no-impure-domain: The domain imports @nestjs/common: add it
+src/ordering/domain/aggregates/order.aggregate.ts
+  1  layers/no-impure-domain: The domain imports @nestjs/common: add it
   to domainDependencies if the domain really needs it.
 
-src/ordering/application/commands/place-order.command.ts:3
-  layers/no-outward-import: The application layer imports
+src/ordering/application/commands/place-order.command.ts
+  3  layers/no-outward-import: The application layer imports
   src/ordering/driven/pg/adapters/pg-orders.adapter.ts
   (ordering driven): it may only import domain,
   application, published-language.

@@ -8,5 +8,6 @@ export { Dependency, type DependencyForm, type DependencyTarget } from "./depend
 export { type GlobalEffect, GlobalUse } from "./dependencies/global-use.ts";
 export { Project } from "./project.ts";
 export { SourceFile } from "./source-file.ts";
+export { DisableComment } from "./statements/disable-comment.ts";
 export { Throw } from "./statements/throw.ts";
 export { type StatementKind, TopLevelStatement } from "./statements/top-level-statement.ts";

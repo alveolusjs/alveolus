@@ -249,8 +249,8 @@ npx alveolus arch check
 A command handler that reads it is reported:
 
 ```
-src/ordering/application/commands/place-order.command.ts:47
-  tactical/no-foreign-command-dependency: The CommandHandler
+src/ordering/application/commands/place-order.command.ts
+  47  tactical/no-foreign-command-dependency: The CommandHandler
   PlaceOrderHandler receives OrderSummaries, a QueryRepository: a
   command handler receives command repositories, ports, event
   translators, domain services and value objects.

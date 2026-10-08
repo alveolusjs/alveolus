@@ -1,7 +1,9 @@
 import type { Settings } from "../architecture/index.ts";
 import { Architecture } from "../architecture/index.ts";
+import { corePackageName } from "../conventions/index.ts";
 import type { Importer, ImportScope } from "../importer/index.ts";
 import type { Finding, Rule, RuleId } from "../rules/index.ts";
+import { DisableDirective, NoLooseDisableRule } from "../rules/index.ts";
 import { Fingerprint } from "./fingerprint.ts";
 import type { Violation } from "./violation.ts";
 
@@ -10,7 +12,19 @@ export interface CheckSettings extends ImportScope, Settings {
 	isEnabled(rule: RuleId): boolean;
 }
 
-/** Reads the project, runs the enabled rules, and turns what they find into violations sorted by file and line. */
+/** A violation a disable comment turns off, and the reason the comment gives. */
+export interface Suppressed {
+	readonly violation: Violation;
+	readonly reason: string;
+}
+
+export interface CheckOutcome {
+	/** Sorted by file and line. */
+	readonly violations: Violation[];
+	readonly suppressed: Suppressed[];
+}
+
+/** Reads the project, runs the enabled rules, applies the disable comments, and turns what the rules find into violations. */
 export class Checker {
 	private readonly fingerprint = new Fingerprint();
 
@@ -19,20 +33,56 @@ export class Checker {
 		private readonly rules: readonly Rule<RuleId>[],
 	) {}
 
-	public check(settings: CheckSettings): Violation[] {
+	public check(settings: CheckSettings): CheckOutcome {
+		if (!this.importer.resolves(corePackageName, settings)) {
+			throw new Error(`${corePackageName} cannot be imported from ${settings.rootDir}: install it, or map it in the paths of your tsconfig. Without it, no building block can be recognised.`);
+		}
 		const architecture = new Architecture(this.importer.read(settings), settings);
-		const violations: Violation[] = [];
+		const outcome: CheckOutcome = { suppressed: [], violations: [] };
+		const used = new Set<string>();
 		for (const rule of this.rules) {
 			if (settings.isEnabled(rule.meta.id)) {
-				violations.push(...this.run(rule, architecture));
+				this.collect(rule, architecture, outcome, used);
 			}
 		}
-		return violations.sort((left, right) => this.compare(left, right));
+		this.collectUnusedDisables(architecture, settings, outcome, used);
+		outcome.violations.sort((left, right) => this.compare(left, right));
+		return outcome;
 	}
 
-	/** The violations of one rule, in the order the rule found them. */
+	/** The violations of one rule, in the order the rule found them, disable comments aside. */
 	public run(rule: Rule<RuleId>, architecture: Architecture): Violation[] {
 		return rule.check(architecture).map((finding) => this.violationOf(rule, finding, architecture));
+	}
+
+	/** Each finding becomes a violation, unless the line above it carries a complete disable comment naming the rule. */
+	private collect(rule: Rule<RuleId>, architecture: Architecture, outcome: CheckOutcome, used: Set<string>): void {
+		for (const finding of rule.check(architecture)) {
+			const violation = this.violationOf(rule, finding, architecture);
+			const comment = finding.file.disableAbove(finding.line);
+			const directive = comment === undefined ? undefined : new DisableDirective(comment.text);
+			if (comment !== undefined && directive?.isComplete === true && directive.rule === rule.meta.id) {
+				used.add(`${finding.file.path}:${comment.line}`);
+				outcome.suppressed.push({ reason: directive.reason ?? "", violation });
+			} else {
+				outcome.violations.push(violation);
+			}
+		}
+	}
+
+	/** A complete disable comment that turned nothing off is reported, so that none outlives its violation. */
+	private collectUnusedDisables(architecture: Architecture, settings: CheckSettings, outcome: CheckOutcome, used: Set<string>): void {
+		const rule = this.rules.find((candidate) => candidate instanceof NoLooseDisableRule);
+		if (!(rule instanceof NoLooseDisableRule) || !settings.isEnabled(rule.meta.id)) {
+			return;
+		}
+		for (const file of architecture.files) {
+			for (const comment of file.disables) {
+				if (new DisableDirective(comment.text).isComplete && !used.has(`${file.path}:${comment.line}`)) {
+					outcome.violations.push(this.violationOf(rule, rule.unused(file, comment), architecture));
+				}
+			}
+		}
 	}
 
 	private violationOf(rule: Rule<RuleId>, finding: Finding, architecture: Architecture): Violation {

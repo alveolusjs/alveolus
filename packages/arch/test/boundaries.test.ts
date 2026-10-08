@@ -11,7 +11,7 @@ import { SourceImports } from "./support/source-imports.ts";
 const allowedImports: Readonly<Record<string, readonly string[]>> = {
 	".": ["architecture", "check", "cli", "config", "importer", "rules"],
 	architecture: ["conventions", "model"],
-	check: ["architecture", "importer", "rules"],
+	check: ["architecture", "conventions", "importer", "rules"],
 	cli: ["check", "config", "importer", "rules"],
 	config: ["architecture", "check", "rules"],
 	conventions: [],

@@ -1,7 +1,7 @@
 import { SyntaxKind, ts } from "ts-morph";
 import type { CallExpression, ExportDeclaration, ImportDeclaration, ImportEqualsDeclaration, ImportTypeNode, Node, Project, SourceFile } from "ts-morph";
 
-import { isAbsolute, join, relative } from "node:path";
+import { isAbsolute, join, normalize, relative } from "node:path";
 
 import type { DependencyForm, DependencyTarget } from "../../../model/index.ts";
 import { Dependency } from "../../../model/index.ts";
@@ -36,7 +36,7 @@ export class DependencyReader {
 		}
 		for (const global of globals) {
 			if (global.origin === "project") {
-				dependencies.push(new Dependency(global.line, "global", global.declaredIn, [global.name], this.fileTarget(global.declaredIn)));
+				dependencies.push(new Dependency(global.line, "global", global.declaredIn, [global.name], this.fileTarget(normalize(global.declaredIn))));
 			}
 		}
 		return dependencies.sort((left, right) => left.line - right.line);
@@ -123,14 +123,14 @@ export class DependencyReader {
 	private targetOf(reference: ModuleReference, file: SourceFile): DependencyTarget {
 		const directory = file.getDirectoryPath();
 		if (reference.specifier === undefined) {
-			return { kind: "file", path: join(directory, reference.text), visibility: "unresolved" };
+			return { kind: "file", path: normalize(join(directory, reference.text)), visibility: "unresolved" };
 		}
 		const resolved = this.resolve(reference.specifier, file);
 		if (resolved !== undefined && this.isInsideProject(resolved)) {
 			return this.fileTarget(resolved);
 		}
 		if (reference.specifier.startsWith(".")) {
-			return { kind: "file", path: join(directory, reference.specifier), visibility: "unresolved" };
+			return { kind: "file", path: normalize(join(directory, reference.specifier)), visibility: "unresolved" };
 		}
 		return { kind: "package", name: this.packageNameOf(reference.specifier) };
 	}
@@ -141,7 +141,8 @@ export class DependencyReader {
 
 	private resolve(specifier: string, file: SourceFile): string | undefined {
 		const resolution = ts.resolveModuleName(specifier, file.getFilePath(), this.project.getCompilerOptions(), this.project.getModuleResolutionHost());
-		return resolution.resolvedModule?.resolvedFileName;
+		const resolved = resolution.resolvedModule?.resolvedFileName;
+		return resolved === undefined ? undefined : normalize(resolved);
 	}
 
 	private packageNameOf(specifier: string): string {

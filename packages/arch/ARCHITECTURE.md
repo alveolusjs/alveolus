@@ -129,8 +129,8 @@ words it.
 
 ### `src/rules/`
 
-One file per rule, in the folder of what it checks: `strategic/`, `layers/`, and `tactical/` with
-one folder per building block. A rule reads top to bottom:
+One file per rule, in the folder of what it checks: `strategic/`, `layers/`, `tactical/` with one
+folder per building block, and `tooling/` for the rules about the checks themselves (disable comments). A rule reads top to bottom:
 
 ```ts
 export class NoPortlessAdapterRule extends ClassRule<"layers/no-portless-adapter", MessageId> {

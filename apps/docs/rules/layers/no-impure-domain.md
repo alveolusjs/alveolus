@@ -58,16 +58,12 @@ global.
 ## What it reports
 
 ```
-src/ordering/domain/aggregates/order.aggregate.ts:1
-  layers/no-impure-domain: The domain imports @nestjs/common:
+src/ordering/domain/aggregates/order.aggregate.ts
+  1  layers/no-impure-domain: The domain imports @nestjs/common:
   add it to domainDependencies if the domain really needs it.
-
-src/ordering/domain/aggregates/order.aggregate.ts:2
-  layers/no-impure-domain: The domain imports UnitOfWork from
+  2  layers/no-impure-domain: The domain imports UnitOfWork from
   @alveolus/core: only domain building blocks and Result are allowed.
-
-src/ordering/domain/aggregates/order.aggregate.ts:5
-  layers/no-impure-domain: The domain imports
+  5  layers/no-impure-domain: The domain imports
   src/ordering/driven/smtp/adapters/mailer.adapter.ts
   (ordering driven): it may only import the domain.
 ```
@@ -75,16 +71,14 @@ src/ordering/domain/aggregates/order.aggregate.ts:5
 A global of the host, the clock and randomness:
 
 ```
-src/ordering/domain/services/pricing.service.ts:3
-  layers/no-impure-domain: The domain uses fetch, a global of the
+src/ordering/domain/services/pricing.service.ts
+  3  layers/no-impure-domain: The domain uses fetch, a global of the
   host: reach it through a port.
 
-src/ordering/domain/aggregates/order.aggregate.ts:12
-  layers/no-impure-domain: The domain reads the system clock with
+src/ordering/domain/aggregates/order.aggregate.ts
+  12  layers/no-impure-domain: The domain reads the system clock with
   Date.now: receive the time from the Clock port.
-
-src/ordering/domain/aggregates/order.aggregate.ts:13
-  layers/no-impure-domain: The domain draws a random value with
+  13  layers/no-impure-domain: The domain draws a random value with
   Math.random: receive it from a port, such as IdGenerator.
 ```
 

@@ -18,9 +18,11 @@ const schema = z.strictObject({
 	compositionRoot: z.string().exactOptional(),
 	domainDependencies: packageDependencies.exactOptional(),
 	ignore: z.array(z.string()).exactOptional(),
+	layout: z.strictObject({ extraFolders: z.strictObject({ application: z.array(z.string()).exactOptional(), domain: z.array(z.string()).exactOptional() }).exactOptional() }).exactOptional(),
 	root: z.string(),
 	rules: z.strictObject(Object.fromEntries(new RuleRegistry().ids.map((id) => [id, ruleSetting.exactOptional()]))).exactOptional(),
 	sharedKernel: z.string().exactOptional(),
+	tsconfig: z.string().exactOptional(),
 });
 
 export class ConfigLoader {

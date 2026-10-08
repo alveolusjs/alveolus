@@ -89,6 +89,7 @@ const sidebar = [
 			{
 				collapsed: false,
 				items: [
+					{ link: "/rules/layers/no-driving-shortcut", text: "no-driving-shortcut" },
 					{ link: "/rules/layers/no-impure-domain", text: "no-impure-domain" },
 					{ link: "/rules/layers/no-outward-import", text: "no-outward-import" },
 					{ link: "/rules/layers/no-portless-adapter", text: "no-portless-adapter" },
@@ -107,6 +108,11 @@ const sidebar = [
 					{ link: "/rules/tactical/no-thrown-failure", text: "no-thrown-failure" },
 				],
 				text: "Tactical",
+			},
+			{
+				collapsed: false,
+				items: [{ link: "/rules/tooling/no-loose-disable", text: "no-loose-disable" }],
+				text: "Tooling",
 			},
 		],
 		text: "Rules",

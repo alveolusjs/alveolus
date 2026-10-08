@@ -23,7 +23,7 @@ export class Architecture {
 	public readonly core: CoreApi = new CoreApi();
 	public readonly layers: Layers = new Layers();
 	public readonly blocks: BuildingBlocks = new BuildingBlocks(this.core);
-	private readonly shape = new LayerShape(this.blocks);
+	private readonly shape: LayerShape;
 	private readonly layout: Layout;
 	private readonly locations = new Map<string, Location>();
 
@@ -32,6 +32,7 @@ export class Architecture {
 		private readonly settings: Settings,
 	) {
 		this.layout = new Layout(settings);
+		this.shape = new LayerShape(this.blocks, settings.extraFolders);
 	}
 
 	public get files(): readonly SourceFile[] {

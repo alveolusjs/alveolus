@@ -314,8 +314,8 @@ npx alveolus arch check
 An import of a database adapter is reported:
 
 ```
-src/ordering/application/translators/order-events.translator.ts:3
-  layers/no-outward-import: The application layer imports
+src/ordering/application/translators/order-events.translator.ts
+  3  layers/no-outward-import: The application layer imports
   src/ordering/driven/pg/adapters/pg-orders.adapter.ts
   (ordering driven): it may only import domain, application,
   published-language.

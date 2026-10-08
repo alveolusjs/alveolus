@@ -19,8 +19,8 @@ const installedCoreDir = "/node_modules/@alveolus/core";
 const projectDir = "/project";
 
 export class TestCodebase {
+	public readonly config: Config;
 	private readonly project: Project;
-	private readonly config: Config;
 
 	public constructor(config: Partial<AlveolusConfig> = {}) {
 		this.config = new Config({ boundedContexts: { catalog: "catalog", ordering: "ordering" }, root: "src", ...config }, projectDir);
@@ -44,6 +44,10 @@ export class TestCodebase {
 	public file(path: string, content: string): this {
 		this.project.createSourceFile(join(projectDir, path), content, { overwrite: true });
 		return this;
+	}
+
+	public get importer(): TsMorphImporter {
+		return new TsMorphImporter(this.project);
 	}
 
 	/** The facts the importer reads, before any convention applies. */
@@ -76,7 +80,7 @@ export class TestCodebase {
 
 	public checkAllRules(): string[] {
 		const checker = new Checker(new TsMorphImporter(this.project), new RuleRegistry().rules);
-		return checker.check(this.config).map((violation) => this.format(violation));
+		return checker.check(this.config).violations.map((violation) => this.format(violation));
 	}
 
 	private run(rule: Rule<RuleId>): Violation[] {

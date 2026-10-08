@@ -1,4 +1,5 @@
 import type { Rule } from "./framework/index.ts";
+import { NoDrivingShortcutRule } from "./layers/no-driving-shortcut.rule.ts";
 import { NoImpureDomainRule } from "./layers/no-impure-domain.rule.ts";
 import { NoOutwardImportRule } from "./layers/no-outward-import.rule.ts";
 import { NoPortlessAdapterRule } from "./layers/no-portless-adapter.rule.ts";
@@ -11,6 +12,7 @@ import { NoForeignCommandDependencyRule } from "./tactical/command-handlers/no-f
 import { NoThrownFailureRule } from "./tactical/domain-errors/no-thrown-failure.rule.ts";
 import { NoStatefulServiceRule } from "./tactical/domain-services/no-stateful-service.rule.ts";
 import { NoForeignQueryDependencyRule } from "./tactical/query-handlers/no-foreign-query-dependency.rule.ts";
+import { NoLooseDisableRule } from "./tooling/no-loose-disable.rule.ts";
 
 /** Every rule, by id, in the order the rules run. The type of a rule id derives from this list. */
 export const ruleIds = [
@@ -19,6 +21,7 @@ export const ruleIds = [
 	"layers/no-impure-domain",
 	"layers/no-outward-import",
 	"layers/no-portless-adapter",
+	"layers/no-driving-shortcut",
 	"tactical/no-aggregate-reference",
 	"tactical/no-foreign-command-dependency",
 	"tactical/no-foreign-query-dependency",
@@ -26,6 +29,7 @@ export const ruleIds = [
 	"tactical/no-thrown-failure",
 	"tactical/no-misplaced-class",
 	"tactical/no-loose-code",
+	"tooling/no-loose-disable",
 ] as const;
 
 export type RuleId = (typeof ruleIds)[number];
@@ -38,6 +42,7 @@ export class RuleRegistry {
 		new NoImpureDomainRule(),
 		new NoOutwardImportRule(),
 		new NoPortlessAdapterRule(),
+		new NoDrivingShortcutRule(),
 		new NoAggregateReferenceRule(),
 		new NoForeignCommandDependencyRule(),
 		new NoForeignQueryDependencyRule(),
@@ -45,7 +50,13 @@ export class RuleRegistry {
 		new NoThrownFailureRule(),
 		new NoMisplacedClassRule(),
 		new NoLooseCodeRule(),
+		new NoLooseDisableRule(ruleIds),
 	];
+
+	/** The rule that reports disable comments; the checker also uses it for the comments that disable nothing. */
+	public get looseDisable(): NoLooseDisableRule {
+		return this.rules.find((rule) => rule instanceof NoLooseDisableRule) as NoLooseDisableRule;
+	}
 
 	public get ids(): RuleId[] {
 		return this.rules.map((rule) => rule.meta.id);

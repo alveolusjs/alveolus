@@ -799,8 +799,8 @@ npx alveolus arch check
 A setter added later is reported:
 
 ```
-src/ordering/domain/aggregates/order.aggregate.ts:42
-  tactical/no-thrown-failure: Order.setStatus must return a
+src/ordering/domain/aggregates/order.aggregate.ts
+  42  tactical/no-thrown-failure: Order.setStatus must return a
   Result: expose reads as getters and return business failures
   as values.
 ```

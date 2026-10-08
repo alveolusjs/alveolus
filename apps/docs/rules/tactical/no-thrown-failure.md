@@ -30,7 +30,7 @@ worked; reads are getters.
 ## What it checks
 
 <div class="al-cards">
-<div class="al-card"><span class="al-card-title"><span class="al-card-step">1</span>Public methods return a Result</span>Every public method of a class that extends <code>AggregateRoot</code> or <code>Entity</code>, and every public property holding a function, such as <code>place = () =&gt; …</code>, even when its return type is inferred. A <code>Promise</code> of a <code>Result</code> counts. Getters, static methods, <code>toSnapshot</code> and <code>equals</code> are left out.</div>
+<div class="al-card"><span class="al-card-title"><span class="al-card-step">1</span>Public methods return a Result</span>Every public method of a class that extends <code>AggregateRoot</code> or <code>Entity</code>, and every public property holding a function, such as <code>place = () =&gt; …</code>, even when its return type is inferred. A <code>Promise</code> of a <code>Result</code> counts. Getters, static methods, <code>toSnapshot</code>, <code>equals</code> and the protocol methods <code>toString</code>, <code>toJSON</code>, <code>valueOf</code> and <code>[Symbol.…]</code> are left out.</div>
 <div class="al-card"><span class="al-card-title"><span class="al-card-step">2</span>No setter</span>A public setter changes the state without saying whether it worked: a business method does it instead.</div>
 <div class="al-card"><span class="al-card-title"><span class="al-card-step">3</span>Nothing is thrown</span>No <code>throw</code> and no <code>Promise.reject</code> in <code>domain/</code> or <code>application/</code>, whatever is thrown: an <code>Error</code>, a domain error or an <code>unknown</code>. Adapters may throw on a technical failure, such as a lost connection.</div>
 </div>
@@ -38,17 +38,13 @@ worked; reads are getters.
 ## What it reports
 
 ```
-src/ordering/domain/aggregates/order.aggregate.ts:2
-  tactical/no-thrown-failure: Order.place must return a Result:
+src/ordering/domain/aggregates/order.aggregate.ts
+  2  tactical/no-thrown-failure: Order.place must return a Result:
   expose reads as getters and return business failures as
   values.
-
-src/ordering/domain/aggregates/order.aggregate.ts:4
-  tactical/no-thrown-failure: A failure is thrown: return it in a
+  4  tactical/no-thrown-failure: A failure is thrown: return it in a
   Result instead.
-
-src/ordering/domain/aggregates/order.aggregate.ts:9
-  tactical/no-thrown-failure: Order.status is a setter: change the
+  9  tactical/no-thrown-failure: Order.status is a setter: change the
   state through a business method that returns a Result.
 ```
 

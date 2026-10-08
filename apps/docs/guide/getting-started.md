@@ -121,12 +121,14 @@ export default defineConfig({
 | Option | Default | What it does |
 | --- | --- | --- |
 | `root` | required | The source folder. |
+| `tsconfig` | `"tsconfig.json"` | The TypeScript configuration the sources are read with, relative to the project folder. |
 | `boundedContexts` | required | Each bounded context and its folder, relative to `root`. `"modules/ordering"` works. |
 | `sharedKernel` | `"shared-kernel"` | The folder shared by every bounded context, relative to `root`. |
 | `compositionRoot` | `"*.module.ts"` | The file, at the root of a bounded context, that wires it. |
 | `domainDependencies` | `{}` | npm packages the domain may import, besides `@alveolus/core`. |
 | `applicationDependencies` | `{}` | npm packages the application may import, besides `@alveolus/core` and `domainDependencies`. |
 | `ignore` | test files | More files to leave out, as globs from the project folder. |
+| `layout.extraFolders` | `{}` | Folders of your own under `domain/` or `application/`, besides those of the building blocks: `{ domain: ["specifications"] }`. |
 | `rules` | every rule on | Turns a rule off: `{ "tactical/no-misplaced-class": "off" }`. |
 
 `domainDependencies` and `applicationDependencies` take `true` for every name of a package, or the
@@ -136,7 +138,8 @@ list of names allowed:
 domainDependencies: { "decimal.js": true, "date-fns": ["addDays"] },
 ```
 
-`*.spec.ts`, `*.test.ts` and `__tests__/` are always left out, whatever `ignore` says.
+Tests and their companions are always left out, whatever `ignore` says: `*.spec.ts`, `*.test.ts`,
+`*.e2e-spec.ts`, `*.fixture.ts`, `*.stories.ts`, `__tests__/` and `__mocks__/`.
 
 ## Run the checks
 
@@ -148,8 +151,8 @@ On a project that keeps the rules, the command prints `No violation` and exits w
 Otherwise it lists each violation, with what is allowed instead, and exits with code 1:
 
 ```
-src/ordering/domain/aggregates/order.aggregate.ts:1
-  layers/no-impure-domain: The domain imports @nestjs/common: add it
+src/ordering/domain/aggregates/order.aggregate.ts
+  1  layers/no-impure-domain: The domain imports @nestjs/common: add it
   to domainDependencies if the domain really needs it.
 
 1 violation
@@ -163,7 +166,9 @@ Each violation names its rule: the [rules](../rules/index.md) explain what each 
 | --- | --- |
 | `--project <dir>` | The project folder. Defaults to the current folder. |
 | `--config <file>` | The configuration file. Defaults to `alveolus.config.ts`. |
+| `--tsconfig <file>` | The TypeScript configuration the sources are read with. Defaults to `tsconfig.json`, or to the `tsconfig` of the configuration file. |
 | `--format json` | Prints the violations as JSON, for tools and agents. |
+| `--format sarif` | Prints SARIF 2.1.0, for GitHub code scanning and the other analysers: upload it with `github/codeql-action/upload-sarif`. |
 
 ### Run it in continuous integration
 
@@ -205,9 +210,27 @@ line: a short hash of its text, blind to indentation and spacing.
 <div class="al-card"><span class="al-card-title">Reported again</span>The line itself changes. Touching a baselined line is the moment to fix it.</div>
 </div>
 
+When a baselined violation is fixed, `check` says so (`4 fixed` in the summary, and a note on
+stderr) without failing: run `baseline` again to drop the entries.
+
 A new violation never hides behind a fixed one: a second `throw` in the same file has another
 line, so another fingerprint. A baseline written before fingerprints existed matches nothing:
 `check` says so, and `baseline` writes it again.
+
+## Turn a violation off
+
+A violation can be right to keep for a while. Turn it off where it stands, with the rule and a
+reason, and the reviewer sees both:
+
+```ts
+// alveolus-disable-next-line layers/no-impure-domain: legacy pool, removed with ORD-412
+import { Pool } from "pg";
+```
+
+The summary counts the disabled violations, `--format json` lists them with their reason, and a
+comment that names no rule, gives no reason or disables nothing is reported by
+[`tooling/no-loose-disable`](../rules/tooling/no-loose-disable.md). For a whole file, use
+`ignore`; for a whole rule, `rules`; for the past, the baseline.
 
 ## See also
 

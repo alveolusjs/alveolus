@@ -106,4 +106,28 @@ describe("TsMorphImporter", () => {
 		]);
 		expect(file.dependencies.map((dependency) => [dependency.form, dependency.label])).toEqual([["global", "db"]]);
 	});
+
+	it("reads a base class that resolves to nothing as extended by name, not by an expression", () => {
+		const file = new TestCodebase().file(path, `import { Base } from "./missing.ts";\nexport class Order extends Base {}`).readFile(path);
+
+		expect(file.classNamed("Order")?.heritage?.isByName).toBe(true);
+	});
+
+	it("tells whether a package can be imported from the sources", () => {
+		const codebase = new TestCodebase();
+
+		expect(codebase.importer.resolves("@alveolus/core", codebase.config)).toBe(true);
+		expect(codebase.importer.resolves("left-pad", codebase.config)).toBe(false);
+	});
+
+	it("reads the disable comments, with what follows the marker", () => {
+		const file = new TestCodebase()
+			.file(path, `// alveolus-disable-next-line layers/no-impure-domain: legacy pool\nimport { Pool } from "pg";\n//alveolus-disable-next-line\nexport const pool = new Pool();`)
+			.readFile(path);
+
+		expect(file.disables.map((comment) => [comment.line, comment.target, comment.text])).toEqual([
+			[1, 2, "layers/no-impure-domain: legacy pool"],
+			[3, 4, ""],
+		]);
+	});
 });

@@ -159,4 +159,15 @@ describe("NoOutwardImportRule", () => {
 			"ordering has 2 composition roots (ordering.module.ts, pricing.module.ts): keep one, and move the rest into the layers.",
 		]);
 	});
+
+	it("accepts the folders the configuration adds under a layer", () => {
+		const codebase = new TestCodebase({ layout: { extraFolders: { application: ["dto"], domain: ["specifications"] } } })
+			.file("src/ordering/domain/specifications/vip.specification.ts", `export type Vip = { readonly minimum: number };`)
+			.file("src/ordering/application/dto/order.dto.ts", `export interface OrderDto { readonly id: string }`)
+			.file("src/ordering/domain/policies/discount.ts", `export type Discount = number;`);
+
+		expect(codebase.messages(new NoOutwardImportRule())).toEqual([
+			"domain/policies/ is no folder of the domain: use aggregates/, entities/, value-objects/, events/, errors/, services/, repositories/, ports/, views/, specifications/.",
+		]);
+	});
 });

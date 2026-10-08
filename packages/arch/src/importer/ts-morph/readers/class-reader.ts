@@ -110,14 +110,18 @@ export class ClassReader {
 		return { isByName: this.namesAClass(clause.getExpression()), typeArguments };
 	}
 
-	/** `extends Order` or `extends core.Order` naming a class declaration, rather than a call, a cast or a constant. */
+	/**
+	 * `extends Order` or `extends core.Order` naming a class declaration, rather than a call, a cast or a constant.
+	 * A name that resolves to nothing, such as a broken import, is still a name: what it is stays unknown, not hidden.
+	 */
 	private namesAClass(expression: Node): boolean {
 		if (!Node.isIdentifier(expression) && !Node.isPropertyAccessExpression(expression)) {
 			return false;
 		}
 		const symbol = expression.getSymbol();
 		const target = symbol?.getAliasedSymbol() ?? symbol;
-		return target?.getDeclarations().some((candidate) => Node.isClassDeclaration(candidate)) ?? false;
+		const declarations = target?.getDeclarations() ?? [];
+		return declarations.length === 0 || declarations.some((candidate) => Node.isClassDeclaration(candidate));
 	}
 
 	private visibilityOf(scope: Scope): Visibility {

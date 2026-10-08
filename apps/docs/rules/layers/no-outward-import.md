@@ -62,7 +62,8 @@ The layer is the first folder of a context, or the second one in a feature of th
 ### Folders inside a layer
 
 Each layer expects the folders of the [project layout](../../guide/project-layout.md#the-tree).
-A file in another folder keeps its layer for every other rule, and is reported here:
+A file in another folder keeps its layer for every other rule, and is reported here. A folder of
+your own goes in `layout.extraFolders` of `alveolus.config.ts`: `{ domain: ["specifications"] }`.
 
 | Layer | Expected | Reported |
 | --- | --- | --- |
@@ -75,24 +76,22 @@ A file in another folder keeps its layer for every other rule, and is reported h
 ## What it reports
 
 ```
-src/ordering/application/commands/place-order.command.ts:1
-  layers/no-outward-import: The application imports
+src/ordering/application/commands/place-order.command.ts
+  1  layers/no-outward-import: The application imports
   @nestjs/common: add it to applicationDependencies if the
   application really needs it.
-
-src/ordering/application/commands/place-order.command.ts:3
-  layers/no-outward-import: The application layer imports
+  3  layers/no-outward-import: The application layer imports
   src/ordering/driven/pg/adapters/pg-orders.adapter.ts
   (ordering driven): it may only import domain, application,
   published-language.
 
-src/ordering/helpers.ts:1
-  layers/no-outward-import: The file is outside the layers:
+src/ordering/helpers.ts
+  1  layers/no-outward-import: The file is outside the layers:
   move it to domain/, application/, published-language/,
   driven/ or driving/.
 
-src/ordering/domain/legacy/v1/aggregates/order.aggregate.ts:1
-  layers/no-outward-import: The file is nested too deep: domain/
+src/ordering/domain/legacy/v1/aggregates/order.aggregate.ts
+  1  layers/no-outward-import: The file is nested too deep: domain/
   holds one folder per kind, such as domain/aggregates/.
 ```
 

@@ -1,4 +1,5 @@
 import type { BuildingBlocks } from "../building-blocks.ts";
+import type { ExtraFolders } from "../settings.ts";
 import type { Location } from "./location.ts";
 
 /** How a file breaks the folders its layer expects; each kind names the message a rule gives. */
@@ -9,7 +10,10 @@ export type ShapeIssue =
 
 /** The folders each layer expects between itself and a file, as the project layout describes them. */
 export class LayerShape {
-	public constructor(private readonly blocks: BuildingBlocks) {}
+	public constructor(
+		private readonly blocks: BuildingBlocks,
+		private readonly extraFolders: ExtraFolders,
+	) {}
 
 	public issueWith(location: Location): ShapeIssue | undefined {
 		const layer = location.layer;
@@ -34,7 +38,7 @@ export class LayerShape {
 
 	/** The domain and the application hold exactly one folder per kind of building block. */
 	private kindFolderIssue(layer: "domain" | "application", folders: readonly string[]): ShapeIssue | undefined {
-		const expected = this.blocks.foldersOf(layer);
+		const expected = [...this.blocks.foldersOf(layer), ...(this.extraFolders[layer] ?? [])];
 		const example = `${layer}/${expected[0]}/`;
 		if (folders.length === 0) {
 			return { example, kind: "directlyInLayer", layer };

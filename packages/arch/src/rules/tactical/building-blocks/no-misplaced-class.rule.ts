@@ -27,18 +27,16 @@ export class NoMisplacedClassRule extends Rule<"tactical/no-misplaced-class", Me
 		const findings: Finding<MessageId>[] = [];
 		for (const file of architecture.files) {
 			findings.push(...this.extraClasses(file));
-			const location = architecture.locationOf(file);
-			for (const codeClass of file.classes) {
-				const finding = this.misplacement(codeClass, file, location, architecture);
-				if (finding !== undefined) {
-					findings.push(finding);
-				}
+			const [first] = file.classes;
+			const finding = first === undefined ? undefined : this.misplacement(first, file, architecture.locationOf(file), architecture);
+			if (finding !== undefined) {
+				findings.push(finding);
 			}
 		}
 		return findings;
 	}
 
-	/** One class per file: every class after the first is reported. */
+	/** One class per file: every class after the first is reported, and its place is checked once it has a file of its own. */
 	private extraClasses(file: SourceFile): Finding<MessageId>[] {
 		const [first, ...others] = file.classes;
 		const findings: Finding<MessageId>[] = [];

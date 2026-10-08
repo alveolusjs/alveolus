@@ -41,8 +41,8 @@ Every constructor parameter and every field of each `DomainService`:
 ## What it reports
 
 ```
-src/ordering/domain/services/order-limit.service.ts:4
-  tactical/no-stateful-service: The DomainService OrderLimit holds
+src/ordering/domain/services/order-limit.service.ts
+  4  tactical/no-stateful-service: The DomainService OrderLimit holds
   Orders, a CommandRepository: a domain service holds configuration
   only; the command handler passes it what it needs.
 ```

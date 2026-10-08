@@ -244,8 +244,8 @@ npx alveolus arch check
 Importing the catalog's type instead of redeclaring it is reported:
 
 ```
-src/ordering/driven/catalog/adapters/catalog-price-list.adapter.ts:8
-  strategic/no-cross-context-import: Imports the published language
+src/ordering/driven/catalog/adapters/catalog-price-list.adapter.ts
+  8  strategic/no-cross-context-import: Imports the published language
   of catalog: redeclare the fields you read in your own
   published-language/.
 ```

@@ -67,7 +67,7 @@ report a domain event whose payload holds an entity instead of plain data.
 
 Rule ids follow `<category>/no-<what is reported>`: `tactical/no-entity-in-event`. The categories are
 `strategic` (what crosses a bounded context), `layers` (what each layer may depend on) and
-`tactical` (how building blocks are written). A tactical rule goes in the folder of the building
+`tactical` (how building blocks are written) and `tooling` (how the checks themselves are used). A tactical rule goes in the folder of the building
 block it checks: `src/rules/tactical/domain-events/`.
 
 ### 2. Write it

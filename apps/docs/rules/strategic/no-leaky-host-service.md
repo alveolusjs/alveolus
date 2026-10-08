@@ -45,8 +45,8 @@ them.
 ## What it reports
 
 ```
-src/catalog/driving/in-process/catalog-api.ts:6
-  strategic/no-leaky-host-service: CatalogApi.product exposes
+src/catalog/driving/in-process/catalog-api.ts
+  6  strategic/no-leaky-host-service: CatalogApi.product exposes
   Product, an AggregateRoot of catalog: an open host service speaks
   the published language.
 ```

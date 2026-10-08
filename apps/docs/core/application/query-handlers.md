@@ -277,8 +277,8 @@ npx alveolus arch check
 A command repository added to its constructor is reported:
 
 ```
-src/ordering/application/queries/get-order-summary.query.ts:20
-  tactical/no-foreign-query-dependency: The QueryHandler
+src/ordering/application/queries/get-order-summary.query.ts
+  20  tactical/no-foreign-query-dependency: The QueryHandler
   GetOrderSummaryHandler receives Orders, a CommandRepository: a
   query handler receives query repositories, ports that do not
   write, and value objects.
