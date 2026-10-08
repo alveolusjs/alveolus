@@ -292,6 +292,16 @@
 					}
 				}
 			}
+		},
+		{
+			"includes": ["packages/arch/test/projects/**"],
+			"linter": {
+				"rules": {
+					"correctness": {
+						"noUnresolvedImports": "off"
+					}
+				}
+			}
 		}
 	],
 	"vcs": {
