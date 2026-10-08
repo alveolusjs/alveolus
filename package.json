@@ -2,6 +2,7 @@
 	"description": "Building blocks for Domain-Driven Design in TypeScript",
 	"devDependencies": {
 		"@biomejs/biome": "^2.5.14",
+		"@changesets/cli": "^3.0.3",
 		"@types/node": "^26.6.3",
 		"knip": "^6.38.0",
 		"tsdown": "^0.23.0",
@@ -16,6 +17,7 @@
 	"private": true,
 	"scripts": {
 		"build": "pnpm -r --filter \"./packages/**\" run build",
+		"changeset": "changeset",
 		"check": "pnpm lint && pnpm typecheck && pnpm knip && pnpm test",
 		"docs:build": "pnpm --filter @alveolus/docs build",
 		"docs:dev": "pnpm --filter @alveolus/docs dev",
@@ -23,6 +25,7 @@
 		"knip": "knip",
 		"lint": "biome check .",
 		"lint:fix": "biome check --write .",
+		"release": "pnpm build && changeset publish",
 		"test": "vitest run",
 		"test:watch": "vitest",
 		"typecheck": "tsc -p tsconfig.json && pnpm -r run typecheck"

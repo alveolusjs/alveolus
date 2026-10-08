@@ -34,5 +34,7 @@ owns it. `readonly` and `private` by default. Loops over clever chains.
 - `pnpm check` is green.
 - A change in what a rule reports, in a message, in a configuration key or in a public type has
   its page updated: users copy messages into issues.
-- A new rule or a new building block has its page, its tests, and a line in the changelog.
+- A change a user can see has a changeset: `pnpm changeset`, the package, the bump and one line.
+  The release workflow turns the changesets into the changelog and the versions; see
+  [Versioning](https://alveolus.dev/guide/versioning) for what counts as a breaking change.
 - Commits say what changed and why: `feat(arch): report a Date in an event payload`.

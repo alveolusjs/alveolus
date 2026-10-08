@@ -16,7 +16,8 @@ Alveolus comes as two packages: `@alveolus/core`, the building blocks your code 
 </dl>
 
 ::: warning
-Alveolus is in alpha: the API may change between versions until 1.0.
+Alveolus is at `0.x`: a minor version may still rename a rule or a configuration key, and the
+changelog says what to do. See [Versioning](./versioning.md).
 :::
 
 ::: tip New to DDD?

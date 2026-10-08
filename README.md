@@ -26,7 +26,7 @@ extend, and a check run in CI reports what breaks them.
 | `@alveolus/arch` | The architecture checks: rules that keep bounded contexts closed, the domain pure and every class in its place. |
 
 > [!WARNING]
-> Alveolus is in alpha: the API may change between versions until 1.0.
+> Alveolus is at `0.x`: a minor version may still rename a rule or a configuration key, and the changelog says what to do. See [Versioning](https://alveolus.dev/guide/versioning).
 
 ## Quick start
 

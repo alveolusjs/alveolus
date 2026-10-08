@@ -276,4 +276,5 @@ rest is review.
 - `pnpm check` is green.
 - A new rule has its test, its page, its sidebar entry and its *Checked by* mentions.
 - A changed message has its page updated: users copy messages into issues.
-- A renamed rule id has no alias: the package is in alpha, and the documentation says so.
+- A renamed rule id has no alias: before 1.0 it happens at a minor, after 1.0 at a major, and the
+  changeset gives the old and the new name.

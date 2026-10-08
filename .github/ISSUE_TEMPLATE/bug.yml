@@ -6,7 +6,7 @@ body:
     id: version
     attributes:
       label: Version
-      placeholder: "@alveolus/arch 0.1.0-alpha.0, Node 24.1, macOS"
+      placeholder: "@alveolus/arch 0.1.0, Node 24.1, macOS"
     validations:
       required: true
   - type: textarea
