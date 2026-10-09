@@ -11,11 +11,13 @@ export interface MemberProps {
 	readonly kind: MemberKind;
 	readonly visibility: Visibility;
 	readonly isStatic: boolean;
+	readonly isReadonly: boolean;
 	readonly isParameterProperty: boolean;
 	readonly isCallable: boolean;
 	readonly valueTypes: readonly ClassType[];
 	readonly parameterTypes: readonly ClassType[];
 	readonly returns: ReturnShape | undefined;
+	readonly holdsCollection: boolean;
 }
 
 export class Member {
@@ -24,11 +26,13 @@ export class Member {
 	public readonly kind: MemberKind;
 	public readonly visibility: Visibility;
 	public readonly isStatic: boolean;
+	public readonly isReadonly: boolean;
 	public readonly isParameterProperty: boolean;
 	public readonly isCallable: boolean;
 	public readonly valueTypes: readonly ClassType[];
 	public readonly parameterTypes: readonly ClassType[];
 	public readonly returns: ReturnShape | undefined;
+	public readonly holdsCollection: boolean;
 
 	public constructor(props: MemberProps) {
 		this.name = props.name;
@@ -36,11 +40,13 @@ export class Member {
 		this.kind = props.kind;
 		this.visibility = props.visibility;
 		this.isStatic = props.isStatic;
+		this.isReadonly = props.isReadonly;
 		this.isParameterProperty = props.isParameterProperty;
 		this.isCallable = props.isCallable;
 		this.valueTypes = props.valueTypes;
 		this.parameterTypes = props.parameterTypes;
 		this.returns = props.returns;
+		this.holdsCollection = props.holdsCollection;
 	}
 
 	public get isPublicInstance(): boolean {

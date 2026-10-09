@@ -6,6 +6,7 @@ import { NoPortlessAdapterRule } from "./layers/no-portless-adapter.rule.ts";
 import { NoCrossContextImportRule } from "./strategic/no-cross-context-import.rule.ts";
 import { NoFatSharedKernelRule } from "./strategic/no-fat-shared-kernel.rule.ts";
 import { NoLeakyHostServiceRule } from "./strategic/no-leaky-host-service.rule.ts";
+import { NoSharedStateRule } from "./strategic/no-shared-state.rule.ts";
 import { NoUnmappedContextRule } from "./strategic/no-unmapped-context.rule.ts";
 import { NoAggregateReferenceRule } from "./tactical/aggregates/no-aggregate-reference.rule.ts";
 import { NoLooseCodeRule } from "./tactical/building-blocks/no-loose-code.rule.ts";
@@ -22,6 +23,7 @@ export const ruleIds = [
 	"strategic/no-leaky-host-service",
 	"strategic/no-unmapped-context",
 	"strategic/no-fat-shared-kernel",
+	"strategic/no-shared-state",
 	"layers/no-impure-domain",
 	"layers/no-outward-import",
 	"layers/no-portless-adapter",
@@ -45,6 +47,7 @@ export class RuleRegistry {
 		new NoLeakyHostServiceRule(),
 		new NoUnmappedContextRule(),
 		new NoFatSharedKernelRule(),
+		new NoSharedStateRule(),
 		new NoImpureDomainRule(),
 		new NoOutwardImportRule(),
 		new NoPortlessAdapterRule(),
