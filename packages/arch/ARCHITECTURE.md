@@ -57,7 +57,10 @@ src/
     strategic/  layers/  tactical/<building block>/
   check/            Checker, Violation, Fingerprint, Baseline, Report
   config/           AlveolusConfig, Config, ConfigLoader
+  docs/             Docs and Page: the documentation shipped in docs/, for alveolus explain
+  init/             Init and the scaffolds: alveolus.config.ts, the skill and AGENTS.md
   cli/
+docs/               copied from apps/docs at build (tsdown.config.ts), not committed
 test/
   boundaries.test.ts   the import graph between folders
   rules.test.ts        every rule on a realistic project, and the known limits
@@ -170,11 +173,16 @@ to the project, message with its `{placeholders}` filled, and a `Fingerprint` of
 A placeholder the finding does not fill throws: it is a bug of the rule, and the rule's tests catch
 it. `Baseline` keys violations by rule, file, symbol and fingerprint; `Report` writes text or JSON.
 
-### `src/config/`, `src/cli/`
+### `src/config/`, `src/docs/`, `src/init/`, `src/cli/`
 
 `Config` loads and validates `alveolus.config.ts` with zod, resolves it against the project
 directory, and implements `CheckSettings`: the `ImportScope` of the importer, the `Settings` of
-the architecture, and the rules turned off. The CLI wires it all with commander.
+the architecture, and the rules turned off.
+
+`Docs` indexes the pages of `docs/`, the sections of `apps/docs` the build copies next to `dist/`,
+and finds one by its topic or a suffix of it; `Page` prints it without the frontmatter and the
+HTML of the site. `Init` writes the scaffolds, a table of files, and never overwrites one. The
+CLI wires it all with commander: `arch check`, `arch baseline`, `explain`, `init`.
 
 ## A check, end to end
 

@@ -15,6 +15,7 @@ const sidebar = [
 			{ link: "/guide/getting-started", text: "Getting started" },
 			{ link: "/guide/existing-project", text: "Existing project" },
 			{ link: "/guide/project-layout", text: "Project layout" },
+			{ link: "/guide/agents", text: "Coding agents" },
 			{ link: "/guide/versioning", text: "Versioning" },
 		],
 		text: "Guide",

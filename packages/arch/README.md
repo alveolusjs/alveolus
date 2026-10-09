@@ -35,8 +35,14 @@ Seventeen rules, each with a page that says what it reports, why, how to fix it 
 cannot see. A baseline for existing projects, `error` / `warn` / `info` levels, disable comments
 with a reason, JSON and SARIF output for the pull request.
 
+The documentation is installed with the package, for you and for a coding agent:
+`npx alveolus explain layers/no-impure-domain` prints a rule, `npx alveolus explain aggregates` a
+building block, and `npx alveolus init` writes the configuration and the instructions that tell
+Claude Code, Cursor or Codex to read them there.
+
 - [Rules](https://alveolus.dev/rules/)
 - [Getting started](https://alveolus.dev/guide/getting-started)
 - [Adopt it on an existing project](https://alveolus.dev/guide/existing-project)
+- [Coding agents](https://alveolus.dev/guide/agents)
 
 Node.js 24 or later. MIT.

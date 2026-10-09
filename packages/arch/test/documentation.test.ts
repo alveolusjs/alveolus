@@ -3,6 +3,8 @@ import { describe, expect, it } from "vitest";
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 
+import { Docs } from "../src/docs/index.ts";
+import { scaffolds } from "../src/init/index.ts";
 import { RuleRegistry, ruleIds } from "../src/rules/registry.ts";
 
 const docs = fileURLToPath(new URL("../../../apps/docs/", import.meta.url));
@@ -19,6 +21,7 @@ class Documentation {
 }
 
 const documentation = new Documentation();
+const local = new Docs(docs);
 const sidebar = documentation.page(".vitepress/config.ts");
 const rulesIndex = documentation.page("rules/index.md");
 const gettingStarted = documentation.page("guide/getting-started.md");
@@ -55,6 +58,32 @@ describe("The documentation", () => {
 		const cli = documentation.sourceOf("cli/cli.ts");
 		for (const [, option] of cli.matchAll(/"(--[a-z-]+)/g)) {
 			expect(gettingStarted, option).toContain(option);
+		}
+	});
+
+	it("ships every section of the sidebar with the package, for alveolus explain", () => {
+		const build = readFileSync(fileURLToPath(new URL("../tsdown.config.ts", import.meta.url)), "utf8");
+		for (const [, section = ""] of sidebar.matchAll(/link: "\/([a-z]+)\//g)) {
+			expect(Docs.sections, section).toContain(section);
+			expect(build, section).toContain(`"${section}"`);
+		}
+	});
+
+	it("explains every rule by its id, and every topic the instructions for an agent name", () => {
+		for (const id of ruleIds) {
+			expect(local.find(id), id).toHaveProperty("page");
+		}
+		for (const scaffold of scaffolds) {
+			for (const [, topic = ""] of scaffold.content.matchAll(/`(?:npx alveolus explain )?([a-z-]+)`/g)) {
+				expect(local.find(topic), topic).toHaveProperty("page");
+			}
+		}
+	});
+
+	it("documents every command of the command line", () => {
+		const cli = documentation.sourceOf("cli/cli.ts");
+		for (const [, command = ""] of cli.matchAll(/\.command\("([a-z]+)"\)/g)) {
+			expect(gettingStarted, command).toMatch(new RegExp(`npx alveolus (arch )?${command}`));
 		}
 	});
 

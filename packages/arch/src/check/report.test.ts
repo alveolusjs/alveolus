@@ -11,7 +11,7 @@ describe("Report", () => {
 		const report = new Report({ baselined: 0, files: 20, stale: 0, suppressed: [], violations: [violation, { ...violation, line: 9, severity: "warn" }, other] });
 
 		expect(report.text()).toBe(
-			"src/a.ts\n  4  error  tactical/no-misplaced-class: Explained.\n  9  warn  tactical/no-misplaced-class: Explained.\n\nsrc/b.ts\n  12  info  tactical/no-misplaced-class: Explained.\n\n1 error, 1 warning, 1 info in 20 files\n",
+			"src/a.ts\n  4  error  tactical/no-misplaced-class: Explained.\n  9  warn  tactical/no-misplaced-class: Explained.\n\nsrc/b.ts\n  12  info  tactical/no-misplaced-class: Explained.\n\n1 error, 1 warning, 1 info in 20 files\n\nWhy, and how to fix it: npx alveolus explain <rule>\n",
 		);
 	});
 

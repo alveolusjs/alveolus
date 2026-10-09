@@ -7,7 +7,9 @@ import type { CheckOutcome } from "../check/index.ts";
 import { Baseline, Checker, Report } from "../check/index.ts";
 import type { Config } from "../config/index.ts";
 import { ConfigLoader } from "../config/index.ts";
+import type { Docs } from "../docs/index.ts";
 import { TsMorphImporter } from "../importer/index.ts";
+import { Init } from "../init/index.ts";
 import { RuleRegistry } from "../rules/index.ts";
 
 interface Output {
@@ -29,6 +31,7 @@ export class Cli {
 		private readonly stdout: Output,
 		private readonly stderr: Output,
 		private readonly cwd: string,
+		private readonly docs: Docs,
 		private readonly colored = false,
 	) {}
 
@@ -54,7 +57,44 @@ export class Cli {
 			.option("--allow-growth", "write the baseline even when it holds more entries than before")
 			.action((options: Options) => this.baseline(options));
 
+		program
+			.command("explain")
+			.description("Print a page of the documentation: a rule, a building block or a guide")
+			.argument("[topic]", "a rule id, a building block or a guide; without it, the list of topics")
+			.action((topic?: string) => this.explain(topic));
+		program
+			.command("init")
+			.description(`Write ${ConfigLoader.fileName}, and the instructions that tell a coding agent to read the documentation installed with the package`)
+			.option("--project <dir>", "project directory", ".")
+			.action((options: Pick<Options, "project">) => this.init(options));
+
 		return program;
+	}
+
+	private explain(topic?: string): void {
+		if (topic === undefined) {
+			this.stdout.write(`${this.docs.topics().join("\n")}\n`);
+			return;
+		}
+		const match = this.docs.find(topic);
+		if ("page" in match) {
+			this.stdout.write(match.page.text());
+			return;
+		}
+		const list = match.candidates.length === 0 ? "alveolus explain lists the topics." : `Did you mean ${match.candidates.join(", ")}?`;
+		this.stderr.write(`No page for ${topic}: ${list}\n`);
+		this.exitCode = 1;
+	}
+
+	private init(options: Pick<Options, "project">): void {
+		const init = new Init(resolve(this.cwd, options.project));
+		for (const { outcome, path } of init.run()) {
+			this.stdout.write(`${outcome}  ${path}\n`);
+		}
+		this.stdout.write(`Name your bounded contexts in ${ConfigLoader.fileName}, then run alveolus arch check.\n`);
+		if (init.hint !== undefined) {
+			this.stderr.write(`${init.hint}\n`);
+		}
 	}
 
 	private withOptions(command: Command): Command {

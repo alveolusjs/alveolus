@@ -3,5 +3,7 @@ export { Baseline, Checker, type CheckSettings, Report, type Violation } from ".
 export { Cli } from "./cli/index.ts";
 export type { AlveolusConfig, RuleSetting } from "./config/index.ts";
 export { Config, ConfigLoader, defineConfig } from "./config/index.ts";
+export { Docs, Page } from "./docs/index.ts";
 export { Importer, type ImportScope, TsMorphImporter } from "./importer/index.ts";
+export { Init, type Written } from "./init/index.ts";
 export { type Finding, type FindingData, Rule, type RuleId, type RuleMeta, RuleRegistry } from "./rules/index.ts";

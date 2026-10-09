@@ -31,7 +31,11 @@ export class Report {
 		for (const [file, violations] of this.byFile()) {
 			blocks.push(this.block(file, violations));
 		}
-		return `${[...blocks, this.summary()].join("\n\n")}\n`;
+		const parts = [...blocks, this.summary()];
+		if (blocks.length > 0) {
+			parts.push(this.colors.dim("Why, and how to fix it: npx alveolus explain <rule>"));
+		}
+		return `${parts.join("\n\n")}\n`;
 	}
 
 	public json(): string {

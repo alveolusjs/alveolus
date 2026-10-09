@@ -2,9 +2,13 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
 import { existsSync, readFileSync, rmSync } from "node:fs";
 import { join } from "node:path";
+import { fileURLToPath } from "node:url";
 
 import { Sandbox } from "../../test/support/sandbox.ts";
+import { Docs } from "../docs/index.ts";
 import { Cli } from "./cli.ts";
+
+const docs = new Docs(fileURLToPath(new URL("../../../../apps/docs/", import.meta.url)));
 
 class Recorder {
 	public text = "";
@@ -24,7 +28,7 @@ describe("Cli", () => {
 		sandbox = new Sandbox("shop");
 		stdout = new Recorder();
 		stderr = new Recorder();
-		cli = new Cli(stdout, stderr, sandbox.dir);
+		cli = new Cli(stdout, stderr, sandbox.dir, docs);
 	});
 
 	afterEach(() => {
@@ -41,7 +45,7 @@ describe("Cli", () => {
 
 		expect(await cli.run(["arch", "check"])).toBe(1);
 		expect(stdout.text).toMatch(
-			/^src\/ordering\/driven\/smtp\/adapters\/mailer\.adapter\.ts\n {2}1 {2}error {2}layers\/no-portless-adapter: Mailer is a driven adapter but extends no Port: extend the port it implements\.\n\n1 error in \d+ files\n$/,
+			/^src\/ordering\/driven\/smtp\/adapters\/mailer\.adapter\.ts\n {2}1 {2}error {2}layers\/no-portless-adapter: Mailer is a driven adapter but extends no Port: extend the port it implements\.\n\n1 error in \d+ files\n\nWhy, and how to fix it: npx alveolus explain <rule>\n$/,
 		);
 	});
 
@@ -178,6 +182,65 @@ describe("Cli", () => {
 	it("refuses an unknown format", async () => {
 		expect(await cli.run(["arch", "check", "--format", "yaml"])).toBe(2);
 		expect(stderr.text).toContain("Allowed choices are text, json, sarif");
+	});
+
+	it("prints a page of the documentation, found by its topic, its rule id or its name", async () => {
+		expect(await cli.run(["explain", "layers/no-impure-domain"])).toBe(0);
+		expect(stdout.text).toMatch(/^# no-impure-domain\n/);
+		expect(stdout.text).toContain("- Rule: layers/no-impure-domain");
+		expect(stdout.text).toContain("## Fix it");
+		expect(stdout.text).not.toContain("<dl");
+
+		stdout.text = "";
+		expect(await cli.run(["explain", "aggregates"])).toBe(0);
+		expect(stdout.text).toMatch(/^# Aggregates\n/);
+	});
+
+	it("lists the topics when none is given", async () => {
+		expect(await cli.run(["explain"])).toBe(0);
+		expect(stdout.text).toContain("rules/layers/no-impure-domain\n");
+		expect(stdout.text).toContain("core/domain/aggregates\n");
+		expect(stdout.text).toContain("guide/project-layout\n");
+	});
+
+	it("refuses an unknown or ambiguous topic", async () => {
+		expect(await cli.run(["explain", "nothing"])).toBe(1);
+		expect(stderr.text).toBe("No page for nothing: alveolus explain lists the topics.\n");
+
+		sandbox.write("core/utilities/result.md", "# Result\n").write("guide/result.md", "# Result\n");
+		stderr.text = "";
+		expect(await new Cli(stdout, stderr, sandbox.dir, new Docs(sandbox.dir)).run(["explain", "result"])).toBe(1);
+		expect(stderr.text).toBe("No page for result: Did you mean core/utilities/result, guide/result?\n");
+	});
+
+	it("writes the configuration and the instructions for an agent, and keeps what exists", async () => {
+		sandbox.write("AGENTS.md", "# Shop\n\nRun the tests.\n");
+
+		expect(await cli.run(["init"])).toBe(0);
+
+		expect(stdout.text).toBe(
+			"kept  alveolus.config.ts\ncreated  .claude/skills/alveolus/SKILL.md\nappended  AGENTS.md\nName your bounded contexts in alveolus.config.ts, then run alveolus arch check.\n",
+		);
+		expect(readFileSync(join(sandbox.dir, "AGENTS.md"), "utf8")).toMatch(/^# Shop\n\nRun the tests\.\n\n## Alveolus\n/);
+		expect(readFileSync(join(sandbox.dir, ".claude/skills/alveolus/SKILL.md"), "utf8")).toMatch(/^---\nname: alveolus\n/);
+		expect(stderr.text).toBe("");
+
+		stdout.text = "";
+		expect(await cli.run(["init"])).toBe(0);
+		expect(stdout.text).toContain("kept  AGENTS.md\n");
+	});
+
+	it("starts a project from scratch and points at CLAUDE.md when it exists", async () => {
+		sandbox.write("CLAUDE.md", "# Shop\n");
+
+		expect(await cli.run(["init", "--project", "fresh"])).toBe(0);
+		expect(stdout.text).toContain("created  alveolus.config.ts\n");
+		expect(readFileSync(join(sandbox.dir, "fresh/alveolus.config.ts"), "utf8")).toContain("boundedContexts: {}");
+		expect(readFileSync(join(sandbox.dir, "fresh/AGENTS.md"), "utf8")).toMatch(/^## Alveolus\n/);
+		expect(stderr.text).toBe("");
+
+		expect(await cli.run(["init"])).toBe(0);
+		expect(stderr.text).toContain("CLAUDE.md exists");
 	});
 
 	it("refuses to check when no file is analysed", async () => {

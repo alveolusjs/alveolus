@@ -109,6 +109,13 @@ Create `alveolus.config.ts` at the root of the project. It says where the source
 folders are bounded contexts and which subdomain each one implements; everything else has a
 default.
 
+```sh
+npx alveolus init
+```
+
+writes a starting one, with the [instructions for a coding agent](./agents.md); it never
+overwrites a file. Or write it yourself:
+
 ```ts [alveolus.config.ts]
 import { defineConfig } from "@alveolus/arch";
 
@@ -168,6 +175,17 @@ src/ordering/domain/aggregates/order.aggregate.ts
 ```
 
 Each violation names its rule: the [rules](../rules/index.md) explain what each one checks and why.
+The same pages are installed with the package, for the terminal and for a
+[coding agent](./agents.md):
+
+```sh
+npx alveolus explain layers/no-impure-domain
+npx alveolus explain aggregates
+npx alveolus explain
+```
+
+A rule by its id, a building block or a guide by its name, and without argument the list of
+topics.
 
 ### Options
 

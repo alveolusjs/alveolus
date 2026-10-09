@@ -8,3 +8,4 @@ coverage/
 apps/docs/.vitepress/cache/
 apps/docs/.vitepress/dist/
 .packs/
+packages/arch/docs/
