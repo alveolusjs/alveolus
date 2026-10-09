@@ -102,25 +102,25 @@ the other way round.
 
 <div class="al-compare">
 
-```ts [❌ Avoid: src/ledger/driving/in-process/ledger-api.ts]
-export class LedgerApi implements OpenHostService {
-	onRedemptionNeeded(callback: RedemptionCallback): void {
+```ts [❌ Avoid: src/catalog/driving/in-process/catalog-api.ts]
+export class CatalogApi implements OpenHostService {
+	onRestockNeeded(callback: RestockCallback): void {
 		this.handlers.connect(callback);
 	}
 }
 ```
 
-```ts [✅ Prefer: src/ledger/application/translators/ledger-events.translator.ts]
-export class LedgerEventsTranslator extends EventTranslator<
-	RedemptionNeeded,
-	RedemptionNeededRepresentation
+```ts [✅ Prefer: src/catalog/application/translators/catalog-events.translator.ts]
+export class CatalogEventsTranslator extends EventTranslator<
+	RestockNeeded,
+	RestockNeededRepresentation
 > {
-	protected readonly source = "ledger";
+	protected readonly source = "catalog";
 
-	translate(event: RedemptionNeeded, context: IntegrationEventContext) {
+	translate(event: RestockNeeded, context: IntegrationEventContext) {
 		return this.wrap(event, context, {
-			payload: { amount: event.amount.value, holder: event.holder.value },
-			type: "ledger.redemption-needed",
+			payload: { productId: event.productId.value, quantity: event.quantity },
+			type: "catalog.restock-needed",
 			version: 1,
 		});
 	}

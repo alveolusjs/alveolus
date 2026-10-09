@@ -47,15 +47,15 @@ Imports of the shared kernel are not consumptions: every context may import it.
 
 A context can consume another one without importing it: `app.module.ts` sees every module, and
 can hand a value of one context to another. Ledger declares a port, its adapter calls whatever it
-is given, and the root composition gives it a handler of e-money:
+is given, and the root composition gives it a handler of payments:
 
 ```ts [src/app.module.ts]
 this.ledger = new LedgerModule({
-	redemptions: () => this.emoney.commands.requestRedemption,
+	transfers: () => this.payments.commands.settleTransfer,
 });
 ```
 
-No file of ledger imports e-money, yet ledger now consumes it. In the composition roots and the
+No file of ledger imports payments, yet ledger now consumes it. In the composition roots and the
 files at the root of `src/`, every value given to a class, a function or a field of one context
 (an argument, a property of an object, the body of an arrow function, an assignment, a variable
 typed by that context) is read: when it comes from another context, by where it is declared or by
@@ -75,11 +75,11 @@ src/ledger/driven/payments/adapters/payment-status.adapter.ts
 
 src/app.module.ts
  14  error  strategic/no-unmapped-context: ledger receives
-     this.emoney.commands.requestRedemption from emoney here, which the
+     this.payments.commands.settleTransfer from payments here, which the
      context map does not allow: reverse the dependency with an
-     integration event that ledger publishes and emoney subscribes to,
-     not with a callback; or if ledger really is downstream of emoney,
-     add emoney to contextMap.ledger.consumes.
+     integration event that ledger publishes and payments subscribes to,
+     not with a callback; or if ledger really is downstream of payments,
+     add payments to contextMap.ledger.consumes.
 ```
 
 A map that would allow it is refused before the check:
@@ -131,7 +131,7 @@ hidden from the map. An event carries data, and `Ledger` does not know who react
   another context is an import of its open host service.
 - A value whose type is erased on the way: a cast (`as unknown as Handler`, `any`) in the
   composition root, or a container token written as a string, such as NestJS
-  `{ provide: "redemptions", useFactory: … }`. In review, the composition root holds no cast, and
+  `{ provide: "transfers", useFactory: … }`. In review, the composition root holds no cast, and
   a token is the abstract class of a port.
 - With the rule off, the wiring is no longer checked against the map, even though
   [`strategic/no-cross-context-import`](./no-cross-context-import.md) still checks what crosses.

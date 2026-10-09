@@ -50,18 +50,25 @@ same way, whether it is named or reached through its type, see
 
 Every form of import counts, see [Every import counts](../index.md#every-import-counts).
 
+The global object is no channel either. Writing or reading a name of `globalThis`, `global`,
+`window` or `self` that no file declares is reported, wherever it is written: an assignment,
+`Reflect.set`, `Reflect.get`, `Object.assign`, `Object.defineProperty`, or `(globalThis as any).x`.
+A name the library declares, such as a polyfill of `globalThis.crypto` or a read of `fetch`, is
+fine, and a global the project declares with `declare global` counts as an import of the file that
+declares it.
+
 The wiring follows the same contract. In the composition roots and the files at the root of
 `src/`, a value of one context given to another one, such as
-`new LedgerModule({ redemptions: () => this.emoney.commands.requestRedemption })`, is an
+`new OrderingModule({ prices: () => this.catalog.commands.changePrice })`, is an
 `OpenHostService` of the giving context, or one of its methods. A handler, a repository or any
 other class of its model is reported, even when the receiving side declares a type of the same
 shape. Whether the receiving context may consume the giving one at all is checked by
 [`strategic/no-unmapped-context`](./no-unmapped-context.md).
 
 So that what crosses can be seen, a module of another context is read by its properties
-(`this.emoney.api`), or handed whole to the constructor of another module
-(`new PaymentsModule(this.ledger)`). Any other way into it is reported: brackets
-(`this.emoney["commands"]`), `Reflect.get`, a spread, destructuring, or passing it to a function,
+(`this.catalog.api`), or handed whole to the constructor of another module
+(`new OrderingModule(this.catalog)`). Any other way into it is reported: brackets
+(`this.catalog["commands"]`), `Reflect.get`, a spread, destructuring, or passing it to a function,
 such as a helper of `src/` or `get` from lodash, that could hand back anything.
 
 ## What it reports
@@ -102,12 +109,18 @@ src/ordering/driven/memory/adapters/memory-prices.adapter.ts
 
 src/app.module.ts
  14  error  strategic/no-cross-context-import: Gives
-  this.emoney.commands.requestRedemption, from emoney, to ledger: only
-  an OpenHostService of another bounded context may cross, in an import
-  or in the wiring.
- 21  error  strategic/no-cross-context-import: Reaches into this.emoney
+  this.catalog.commands.changePrice, from catalog, to ordering: only an
+  OpenHostService of another bounded context may cross, in an import or
+  in the wiring.
+ 21  error  strategic/no-cross-context-import: Reaches into this.catalog
   with Reflect.get: in the wiring, a module of another context is read
   by its properties, so that what crosses can be seen.
+
+src/catalog/catalog.module.ts
+ 18  error  strategic/no-cross-context-import: Writes
+  globalThis.catalog:prices, which no file declares: two contexts can
+  meet there without the context map showing it. Integrate through an
+  open host service, or publish an integration event.
 ```
 
 ## Fix it
@@ -165,7 +178,7 @@ bounded context. Move what it needs into the shared kernel, or keep it in the co
 - A loader reached through a value typed `any` that is neither a `constructor` nor a lookup on
   `globalThis`, such as `(loaders as any).run(code)`, is not recognised. In review, `any` around a
   call is a question to ask.
-- In the wiring, a module chosen by a condition (`flag ? this.emoney : this.ledger`) and then
+- In the wiring, a module chosen by a condition (`flag ? this.catalog : this.ordering`) and then
   reached into is not recognised as a module: its type is a union.
 - In the wiring, a value whose type is erased on the way, by a cast or a container token written
   as a string, is not seen. In review, the composition root holds no cast.

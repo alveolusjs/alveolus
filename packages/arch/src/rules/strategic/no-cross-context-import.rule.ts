@@ -3,7 +3,7 @@ import type { Dependency, SourceFile } from "../../model/index.ts";
 import type { Finding, RuleMeta } from "../framework/index.ts";
 import { ImportRule } from "../framework/index.ts";
 
-type MessageId = "wiredModel" | "reachedModule" | "reexport" | "unseen" | "dynamicLoad" | "sharedKernel" | "publishedLanguage" | "notOpenHostService" | "outsideAntiCorruptionLayer";
+type MessageId = "globalChannel" | "wiredModel" | "reachedModule" | "reexport" | "unseen" | "dynamicLoad" | "sharedKernel" | "publishedLanguage" | "notOpenHostService" | "outsideAntiCorruptionLayer";
 
 export class NoCrossContextImportRule extends ImportRule<"strategic/no-cross-context-import", MessageId> {
 	public readonly meta: RuleMeta<"strategic/no-cross-context-import", MessageId> = {
@@ -13,6 +13,8 @@ export class NoCrossContextImportRule extends ImportRule<"strategic/no-cross-con
 		id: "strategic/no-cross-context-import",
 		messages: {
 			dynamicLoad: "Loads code at runtime with {loader}: the analysis cannot tell which bounded context it reaches; use a static import.",
+			globalChannel:
+				"{access} {name}, which no file declares: two contexts can meet there without the context map showing it. Integrate through an open host service, or publish an integration event.",
 			notOpenHostService: "Imports {target}: only an OpenHostService of another bounded context may be imported.",
 			outsideAntiCorruptionLayer: "Uses the open host service of {context} outside an AntiCorruptionLayer: a core context translates what it consumes in an anti-corruption layer.",
 			publishedLanguage: "Imports the published language of {context}: redeclare the fields you read in your own published-language/.",
@@ -28,6 +30,7 @@ export class NoCrossContextImportRule extends ImportRule<"strategic/no-cross-con
 		const findings = super.check(architecture);
 		for (const file of this.filesOf(architecture)) {
 			findings.push(...this.reachedModules(file, architecture));
+			findings.push(...this.globalChannels(file, architecture));
 			for (const crossing of architecture.crossingsIn(file)) {
 				if (!crossing.isOpenHostService) {
 					findings.push(this.finding(file, crossing.line, crossing.expression, "wiredModel", { expression: crossing.expression, from: crossing.from, to: crossing.to }));
@@ -35,6 +38,17 @@ export class NoCrossContextImportRule extends ImportRule<"strategic/no-cross-con
 			}
 		}
 		return findings;
+	}
+
+	private globalChannels(file: SourceFile, architecture: Architecture): Finding<MessageId>[] {
+		const location = architecture.locationOf(file);
+		if (!location.isInBoundedContext && !location.isInSharedKernel && !location.isAtRoot) {
+			return [];
+		}
+		return file.globalChannels.map((channel) => {
+			const access = channel.access === "writes" ? "Writes" : "Reads";
+			return this.finding(file, channel.line, channel.name, "globalChannel", { access, name: channel.name });
+		});
 	}
 
 	private reachedModules(file: SourceFile, architecture: Architecture): Finding<MessageId>[] {
