@@ -143,6 +143,15 @@ describe("NoOutwardImportRule", () => {
 		]);
 	});
 
+	it("keeps the files at the root away from code loaded at runtime", () => {
+		const codebase = new TestCodebase().file("src/main.ts", `import { createRequire } from "node:module";\nconst version = eval("1");`);
+
+		expect(codebase.messages(new NoOutwardImportRule())).toEqual([
+			"Files at the root import composition roots only, not code loaded at runtime with node:module.",
+			"Files at the root import composition roots only, not code loaded at runtime with eval.",
+		]);
+	});
+
 	it("expects the documented folders under each layer, but keeps the layer of a misplaced file", () => {
 		const codebase = new TestCodebase()
 			.file("src/ordering/domain/legacy/v1/aggregates/order.aggregate.ts", `import { Pool } from "pg";`)

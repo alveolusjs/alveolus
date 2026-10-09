@@ -43,7 +43,8 @@ The shared kernel imports no bounded context at all. Every context may import th
 
 No file of a context or of the shared kernel imports a file the analysis does not see: ignored,
 unresolved, computed at runtime, or outside the declared contexts and the shared kernel. Such a
-file could re-export another context, and the rule could not tell which one.
+file could re-export another context, and the rule could not tell which one. Code loaded at
+runtime, with `createRequire`, `eval`, `new Function` or `node:vm`, is reported the same way.
 
 Every form of import counts, see [Every import counts](../index.md#every-import-counts).
 
@@ -77,6 +78,11 @@ src/ordering/domain/services/pricing.service.ts
   src/ordering/domain/value-objects/product-id.fixture.ts (ignored by
   the analysis): the analysis cannot tell which bounded context it
   reaches; move the file into a bounded context or the shared kernel.
+
+src/ordering/driven/memory/adapters/memory-prices.adapter.ts
+  1  error  strategic/no-cross-context-import: Loads code at runtime with
+  node:module: the analysis cannot tell which bounded context it
+  reaches; use a static import.
 ```
 
 ## Fix it

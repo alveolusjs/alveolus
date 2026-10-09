@@ -1,6 +1,6 @@
-export type DependencyForm = "import" | "re-export" | "inline type" | "dynamic import" | "require" | "reference" | "augmentation" | "global";
+export type DependencyForm = "import" | "re-export" | "inline type" | "dynamic import" | "require" | "reference" | "augmentation" | "dynamic load" | "global";
 
-type TargetVisibility = "analysed" | "ignored" | "unresolved";
+type TargetVisibility = "analysed" | "ignored" | "unresolved" | "dynamic";
 
 export type DependencyTarget = { readonly kind: "file"; readonly path: string; readonly visibility: TargetVisibility } | { readonly kind: "package"; readonly name: string };
 

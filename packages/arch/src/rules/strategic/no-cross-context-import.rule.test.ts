@@ -101,6 +101,22 @@ describe("NoCrossContextImportRule", () => {
 		]);
 	});
 
+	it("rejects code loaded at runtime, in a context of any subdomain", () => {
+		const codebase = withCatalog(new TestCodebase({ subdomains: { core: ["catalog"], generic: ["ordering"] } })).file(
+			"src/ordering/driven/memory/adapters/memory-prices.adapter.ts",
+			`import { createRequire } from "node:module";
+			export class MemoryPrices {
+				private static readonly load = createRequire(import.meta.url);
+				private static readonly run = new Function("s", "return import(s)");
+			}`,
+		);
+
+		expect(codebase.messages(new NoCrossContextImportRule())).toEqual([
+			"Loads code at runtime with node:module: the analysis cannot tell which bounded context it reaches; use a static import.",
+			"Loads code at runtime with Function: the analysis cannot tell which bounded context it reaches; use a static import.",
+		]);
+	});
+
 	it("keeps the shared kernel free of any bounded context", () => {
 		const codebase = catalog.file("src/shared-kernel/domain/value-objects/sku.value-object.ts", `import { CatalogApi } from "../../../catalog/driving/catalog-api.ts";`);
 
