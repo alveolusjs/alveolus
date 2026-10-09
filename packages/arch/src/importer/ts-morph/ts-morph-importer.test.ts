@@ -40,6 +40,34 @@ describe("TsMorphImporter", () => {
 		]);
 	});
 
+	it("reads code loaded at runtime as a dependency the analysis does not see", () => {
+		const file = new TestCodebase()
+			.file(
+				path,
+				`import { createRequire } from "node:module";
+			import * as vm from "node:vm";
+			const load = createRequire(import.meta.url);
+			const run = new Function("s", "return import(s)");
+			const value = eval("1");
+			const indirect = (0, eval)("1");
+			const builtin = process.getBuiltinModule("module");
+			const legacy = module.require("pg");
+			const Local = class Function {};
+			new Local();`,
+			)
+			.readFile(path);
+
+		expect(file.dependencies.filter((dependency) => dependency.target.kind === "file").map((dependency) => [dependency.line, dependency.form, dependency.label, dependency.target])).toEqual([
+			[1, "import", "createRequire", { kind: "file", path: "node:module", visibility: "dynamic" }],
+			[2, "import", "*", { kind: "file", path: "node:vm", visibility: "dynamic" }],
+			[4, "dynamic load", "Function", { kind: "file", path: "Function", visibility: "dynamic" }],
+			[5, "dynamic load", "eval", { kind: "file", path: "eval", visibility: "dynamic" }],
+			[6, "dynamic load", "eval", { kind: "file", path: "eval", visibility: "dynamic" }],
+			[7, "dynamic load", "process.getBuiltinModule", { kind: "file", path: "process.getBuiltinModule", visibility: "dynamic" }],
+			[8, "dynamic load", "module.require", { kind: "file", path: "module.require", visibility: "dynamic" }],
+		]);
+	});
+
 	it("reads a class: its lineage with packages, its heritage, its markers and its members in source order", () => {
 		const file = new TestCodebase()
 			.file(

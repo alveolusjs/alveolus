@@ -5,12 +5,18 @@ type FileTarget = Extract<DependencyTarget, { kind: "file" }>;
 
 export class Wording {
 	public target(target: FileTarget, architecture: Architecture): string {
+		if (target.visibility === "dynamic") {
+			return `code loaded at runtime with ${target.path}`;
+		}
 		return `${architecture.relativePath(target.path)} (${this.location(architecture.locationOfTarget(target))})`;
 	}
 
 	public location(location: Location): string {
 		if (location.unseen === "ignored") {
 			return "ignored by the analysis";
+		}
+		if (location.unseen === "dynamic") {
+			return "loaded at runtime";
 		}
 		if (location.unseen === "unresolved") {
 			return "not resolved by the analysis";

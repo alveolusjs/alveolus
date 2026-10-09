@@ -141,6 +141,10 @@ ignored, such as a test file. No file imports it, not even a composition root or
 root of `src/`: a test file that re-exports another context would otherwise carry the import past
 every rule.
 
+Code loaded at runtime counts the same way, wherever it is: `node:module` (`createRequire`),
+`node:vm`, `module.require`, `process.getBuiltinModule`, `eval`, `Function` and `new Function`.
+To read a JSON file, import it: `import pkg from "../package.json" with { type: "json" }`.
+
 ```
 src/ordering/domain/services/pricing.service.ts
   2  error  layers/no-impure-domain: The domain imports

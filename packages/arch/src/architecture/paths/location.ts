@@ -3,7 +3,7 @@ import type { SubdomainType } from "../settings.ts";
 
 export type Area = "context" | "shared-kernel" | "root" | "outside";
 
-export type Unseen = "ignored" | "unresolved";
+export type Unseen = "ignored" | "unresolved" | "dynamic";
 
 export interface LocationProps {
 	readonly area: Area;
