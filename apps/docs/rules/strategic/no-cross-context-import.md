@@ -10,7 +10,7 @@ an anti-corruption layer or its composition root.
 <dl class="al-glance">
 	<dt>Rule</dt><dd><code>strategic/no-cross-context-import</code></dd>
 	<dt>Category</dt><dd><a href="/rules/#strategic">Strategic</a>: what crosses a bounded context</dd>
-	<dt>Reports</dt><dd>An import from another bounded context that is not its open host service, used where it may be; an import of a file the analysis does not see</dd>
+	<dt>Reports</dt><dd>An import from another bounded context that is not its open host service, used where it may be; a value of another context given in the wiring that is not its open host service; an import of a file the analysis does not see</dd>
 	<dt>Applies to</dt><dd>Every file of every bounded context, whatever its subdomain, and of the shared kernel</dd>
 	<dt>Turn off</dt><dd><a href="#turn-it-off"><code>"strategic/no-cross-context-import": "off"</code></a></dd>
 </dl>
@@ -48,6 +48,14 @@ runtime, with `createRequire`, `eval`, `new Function` or `node:vm`, is reported 
 
 Every form of import counts, see [Every import counts](../index.md#every-import-counts).
 
+The wiring follows the same contract. In the composition roots and the files at the root of
+`src/`, a value of one context given to another one, such as
+`new LedgerModule({ redemptions: () => this.emoney.commands.requestRedemption })`, is an
+`OpenHostService` of the giving context, or one of its methods. A handler, a repository or any
+other class of its model is reported, even when the receiving side declares a type of the same
+shape. Whether the receiving context may consume the giving one at all is checked by
+[`strategic/no-unmapped-context`](./no-unmapped-context.md).
+
 ## What it reports
 
 ```
@@ -83,6 +91,12 @@ src/ordering/driven/memory/adapters/memory-prices.adapter.ts
   1  error  strategic/no-cross-context-import: Loads code at runtime with
   node:module: the analysis cannot tell which bounded context it
   reaches; use a static import.
+
+src/app.module.ts
+ 14  error  strategic/no-cross-context-import: Gives
+  this.emoney.commands.requestRedemption, from emoney, to ledger: only
+  an OpenHostService of another bounded context may cross, in an import
+  or in the wiring.
 ```
 
 ## Fix it
@@ -137,6 +151,8 @@ bounded context. Move what it needs into the shared kernel, or keep it in the co
   should build values of its own context.
 - A file that matches `ignore` in `alveolus.config.ts` is not analysed at all, and no file of a
   context may import it. Review a change to `ignore` as you would review a rule turned off.
+- In the wiring, a value whose type is erased on the way, by a cast or a container token written
+  as a string, is not seen. In review, the composition root holds no cast.
 :::
 
 ## Turn it off

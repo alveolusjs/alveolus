@@ -16,16 +16,19 @@ import type { GlobalReference } from "./readers/global-reference.ts";
 import { StatementReader } from "./readers/statement-reader.ts";
 import { ThrowReader } from "./readers/throw-reader.ts";
 import { TypeReader } from "./readers/type-reader.ts";
+import { WiringReader } from "./readers/wiring-reader.ts";
 
 export class TsMorphImporter extends Importer {
 	private readonly classes: ClassReader;
+	private readonly types: TypeReader;
 	private readonly statements = new StatementReader();
 	private readonly disables = new DisableReader();
 	private readonly throws = new ThrowReader();
 
 	public constructor(private readonly sources: MorphProject) {
 		super();
-		this.classes = new ClassReader(new TypeReader(new PackageNames(sources.getFileSystem())));
+		this.types = new TypeReader(new PackageNames(sources.getFileSystem()));
+		this.classes = new ClassReader(this.types);
 	}
 
 	public static fromTsConfig(tsConfigFilePath: string): TsMorphImporter {
@@ -43,17 +46,18 @@ export class TsMorphImporter extends Importer {
 
 	public read(scope: ImportScope): Project {
 		const dependencies = new DependencyReader(this.sources, scope);
+		const wirings = new WiringReader(this.types, scope);
 		const globals = new GlobalReader(scope.projectDir);
 		const files: SourceFile[] = [];
 		for (const file of this.sources.getSourceFiles()) {
 			if (this.isInside(scope.rootDir, file.getFilePath()) && !scope.isIgnored(file.getFilePath())) {
-				files.push(this.readFile(file, dependencies, globals));
+				files.push(this.readFile(file, dependencies, globals, wirings));
 			}
 		}
 		return new Project(scope.projectDir, files);
 	}
 
-	private readFile(file: MorphFile, dependencies: DependencyReader, globals: GlobalReader): SourceFile {
+	private readFile(file: MorphFile, dependencies: DependencyReader, globals: GlobalReader, wirings: WiringReader): SourceFile {
 		const globalReferences = globals.read(file);
 		return new SourceFile({
 			classes: file.getClasses().map((declaration) => this.classes.read(declaration)),
@@ -64,6 +68,7 @@ export class TsMorphImporter extends Importer {
 			statements: this.statements.read(file),
 			text: file.getFullText(),
 			throws: this.throws.read(file),
+			wirings: wirings.read(file),
 		});
 	}
 

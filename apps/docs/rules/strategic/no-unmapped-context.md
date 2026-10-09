@@ -10,8 +10,8 @@ never depend on each other.
 <dl class="al-glance">
 	<dt>Rule</dt><dd><code>strategic/no-unmapped-context</code></dd>
 	<dt>Category</dt><dd><a href="/rules/#strategic">Strategic</a>: what crosses a bounded context</dd>
-	<dt>Reports</dt><dd>An import of another context that <code>contextMap</code> does not allow</dd>
-	<dt>Applies to</dt><dd>Every file of every bounded context</dd>
+	<dt>Reports</dt><dd>An import of another context, or a value of another context given in the wiring, that <code>contextMap</code> does not allow</dd>
+	<dt>Applies to</dt><dd>Every file of every bounded context; for the wiring, the composition roots and the files at the root of <code>src/</code></dd>
 	<dt>Turn off</dt><dd><a href="#turn-it-off"><code>"strategic/no-unmapped-context": "off"</code></a></dd>
 </dl>
 
@@ -43,6 +43,26 @@ never allowed, whichever way the code is written.
 
 Imports of the shared kernel are not consumptions: every context may import it.
 
+### The wiring counts too
+
+A context can consume another one without importing it: `app.module.ts` sees every module, and
+can hand a value of one context to another. Ledger declares a port, its adapter calls whatever it
+is given, and the root composition gives it a handler of e-money:
+
+```ts [src/app.module.ts]
+this.ledger = new LedgerModule({
+	redemptions: () => this.emoney.commands.requestRedemption,
+});
+```
+
+No file of ledger imports e-money, yet ledger now consumes it. In the composition roots and the
+files at the root of `src/`, every value given to a class, a function or a field of one context
+(an argument, a property of an object, the body of an arrow function, an assignment, a variable
+typed by that context) is read: when it comes from another context, by where it is declared or by
+its type, the receiving context consumes that one, and the map must say so. A module handed whole,
+such as `new PaymentsModule(this.ledger)`, is not a consumption yet: what that module then takes
+from it is.
+
 ## What it reports
 
 ```
@@ -50,6 +70,13 @@ src/ledger/driven/payments/adapters/payment-status.adapter.ts
   2  error  strategic/no-unmapped-context: ledger consumes payments, which the
      context map does not allow: reverse the dependency, or if ledger
      really is downstream of payments, add payments to
+     contextMap.ledger.consumes.
+
+src/app.module.ts
+ 14  error  strategic/no-unmapped-context: ledger receives
+     this.emoney.commands.requestRedemption from emoney here, which the
+     context map does not allow: reverse the dependency, or if ledger
+     really is downstream of emoney, add emoney to
      contextMap.ledger.consumes.
 ```
 
@@ -94,8 +121,14 @@ So that `Ledger` stays upstream, it does not ask `Payments` anything: it publish
 
 ::: warning What the rule cannot see
 - A dependency that goes through the database, a queue or an HTTP call to another context's API
-  written as a string: the map covers imports. In review, every consumption of another context
-  is an import of its open host service.
+  written as a string: the map covers imports and the wiring. In review, every consumption of
+  another context is an import of its open host service.
+- A value whose type is erased on the way: a cast (`as unknown as Handler`, `any`) in the
+  composition root, or a container token written as a string, such as NestJS
+  `{ provide: "redemptions", useFactory: … }`. In review, the composition root holds no cast, and
+  a token is the abstract class of a port.
+- With the rule off, the wiring is no longer checked against the map, even though
+  [`strategic/no-cross-context-import`](./no-cross-context-import.md) still checks what crosses.
 :::
 
 ## Turn it off

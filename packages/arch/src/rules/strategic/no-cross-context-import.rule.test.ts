@@ -3,6 +3,37 @@ import { beforeEach, describe, expect, it } from "vitest";
 import { TestCodebase } from "../../../test/support/test-codebase.ts";
 import { NoCrossContextImportRule } from "./no-cross-context-import.rule.ts";
 
+function wired(app: string): TestCodebase {
+	return new TestCodebase()
+		.file(
+			"src/catalog/driving/in-process/catalog-api.ts",
+			`import type { OpenHostService } from "@alveolus/core";\nexport class CatalogApi implements OpenHostService { public price(id: string): number { return 1; } }`,
+		)
+		.file(
+			"src/catalog/catalog.module.ts",
+			`import { CatalogApi } from "./driving/in-process/catalog-api.ts";\nexport class CatalogModule { public readonly api = new CatalogApi(); public constructor(private readonly orders: () => { place(id: string): boolean }) {} }`,
+		)
+		.file("src/ordering/application/commands/place-order.command.ts", `export class PlaceOrderHandler { public place(id: string): boolean { return true; } }`)
+		.file(
+			"src/ordering/driven/catalog/adapters/catalog-prices.adapter.ts",
+			`import type { AntiCorruptionLayer } from "@alveolus/core";
+import type { CatalogApi } from "../../../../catalog/driving/in-process/catalog-api.ts";
+export class CatalogPrices implements AntiCorruptionLayer { public constructor(private readonly api: CatalogApi) {} }`,
+		)
+		.file(
+			"src/ordering/ordering.module.ts",
+			`import type { CatalogModule } from "../catalog/catalog.module.ts";
+import { PlaceOrderHandler } from "./application/commands/place-order.command.ts";
+import { CatalogPrices } from "./driven/catalog/adapters/catalog-prices.adapter.ts";
+export class OrderingModule {
+	public readonly placeOrder = new PlaceOrderHandler();
+	public readonly prices: CatalogPrices;
+	public constructor(catalog: CatalogModule) { this.prices = new CatalogPrices(catalog.api); }
+}`,
+		)
+		.file("src/app.module.ts", app);
+}
+
 function withCatalog(codebase: TestCodebase): TestCodebase {
 	return codebase
 		.file(
@@ -151,5 +182,55 @@ describe("NoCrossContextImportRule", () => {
 			.file("src/ordering/ordering.module.ts", `import { CatalogModule } from "../catalog/catalog.module.ts";`);
 
 		expect(codebase.check(new NoCrossContextImportRule())).toEqual(["src/catalog/catalog.module.ts:2 Product"]);
+	});
+
+	it("lets only the open host service of another context cross in the wiring", () => {
+		expect(
+			wired(`import { CatalogModule } from "./catalog/catalog.module.ts";
+import { OrderingModule } from "./ordering/ordering.module.ts";
+export class AppModule {
+	private readonly catalog = new CatalogModule(() => ({ place: () => true }));
+	private readonly ordering = new OrderingModule(this.catalog);
+}`).check(new NoCrossContextImportRule()),
+		).toEqual([]);
+		expect(
+			wired(`import { CatalogModule } from "./catalog/catalog.module.ts";
+import { OrderingModule } from "./ordering/ordering.module.ts";
+export class AppModule {
+	private readonly ordering: OrderingModule;
+	private readonly catalog: CatalogModule;
+	public constructor() {
+		this.catalog = new CatalogModule(() => this.ordering.placeOrder);
+		this.ordering = new OrderingModule(this.catalog);
+		const handler = this.ordering.placeOrder;
+		new CatalogModule(() => handler);
+	}
+}`).messages(new NoCrossContextImportRule()),
+		).toEqual([
+			"Gives this.ordering.placeOrder, from ordering, to catalog: only an OpenHostService of another bounded context may cross, in an import or in the wiring.",
+			"Gives handler, from ordering, to catalog: only an OpenHostService of another bounded context may cross, in an import or in the wiring.",
+		]);
+	});
+
+	it("reads the wiring in the composition root of a context too", () => {
+		const codebase = wired(`export class AppModule {}`)
+			.file("src/catalog/domain/services/pricing.service.ts", `export class Pricing {}`)
+			.file(
+				"src/catalog/catalog.module.ts",
+				`import { CatalogApi } from "./driving/in-process/catalog-api.ts";
+import { Pricing } from "./domain/services/pricing.service.ts";
+export class CatalogModule { public readonly api = new CatalogApi(); public readonly pricing = new Pricing(); }`,
+			)
+			.file(
+				"src/ordering/ordering.module.ts",
+				`import type { CatalogModule } from "../catalog/catalog.module.ts";
+import { CatalogPrices } from "./driven/catalog/adapters/catalog-prices.adapter.ts";
+export class OrderingModule {
+	public readonly prices: CatalogPrices;
+	public constructor(catalog: CatalogModule) { this.prices = new CatalogPrices(catalog.pricing as never); }
+}`,
+			);
+
+		expect(codebase.check(new NoCrossContextImportRule())).toEqual(["src/ordering/ordering.module.ts:5 catalog.pricing"]);
 	});
 });

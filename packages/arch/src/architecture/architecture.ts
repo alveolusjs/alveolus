@@ -7,6 +7,8 @@ import type { AllowedPackages } from "./allowed-packages.ts";
 import { BuildingBlocks } from "./building-blocks.ts";
 import type { ContextMap } from "./context-map.ts";
 import { CoreApi } from "./core-api.ts";
+import type { Crossing } from "./crossing.ts";
+import { Crossings } from "./crossing.ts";
 import { Layers } from "./layers.ts";
 import type { ShapeIssue } from "./paths/layer-shape.ts";
 import { LayerShape } from "./paths/layer-shape.ts";
@@ -23,6 +25,7 @@ export class Architecture {
 	private readonly shape: LayerShape;
 	private readonly layout: Layout;
 	private readonly locations = new Map<string, Location>();
+	private readonly crossings: Crossings = new Crossings(this);
 
 	public constructor(
 		public readonly project: Project,
@@ -50,6 +53,14 @@ export class Architecture {
 
 	public locationOf(file: SourceFile): Location {
 		return this.locate(file.path);
+	}
+
+	public locationOfPath(path: string): Location {
+		return this.locate(path);
+	}
+
+	public crossingsIn(file: SourceFile): Crossing[] {
+		return this.crossings.in(file);
 	}
 
 	public locationOfTarget(target: FileTarget): Location {

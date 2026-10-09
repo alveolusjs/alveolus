@@ -6,6 +6,7 @@ export type { NamedType } from "./classes/named-type.ts";
 export type { ReturnShape } from "./classes/return-shape.ts";
 export { Dependency, type DependencyForm, type DependencyTarget } from "./dependencies/dependency.ts";
 export { type GlobalEffect, GlobalUse } from "./dependencies/global-use.ts";
+export { Wiring, type WiringLink } from "./dependencies/wiring.ts";
 export { Project } from "./project.ts";
 export { SourceFile } from "./source-file.ts";
 export { DisableComment } from "./statements/disable-comment.ts";
