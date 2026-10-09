@@ -3,7 +3,7 @@ import type { Dependency, SourceFile } from "../../model/index.ts";
 import type { Finding, RuleMeta } from "../framework/index.ts";
 import { ImportRule } from "../framework/index.ts";
 
-type MessageId = "wiredModel" | "reexport" | "unseen" | "dynamicLoad" | "sharedKernel" | "publishedLanguage" | "notOpenHostService" | "outsideAntiCorruptionLayer";
+type MessageId = "wiredModel" | "reachedModule" | "reexport" | "unseen" | "dynamicLoad" | "sharedKernel" | "publishedLanguage" | "notOpenHostService" | "outsideAntiCorruptionLayer";
 
 export class NoCrossContextImportRule extends ImportRule<"strategic/no-cross-context-import", MessageId> {
 	public readonly meta: RuleMeta<"strategic/no-cross-context-import", MessageId> = {
@@ -16,6 +16,7 @@ export class NoCrossContextImportRule extends ImportRule<"strategic/no-cross-con
 			notOpenHostService: "Imports {target}: only an OpenHostService of another bounded context may be imported.",
 			outsideAntiCorruptionLayer: "Uses the open host service of {context} outside an AntiCorruptionLayer: a core context translates what it consumes in an anti-corruption layer.",
 			publishedLanguage: "Imports the published language of {context}: redeclare the fields you read in your own published-language/.",
+			reachedModule: "Reaches into {expression} with {means}: in the wiring, a module of another context is read by its properties, so that what crosses can be seen.",
 			reexport: "The composition root re-exports {names}: it exports its own module only, so that no other context reaches through it.",
 			sharedKernel: "The shared kernel imports no bounded context, but imports {target}.",
 			unseen: "Imports {target}: the analysis cannot tell which bounded context it reaches; move the file into a bounded context or the shared kernel.",
@@ -26,10 +27,23 @@ export class NoCrossContextImportRule extends ImportRule<"strategic/no-cross-con
 	public override check(architecture: Architecture): Finding<MessageId>[] {
 		const findings = super.check(architecture);
 		for (const file of this.filesOf(architecture)) {
+			findings.push(...this.reachedModules(file, architecture));
 			for (const crossing of architecture.crossingsIn(file)) {
 				if (!crossing.isOpenHostService) {
 					findings.push(this.finding(file, crossing.line, crossing.expression, "wiredModel", { expression: crossing.expression, from: crossing.from, to: crossing.to }));
 				}
+			}
+		}
+		return findings;
+	}
+
+	private reachedModules(file: SourceFile, architecture: Architecture): Finding<MessageId>[] {
+		const from = architecture.locationOf(file);
+		const findings: Finding<MessageId>[] = [];
+		for (const reach of file.moduleReaches) {
+			const module = architecture.locationOfPath(reach.module.declaredIn ?? "");
+			if (module.isCompositionRoot && module.isInBoundedContext && !module.isSameContextAs(from)) {
+				findings.push(this.finding(file, reach.line, reach.expression, "reachedModule", { expression: reach.expression, means: reach.means }));
 			}
 		}
 		return findings;

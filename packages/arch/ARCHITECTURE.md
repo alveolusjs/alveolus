@@ -89,6 +89,9 @@ from the rest of the package, no `ts-morph`.
 - `Wiring` is a value given in a composition root or a file at the root: the file declaring what
   receives it, and the links of its expression (`this`, `emoney`, `commands`, …), each with the
   file declaring it and the classes in its type.
+- `ModuleReach` is a class of a composition root, a module, used in a composition root or a file at
+  the root other than by one of its properties, as a whole argument to another module, or stored:
+  by brackets, a spread, destructuring, or as an argument to a function, with that means.
 
 Invariant: a fact never depends on a rule. Before adding a field for a new rule, look for a query
 on existing facts.
@@ -107,6 +110,7 @@ each file with one reader per family of facts:
 | `StatementReader` | `TopLevelStatement`: functions, enums, namespaces, mutable or computed constants, bare statements |
 | `ThrowReader` | `Throw`: `throw` statements and `Promise.reject` calls |
 | `LoaderReader` | code loaded at runtime, for `DependencyReader`: by name, and by type (`FunctionConstructor`, `typeof eval`, the `constructor` of a function, a computed lookup on `globalThis`) |
+| `ModuleReachReader` | `ModuleReach`: in the files `ImportScope.readsWiring` names, each module reached into other than by its properties |
 | `GlobalReader` | globals, told apart by where the type checker finds their declaration |
 | `WiringReader` | `Wiring`: in the files `ImportScope.readsWiring` names, each value given to a call, a construction, an assignment or a typed declaration, as the chain of its links with where each is declared and the classes in its type |
 
