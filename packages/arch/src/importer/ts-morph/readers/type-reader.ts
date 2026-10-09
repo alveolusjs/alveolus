@@ -9,6 +9,8 @@ import type { PackageNames } from "../package-names.ts";
 
 const collections: readonly string[] = ["Map", "Set", "WeakMap", "WeakSet"];
 
+const readonlyCollections: readonly string[] = ["ReadonlyMap", "ReadonlySet", "ReadonlyArray"];
+
 export class TypeReader {
 	public constructor(private readonly packageNames: PackageNames) {}
 
@@ -42,6 +44,10 @@ export class TypeReader {
 		return type.isAnonymous() && type.getCallSignatures().length === 0 && type.getConstructSignatures().length === 0;
 	}
 
+	public opaqueValueIn(type: Type): string | undefined {
+		return this.findsOpaqueValue(type, new Set());
+	}
+
 	public holdsFunction(type: Type): boolean {
 		return this.findsFunction(type, new Set());
 	}
@@ -70,6 +76,48 @@ export class TypeReader {
 			alias: alias === undefined ? undefined : this.namedSymbol(alias),
 			union: members.map((member) => this.namedTypeOf(member)),
 		};
+	}
+
+	private findsOpaqueValue(type: Type, seen: Set<ts.Type>): string | undefined {
+		if (seen.has(type.compilerType)) {
+			return undefined;
+		}
+		seen.add(type.compilerType);
+		if (type.isAny() || type.isUnknown()) {
+			return type.getText();
+		}
+		if (type.isUnion()) {
+			return this.firstOpaque(type.getUnionTypes(), seen);
+		}
+		if (type.isIntersection()) {
+			return this.firstOpaque(type.getIntersectionTypes(), seen);
+		}
+		if (!type.isObject() || type.isClass()) {
+			return undefined;
+		}
+		if (type.getCallSignatures().length > 0 || type.getConstructSignatures().length > 0) {
+			return "a function";
+		}
+		if (type.isArray() || type.isTuple()) {
+			if (!type.isReadonlyArray()) {
+				return "a mutable array";
+			}
+			return this.firstOpaque(type.isTuple() ? type.getTupleElements() : type.getTypeArguments(), seen);
+		}
+		if (readonlyCollections.includes(type.getSymbol()?.getName() ?? "")) {
+			return this.firstOpaque(type.getTypeArguments(), seen);
+		}
+		return "an object";
+	}
+
+	private firstOpaque(types: readonly Type[], seen: Set<ts.Type>): string | undefined {
+		for (const inner of types) {
+			const opaque = this.findsOpaqueValue(inner, seen);
+			if (opaque !== undefined) {
+				return opaque;
+			}
+		}
+		return undefined;
 	}
 
 	private findsFunction(type: Type, seen: Set<ts.Type>): boolean {

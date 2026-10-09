@@ -10,6 +10,7 @@ interface MemberTypes {
 	readonly holdsCollection?: boolean;
 	readonly receivesFunction?: boolean;
 	readonly erasedType?: string | undefined;
+	readonly opaqueValue?: string | undefined;
 	readonly parameterTypes?: readonly ClassType[];
 	readonly returns?: ReturnShape | undefined;
 	readonly valueTypes?: readonly ClassType[];
@@ -42,6 +43,7 @@ export class ClassReader {
 					erasedType: this.types.erasedNameOf(signature === undefined ? type : signature.getReturnType()),
 					holdsCollection: this.types.holdsCollection(type),
 					isCallable: signature !== undefined,
+					opaqueValue: this.types.opaqueValueIn(type),
 					receivesFunction: signature !== undefined && signature.getParameters().some((parameter) => this.types.holdsFunction(parameter.getTypeAtLocation(member))),
 					returns: signature === undefined ? undefined : this.types.returnShapeOf(signature.getReturnType()),
 					valueTypes: this.types.classTypesIn(type),
@@ -86,6 +88,7 @@ export class ClassReader {
 			kind,
 			line: member.getStartLineNumber(),
 			name,
+			opaqueValue: types.opaqueValue,
 			parameterTypes: types.parameterTypes ?? [],
 			receivesFunction: types.receivesFunction ?? false,
 			returns: types.returns,
@@ -109,6 +112,7 @@ export class ClassReader {
 			kind: "constructor parameter",
 			line: parameter.getStartLineNumber(),
 			name: parameter.getName(),
+			opaqueValue: undefined,
 			parameterTypes: [],
 			receivesFunction: false,
 			returns: undefined,

@@ -51,4 +51,38 @@ describe("NoSharedStateRule", () => {
 
 		expect(codebase.check(new NoSharedStateRule())).toEqual([]);
 	});
+
+	it("accepts values only in a static readonly field: a value object, an identifier, a class of domainDependencies", () => {
+		const codebase = new TestCodebase({ domainDependencies: { "decimal.js": true } })
+			.package("decimal.js", `export declare class Decimal { constructor(value: string); plus(other: Decimal): Decimal; }`)
+			.package("events", `export declare class EventEmitter { emit(name: string): boolean; }`)
+			.file(
+				"src/shared-kernel/domain/value-objects/rate.value-object.ts",
+				`import { ValueObject } from "@alveolus/core";
+				import { Decimal } from "decimal.js";
+				export class Rate extends ValueObject<{ value: Decimal }> {
+					public static readonly ONE = new Rate({ value: new Decimal("1") });
+					public static readonly BASE = new Decimal("1.1");
+					public static readonly KNOWN: ReadonlyMap<string, Rate> = new Map();
+				}`,
+			)
+			.file(
+				"src/shared-kernel/driven/memory/adapters/service-directory.adapter.ts",
+				`import { EventEmitter } from "events";
+				export class ServiceDirectory {
+					public static readonly shared = new ServiceDirectory();
+					public static readonly bus = new EventEmitter();
+					public static readonly resolve = (name: string): unknown => name;
+					public static readonly settings: { readonly strict: boolean } = { strict: true };
+					private readonly services = new Map<string, unknown>();
+				}`,
+			);
+
+		expect(codebase.messages(new NoSharedStateRule())).toEqual([
+			"ServiceDirectory.shared holds a ServiceDirectory in a static field, which can keep state every context reaches, a channel the context map does not show. A static field of the shared kernel holds a value: a primitive, a value object, an identifier, a class of domainDependencies, or a readonly collection of them.",
+			"ServiceDirectory.bus holds an EventEmitter in a static field, which can keep state every context reaches, a channel the context map does not show. A static field of the shared kernel holds a value: a primitive, a value object, an identifier, a class of domainDependencies, or a readonly collection of them.",
+			"ServiceDirectory.resolve holds a function in a static field, which can keep state every context reaches, a channel the context map does not show. A static field of the shared kernel holds a value: a primitive, a value object, an identifier, a class of domainDependencies, or a readonly collection of them.",
+			"ServiceDirectory.settings holds a collection in a static field: every context reaches the same one, a channel the context map does not show. The shared kernel shares a model, not state: integrate through an open host service.",
+		]);
+	});
 });
