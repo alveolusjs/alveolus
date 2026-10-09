@@ -150,7 +150,7 @@ is refused when the configuration loads.
 | `boundedContexts` | required | Each bounded context and its folder, relative to `root`. `"modules/ordering"` works. |
 | `sharedKernel` | `"shared-kernel"` | The folder shared by every bounded context, relative to `root`. |
 | `subdomains` | required | The [subdomain](./project-layout.md#core-supporting-generic) each bounded context implements: `{ core: ["ordering"], supporting: ["billing"], generic: ["notifications"] }`. Every context is listed once. |
-| `contextMap` | required | For each bounded context, the ones it consumes: `{ ledger: { consumes: [] }, payments: { consumes: ["ledger"] } }`. Every context is listed, and the map has no cycle. |
+| `contextMap` | required | For each bounded context, the ones it consumes: `{ catalog: { consumes: [] }, ordering: { consumes: ["catalog"] } }`. Every context is listed, and the map has no cycle. |
 | `compositionRoot` | `"*.module.ts"` | The file, at the root of a bounded context, that wires it. |
 | `domainDependencies` | `{}` | npm packages the domain may import, besides `@alveolus/core`. |
 | `applicationDependencies` | `{}` | npm packages the application may import, besides `@alveolus/core` and `domainDependencies`. |

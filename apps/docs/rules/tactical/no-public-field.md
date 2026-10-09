@@ -17,13 +17,13 @@ changes it, and what callers need is read through a getter.
 
 ## Why
 
-`Account` has `public balance = 0`. The withdraw handler checks the balance and subtracts the
-amount itself; the next handler does the same with a slightly different check. The rule "an
-account never goes below its overdraft" now lives in four handlers, and the aggregate is a bag of
-fields: the model is anemic, and the day the rule changes, nobody finds every copy.
+`Product` has `public stock = 0`. The reservation handler checks the stock and subtracts the
+quantity itself; the next handler does the same with a slightly different check. The rule "a
+product is never reserved beyond its stock" now lives in four handlers, and the aggregate is a bag
+of fields: the model is anemic, and the day the rule changes, nobody finds every copy.
 
 ::: tip The fix
-The state is private, and changes through a method that returns a `Result`: `account.withdraw(amount)`.
+The state is private, and changes through a method that returns a `Result`: `product.reserve(quantity)`.
 A value the outside needs to read is a getter. The rule lives once, where the state is.
 :::
 
@@ -33,12 +33,12 @@ Every instance field of a class that extends one of the four building blocks:
 
 | Field | Allowed |
 | --- | --- |
-| `private balance`, `protected readonly opened` | ✅ |
-| `constructor(private readonly currency: string)` | ✅ |
-| `get balance(): Money` | ✅ |
+| `private stock`, `protected readonly addedAt` | ✅ |
+| `constructor(private readonly sku: string)` | ✅ |
+| `get price(): Money` | ✅ |
 | `public static readonly limit = 100` | ✅ |
-| `public balance = 0`, `public readonly currency` | ❌ |
-| `constructor(public readonly owner: string)` | ❌ |
+| `public stock = 0`, `public readonly sku` | ❌ |
+| `constructor(public readonly name: string)` | ❌ |
 
 A `readonly` public field is reported too: a value object of it can still be mutated, and the
 getter keeps the shape of the class free to change.
@@ -46,8 +46,8 @@ getter keeps the shape of the class free to change.
 ## What it reports
 
 ```
-src/ledger/domain/aggregates/account.aggregate.ts
-  4  error  tactical/no-public-field: Account.balance is a public field:
+src/catalog/domain/aggregates/product.aggregate.ts
+  4  error  tactical/no-public-field: Product.stock is a public field:
      keep the state private, and expose what callers need through a
      getter.
 ```
@@ -58,30 +58,30 @@ src/ledger/domain/aggregates/account.aggregate.ts
 
 <div class="al-compare">
 
-```ts [❌ Avoid: src/ledger/domain/aggregates/account.aggregate.ts]
-export class Account extends AggregateRoot<AccountId> {
-	public balance = 0;
+```ts [❌ Avoid: src/catalog/domain/aggregates/product.aggregate.ts]
+export class Product extends AggregateRoot<ProductId> {
+	public stock = 0;
 }
 
 // in a handler
-if (account.balance >= amount) {
-	account.balance -= amount;
+if (product.stock >= quantity) {
+	product.stock -= quantity;
 }
 ```
 
-```ts [✅ Prefer: src/ledger/domain/aggregates/account.aggregate.ts]
-export class Account extends AggregateRoot<AccountId> {
-	private balance = 0;
+```ts [✅ Prefer: src/catalog/domain/aggregates/product.aggregate.ts]
+export class Product extends AggregateRoot<ProductId> {
+	private stock = 0;
 
-	get currentBalance(): number {
-		return this.balance;
+	get available(): number {
+		return this.stock;
 	}
 
-	withdraw(amount: number): Result<void, InsufficientFunds> {
-		if (this.balance < amount) {
-			return err(new InsufficientFunds({ amount }));
+	reserve(quantity: number): Result<void, OutOfStock> {
+		if (this.stock < quantity) {
+			return err(new OutOfStock({ quantity }));
 		}
-		this.balance -= amount;
+		this.stock -= quantity;
 		return ok();
 	}
 }

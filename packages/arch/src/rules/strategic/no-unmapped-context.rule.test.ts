@@ -35,24 +35,24 @@ export class OrderingModule {
 		.file("src/app.module.ts", app);
 }
 
-function bank(config: Partial<AlveolusConfig>, paymentsConsumesLedger: boolean, ledgerConsumesPayments: boolean): TestCodebase {
-	const codebase = new TestCodebase({ boundedContexts: { ledger: "ledger", payments: "payments", reporting: "reporting" }, subdomains: { core: ["ledger", "payments", "reporting"] }, ...config })
-		.file("src/ledger/driving/in-process/ledger-api.ts", `import type { OpenHostService } from "@alveolus/core";\nexport class LedgerApi implements OpenHostService {}`)
-		.file("src/payments/driving/in-process/payments-api.ts", `import type { OpenHostService } from "@alveolus/core";\nexport class PaymentsApi implements OpenHostService {}`)
+function shop(config: Partial<AlveolusConfig>, orderingConsumesCatalog: boolean, catalogConsumesOrdering: boolean): TestCodebase {
+	const codebase = new TestCodebase({ boundedContexts: { catalog: "catalog", ordering: "ordering", reporting: "reporting" }, subdomains: { core: ["catalog", "ordering", "reporting"] }, ...config })
+		.file("src/catalog/driving/in-process/catalog-api.ts", `import type { OpenHostService } from "@alveolus/core";\nexport class CatalogApi implements OpenHostService {}`)
+		.file("src/ordering/driving/in-process/ordering-api.ts", `import type { OpenHostService } from "@alveolus/core";\nexport class OrderingApi implements OpenHostService {}`)
 		.file(
-			"src/reporting/driven/ledger/adapters/ledger-figures.adapter.ts",
-			`import type { AntiCorruptionLayer } from "@alveolus/core";\nimport type { LedgerApi } from "../../../../ledger/driving/in-process/ledger-api.ts";\nexport class LedgerFigures implements AntiCorruptionLayer { constructor(private readonly api: LedgerApi) {} }`,
+			"src/reporting/driven/catalog/adapters/catalog-figures.adapter.ts",
+			`import type { AntiCorruptionLayer } from "@alveolus/core";\nimport type { CatalogApi } from "../../../../catalog/driving/in-process/catalog-api.ts";\nexport class CatalogFigures implements AntiCorruptionLayer { constructor(private readonly api: CatalogApi) {} }`,
 		);
-	if (paymentsConsumesLedger) {
+	if (orderingConsumesCatalog) {
 		codebase.file(
-			"src/payments/driven/ledger/adapters/ledger-balances.adapter.ts",
-			`import type { AntiCorruptionLayer } from "@alveolus/core";\nimport type { LedgerApi } from "../../../../ledger/driving/in-process/ledger-api.ts";\nexport class LedgerBalances implements AntiCorruptionLayer { constructor(private readonly api: LedgerApi) {} }`,
+			"src/ordering/driven/catalog/adapters/catalog-prices.adapter.ts",
+			`import type { AntiCorruptionLayer } from "@alveolus/core";\nimport type { CatalogApi } from "../../../../catalog/driving/in-process/catalog-api.ts";\nexport class CatalogBalances implements AntiCorruptionLayer { constructor(private readonly api: CatalogApi) {} }`,
 		);
 	}
-	if (ledgerConsumesPayments) {
+	if (catalogConsumesOrdering) {
 		codebase.file(
-			"src/ledger/driven/payments/adapters/payment-status.adapter.ts",
-			`import type { AntiCorruptionLayer } from "@alveolus/core";\nimport type { PaymentsApi } from "../../../../payments/driving/in-process/payments-api.ts";\nexport class PaymentStatus implements AntiCorruptionLayer { constructor(private readonly api: PaymentsApi) {} }`,
+			"src/catalog/driven/ordering/adapters/order-status.adapter.ts",
+			`import type { AntiCorruptionLayer } from "@alveolus/core";\nimport type { OrderingApi } from "../../../../ordering/driving/in-process/ordering-api.ts";\nexport class PaymentStatus implements AntiCorruptionLayer { constructor(private readonly api: OrderingApi) {} }`,
 		);
 	}
 	return codebase;
@@ -60,25 +60,25 @@ function bank(config: Partial<AlveolusConfig>, paymentsConsumesLedger: boolean, 
 
 describe("NoUnmappedContextRule", () => {
 	it("accepts the consumptions the context map declares", () => {
-		const contextMap = { ledger: { consumes: [] }, payments: { consumes: ["ledger"] }, reporting: { consumes: ["ledger"] } };
+		const contextMap = { catalog: { consumes: [] }, ordering: { consumes: ["catalog"] }, reporting: { consumes: ["catalog"] } };
 
-		expect(bank({ contextMap }, true, false).check(new NoUnmappedContextRule())).toEqual([]);
+		expect(shop({ contextMap }, true, false).check(new NoUnmappedContextRule())).toEqual([]);
 	});
 
 	it("rejects a consumption the context map does not declare, and says to reverse it first", () => {
-		const contextMap = { ledger: { consumes: [] }, payments: { consumes: [] }, reporting: { consumes: ["ledger"] } };
+		const contextMap = { catalog: { consumes: [] }, ordering: { consumes: [] }, reporting: { consumes: ["catalog"] } };
 
-		expect(bank({ contextMap }, true, false).messages(new NoUnmappedContextRule())).toEqual([
-			"payments consumes ledger, which the context map does not allow: reverse the dependency with an integration event that payments publishes and ledger subscribes to, not with a callback; or if payments really is downstream of ledger, add ledger to contextMap.payments.consumes.",
+		expect(shop({ contextMap }, true, false).messages(new NoUnmappedContextRule())).toEqual([
+			"ordering consumes catalog, which the context map does not allow: reverse the dependency with an integration event that ordering publishes and catalog subscribes to, not with a callback; or if ordering really is downstream of catalog, add catalog to contextMap.ordering.consumes.",
 		]);
 	});
 
 	it("reports both ends of a consumption the map does not know, a cycle included", () => {
-		const contextMap = { ledger: { consumes: [] }, payments: { consumes: [] }, reporting: { consumes: ["ledger"] } };
+		const contextMap = { catalog: { consumes: [] }, ordering: { consumes: [] }, reporting: { consumes: ["catalog"] } };
 
-		expect(bank({ contextMap }, true, true).check(new NoUnmappedContextRule())).toEqual([
-			"src/payments/driven/ledger/adapters/ledger-balances.adapter.ts:2 LedgerApi",
-			"src/ledger/driven/payments/adapters/payment-status.adapter.ts:2 PaymentsApi",
+		expect(shop({ contextMap }, true, true).check(new NoUnmappedContextRule())).toEqual([
+			"src/ordering/driven/catalog/adapters/catalog-prices.adapter.ts:2 CatalogApi",
+			"src/catalog/driven/ordering/adapters/order-status.adapter.ts:2 OrderingApi",
 		]);
 	});
 
