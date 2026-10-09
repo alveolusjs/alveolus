@@ -6,15 +6,15 @@ import { NoPublicFieldRule } from "./no-public-field.rule.ts";
 describe("NoPublicFieldRule", () => {
 	it("accepts private fields, getters and static constants", () => {
 		const codebase = new TestCodebase().file(
-			"src/ledger/domain/aggregates/account.aggregate.ts",
+			"src/catalog/domain/aggregates/product.aggregate.ts",
 			`import { AggregateRoot, Identifier } from "@alveolus/core";
-			class AccountId extends Identifier<string, "AccountId"> {}
-			export class Account extends AggregateRoot<AccountId> {
+			class ProductId extends Identifier<string, "ProductId"> {}
+			export class Product extends AggregateRoot<ProductId> {
 				public static readonly limit = 100;
-				private balance = 0;
-				protected readonly opened: string = "";
-				public constructor(id: AccountId, private readonly currency: string) { super(id); }
-				public get balanceValue(): number { return this.balance; }
+				private stock = 0;
+				protected readonly addedAt: string = "";
+				public constructor(id: ProductId, private readonly sku: string) { super(id); }
+				public get available(): number { return this.stock; }
 				public toSnapshot() { return { id: this.id.value }; }
 			}`,
 		);
@@ -24,23 +24,23 @@ describe("NoPublicFieldRule", () => {
 
 	it("rejects a public field, readonly or not, declared or as a constructor parameter", () => {
 		const codebase = new TestCodebase().file(
-			"src/ledger/domain/aggregates/account.aggregate.ts",
+			"src/catalog/domain/aggregates/product.aggregate.ts",
 			`import { AggregateRoot, Identifier, ValueObject } from "@alveolus/core";
-			class AccountId extends Identifier<string, "AccountId"> {}
-			export class Account extends AggregateRoot<AccountId> {
-				public balance = 0;
-				public readonly currency = "EUR";
-				public constructor(id: AccountId, public readonly owner: string) { super(id); }
+			class ProductId extends Identifier<string, "ProductId"> {}
+			export class Product extends AggregateRoot<ProductId> {
+				public stock = 0;
+				public readonly sku = "SKU-1";
+				public constructor(id: ProductId, public readonly name: string) { super(id); }
 				public toSnapshot() { return { id: this.id.value }; }
 			}
 			export class Money extends ValueObject<{ amount: number }> { public amount = 0; }`,
 		);
 
 		expect(codebase.check(new NoPublicFieldRule())).toEqual([
-			"src/ledger/domain/aggregates/account.aggregate.ts:4 Account.balance",
-			"src/ledger/domain/aggregates/account.aggregate.ts:5 Account.currency",
-			"src/ledger/domain/aggregates/account.aggregate.ts:6 Account.owner",
-			"src/ledger/domain/aggregates/account.aggregate.ts:9 Money.amount",
+			"src/catalog/domain/aggregates/product.aggregate.ts:4 Product.stock",
+			"src/catalog/domain/aggregates/product.aggregate.ts:5 Product.sku",
+			"src/catalog/domain/aggregates/product.aggregate.ts:6 Product.name",
+			"src/catalog/domain/aggregates/product.aggregate.ts:9 Money.amount",
 		]);
 	});
 });

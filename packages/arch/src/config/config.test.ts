@@ -88,20 +88,20 @@ describe("Config", () => {
 	});
 
 	it("refuses a context map that names an unknown context, leaves one out, consumes itself or has a cycle", () => {
-		const contexts = { ledger: "ledger", payments: "payments" };
-		const subdomains = { core: ["ledger", "payments"] };
+		const contexts = { catalog: "catalog", ordering: "ordering" };
+		const subdomains = { core: ["catalog", "ordering"] };
 		const configOf = (contextMap: ContextMapConfig): Config => new Config({ boundedContexts: contexts, contextMap, root: "src", subdomains }, "/project");
 
-		expect(() => configOf({ billing: { consumes: [] }, ledger: { consumes: [] }, payments: { consumes: ["reporting"] } })).toThrow(
+		expect(() => configOf({ billing: { consumes: [] }, catalog: { consumes: [] }, ordering: { consumes: ["reporting"] } })).toThrow(
 			"contextMap names billing, reporting, which boundedContexts does not declare.",
 		);
-		expect(() => configOf({ payments: { consumes: ["ledger"] } })).toThrow("contextMap does not list ledger: every bounded context lists the contexts it consumes, consumes: [] when none.");
-		expect(() => configOf({ ledger: { consumes: ["ledger"] }, payments: { consumes: [] } })).toThrow("contextMap lists ledger as consuming itself: a context consumes other contexts only.");
-		expect(() => configOf({ ledger: { consumes: ["payments"] }, payments: { consumes: ["ledger"] } })).toThrow("contextMap has a cycle: ledger → payments → ledger.");
+		expect(() => configOf({ ordering: { consumes: ["catalog"] } })).toThrow("contextMap does not list catalog: every bounded context lists the contexts it consumes, consumes: [] when none.");
+		expect(() => configOf({ catalog: { consumes: ["catalog"] }, ordering: { consumes: [] } })).toThrow("contextMap lists catalog as consuming itself: a context consumes other contexts only.");
+		expect(() => configOf({ catalog: { consumes: ["ordering"] }, ordering: { consumes: ["catalog"] } })).toThrow("contextMap has a cycle: catalog → ordering → catalog.");
 
-		const config = configOf({ ledger: { consumes: [] }, payments: { consumes: ["ledger"] } });
+		const config = configOf({ catalog: { consumes: [] }, ordering: { consumes: ["catalog"] } });
 
-		expect(config.contextMap.allows("payments", "ledger")).toBe(true);
-		expect(config.contextMap.allows("ledger", "payments")).toBe(false);
+		expect(config.contextMap.allows("ordering", "catalog")).toBe(true);
+		expect(config.contextMap.allows("catalog", "ordering")).toBe(false);
 	});
 });
