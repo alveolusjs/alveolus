@@ -86,6 +86,7 @@ const sidebar = [
 				items: [
 					{ link: "/rules/strategic/no-cross-context-import", text: "no-cross-context-import" },
 					{ link: "/rules/strategic/no-fat-shared-kernel", text: "no-fat-shared-kernel" },
+					{ link: "/rules/strategic/no-shared-state", text: "no-shared-state" },
 					{ link: "/rules/strategic/no-leaky-host-service", text: "no-leaky-host-service" },
 					{ link: "/rules/strategic/no-unmapped-context", text: "no-unmapped-context" },
 				],

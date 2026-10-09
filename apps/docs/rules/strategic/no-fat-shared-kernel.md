@@ -77,5 +77,6 @@ rules: { "strategic/no-fat-shared-kernel": "off" },
 ## See also
 
 - [Project layout: shared kernel](../../guide/project-layout.md#shared-kernel)
+- [`strategic/no-shared-state`](./no-shared-state.md), no state in the shared kernel either
 - [`strategic/no-unmapped-context`](./no-unmapped-context.md), the other way contexts get tied
 - [Rules](../index.md), every rule by category

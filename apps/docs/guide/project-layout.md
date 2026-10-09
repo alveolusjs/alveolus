@@ -313,7 +313,9 @@ may import it; it imports none of them.
 Each change to the shared kernel reaches every context. `Clock` and `IdGenerator` already come
 with `@alveolus/core`; only their adapters live here. An aggregate, a repository or a handler in
 the shared kernel is reported by
-[`strategic/no-fat-shared-kernel`](../rules/strategic/no-fat-shared-kernel.md).
+[`strategic/no-fat-shared-kernel`](../rules/strategic/no-fat-shared-kernel.md), and a static field
+that holds state, such as a registry of services, by
+[`strategic/no-shared-state`](../rules/strategic/no-shared-state.md).
 :::
 
 ## See also

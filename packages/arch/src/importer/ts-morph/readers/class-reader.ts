@@ -7,6 +7,7 @@ import type { TypeReader } from "./type-reader.ts";
 
 interface MemberTypes {
 	readonly isCallable?: boolean;
+	readonly holdsCollection?: boolean;
 	readonly parameterTypes?: readonly ClassType[];
 	readonly returns?: ReturnShape | undefined;
 	readonly valueTypes?: readonly ClassType[];
@@ -36,6 +37,7 @@ export class ClassReader {
 			const [signature] = type.getCallSignatures();
 			return [
 				this.member(member, "field", {
+					holdsCollection: this.types.holdsCollection(type),
 					isCallable: signature !== undefined,
 					returns: signature === undefined ? undefined : this.types.returnShapeOf(signature.getReturnType()),
 					valueTypes: this.types.classTypesIn(type),
@@ -62,8 +64,10 @@ export class ClassReader {
 		const isStatic = Node.isStaticable(member) && member.isStatic();
 		const scope = Node.isScoped(member) ? member.getScope() : Scope.Public;
 		return new Member({
+			holdsCollection: types.holdsCollection ?? false,
 			isCallable: types.isCallable ?? false,
 			isParameterProperty: false,
+			isReadonly: Node.isReadonlyable(member) && member.isReadonly(),
 			isStatic,
 			kind,
 			line: member.getStartLineNumber(),
@@ -81,8 +85,10 @@ export class ClassReader {
 
 	private constructorParameter(parameter: ParameterDeclaration): Member {
 		return new Member({
+			holdsCollection: this.types.holdsCollection(parameter.getType()),
 			isCallable: false,
 			isParameterProperty: parameter.isParameterProperty(),
+			isReadonly: parameter.isReadonly(),
 			isStatic: false,
 			kind: "constructor parameter",
 			line: parameter.getStartLineNumber(),

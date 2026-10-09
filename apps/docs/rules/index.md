@@ -53,6 +53,7 @@ its own business. The "Applies to" line of each rule page says which it is.
 | --- | --- |
 | [`strategic/no-cross-context-import`](./strategic/no-cross-context-import.md) | An import from another bounded context that is not its open host service, a file the analysis does not see, a composition root that re-exports. |
 | [`strategic/no-fat-shared-kernel`](./strategic/no-fat-shared-kernel.md) | An aggregate, a repository or a handler in the shared kernel. |
+| [`strategic/no-shared-state`](./strategic/no-shared-state.md) | A static field of the shared kernel that holds state. |
 | [`strategic/no-leaky-host-service`](./strategic/no-leaky-host-service.md) | An open host service that exposes a class of its context instead of the published language. |
 | [`strategic/no-unmapped-context`](./strategic/no-unmapped-context.md) | A context consuming one the context map does not allow, or two contexts that depend on each other. |
 

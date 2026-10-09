@@ -6,6 +6,8 @@ import type { NamedType, ReturnShape } from "../../../model/index.ts";
 import { ClassType } from "../../../model/index.ts";
 import type { PackageNames } from "../package-names.ts";
 
+const collections: readonly string[] = ["Map", "Set", "WeakMap", "WeakSet"];
+
 export class TypeReader {
 	public constructor(private readonly packageNames: PackageNames) {}
 
@@ -24,6 +26,19 @@ export class TypeReader {
 	public namedTypeOf(type: Type): NamedType {
 		const symbol = type.getSymbol() ?? type.getAliasSymbol();
 		return symbol === undefined ? { name: type.getText(), packageName: undefined } : this.namedSymbol(symbol);
+	}
+
+	public holdsCollection(type: Type): boolean {
+		if (type.isArray() || type.isTuple()) {
+			return !type.isReadonlyArray();
+		}
+		if (collections.includes(type.getSymbol()?.getName() ?? "")) {
+			return true;
+		}
+		if (type.getStringIndexType() !== undefined || type.getNumberIndexType() !== undefined) {
+			return true;
+		}
+		return type.isAnonymous() && type.getCallSignatures().length === 0 && type.getConstructSignatures().length === 0;
 	}
 
 	public returnShapeOf(type: Type): ReturnShape {
