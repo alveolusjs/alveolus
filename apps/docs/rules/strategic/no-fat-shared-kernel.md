@@ -18,13 +18,13 @@ Everything that changes with a business belongs to one bounded context.
 ## Why
 
 `Customer` is needed by every context, so it lands in the shared kernel. From then on every
-context depends on its shape, its rules and its repository; the KYC team cannot change how a
-customer is verified without a change that reaches the whole system. The shared kernel has become
+context depends on its shape, its rules and its repository; the customers team cannot change how
+a customer signs up without a change that reaches the whole system. The shared kernel has become
 the one model nobody can touch.
 
 ::: tip The fix
-Each context keeps its own view of a customer, under its own name: a `Payer` in payments, an
-`Applicant` in KYC, each with the fields it needs. What they share is small and stable: the
+Each context keeps its own view of a customer, under its own name: a `Buyer` in ordering, a
+`Recipient` in notifications, each with the fields it needs. What they share is small and stable: the
 `CustomerId`, the `Money` value object, the ports every context uses.
 :::
 
