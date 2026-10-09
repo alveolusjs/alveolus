@@ -9,13 +9,15 @@ import { SourceImports } from "./support/source-imports.ts";
  * Each folder of `src/` may import only the folders listed here. See ARCHITECTURE.md.
  */
 const allowedImports: Readonly<Record<string, readonly string[]>> = {
-	".": ["architecture", "check", "cli", "config", "importer", "rules"],
+	".": ["architecture", "check", "cli", "config", "docs", "importer", "init", "rules"],
 	architecture: ["conventions", "model"],
 	check: ["architecture", "conventions", "importer", "rules"],
-	cli: ["check", "config", "importer", "rules"],
+	cli: ["check", "config", "docs", "importer", "init", "rules"],
 	config: ["architecture", "check", "rules"],
 	conventions: [],
+	docs: [],
 	importer: ["model"],
+	init: [],
 	model: [],
 	rules: ["architecture", "conventions", "model"],
 };
