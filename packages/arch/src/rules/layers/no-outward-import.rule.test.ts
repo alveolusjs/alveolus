@@ -118,6 +118,31 @@ describe("NoOutwardImportRule", () => {
 		]);
 	});
 
+	it("keeps the composition root and the files at the root away from files the analysis does not see", () => {
+		const codebase = new TestCodebase({ ignore: ["**/*.fixture.ts"] })
+			.file("src/billing/billing.module.ts", `export class BillingModule {}`)
+			.file("src/ordering/wiring.fixture.ts", `export { BillingModule } from "../billing/billing.module.ts";`)
+			.file("lib/relay.ts", `export const relay = {};`)
+			.file(
+				"src/ordering/ordering.module.ts",
+				`import type { BillingModule } from "./wiring.fixture.ts";
+				import { relay } from "../../lib/relay.ts";
+				import { legacy } from "./legacy.js";
+				const plugin = await import(name);`,
+			)
+			.file("src/main.ts", `import { BillingModule } from "./ordering/wiring.fixture.ts";\nimport { relay } from "../lib/relay.ts";`);
+
+		expect(codebase.messages(new NoOutwardImportRule())).toEqual([
+			"The file is outside the bounded contexts and the shared kernel declared in alveolus.config.ts: move it, or add it to ignore.",
+			"Files at the root import composition roots only, not src/ordering/wiring.fixture.ts (ignored by the analysis).",
+			"Files at the root import composition roots only, not lib/relay.ts (outside the declared bounded contexts and shared kernel).",
+			"The composition root imports src/ordering/wiring.fixture.ts (ignored by the analysis): it wires its own context and the shared kernel only.",
+			"The composition root imports lib/relay.ts (outside the declared bounded contexts and shared kernel): it wires its own context and the shared kernel only.",
+			"The composition root imports src/ordering/legacy.js (not resolved by the analysis): it wires its own context and the shared kernel only.",
+			"The composition root imports src/ordering/name (not resolved by the analysis): it wires its own context and the shared kernel only.",
+		]);
+	});
+
 	it("expects the documented folders under each layer, but keeps the layer of a misplaced file", () => {
 		const codebase = new TestCodebase()
 			.file("src/ordering/domain/legacy/v1/aggregates/order.aggregate.ts", `import { Pool } from "pg";`)

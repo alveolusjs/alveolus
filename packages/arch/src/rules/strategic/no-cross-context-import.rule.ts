@@ -3,12 +3,12 @@ import type { Dependency, SourceFile } from "../../model/index.ts";
 import type { Finding, RuleMeta } from "../framework/index.ts";
 import { ImportRule } from "../framework/index.ts";
 
-type MessageId = "reexport" | "sharedKernel" | "publishedLanguage" | "notOpenHostService" | "outsideAntiCorruptionLayer";
+type MessageId = "reexport" | "unseen" | "sharedKernel" | "publishedLanguage" | "notOpenHostService" | "outsideAntiCorruptionLayer";
 
 export class NoCrossContextImportRule extends ImportRule<"strategic/no-cross-context-import", MessageId> {
 	public readonly meta: RuleMeta<"strategic/no-cross-context-import", MessageId> = {
 		contexts: "every",
-		description: "An import from another bounded context that is not its open host service, a composition root that re-exports.",
+		description: "An import from another bounded context that is not its open host service, a file the analysis does not see, a composition root that re-exports.",
 		id: "strategic/no-cross-context-import",
 		messages: {
 			notOpenHostService: "Imports {target}: only an OpenHostService of another bounded context may be imported.",
@@ -16,6 +16,7 @@ export class NoCrossContextImportRule extends ImportRule<"strategic/no-cross-con
 			publishedLanguage: "Imports the published language of {context}: redeclare the fields you read in your own published-language/.",
 			reexport: "The composition root re-exports {names}: it exports its own module only, so that no other context reaches through it.",
 			sharedKernel: "The shared kernel imports no bounded context, but imports {target}.",
+			unseen: "Imports {target}: the analysis cannot tell which bounded context it reaches; move the file into a bounded context or the shared kernel.",
 		},
 	};
 
@@ -34,6 +35,9 @@ export class NoCrossContextImportRule extends ImportRule<"strategic/no-cross-con
 			return undefined;
 		}
 		const to = architecture.locationOfTarget(target);
+		if (to.isOutside) {
+			return this.finding(file, dependency.line, dependency.label, "unseen", { target: this.wording.target(target, architecture) });
+		}
 		if (!to.isOtherBoundedContextThan(from)) {
 			return undefined;
 		}

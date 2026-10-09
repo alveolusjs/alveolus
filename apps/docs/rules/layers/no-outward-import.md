@@ -40,8 +40,11 @@ Within the same context, or towards the shared kernel:
 | `published-language/` | Its own `published-language/`. From `@alveolus/core`, only `PublishedLanguage`, `IntegrationEvent` and `JsonValue`; other packages, such as a schema library, are fine. |
 | `driven/` | `domain/`, `application/`, `published-language/`, `driven/`, any package. |
 | `driving/` | `domain/`, `application/`, `published-language/`, `driving/`, any package. |
-| the composition root | Anything in its context and in the shared kernel. |
-| files at the root of `src/` | Composition roots, and each other. |
+| the composition root | Anything in its context and in the shared kernel, any package. |
+| files at the root of `src/` | Composition roots, each other, any package. |
+
+No file imports a file the analysis does not see: ignored, unresolved, computed at runtime, or
+outside the declared contexts and the shared kernel.
 
 No layer imports a composition root. The domain has its own rule,
 [`layers/no-impure-domain`](./no-impure-domain.md); imports from another context are checked by
@@ -100,7 +103,8 @@ The rule also reports:
 | Case | Message |
 | --- | --- |
 | A layer imports a composition root | `Imports … : only the composition root wires the layers.` |
-| A file at the root imports inside a context | `Files at the root import composition roots only, not ….` |
+| A file at the root imports inside a context, or a file the analysis does not see | `Files at the root import composition roots only, not ….` |
+| A composition root imports a file the analysis does not see | `The composition root imports src/ordering/wiring.fixture.ts (ignored by the analysis): it wires its own context and the shared kernel only.` |
 | Two composition roots in a context | `ordering has 2 composition roots (ordering.module.ts, pricing.module.ts): keep one, and move the rest into the layers.` |
 | The published language imports another name from core | `The published language imports … from @alveolus/core: only published-language types are allowed.` |
 | A name not allowed from a restricted package | `The application imports Controller from @nestjs/common: applicationDependencies only allows Injectable.` |
