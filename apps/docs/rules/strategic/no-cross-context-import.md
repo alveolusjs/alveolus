@@ -44,7 +44,9 @@ The shared kernel imports no bounded context at all. Every context may import th
 No file of a context or of the shared kernel imports a file the analysis does not see: ignored,
 unresolved, computed at runtime, or outside the declared contexts and the shared kernel. Such a
 file could re-export another context, and the rule could not tell which one. Code loaded at
-runtime, with `createRequire`, `eval`, `new Function` or `node:vm`, is reported the same way.
+runtime, with `createRequire`, `eval`, the `Function` constructor or `node:vm`, is reported the
+same way, whether it is named or reached through its type, see
+[Every import counts](../index.md#every-import-counts).
 
 Every form of import counts, see [Every import counts](../index.md#every-import-counts).
 
@@ -151,6 +153,9 @@ bounded context. Move what it needs into the shared kernel, or keep it in the co
   should build values of its own context.
 - A file that matches `ignore` in `alveolus.config.ts` is not analysed at all, and no file of a
   context may import it. Review a change to `ignore` as you would review a rule turned off.
+- A loader reached through a value typed `any` that is neither a `constructor` nor a lookup on
+  `globalThis`, such as `(loaders as any).run(code)`, is not recognised. In review, `any` around a
+  call is a question to ask.
 - In the wiring, a value whose type is erased on the way, by a cast or a container token written
   as a string, is not seen. In review, the composition root holds no cast.
 :::

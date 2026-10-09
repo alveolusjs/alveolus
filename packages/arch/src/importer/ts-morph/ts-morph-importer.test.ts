@@ -68,6 +68,37 @@ describe("TsMorphImporter", () => {
 		]);
 	});
 
+	it("reads code loaded at runtime by its type, without its name", () => {
+		const file = new TestCodebase()
+			.file(
+				path,
+				`const asyncLoader = new (Object.getPrototypeOf(async () => {}).constructor)("p", "return p");
+			const plain = new ((() => 0).constructor as FunctionConstructor)("p", "return p");
+			const alias = Function;
+			const aliased = new alias("return 1");
+			const run = eval;
+			run("1");
+			const reflected = Reflect.construct(Function, ["return 1"]);
+			const lookedUp = Reflect.get(globalThis, ["ev", "al"].join(""));
+			const indexed = globalThis["eval"];
+			const computed = globalThis[String(1)];
+			class Money { public copy(): Money { return new (this.constructor as new () => Money)(); } }
+			const timer = globalThis["setTimeout"];`,
+			)
+			.readFile(path);
+
+		expect(file.dependencies.map((dependency) => [dependency.line, dependency.label])).toEqual([
+			[1, "Object.getPrototypeOf(async () => {}).constructor"],
+			[2, "(() => 0).constructor"],
+			[4, "Function"],
+			[6, "eval"],
+			[7, "Function"],
+			[8, "globalThis[…]"],
+			[9, "globalThis.eval"],
+			[10, "globalThis[…]"],
+		]);
+	});
+
 	it("reads a class: its lineage with packages, its heritage, its markers and its members in source order", () => {
 		const file = new TestCodebase()
 			.file(

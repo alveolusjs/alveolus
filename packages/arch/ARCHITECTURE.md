@@ -106,6 +106,7 @@ each file with one reader per family of facts:
 | `TypeReader` | `ClassType` (deep walk of a type), `NamedType`, `ReturnShape` |
 | `StatementReader` | `TopLevelStatement`: functions, enums, namespaces, mutable or computed constants, bare statements |
 | `ThrowReader` | `Throw`: `throw` statements and `Promise.reject` calls |
+| `LoaderReader` | code loaded at runtime, for `DependencyReader`: by name, and by type (`FunctionConstructor`, `typeof eval`, the `constructor` of a function, a computed lookup on `globalThis`) |
 | `GlobalReader` | globals, told apart by where the type checker finds their declaration |
 | `WiringReader` | `Wiring`: in the files `ImportScope.readsWiring` names, each value given to a call, a construction, an assignment or a typed declaration, as the chain of its links with where each is declared and the classes in its type |
 

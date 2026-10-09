@@ -69,7 +69,7 @@ describe("NoUnmappedContextRule", () => {
 		const contextMap = { ledger: { consumes: [] }, payments: { consumes: [] }, reporting: { consumes: ["ledger"] } };
 
 		expect(bank({ contextMap }, true, false).messages(new NoUnmappedContextRule())).toEqual([
-			"payments consumes ledger, which the context map does not allow: reverse the dependency, or if payments really is downstream of ledger, add ledger to contextMap.payments.consumes.",
+			"payments consumes ledger, which the context map does not allow: reverse the dependency with an integration event that payments publishes and ledger subscribes to, not with a callback; or if payments really is downstream of ledger, add ledger to contextMap.payments.consumes.",
 		]);
 	});
 
@@ -105,8 +105,8 @@ export class AppModule {
 	}
 }`).messages(new NoUnmappedContextRule()),
 		).toEqual([
-			"catalog receives this.ordering.placeOrder from ordering here, which the context map does not allow: reverse the dependency, or if catalog really is downstream of ordering, add ordering to contextMap.catalog.consumes.",
-			"catalog receives handler from ordering here, which the context map does not allow: reverse the dependency, or if catalog really is downstream of ordering, add ordering to contextMap.catalog.consumes.",
+			"catalog receives this.ordering.placeOrder from ordering here, which the context map does not allow: reverse the dependency with an integration event that catalog publishes and ordering subscribes to, not with a callback; or if catalog really is downstream of ordering, add ordering to contextMap.catalog.consumes.",
+			"catalog receives handler from ordering here, which the context map does not allow: reverse the dependency with an integration event that catalog publishes and ordering subscribes to, not with a callback; or if catalog really is downstream of ordering, add ordering to contextMap.catalog.consumes.",
 		]);
 	});
 });
