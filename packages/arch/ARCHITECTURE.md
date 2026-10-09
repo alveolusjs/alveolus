@@ -87,7 +87,7 @@ from the rest of the package, no `ts-morph`.
   loaded at runtime (`node:module`, `node:vm`, `eval`, `new Function`, towards a target of
   visibility `dynamic`), and a global declared by another file of the project.
 - `Wiring` is a value given in a composition root or a file at the root: the file declaring what
-  receives it, and the links of its expression (`this`, `emoney`, `commands`, …), each with the
+  receives it, and the links of its expression (`this`, `catalog`, `commands`, …), each with the
   file declaring it and the classes in its type.
 - `ModuleReach` is a class of a composition root, a module, used in a composition root or a file at
   the root other than by one of its properties, as a whole argument to another module, or stored:

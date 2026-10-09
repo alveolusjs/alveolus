@@ -17,10 +17,10 @@ by every context at once: a channel between them that no import and no context m
 
 ## Why
 
-Ledger needs to create a redemption in e-money, and the context map says ledger consumes nothing.
-Someone adds a `ServiceRegistry` to the shared kernel: e-money registers its handler under a name,
-ledger resolves it. No file of ledger imports e-money, every import rule passes, and ledger now
-depends on e-money in a way nobody decided.
+The catalog needs to cancel the orders of a withdrawn product, and the context map says the
+catalog consumes nothing. Someone adds a `ServiceRegistry` to the shared kernel: ordering registers
+its handler under a name, the catalog resolves it. No file of the catalog imports ordering, every
+import rule passes, and the catalog now depends on ordering in a way nobody decided.
 
 ::: tip The fix
 Contexts talk through an [open host service](../../core/strategic/open-host-services.md), consumed
