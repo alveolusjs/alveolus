@@ -5,6 +5,7 @@ export { Member, type Visibility } from "./classes/member.ts";
 export type { NamedType } from "./classes/named-type.ts";
 export type { ReturnShape } from "./classes/return-shape.ts";
 export { Dependency, type DependencyForm, type DependencyTarget } from "./dependencies/dependency.ts";
+export { type GlobalAccess, GlobalChannel } from "./dependencies/global-channel.ts";
 export { type GlobalEffect, GlobalUse } from "./dependencies/global-use.ts";
 export { ModuleReach } from "./dependencies/module-reach.ts";
 export { Wiring, type WiringLink } from "./dependencies/wiring.ts";

@@ -89,7 +89,8 @@ value object, a primitive, a `readonly` array, a `ReadonlyMap`.
   goes unseen. In review, the root passes the same instance to several contexts only for the
   infrastructure every context needs: the database, the outbox, the clock.
 - State held outside the shared kernel is not checked: a package with a global container, such as
-  the default container of a dependency injection library, or a write to `globalThis`.
+  the default container of a dependency injection library. A name of `globalThis` that no file
+  declares is reported by [`strategic/no-cross-context-import`](./no-cross-context-import.md).
 :::
 
 ## Turn it off

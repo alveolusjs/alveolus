@@ -50,6 +50,13 @@ same way, whether it is named or reached through its type, see
 
 Every form of import counts, see [Every import counts](../index.md#every-import-counts).
 
+The global object is no channel either. Writing or reading a name of `globalThis`, `global`,
+`window` or `self` that no file declares is reported, wherever it is written: an assignment,
+`Reflect.set`, `Reflect.get`, `Object.assign`, `Object.defineProperty`, or `(globalThis as any).x`.
+A name the library declares, such as a polyfill of `globalThis.crypto` or a read of `fetch`, is
+fine, and a global the project declares with `declare global` counts as an import of the file that
+declares it.
+
 The wiring follows the same contract. In the composition roots and the files at the root of
 `src/`, a value of one context given to another one, such as
 `new LedgerModule({ redemptions: () => this.emoney.commands.requestRedemption })`, is an
@@ -108,6 +115,12 @@ src/app.module.ts
  21  error  strategic/no-cross-context-import: Reaches into this.emoney
   with Reflect.get: in the wiring, a module of another context is read
   by its properties, so that what crosses can be seen.
+
+src/emoney/emoney.module.ts
+ 18  error  strategic/no-cross-context-import: Writes
+  globalThis.eme:redemptions, which no file declares: two contexts can
+  meet there without the context map showing it. Integrate through an
+  open host service, or publish an integration event.
 ```
 
 ## Fix it

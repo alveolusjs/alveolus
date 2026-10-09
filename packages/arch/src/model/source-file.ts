@@ -1,5 +1,6 @@
 import type { ClassDeclaration } from "./classes/class-declaration.ts";
 import type { Dependency } from "./dependencies/dependency.ts";
+import type { GlobalChannel } from "./dependencies/global-channel.ts";
 import type { GlobalUse } from "./dependencies/global-use.ts";
 import type { ModuleReach } from "./dependencies/module-reach.ts";
 import type { Wiring } from "./dependencies/wiring.ts";
@@ -15,6 +16,7 @@ export interface SourceFileProps {
 	readonly statements: readonly TopLevelStatement[];
 	readonly throws: readonly Throw[];
 	readonly globals: readonly GlobalUse[];
+	readonly globalChannels: readonly GlobalChannel[];
 	readonly wirings: readonly Wiring[];
 	readonly moduleReaches: readonly ModuleReach[];
 	readonly disables: readonly DisableComment[];
@@ -27,6 +29,7 @@ export class SourceFile {
 	public readonly statements: readonly TopLevelStatement[];
 	public readonly throws: readonly Throw[];
 	public readonly globals: readonly GlobalUse[];
+	public readonly globalChannels: readonly GlobalChannel[];
 	public readonly wirings: readonly Wiring[];
 	public readonly moduleReaches: readonly ModuleReach[];
 	public readonly disables: readonly DisableComment[];
@@ -39,6 +42,7 @@ export class SourceFile {
 		this.statements = props.statements;
 		this.throws = props.throws;
 		this.globals = props.globals;
+		this.globalChannels = props.globalChannels;
 		this.wirings = props.wirings;
 		this.moduleReaches = props.moduleReaches;
 		this.disables = props.disables;

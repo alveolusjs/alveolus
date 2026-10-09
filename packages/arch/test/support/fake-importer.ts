@@ -8,7 +8,19 @@ export class FakeImporter extends Importer {
 	}
 
 	public read(scope: ImportScope): Project {
-		const file = new SourceFile({ classes: [], dependencies: [], disables: [], globals: [], moduleReaches: [], path: `${scope.rootDir}/index.ts`, statements: [], text: "", throws: [], wirings: [] });
+		const file = new SourceFile({
+			classes: [],
+			dependencies: [],
+			disables: [],
+			globalChannels: [],
+			globals: [],
+			moduleReaches: [],
+			path: `${scope.rootDir}/index.ts`,
+			statements: [],
+			text: "",
+			throws: [],
+			wirings: [],
+		});
 		return new Project(scope.projectDir, [file]);
 	}
 

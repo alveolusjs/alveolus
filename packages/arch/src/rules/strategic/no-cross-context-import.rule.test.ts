@@ -260,4 +260,33 @@ export class AppModule {
 			"Reaches into this.ordering with destructuring: in the wiring, a module of another context is read by its properties, so that what crosses can be seen.",
 		]);
 	});
+
+	it("rejects a name of the global object that no file declares, written or read", () => {
+		const codebase = catalog
+			.file(
+				"src/catalog/catalog.module.ts",
+				`import { webcrypto } from "node:crypto";
+export class CatalogModule {
+	public constructor() {
+		globalThis.crypto ??= webcrypto as Crypto;
+		Reflect.set(globalThis, "catalog:prices", () => 1);
+		(globalThis as any).restock = () => true;
+		Object.assign(globalThis, { stock: 3, fetch: globalThis.fetch });
+	}
+}`,
+			)
+			.file(
+				"src/ordering/driven/catalog/adapters/catalog-prices.adapter.ts",
+				`export class CatalogPrices {
+	public price(): unknown { return Reflect.get(globalThis, "catalog:prices") ?? globalThis["structuredClone"]; }
+}`,
+			);
+
+		expect(codebase.messages(new NoCrossContextImportRule())).toEqual([
+			"Writes globalThis.catalog:prices, which no file declares: two contexts can meet there without the context map showing it. Integrate through an open host service, or publish an integration event.",
+			"Writes globalThis.restock, which no file declares: two contexts can meet there without the context map showing it. Integrate through an open host service, or publish an integration event.",
+			"Writes globalThis.stock, which no file declares: two contexts can meet there without the context map showing it. Integrate through an open host service, or publish an integration event.",
+			"Reads globalThis.catalog:prices, which no file declares: two contexts can meet there without the context map showing it. Integrate through an open host service, or publish an integration event.",
+		]);
+	});
 });

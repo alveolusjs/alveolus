@@ -111,6 +111,7 @@ each file with one reader per family of facts:
 | `ThrowReader` | `Throw`: `throw` statements and `Promise.reject` calls |
 | `LoaderReader` | code loaded at runtime, for `DependencyReader`: by name, and by type (`FunctionConstructor`, `typeof eval`, the `constructor` of a function, a computed lookup on `globalThis`) |
 | `ModuleReachReader` | `ModuleReach`: in the files `ImportScope.readsWiring` names, each module reached into other than by its properties |
+| `GlobalChannelReader` | `GlobalChannel`: a name of `globalThis`, `global`, `window` or `self` that no file declares, written or read |
 | `GlobalReader` | globals, told apart by where the type checker finds their declaration |
 | `WiringReader` | `Wiring`: in the files `ImportScope.readsWiring` names, each value given to a call, a construction, an assignment or a typed declaration, as the chain of its links with where each is declared and the classes in its type |
 

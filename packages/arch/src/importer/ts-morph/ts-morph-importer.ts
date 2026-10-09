@@ -11,6 +11,7 @@ import { PackageNames } from "./package-names.ts";
 import { ClassReader } from "./readers/class-reader.ts";
 import { DependencyReader } from "./readers/dependency-reader.ts";
 import { DisableReader } from "./readers/disable-reader.ts";
+import { GlobalChannelReader } from "./readers/global-channel-reader.ts";
 import { GlobalReader } from "./readers/global-reader.ts";
 import type { GlobalReference } from "./readers/global-reference.ts";
 import { ModuleReachReader } from "./readers/module-reach-reader.ts";
@@ -32,6 +33,7 @@ export class TsMorphImporter extends Importer {
 	private readonly statements = new StatementReader();
 	private readonly disables = new DisableReader();
 	private readonly throws = new ThrowReader();
+	private readonly globalChannels = new GlobalChannelReader();
 
 	public constructor(private readonly sources: MorphProject) {
 		super();
@@ -73,6 +75,7 @@ export class TsMorphImporter extends Importer {
 			classes: file.getClasses().map((declaration) => this.classes.read(declaration)),
 			dependencies: dependencies.read(file, globalReferences),
 			disables: this.disables.read(file),
+			globalChannels: this.globalChannels.read(file),
 			globals: this.globalUsesOf(globalReferences),
 			moduleReaches: reaches.read(file),
 			path: normalize(file.getFilePath()),
