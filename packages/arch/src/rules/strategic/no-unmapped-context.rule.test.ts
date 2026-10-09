@@ -29,18 +29,23 @@ function bank(config: Partial<AlveolusConfig>, paymentsConsumesLedger: boolean, 
 
 describe("NoUnmappedContextRule", () => {
 	it("accepts the consumptions the context map declares", () => {
-		expect(bank({ contextMap: { payments: ["ledger"], reporting: ["ledger"] } }, true, false).check(new NoUnmappedContextRule())).toEqual([]);
+		const contextMap = { ledger: { consumes: [] }, payments: { consumes: ["ledger"] }, reporting: { consumes: ["ledger"] } };
+
+		expect(bank({ contextMap }, true, false).check(new NoUnmappedContextRule())).toEqual([]);
 	});
 
-	it("rejects a consumption the context map does not declare", () => {
-		expect(bank({ contextMap: { reporting: ["ledger"] } }, true, false).messages(new NoUnmappedContextRule())).toEqual([
-			"payments consumes ledger, which the context map does not allow: add ledger to contextMap.payments, or reverse the dependency.",
+	it("rejects a consumption the context map does not declare, and says to reverse it first", () => {
+		const contextMap = { ledger: { consumes: [] }, payments: { consumes: [] }, reporting: { consumes: ["ledger"] } };
+
+		expect(bank({ contextMap }, true, false).messages(new NoUnmappedContextRule())).toEqual([
+			"payments consumes ledger, which the context map does not allow: reverse the dependency, or if payments really is downstream of ledger, add ledger to contextMap.payments.consumes.",
 		]);
 	});
 
-	it("without a context map, rejects the consumptions that close a cycle", () => {
-		expect(bank({}, true, false).check(new NoUnmappedContextRule())).toEqual([]);
-		expect(bank({}, true, true).check(new NoUnmappedContextRule())).toEqual([
+	it("reports both ends of a consumption the map does not know, a cycle included", () => {
+		const contextMap = { ledger: { consumes: [] }, payments: { consumes: [] }, reporting: { consumes: ["ledger"] } };
+
+		expect(bank({ contextMap }, true, true).check(new NoUnmappedContextRule())).toEqual([
 			"src/payments/driven/ledger/adapters/ledger-balances.adapter.ts:2 LedgerApi",
 			"src/ledger/driven/payments/adapters/payment-status.adapter.ts:2 PaymentsApi",
 		]);

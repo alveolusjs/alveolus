@@ -8,6 +8,7 @@ const config = `import { defineConfig } from "@alveolus/arch";
 
 export default defineConfig({
 	boundedContexts: {},
+	contextMap: {},
 	root: "src",
 });
 `;
@@ -24,7 +25,7 @@ The documentation is installed with the package: read it with \`npx alveolus exp
 1. Before writing a class, read its building block: \`npx alveolus explain aggregates\`, \`entities\`, \`value-objects\`, \`domain-events\`, \`domain-errors\`, \`ports\`, \`repositories\`, \`command-handlers\`, \`query-handlers\`, \`result\`.
 2. Where a file goes and what each layer may import: \`npx alveolus explain project-layout\`.
 3. After each change, run \`npx alveolus arch check\`.
-4. On a violation, read the rule before changing the code: \`npx alveolus explain <rule>\`, with the rule id of the report, such as \`layers/no-impure-domain\`. Fix the cause: never turn a rule off, add a disable comment or edit \`alveolus.baseline.json\` by hand without asking.
+4. On a violation, read the rule before changing the code: \`npx alveolus explain <rule>\`, with the rule id of the report, such as \`layers/no-impure-domain\`. Fix the cause: never turn a rule off, add a disable comment, add a context to \`contextMap\` or edit \`alveolus.baseline.json\` by hand without asking.
 `;
 
 const agents = `## Alveolus

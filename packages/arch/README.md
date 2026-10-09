@@ -14,6 +14,11 @@ import { defineConfig } from "@alveolus/arch";
 
 export default defineConfig({
 	boundedContexts: { catalog: "catalog", notifications: "notifications", ordering: "ordering" },
+	contextMap: {
+		catalog: { consumes: [] },
+		notifications: { consumes: ["ordering"] },
+		ordering: { consumes: ["catalog"] },
+	},
 	root: "src",
 	subdomains: { core: ["catalog", "ordering"], generic: ["notifications"] },
 });

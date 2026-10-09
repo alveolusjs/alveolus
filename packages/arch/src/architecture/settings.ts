@@ -19,7 +19,7 @@ export interface Settings {
 	readonly contextFolders: readonly ContextFolder[];
 	readonly compositionRoot: string;
 	readonly extraFolders: ExtraFolders;
-	readonly contextMap: ContextMap | undefined;
+	readonly contextMap: ContextMap;
 	readonly domainDependencies: AllowedPackages;
 	readonly applicationDependencies: AllowedPackages;
 }

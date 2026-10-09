@@ -106,8 +106,8 @@ Start from a use case: the [aggregate](../core/domain/aggregates.md) that keeps 
 ## Configure the checks
 
 Create `alveolus.config.ts` at the root of the project. It says where the source code is, which
-folders are bounded contexts and which subdomain each one implements; everything else has a
-default.
+folders are bounded contexts, which subdomain each one implements and which contexts each one
+consumes; everything else has a default.
 
 ```sh
 npx alveolus init
@@ -121,6 +121,11 @@ import { defineConfig } from "@alveolus/arch";
 
 export default defineConfig({
 	boundedContexts: { catalog: "catalog", notifications: "notifications", ordering: "ordering" },
+	contextMap: {
+		catalog: { consumes: [] },
+		notifications: { consumes: ["ordering"] },
+		ordering: { consumes: ["catalog"] },
+	},
 	root: "src",
 	subdomains: { core: ["catalog", "ordering"], generic: ["notifications"] },
 });
@@ -129,6 +134,12 @@ export default defineConfig({
 A [core](./project-layout.md#core-supporting-generic) context is checked by every rule. A
 supporting or generic one is checked only at its boundary: it may be written any way you like, as
 long as it reaches the other contexts through their open host services.
+
+The context map is the strategic design of the system, written down: each line reads as a
+sentence, `ordering` consumes `catalog`, and every context has one, `consumes: []` when it
+consumes nothing. An import that goes against the map is reported by
+[`strategic/no-unmapped-context`](../rules/strategic/no-unmapped-context.md); a cycle in the map
+is refused when the configuration loads.
 
 ### Options
 
@@ -139,7 +150,7 @@ long as it reaches the other contexts through their open host services.
 | `boundedContexts` | required | Each bounded context and its folder, relative to `root`. `"modules/ordering"` works. |
 | `sharedKernel` | `"shared-kernel"` | The folder shared by every bounded context, relative to `root`. |
 | `subdomains` | required | The [subdomain](./project-layout.md#core-supporting-generic) each bounded context implements: `{ core: ["ordering"], supporting: ["billing"], generic: ["notifications"] }`. Every context is listed once. |
-| `contextMap` | none | For each bounded context, the ones it consumes: `{ payments: ["ledger"] }`. Checked for cycles; without it, only cycles are reported. |
+| `contextMap` | required | For each bounded context, the ones it consumes: `{ ledger: { consumes: [] }, payments: { consumes: ["ledger"] } }`. Every context is listed, and the map has no cycle. |
 | `compositionRoot` | `"*.module.ts"` | The file, at the root of a bounded context, that wires it. |
 | `domainDependencies` | `{}` | npm packages the domain may import, besides `@alveolus/core`. |
 | `applicationDependencies` | `{}` | npm packages the application may import, besides `@alveolus/core` and `domainDependencies`. |

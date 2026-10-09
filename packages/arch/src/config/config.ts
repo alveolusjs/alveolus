@@ -1,10 +1,10 @@
 import { matchesGlob, relative, resolve, sep } from "node:path";
 
-import type { ContextFolder, ExtraFolders, Subdomains, SubdomainType, Upstreams } from "../architecture/index.ts";
+import type { ContextFolder, ExtraFolders, Subdomains, SubdomainType } from "../architecture/index.ts";
 import { AllowedPackages, ContextMap } from "../architecture/index.ts";
 import type { CheckSettings, Severity } from "../check/index.ts";
 import type { RuleId } from "../rules/index.ts";
-import type { AlveolusConfig } from "./alveolus-config.ts";
+import type { AlveolusConfig, ContextMapConfig } from "./alveolus-config.ts";
 
 const testFiles: readonly string[] = ["**/*.spec.ts", "**/*.test.ts", "**/*.e2e-spec.ts", "**/*.fixture.ts", "**/*.fixtures.ts", "**/*.stories.ts", "**/__tests__/**", "**/__mocks__/**"];
 
@@ -17,7 +17,7 @@ export class Config implements CheckSettings {
 	public readonly applicationDependencies: AllowedPackages;
 	public readonly contextFolders: readonly ContextFolder[];
 	public readonly extraFolders: ExtraFolders;
-	public readonly contextMap: ContextMap | undefined;
+	public readonly contextMap: ContextMap;
 	private readonly ignored: readonly string[];
 	private readonly rules: AlveolusConfig["rules"];
 
@@ -30,7 +30,7 @@ export class Config implements CheckSettings {
 		this.applicationDependencies = this.domainDependencies.with(new AllowedPackages(config.applicationDependencies));
 		this.ignored = [...testFiles, ...(config.ignore ?? [])];
 		this.extraFolders = config.layout?.extraFolders ?? {};
-		this.contextMap = config.contextMap === undefined ? undefined : this.validContextMap(config.contextMap, Object.keys(config.boundedContexts));
+		this.contextMap = this.validContextMap(config.contextMap, Object.keys(config.boundedContexts));
 		this.rules = config.rules;
 
 		const sharedKernel = config.sharedKernel ?? "shared-kernel";
@@ -62,11 +62,24 @@ export class Config implements CheckSettings {
 		return folders;
 	}
 
-	private validContextMap(upstreams: Upstreams, contexts: readonly string[]): ContextMap {
+	private validContextMap(relations: ContextMapConfig, contexts: readonly string[]): ContextMap {
+		const upstreams: Record<string, readonly string[]> = {};
+		for (const [name, { consumes }] of Object.entries(relations)) {
+			upstreams[name] = consumes;
+		}
 		const map = new ContextMap(upstreams);
-		const unknown = map.contexts.filter((name) => !contexts.includes(name));
+		const named = new Set([...map.contexts, ...map.consumed]);
+		const unknown = [...named].filter((name) => !contexts.includes(name));
 		if (unknown.length > 0) {
 			throw new Error(`contextMap names ${unknown.join(", ")}, which boundedContexts does not declare.`);
+		}
+		const unlisted = contexts.filter((name) => !map.contexts.includes(name));
+		if (unlisted.length > 0) {
+			throw new Error(`contextMap does not list ${unlisted.join(", ")}: every bounded context lists the contexts it consumes, consumes: [] when none.`);
+		}
+		const selfConsumers = map.selfConsumers();
+		if (selfConsumers.length > 0) {
+			throw new Error(`contextMap lists ${selfConsumers.join(", ")} as consuming itself: a context consumes other contexts only.`);
 		}
 		const cycle = map.cycle();
 		if (cycle !== undefined) {

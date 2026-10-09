@@ -152,8 +152,10 @@ name:
 ```ts [alveolus.config.ts]
 export default defineConfig({
 	boundedContexts: { ordering: "ordering" },
+	contextMap: { ordering: { consumes: [] } },
 	root: "src",
 	rules: { "tactical/no-misplaced-class": "off", "tactical/no-public-field": "warn" },
+	subdomains: { core: ["ordering"] },
 });
 ```
 
