@@ -265,7 +265,7 @@ npx alveolus arch check
 
 <div class="al-cards">
 <div class="al-card"><span class="al-card-title"><a href="../../rules/strategic/no-cross-context-import"><code>strategic/no-cross-context-import</code></a></span>Another context imports this class, and nothing else of the catalog.</div>
-<div class="al-card"><span class="al-card-title"><a href="../../rules/strategic/no-leaky-host-service"><code>strategic/no-leaky-host-service</code></a></span>It answers in the published language, never with a class of the catalog.</div>
+<div class="al-card"><span class="al-card-title"><a href="../../rules/strategic/no-leaky-host-service"><code>strategic/no-leaky-host-service</code></a></span>It answers in the published language, never with a class of the catalog or an untyped result, and it receives data, never a callback.</div>
 <div class="al-card"><span class="al-card-title"><a href="../../rules/tactical/no-misplaced-class"><code>tactical/no-misplaced-class</code></a></span>It stays under <code>driving/</code>.</div>
 </div>
 
