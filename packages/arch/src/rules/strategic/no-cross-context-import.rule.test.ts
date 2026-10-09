@@ -99,6 +99,17 @@ describe("NoCrossContextImportRule", () => {
 		expect(codebase.check(new NoCrossContextImportRule())).toEqual(["src/ordering/driven/adapters/prices.adapter.ts:1 ProductId", "src/ordering/driven/adapters/prices.adapter.ts:2 *"]);
 	});
 
+	it("reads reference directives and module augmentations of another context", () => {
+		const codebase = catalog.file(
+			"src/ordering/domain/services/pricing.service.ts",
+			`/// <reference path="../../../catalog/domain/value-objects/product-id.identifier.ts" />
+			declare module "../../../catalog/domain/value-objects/product-id.identifier.ts" { interface ProductId { sku: string } }
+			export class Pricing {}`,
+		);
+
+		expect(codebase.check(new NoCrossContextImportRule())).toEqual(["src/ordering/domain/services/pricing.service.ts:1 *", "src/ordering/domain/services/pricing.service.ts:2 *"]);
+	});
+
 	it("keeps a composition root from re-exporting what other contexts would reach through it", () => {
 		const codebase = catalog
 			.file("src/catalog/domain/aggregates/product.aggregate.ts", `export class Product {}`)

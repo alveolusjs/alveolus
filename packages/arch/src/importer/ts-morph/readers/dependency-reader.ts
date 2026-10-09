@@ -1,5 +1,5 @@
 import { SyntaxKind, ts } from "ts-morph";
-import type { CallExpression, ExportDeclaration, ImportDeclaration, ImportEqualsDeclaration, ImportTypeNode, Node, Project, SourceFile } from "ts-morph";
+import type { CallExpression, ExportDeclaration, FileReference, ImportDeclaration, ImportEqualsDeclaration, ImportTypeNode, ModuleDeclaration, Node, Project, SourceFile } from "ts-morph";
 
 import { isAbsolute, join, normalize, relative } from "node:path";
 
@@ -14,6 +14,7 @@ interface ModuleReference {
 	readonly specifier: string | undefined;
 	readonly text: string;
 	readonly names: readonly string[];
+	readonly isPath?: boolean;
 }
 
 const everything: readonly string[] = ["*"];
@@ -55,6 +56,15 @@ export class DependencyReader {
 		}
 		for (const call of file.getDescendantsOfKind(SyntaxKind.CallExpression)) {
 			references.push(...this.fromCall(call));
+		}
+		for (const reference of file.getPathReferenceDirectives()) {
+			references.push({ ...this.fromDirective(reference, file), isPath: true });
+		}
+		for (const reference of file.getTypeReferenceDirectives()) {
+			references.push(this.fromDirective(reference, file));
+		}
+		for (const declaration of file.getDescendantsOfKind(SyntaxKind.ModuleDeclaration)) {
+			references.push(...this.fromAugmentation(declaration));
 		}
 		return references;
 	}
@@ -109,6 +119,20 @@ export class DependencyReader {
 		return [];
 	}
 
+	private fromDirective(reference: FileReference, file: SourceFile): ModuleReference {
+		const line = file.getLineAndColumnAtPos(reference.getPos()).line;
+		const specifier = reference.getFileName();
+		return { form: "reference", line, names: everything, specifier, text: specifier };
+	}
+
+	private fromAugmentation(declaration: ModuleDeclaration): ModuleReference[] {
+		const name = declaration.getNameNode();
+		if (!name.isKind(SyntaxKind.StringLiteral) || name.getLiteralValue().includes("*")) {
+			return [];
+		}
+		return [this.reference(declaration, "augmentation", name, everything)];
+	}
+
 	private reference(node: Node, form: DependencyForm, specifierNode: Node, names: readonly string[]): ModuleReference {
 		const isLiteral = specifierNode.isKind(SyntaxKind.StringLiteral) || specifierNode.isKind(SyntaxKind.NoSubstitutionTemplateLiteral);
 		return { form, line: node.getStartLineNumber(), names, specifier: isLiteral ? specifierNode.getLiteralValue() : undefined, text: specifierNode.getText() };
@@ -119,11 +143,11 @@ export class DependencyReader {
 		if (reference.specifier === undefined) {
 			return { kind: "file", path: normalize(join(directory, reference.text)), visibility: "unresolved" };
 		}
-		const resolved = this.resolve(reference.specifier, file);
+		const resolved = reference.isPath === true ? this.referencedPath(reference.specifier, directory) : this.resolve(reference.specifier, file);
 		if (resolved !== undefined && this.isInsideProject(resolved)) {
 			return this.fileTarget(resolved);
 		}
-		if (reference.specifier.startsWith(".")) {
+		if (reference.isPath === true || reference.specifier.startsWith(".")) {
 			return { kind: "file", path: normalize(join(directory, reference.specifier)), visibility: "unresolved" };
 		}
 		return { kind: "package", name: this.packageNameOf(reference.specifier) };
@@ -137,6 +161,11 @@ export class DependencyReader {
 		const resolution = ts.resolveModuleName(specifier, file.getFilePath(), this.project.getCompilerOptions(), this.project.getModuleResolutionHost());
 		const resolved = resolution.resolvedModule?.resolvedFileName;
 		return resolved === undefined ? undefined : normalize(resolved);
+	}
+
+	private referencedPath(specifier: string, directory: string): string | undefined {
+		const path = normalize(join(directory, specifier));
+		return this.project.getModuleResolutionHost().fileExists(path) ? path : undefined;
 	}
 
 	private packageNameOf(specifier: string): string {
