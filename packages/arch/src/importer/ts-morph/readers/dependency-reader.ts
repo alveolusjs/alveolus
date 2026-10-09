@@ -1,18 +1,5 @@
 import { SyntaxKind, ts } from "ts-morph";
-import type {
-	CallExpression,
-	ExportDeclaration,
-	Expression,
-	FileReference,
-	ImportDeclaration,
-	ImportEqualsDeclaration,
-	ImportTypeNode,
-	ModuleDeclaration,
-	NewExpression,
-	Node,
-	Project,
-	SourceFile,
-} from "ts-morph";
+import type { CallExpression, ExportDeclaration, FileReference, ImportDeclaration, ImportEqualsDeclaration, ImportTypeNode, ModuleDeclaration, Node, Project, SourceFile } from "ts-morph";
 
 import { isAbsolute, join, normalize, relative } from "node:path";
 
@@ -20,6 +7,7 @@ import type { DependencyForm, DependencyTarget } from "../../../model/index.ts";
 import { Dependency } from "../../../model/index.ts";
 import type { ImportScope } from "../../importer.ts";
 import type { GlobalReference } from "./global-reference.ts";
+import { LoaderReader } from "./loader-reader.ts";
 
 interface ModuleReference {
 	readonly line: number;
@@ -34,11 +22,9 @@ const everything: readonly string[] = ["*"];
 
 const loaderPackages: readonly string[] = ["module", "node:module", "vm", "node:vm"];
 
-const globalLoaders: readonly string[] = ["eval", "Function"];
-
-const loaderMembers: readonly string[] = ["eval", "Function", "require", "getBuiltinModule"];
-
 export class DependencyReader {
+	private readonly loaders = new LoaderReader();
+
 	public constructor(
 		private readonly project: Project,
 		private readonly scope: ImportScope,
@@ -75,10 +61,9 @@ export class DependencyReader {
 		}
 		for (const call of file.getDescendantsOfKind(SyntaxKind.CallExpression)) {
 			references.push(...this.fromCall(call));
-			references.push(...this.fromLoader(call));
 		}
-		for (const construction of file.getDescendantsOfKind(SyntaxKind.NewExpression)) {
-			references.push(...this.fromLoader(construction));
+		for (const load of this.loaders.read(file)) {
+			references.push({ form: "dynamic load", line: load.line, names: [], specifier: load.loader, text: load.loader });
 		}
 		for (const reference of file.getPathReferenceDirectives()) {
 			references.push({ ...this.fromDirective(reference, file), isPath: true });
@@ -154,40 +139,6 @@ export class DependencyReader {
 			return [];
 		}
 		return [this.reference(declaration, "augmentation", name, everything)];
-	}
-
-	private fromLoader(call: CallExpression | NewExpression): ModuleReference[] {
-		const loader = this.loaderOf(call.getExpression());
-		if (loader === undefined) {
-			return [];
-		}
-		return [{ form: "dynamic load", line: call.getStartLineNumber(), names: [], specifier: loader, text: loader }];
-	}
-
-	private loaderOf(callee: Expression): string | undefined {
-		const expression = this.unwrapped(callee);
-		if (expression.isKind(SyntaxKind.Identifier)) {
-			return globalLoaders.includes(expression.getText()) && !this.isDeclaredInProject(expression) ? expression.getText() : undefined;
-		}
-		if (expression.isKind(SyntaxKind.PropertyAccessExpression) && loaderMembers.includes(expression.getName())) {
-			return expression.getText();
-		}
-		return undefined;
-	}
-
-	private unwrapped(expression: Expression): Expression {
-		if (expression.isKind(SyntaxKind.ParenthesizedExpression)) {
-			return this.unwrapped(expression.getExpression());
-		}
-		if (expression.isKind(SyntaxKind.BinaryExpression) && expression.getOperatorToken().isKind(SyntaxKind.CommaToken)) {
-			return this.unwrapped(expression.getRight());
-		}
-		return expression;
-	}
-
-	private isDeclaredInProject(expression: Node): boolean {
-		const declaration = expression.getSymbol()?.getDeclarations()[0];
-		return declaration !== undefined && this.isInsideProject(normalize(declaration.getSourceFile().getFilePath()));
 	}
 
 	private reference(node: Node, form: DependencyForm, specifierNode: Node, names: readonly string[]): ModuleReference {

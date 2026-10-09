@@ -68,16 +68,18 @@ from it is.
 ```
 src/ledger/driven/payments/adapters/payment-status.adapter.ts
   2  error  strategic/no-unmapped-context: ledger consumes payments, which the
-     context map does not allow: reverse the dependency, or if ledger
-     really is downstream of payments, add payments to
-     contextMap.ledger.consumes.
+     context map does not allow: reverse the dependency with an
+     integration event that ledger publishes and payments subscribes to,
+     not with a callback; or if ledger really is downstream of payments,
+     add payments to contextMap.ledger.consumes.
 
 src/app.module.ts
  14  error  strategic/no-unmapped-context: ledger receives
      this.emoney.commands.requestRedemption from emoney here, which the
-     context map does not allow: reverse the dependency, or if ledger
-     really is downstream of emoney, add emoney to
-     contextMap.ledger.consumes.
+     context map does not allow: reverse the dependency with an
+     integration event that ledger publishes and emoney subscribes to,
+     not with a callback; or if ledger really is downstream of emoney,
+     add emoney to contextMap.ledger.consumes.
 ```
 
 A map that would allow it is refused before the check:
@@ -116,6 +118,10 @@ way, and the day it needs another one, the import is reported and the map is upd
 So that `Ledger` stays upstream, it does not ask `Payments` anything: it publishes
 `TransferSettled` in its [published language](../../core/strategic/published-language.md), and
 `Payments` reacts to it.
+
+A callback is not a reversal. `Ledger` calling a function that `Payments` registered on its open
+host service still runs code of `Payments` when `Ledger` decides: the dependency is the same, only
+hidden from the map. An event carries data, and `Ledger` does not know who reacts.
 
 ## Limits
 

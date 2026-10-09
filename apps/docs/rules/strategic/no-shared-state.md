@@ -45,8 +45,9 @@ Every static field of a class in the shared kernel:
 | `static readonly byId: Record<string, Handler> = {}`: an index signature | ❌ |
 | `static readonly options = { strict: true }`: an object literal | ❌ |
 
-Instance fields are not checked: an adapter of the shared kernel may hold its own state, each
-context builds its own instance.
+Instance fields are not checked: an adapter of the shared kernel may hold its own state. When each
+context builds its own instance, nobody else reaches it; when the composition root at the root of
+`src/` hands the same instance to two contexts, it is a channel, see [Limits](#limits).
 
 Module-level state, such as `let current` or `const services = new Map()` at the top of a file, is
 reported by [`tactical/no-loose-code`](../tactical/no-loose-code.md).
@@ -83,6 +84,10 @@ value object, a primitive, a `readonly` array, a `ReadonlyMap`.
   service.
 - A `Readonly<Record<…>>` counts as a collection, because it has an index signature: use a
   `ReadonlyMap` for a constant dictionary.
+- An instance handed to two contexts by the composition root at the root of `src/` is not checked:
+  the database and the outbox are shared that way on purpose, and a registry passed the same way
+  goes unseen. In review, the root passes the same instance to several contexts only for the
+  infrastructure every context needs: the database, the outbox, the clock.
 - State held outside the shared kernel is not checked: a package with a global container, such as
   the default container of a dependency injection library, or a write to `globalThis`.
 :::

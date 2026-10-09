@@ -18,9 +18,10 @@ export class NoUnmappedContextRule extends Rule<"strategic/no-unmapped-context",
 		description: "A bounded context consuming one the context map does not allow, through an import or through the wiring.",
 		id: "strategic/no-unmapped-context",
 		messages: {
-			unmapped: "{from} consumes {to}, which the context map does not allow: reverse the dependency, or if {from} really is downstream of {to}, add {to} to contextMap.{from}.consumes.",
+			unmapped:
+				"{from} consumes {to}, which the context map does not allow: reverse the dependency with an integration event that {from} publishes and {to} subscribes to, not with a callback; or if {from} really is downstream of {to}, add {to} to contextMap.{from}.consumes.",
 			unmappedWiring:
-				"{from} receives {expression} from {to} here, which the context map does not allow: reverse the dependency, or if {from} really is downstream of {to}, add {to} to contextMap.{from}.consumes.",
+				"{from} receives {expression} from {to} here, which the context map does not allow: reverse the dependency with an integration event that {from} publishes and {to} subscribes to, not with a callback; or if {from} really is downstream of {to}, add {to} to contextMap.{from}.consumes.",
 		},
 	};
 
