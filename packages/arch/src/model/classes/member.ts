@@ -20,6 +20,7 @@ export interface MemberProps {
 	readonly holdsCollection: boolean;
 	readonly receivesFunction: boolean;
 	readonly erasedType: string | undefined;
+	readonly opaqueValue: string | undefined;
 }
 
 export class Member {
@@ -37,6 +38,7 @@ export class Member {
 	public readonly holdsCollection: boolean;
 	public readonly receivesFunction: boolean;
 	public readonly erasedType: string | undefined;
+	public readonly opaqueValue: string | undefined;
 
 	public constructor(props: MemberProps) {
 		this.name = props.name;
@@ -53,6 +55,7 @@ export class Member {
 		this.holdsCollection = props.holdsCollection;
 		this.receivesFunction = props.receivesFunction;
 		this.erasedType = props.erasedType;
+		this.opaqueValue = props.opaqueValue;
 	}
 
 	public get isPublicInstance(): boolean {

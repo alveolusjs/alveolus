@@ -39,11 +39,20 @@ Every static field of a class in the shared kernel:
 | `static readonly ZERO = new Money({ amount: 0 })` | ✅ |
 | `static readonly PRECISION = 2` | ✅ |
 | `static readonly CURRENCIES: readonly string[] = ["EUR"]`, a `ReadonlyMap`, a `ReadonlySet` | ✅ |
+| `static readonly NONE = new CustomerId("")`: an identifier | ✅ |
+| `static readonly RATE = new Decimal("1.1")`: a class of a package listed in `domainDependencies` | ✅ |
 | `static count = 0`: without `readonly` | ❌ |
 | `static readonly services = new Map()`: a `Map`, a `Set`, a `WeakMap`, a `WeakSet` | ❌ |
 | `static readonly names: string[] = []`: an array that is not `readonly` | ❌ |
 | `static readonly byId: Record<string, Handler> = {}`: an index signature | ❌ |
 | `static readonly options = { strict: true }`: an object literal | ❌ |
+| `static readonly shared = new ServiceDirectory()`: a class that is not a value, such as a singleton | ❌ |
+| `static readonly bus = new EventEmitter()`: a class of a package outside `domainDependencies` | ❌ |
+| `static readonly resolve = makeResolver()`: a function, which can close over any state | ❌ |
+
+A static field holds a value: a primitive, a value object, an identifier, a class of a package
+listed in `domainDependencies`, or a `readonly` collection of them. Static methods are not fields:
+`static of(amount: number)` is fine.
 
 Instance fields are not checked: an adapter of the shared kernel may hold its own state. When each
 context builds its own instance, nobody else reaches it; when the composition root at the root of
@@ -60,6 +69,12 @@ src/shared-kernel/driven/memory/registry/service-registry.ts
      collection in a static field: every context reaches the same one, a
      channel the context map does not show. The shared kernel shares a
      model, not state: integrate through an open host service.
+  3  error  strategic/no-shared-state: ServiceRegistry.shared holds a
+     ServiceRegistry in a static field, which can keep state every context
+     reaches, a channel the context map does not show. A static field of
+     the shared kernel holds a value: a primitive, a value object, an
+     identifier, a class of domainDependencies, or a readonly collection
+     of them.
 ```
 
 ## Fix it
@@ -75,13 +90,18 @@ anti-corruption layer. The composition root passes the service; no registry is n
 So that a constant cannot become a channel, make it `readonly` and give it an immutable type: a
 value object, a primitive, a `readonly` array, a `ReadonlyMap`.
 
+### Build services in the composition root
+
+So that every context gets the instance the composition root decides, a clock, a bus or a
+directory is built there and passed to the constructors that need it, not kept in a static
+`instance` field.
+
 ## Limits
 
 ::: warning What the rule cannot see
-- A `static readonly` field typed by a class whose instances can change, such as
-  `static readonly bus = new EventEmitter()`, passes: the rule reads the type of the field, not
-  what its class does. In review, a static field of the shared kernel holds a value, never a
-  service.
+- A value object or a class of `domainDependencies` is trusted to be immutable: a value object
+  that keeps a `Map` in a private field passes. In review, a value object changes by returning a
+  new one.
 - A `Readonly<Record<…>>` counts as a collection, because it has an index signature: use a
   `ReadonlyMap` for a constant dictionary.
 - An instance handed to two contexts by the composition root at the root of `src/` is not checked:

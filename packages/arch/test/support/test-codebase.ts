@@ -54,6 +54,13 @@ export class TestCodebase {
 		return this;
 	}
 
+	public package(name: string, declarations: string): this {
+		const directory = join(projectDir, "node_modules", name);
+		this.project.getFileSystem().writeFileSync(join(directory, "package.json"), JSON.stringify({ name, types: "index.d.ts" }));
+		this.project.createSourceFile(join(directory, "index.d.ts"), declarations, { overwrite: true });
+		return this;
+	}
+
 	public get importer(): TsMorphImporter {
 		return new TsMorphImporter(this.project);
 	}
