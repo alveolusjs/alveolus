@@ -1,4 +1,4 @@
-export type DependencyForm = "import" | "re-export" | "inline type" | "dynamic import" | "require" | "global";
+export type DependencyForm = "import" | "re-export" | "inline type" | "dynamic import" | "require" | "reference" | "augmentation" | "global";
 
 type TargetVisibility = "analysed" | "ignored" | "unresolved";
 

@@ -83,7 +83,8 @@ from the rest of the package, no `ts-morph`.
   ancestor with the package that declares it. Recognising a building block is left to
   `architecture/`.
 - `Dependency` covers every way a file depends on a module: `import`, `export … from`,
-  `import("…").T`, `import()`, `require()`, and a global declared by another file of the project.
+  `import("…").T`, `import()`, `require()`, `/// <reference path|types>`, `declare module "…"`, and a
+  global declared by another file of the project.
 
 Invariant: a fact never depends on a rule. Before adding a field for a new rule, look for a query
 on existing facts.

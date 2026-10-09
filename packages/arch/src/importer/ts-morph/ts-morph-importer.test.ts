@@ -12,22 +12,31 @@ describe("TsMorphImporter", () => {
 			.file("src/ordering/domain/value-objects/money.value-object.ts", `export class Money {}`)
 			.file(
 				path,
-				`import { Money } from "../value-objects/money.value-object.ts";
+				`/// <reference path="../value-objects/money.value-object.ts" />
+			/// <reference path="./gone.d.ts" />
+			/// <reference types="node" />
+			import { Money } from "../value-objects/money.value-object.ts";
 			export { Money as Cash } from "../value-objects/money.value-object.ts";
 			type Pool = import("pg").Pool;
 			const lazy = () => import("./missing.ts");
 			const legacy = require("pg");
-			import pg = require("pg");`,
+			import pg = require("pg");
+			declare module "../value-objects/money.value-object.ts" { interface Money { cents: number } }
+			declare module "*.svg" {}`,
 			)
 			.readFile(path);
 
 		expect(file.dependencies.map((dependency) => [dependency.line, dependency.form, dependency.label, dependency.target])).toEqual([
-			[1, "import", "Money", { kind: "file", path: normalize("/project/src/ordering/domain/value-objects/money.value-object.ts"), visibility: "analysed" }],
-			[2, "re-export", "Money", { kind: "file", path: normalize("/project/src/ordering/domain/value-objects/money.value-object.ts"), visibility: "analysed" }],
-			[3, "inline type", "Pool", { kind: "package", name: "pg" }],
-			[4, "dynamic import", "*", { kind: "file", path: normalize("/project/src/ordering/domain/aggregates/missing.ts"), visibility: "unresolved" }],
-			[5, "require", "*", { kind: "package", name: "pg" }],
-			[6, "require", "*", { kind: "package", name: "pg" }],
+			[1, "reference", "*", { kind: "file", path: normalize("/project/src/ordering/domain/value-objects/money.value-object.ts"), visibility: "analysed" }],
+			[2, "reference", "*", { kind: "file", path: normalize("/project/src/ordering/domain/aggregates/gone.d.ts"), visibility: "unresolved" }],
+			[3, "reference", "*", { kind: "package", name: "node" }],
+			[4, "import", "Money", { kind: "file", path: normalize("/project/src/ordering/domain/value-objects/money.value-object.ts"), visibility: "analysed" }],
+			[5, "re-export", "Money", { kind: "file", path: normalize("/project/src/ordering/domain/value-objects/money.value-object.ts"), visibility: "analysed" }],
+			[6, "inline type", "Pool", { kind: "package", name: "pg" }],
+			[7, "dynamic import", "*", { kind: "file", path: normalize("/project/src/ordering/domain/aggregates/missing.ts"), visibility: "unresolved" }],
+			[8, "require", "*", { kind: "package", name: "pg" }],
+			[9, "require", "*", { kind: "package", name: "pg" }],
+			[10, "augmentation", "*", { kind: "file", path: normalize("/project/src/ordering/domain/value-objects/money.value-object.ts"), visibility: "analysed" }],
 		]);
 	});
 

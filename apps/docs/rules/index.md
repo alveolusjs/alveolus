@@ -120,12 +120,15 @@ The rules that check imports read every way a file can depend on another one, no
 `import … from`:
 
 ```ts
+/// <reference path="../legacy/pool.ts" />
+/// <reference types="pg" />
 import { Pool } from "pg";
 export { Pool } from "pg";
 type Pool = import("pg").Pool;
 const pg = await import("pg");
 const pg = require("pg");
 import pg = require("pg");
+declare module "pg" { interface Pool { tenant: string } }
 ```
 
 A global declared by the project, in a `declare global` block, counts as an import of the file that
