@@ -144,7 +144,7 @@
 		"url": "git+https://github.com/alveolusjs/alveolus.git"
 	},
 	"scripts": {
-		"build": "tsdown",
+		"build": "tsdown && biome check --write package.json",
 		"typecheck": "tsc -p tsconfig.json"
 	},
 	"sideEffects": false,

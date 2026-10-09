@@ -2,11 +2,15 @@
 	"$schema": "https://unpkg.com/@changesets/config@3.1.1/schema.json",
 	"access": "public",
 	"baseBranch": "main",
+	"changedFilePatterns": ["src/**", "package.json"],
 	"changelog": "@changesets/cli/changelog",
 	"commit": false,
 	"fixed": [],
 	"ignore": ["@alveolus/docs"],
 	"linked": [],
-	"privatePackages": { "tag": false, "version": false },
+	"privatePackages": {
+		"tag": false,
+		"version": false
+	},
 	"updateInternalDependencies": "patch"
 }

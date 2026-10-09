@@ -12,6 +12,7 @@ Node 24 and pnpm 11 (the versions in the root `package.json`).
 ```sh
 pnpm install
 pnpm check          # lint, typecheck, dead code, tests: what CI runs
+pnpm test:coverage  # the tests with the coverage gate of CI
 ```
 
 Day to day, from the repository root:
