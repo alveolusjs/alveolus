@@ -86,6 +86,9 @@ from the rest of the package, no `ts-morph`.
   `import("…").T`, `import()`, `require()`, `/// <reference path|types>`, `declare module "…"`, code
   loaded at runtime (`node:module`, `node:vm`, `eval`, `new Function`, towards a target of
   visibility `dynamic`), and a global declared by another file of the project.
+- `Wiring` is a value given in a composition root or a file at the root: the file declaring what
+  receives it, and the links of its expression (`this`, `emoney`, `commands`, …), each with the
+  file declaring it and the classes in its type.
 
 Invariant: a fact never depends on a rule. Before adding a field for a new rule, look for a query
 on existing facts.
@@ -104,6 +107,7 @@ each file with one reader per family of facts:
 | `StatementReader` | `TopLevelStatement`: functions, enums, namespaces, mutable or computed constants, bare statements |
 | `ThrowReader` | `Throw`: `throw` statements and `Promise.reject` calls |
 | `GlobalReader` | globals, told apart by where the type checker finds their declaration |
+| `WiringReader` | `Wiring`: in the files `ImportScope.readsWiring` names, each value given to a call, a construction, an assignment or a typed declaration, as the chain of its links with where each is declared and the classes in its type |
 
 ### `src/conventions/`
 
@@ -125,6 +129,8 @@ The project read through the conventions. `Architecture` is the façade the rule
 - where a file sits: `locationOf`, `locationOfTarget`, `shapeIssueOf` (through `paths/`); a
   `Location` in a bounded context carries the `subdomain` the context implements, from
   `subdomains` in the configuration;
+- what crosses in the wiring: `crossingsIn(file)`, each `Wiring` read as the context that receives
+  a value, the context it comes from, and whether it is an open host service;
 - what a class is: `is`, `kindOf`, `kindsOf`, `isBuildingBlock`, `implementsMarker`,
   `returnsResult`, `classOf`;
 - the conventions as objects: `core` (`CoreApi`), `layers` (`Layers`), `blocks`

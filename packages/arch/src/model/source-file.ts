@@ -1,6 +1,7 @@
 import type { ClassDeclaration } from "./classes/class-declaration.ts";
 import type { Dependency } from "./dependencies/dependency.ts";
 import type { GlobalUse } from "./dependencies/global-use.ts";
+import type { Wiring } from "./dependencies/wiring.ts";
 import type { DisableComment } from "./statements/disable-comment.ts";
 import type { Throw } from "./statements/throw.ts";
 import type { TopLevelStatement } from "./statements/top-level-statement.ts";
@@ -13,6 +14,7 @@ export interface SourceFileProps {
 	readonly statements: readonly TopLevelStatement[];
 	readonly throws: readonly Throw[];
 	readonly globals: readonly GlobalUse[];
+	readonly wirings: readonly Wiring[];
 	readonly disables: readonly DisableComment[];
 }
 
@@ -23,6 +25,7 @@ export class SourceFile {
 	public readonly statements: readonly TopLevelStatement[];
 	public readonly throws: readonly Throw[];
 	public readonly globals: readonly GlobalUse[];
+	public readonly wirings: readonly Wiring[];
 	public readonly disables: readonly DisableComment[];
 	private readonly lines: readonly string[];
 
@@ -33,6 +36,7 @@ export class SourceFile {
 		this.statements = props.statements;
 		this.throws = props.throws;
 		this.globals = props.globals;
+		this.wirings = props.wirings;
 		this.disables = props.disables;
 		this.lines = props.text.split(/\r?\n/);
 	}

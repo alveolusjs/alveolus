@@ -1,7 +1,7 @@
 import { matchesGlob, relative, resolve, sep } from "node:path";
 
 import type { ContextFolder, ExtraFolders, Subdomains, SubdomainType } from "../architecture/index.ts";
-import { AllowedPackages, ContextMap } from "../architecture/index.ts";
+import { AllowedPackages, ContextMap, Layout } from "../architecture/index.ts";
 import type { CheckSettings, Severity } from "../check/index.ts";
 import type { RuleId } from "../rules/index.ts";
 import type { AlveolusConfig, ContextMapConfig } from "./alveolus-config.ts";
@@ -20,6 +20,7 @@ export class Config implements CheckSettings {
 	public readonly contextMap: ContextMap;
 	private readonly ignored: readonly string[];
 	private readonly rules: AlveolusConfig["rules"];
+	private readonly layout: Layout;
 
 	public constructor(config: AlveolusConfig, projectDir: string) {
 		this.projectDir = resolve(projectDir);
@@ -35,6 +36,7 @@ export class Config implements CheckSettings {
 
 		const sharedKernel = config.sharedKernel ?? "shared-kernel";
 		this.contextFolders = [...this.classifiedContexts(config.subdomains ?? {}, config.boundedContexts), { dir: resolve(this.rootDir, sharedKernel), isSharedKernel: true, name: "shared kernel" }];
+		this.layout = new Layout(this);
 	}
 
 	private classifiedContexts(subdomains: Subdomains, boundedContexts: AlveolusConfig["boundedContexts"]): ContextFolder[] {
@@ -91,6 +93,11 @@ export class Config implements CheckSettings {
 	public isIgnored(path: string): boolean {
 		const projectPath = relative(this.projectDir, path).split(sep).join("/");
 		return this.ignored.some((glob) => matchesGlob(projectPath, glob));
+	}
+
+	public readsWiring(path: string): boolean {
+		const location = this.layout.locate(path);
+		return location.isAtRoot || location.isCompositionRoot;
 	}
 
 	public severityOf(rule: RuleId): Severity | "off" {

@@ -223,6 +223,24 @@ export class Order extends AggregateRoot<OrderId> {
 			expect(codebase.checkAllRules()).toEqual([]);
 		});
 
+		it("do not see a value of another context whose type a cast erases in the wiring", () => {
+			const codebase = shop()
+				.file("src/ordering/ordering.module.ts", `export class OrderingModule { public readonly secret = { place: (id: string): boolean => true }; }`)
+				.file("src/catalog/catalog.module.ts", `export class CatalogModule { public constructor(private readonly orders: unknown) {} }`)
+				.file(
+					"src/app.module.ts",
+					`import { CatalogModule } from "./catalog/catalog.module.ts";
+import { OrderingModule } from "./ordering/ordering.module.ts";
+export class AppModule {
+	private readonly ordering = new OrderingModule();
+	private readonly hidden = this.ordering.secret as unknown;
+	private readonly catalog = new CatalogModule(this.hidden);
+}`,
+				);
+
+			expect(codebase.checkAllRules()).toEqual([]);
+		});
+
 		it("skip the files that the configuration ignores", () => {
 			const codebase = shop(new TestCodebase({ ignore: ["src/ordering/domain/legacy/**"] })).file(
 				"src/ordering/domain/legacy/pg-order.ts",

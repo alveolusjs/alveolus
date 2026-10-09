@@ -3,12 +3,13 @@ import type { Dependency, SourceFile } from "../../model/index.ts";
 import type { Finding, RuleMeta } from "../framework/index.ts";
 import { ImportRule } from "../framework/index.ts";
 
-type MessageId = "reexport" | "unseen" | "dynamicLoad" | "sharedKernel" | "publishedLanguage" | "notOpenHostService" | "outsideAntiCorruptionLayer";
+type MessageId = "wiredModel" | "reexport" | "unseen" | "dynamicLoad" | "sharedKernel" | "publishedLanguage" | "notOpenHostService" | "outsideAntiCorruptionLayer";
 
 export class NoCrossContextImportRule extends ImportRule<"strategic/no-cross-context-import", MessageId> {
 	public readonly meta: RuleMeta<"strategic/no-cross-context-import", MessageId> = {
 		contexts: "every",
-		description: "An import from another bounded context that is not its open host service, a file the analysis does not see, a composition root that re-exports.",
+		description:
+			"An import from another bounded context that is not its open host service, a file the analysis does not see, a composition root that re-exports, a value of another context given in the wiring that is not its open host service.",
 		id: "strategic/no-cross-context-import",
 		messages: {
 			dynamicLoad: "Loads code at runtime with {loader}: the analysis cannot tell which bounded context it reaches; use a static import.",
@@ -18,8 +19,21 @@ export class NoCrossContextImportRule extends ImportRule<"strategic/no-cross-con
 			reexport: "The composition root re-exports {names}: it exports its own module only, so that no other context reaches through it.",
 			sharedKernel: "The shared kernel imports no bounded context, but imports {target}.",
 			unseen: "Imports {target}: the analysis cannot tell which bounded context it reaches; move the file into a bounded context or the shared kernel.",
+			wiredModel: "Gives {expression}, from {to}, to {from}: only an OpenHostService of another bounded context may cross, in an import or in the wiring.",
 		},
 	};
+
+	public override check(architecture: Architecture): Finding<MessageId>[] {
+		const findings = super.check(architecture);
+		for (const file of this.filesOf(architecture)) {
+			for (const crossing of architecture.crossingsIn(file)) {
+				if (!crossing.isOpenHostService) {
+					findings.push(this.finding(file, crossing.line, crossing.expression, "wiredModel", { expression: crossing.expression, from: crossing.from, to: crossing.to }));
+				}
+			}
+		}
+		return findings;
+	}
 
 	protected appliesTo(file: SourceFile, architecture: Architecture): boolean {
 		const location = architecture.locationOf(file);

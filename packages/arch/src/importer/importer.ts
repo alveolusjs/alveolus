@@ -4,6 +4,7 @@ export interface ImportScope {
 	readonly projectDir: string;
 	readonly rootDir: string;
 	isIgnored(path: string): boolean;
+	readsWiring(path: string): boolean;
 }
 
 export abstract class Importer {
