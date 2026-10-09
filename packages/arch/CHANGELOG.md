@@ -1,5 +1,15 @@
 # @alveolus/arch
 
+## 0.6.0
+
+### Minor Changes
+
+- 5164b5d: Code loaded at runtime is recognised by its type, not only by its name: an alias of `Function` or `eval`, the `constructor` of a function (`(() => 0).constructor`, the `AsyncFunction` constructor), `Reflect.construct(Function, …)`, and a lookup on `globalThis`, `global`, `window` or `self` whose key is computed, such as `Reflect.get(globalThis, name)`. The documentation said `new Function` and `eval` were reported; written without their names, they were not. The message of `strategic/no-unmapped-context` now says how to reverse a dependency, with an integration event and not with a callback, and the page of `strategic/no-shared-state` no longer claims that an instance field is never shared.
+- 1a28391: `strategic/no-leaky-host-service` reports an open host service that receives a function, at any depth of its parameters (a callback, an options object with a handler, an array of listeners), or returns `unknown`, `any` or `object`. An `onRestockNeeded(callback)` on the catalog's open host service let it run code of another context while the context map said it consumed nothing, and a result typed `unknown` let a live aggregate leave the context. To let another context react, publish an integration event. A parameter may still be `unknown`, for a payload to validate.
+- 3a41260: In the wiring, a module of another context is read by its properties only. `strategic/no-cross-context-import` reports a composition root or a file at the root of `src/` that reaches into such a module with brackets, `Reflect.get`, a spread, destructuring, or by passing it to a function that could hand back anything, such as a helper or lodash `get`. `Reflect.get(Reflect.get(this.catalog, "commands"), "changePrice")` gave a handler of the catalog to ordering with a type the analysis could not follow. A module handed whole to the constructor of another module stays allowed.
+- 65fb593: `strategic/no-shared-state` reports a static readonly field of the shared kernel that holds anything but a value. A value is a primitive, a value object, an identifier, a class of a package listed in `domainDependencies`, or a readonly collection of them. A singleton such as `static readonly shared = new ServiceDirectory()`, a `static readonly bus = new EventEmitter()` or a function kept its state out of the rule's sight, since it read the type of the field and not what its class holds. Build such services in the composition root.
+- de602c6: `strategic/no-cross-context-import` reports a name of `globalThis`, `global`, `window` or `self` that no file declares, written or read: an assignment, `Reflect.set`, `Reflect.get`, `Object.assign`, `Object.defineProperty` or `(globalThis as any).x`. `Reflect.set(globalThis, "catalog:prices", handler)` in one context and `Reflect.get` in another let them call each other with no import. A name the library declares, such as a polyfill of `globalThis.crypto`, stays allowed.
+
 ## 0.5.0
 
 ### Minor Changes
