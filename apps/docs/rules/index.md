@@ -12,6 +12,7 @@ bounded contexts, a framework leaking into the domain, a helper that lands nowhe
 	<dt>Rule names</dt><dd><a href="#how-rules-are-named"><code>&lt;category&gt;/no-&lt;what it reports&gt;</code></a></dd>
 	<dt>Categories</dt><dd><a href="#strategic">Strategic</a>, <a href="#layers">Layers</a>, <a href="#tactical">Tactical</a></dd>
 	<dt>Default</dt><dd>Every rule on; test files never checked</dd>
+	<dt>Where</dt><dd><a href="#where-a-rule-applies">Every rule on a core context, the boundary rules on a supporting or generic one</a></dd>
 	<dt>Config</dt><dd><a href="#turn-a-rule-off"><code>rules</code></a> in <code>alveolus.config.ts</code></dd>
 </dl>
 
@@ -38,6 +39,14 @@ architecture it guards, the rest says what a violation is.
 <div class="al-card"><span class="al-card-title"><code>tactical/</code></span>Inside the domain and the application: how building blocks are written and where they live.</div>
 </div>
 
+## Where a rule applies
+
+`subdomains` in `alveolus.config.ts` says which bounded contexts are
+[core, supporting or generic](../guide/project-layout.md#core-supporting-generic). A core context
+and the shared kernel are checked by every rule. A supporting or generic context is checked only
+by the rules about its boundary, the `strategic/` and `tooling/` ones: how it is written inside is
+its own business. The "Applies to" line of each rule page says which it is.
+
 ## Strategic
 
 | Rule | Reports |
@@ -49,6 +58,8 @@ architecture it guards, the rest says what a violation is.
 
 ## Layers
 
+In core bounded contexts and the shared kernel.
+
 | Rule | Reports |
 | --- | --- |
 | [`layers/no-driving-shortcut`](./layers/no-driving-shortcut.md) | A driving adapter reaching a repository, a port or an aggregate instead of calling a handler. |
@@ -57,6 +68,8 @@ architecture it guards, the rest says what a violation is.
 | [`layers/no-portless-adapter`](./layers/no-portless-adapter.md) | A driven adapter that extends no port, a port declared outside the domain. |
 
 ## Tactical
+
+In core bounded contexts and the shared kernel.
 
 | Rule | Reports |
 | --- | --- |

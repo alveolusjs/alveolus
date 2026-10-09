@@ -24,7 +24,7 @@ describe("Report", () => {
 
 	it("writes SARIF with the rules, the level of each result and a fingerprint", () => {
 		const report = new Report({ baselined: 0, files: 1, stale: 0, suppressed: [], violations: [{ ...violation, severity: "warn" }] });
-		const rules = [{ description: "A class in the wrong place.", id: "tactical/no-misplaced-class", messages: {} }];
+		const rules = [{ contexts: "core" as const, description: "A class in the wrong place.", id: "tactical/no-misplaced-class", messages: {} }];
 
 		expect(JSON.parse(report.sarif(rules))).toEqual({
 			$schema: "https://json.schemastore.org/sarif-2.1.0.json",

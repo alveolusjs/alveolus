@@ -6,7 +6,7 @@ import { Rule } from "./rule.ts";
 export abstract class ImportRule<Id extends string = string, MessageId extends string = string> extends Rule<Id, MessageId> {
 	public check(architecture: Architecture): Finding<MessageId>[] {
 		const findings: Finding<MessageId>[] = [];
-		for (const file of architecture.files) {
+		for (const file of this.filesOf(architecture)) {
 			if (!this.appliesTo(file, architecture)) {
 				continue;
 			}

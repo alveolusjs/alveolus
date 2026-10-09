@@ -11,7 +11,7 @@ an anti-corruption layer or its composition root.
 	<dt>Rule</dt><dd><code>strategic/no-cross-context-import</code></dd>
 	<dt>Category</dt><dd><a href="/rules/#strategic">Strategic</a>: what crosses a bounded context</dd>
 	<dt>Reports</dt><dd>An import from another bounded context that is not its open host service, used where it may be</dd>
-	<dt>Applies to</dt><dd>Every file of every bounded context and of the shared kernel</dd>
+	<dt>Applies to</dt><dd>Every file of every bounded context, whatever its subdomain, and of the shared kernel</dd>
 	<dt>Turn off</dt><dd><a href="#turn-it-off"><code>"strategic/no-cross-context-import": "off"</code></a></dd>
 </dl>
 
@@ -34,7 +34,7 @@ When a file of one bounded context imports a file of another one:
 
 <div class="al-cards al-cards-2">
 <div class="al-card"><span class="al-card-title"><span class="al-card-step">1</span>Only open host services</span>Every imported name is a class that implements <code>OpenHostService</code>.</div>
-<div class="al-card"><span class="al-card-title"><span class="al-card-step">2</span>Only from an anti-corruption layer</span>The importing file declares a class that implements <code>AntiCorruptionLayer</code>, or is the composition root of its context.</div>
+<div class="al-card"><span class="al-card-title"><span class="al-card-step">2</span>Only from an anti-corruption layer</span>In a core context, the importing file declares a class that implements <code>AntiCorruptionLayer</code>, or is the composition root of its context. A <a href="../../guide/project-layout.md#core-supporting-generic">supporting or generic context</a> calls the service from anywhere: it has no model to protect.</div>
 <div class="al-card"><span class="al-card-title"><span class="al-card-step">3</span>Composition roots meet freely</span>A composition root may import another context's composition root, to reach its open host services. It re-exports nothing, so that no other context reaches its model through it.</div>
 <div class="al-card"><span class="al-card-title"><span class="al-card-step">4</span>No foreign published language</span>The published language of another context is never imported, not even its types.</div>
 </div>

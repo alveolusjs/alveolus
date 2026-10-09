@@ -7,6 +7,7 @@ type MessageId = "otherLayer" | "coreSymbol" | "undeclaredPackage" | "packageNam
 
 export class NoImpureDomainRule extends ImportRule<"layers/no-impure-domain", MessageId> {
 	public readonly meta: RuleMeta<"layers/no-impure-domain", MessageId> = {
+		contexts: "core",
 		description: "The domain importing a framework, a database, another layer or a package not allowed, or using the host, the clock or randomness.",
 		id: "layers/no-impure-domain",
 		messages: {
@@ -22,7 +23,7 @@ export class NoImpureDomainRule extends ImportRule<"layers/no-impure-domain", Me
 
 	public override check(architecture: Architecture): Finding<MessageId>[] {
 		const findings = super.check(architecture);
-		for (const file of architecture.files) {
+		for (const file of this.filesOf(architecture)) {
 			if (this.appliesTo(file, architecture)) {
 				findings.push(...this.impureGlobals(file));
 			}

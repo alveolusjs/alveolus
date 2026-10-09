@@ -13,8 +13,9 @@ pnpm add -D @alveolus/arch
 import { defineConfig } from "@alveolus/arch";
 
 export default defineConfig({
-	boundedContexts: { catalog: "catalog", ordering: "ordering" },
+	boundedContexts: { catalog: "catalog", notifications: "notifications", ordering: "ordering" },
 	root: "src",
+	subdomains: { core: ["catalog", "ordering"], generic: ["notifications"] },
 });
 ```
 

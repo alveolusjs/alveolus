@@ -4,6 +4,7 @@ import { InjectionRule } from "../../framework/index.ts";
 
 export class NoStatefulServiceRule extends InjectionRule<"tactical/no-stateful-service"> {
 	public readonly meta: RuleMeta<"tactical/no-stateful-service", "foreign"> = {
+		contexts: "core",
 		description: "A domain service holding a port, a repository or another service.",
 		id: "tactical/no-stateful-service",
 		messages: {

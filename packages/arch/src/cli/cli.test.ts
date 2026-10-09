@@ -94,7 +94,10 @@ describe("Cli", () => {
 
 	it("turns a rule off from the configuration", async () => {
 		sandbox.write("src/ordering/driven/smtp/adapters/mailer.adapter.ts", "export class Mailer {}\n");
-		sandbox.write("alveolus.config.ts", `export default { boundedContexts: { catalog: "catalog", ordering: "ordering" }, root: "src", rules: { "layers/no-portless-adapter": "off" } };\n`);
+		sandbox.write(
+			"alveolus.config.ts",
+			`export default { boundedContexts: { catalog: "catalog", ordering: "ordering" }, root: "src", rules: { "layers/no-portless-adapter": "off" }, subdomains: { core: ["catalog", "ordering"] } };\n`,
+		);
 
 		expect(await cli.run(["arch", "check"])).toBe(0);
 	});
@@ -162,7 +165,10 @@ describe("Cli", () => {
 
 	it("fails on errors only: a warning or an info never fails the check", async () => {
 		sandbox.write("src/ordering/driven/smtp/adapters/mailer.adapter.ts", "export class Mailer {}\n");
-		sandbox.write("alveolus.config.ts", `export default { boundedContexts: { catalog: "catalog", ordering: "ordering" }, root: "src", rules: { "layers/no-portless-adapter": "warn" } };\n`);
+		sandbox.write(
+			"alveolus.config.ts",
+			`export default { boundedContexts: { catalog: "catalog", ordering: "ordering" }, root: "src", rules: { "layers/no-portless-adapter": "warn" }, subdomains: { core: ["catalog", "ordering"] } };\n`,
+		);
 
 		expect(await cli.run(["arch", "check"])).toBe(0);
 		expect(stdout.text).toContain("  1  warn  layers/no-portless-adapter:");
@@ -175,7 +181,7 @@ describe("Cli", () => {
 	});
 
 	it("refuses to check when no file is analysed", async () => {
-		sandbox.write("alveolus.config.ts", `export default { boundedContexts: { catalog: "catalog", ordering: "ordering" }, root: "elsewhere" };\n`);
+		sandbox.write("alveolus.config.ts", `export default { boundedContexts: { catalog: "catalog", ordering: "ordering" }, root: "elsewhere", subdomains: { core: ["catalog", "ordering"] } };\n`);
 
 		expect(await cli.run(["arch", "check"])).toBe(2);
 		expect(stderr.text).toContain("No file to analyse under");

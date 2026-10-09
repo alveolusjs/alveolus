@@ -4,6 +4,7 @@ import { InjectionRule } from "../../framework/index.ts";
 
 export class NoForeignQueryDependencyRule extends InjectionRule<"tactical/no-foreign-query-dependency"> {
 	public readonly meta: RuleMeta<"tactical/no-foreign-query-dependency", "foreign"> = {
+		contexts: "core",
 		description: "A query handler receiving what writes or changes state.",
 		id: "tactical/no-foreign-query-dependency",
 		messages: {

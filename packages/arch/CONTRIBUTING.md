@@ -81,6 +81,7 @@ import { ClassRule } from "../../framework/index.ts";
 
 export class NoEntityInEventRule extends ClassRule<"tactical/no-entity-in-event", "entity"> {
 	public readonly meta: RuleMeta<"tactical/no-entity-in-event", "entity"> = {
+		contexts: "core",
 		description: "A domain event whose payload holds an entity.",
 		id: "tactical/no-entity-in-event",
 		messages: {
@@ -107,9 +108,12 @@ export class NoEntityInEventRule extends ClassRule<"tactical/no-entity-in-event"
 
 What to notice:
 
-- `meta` comes first and reads like the documentation page: the id, what is reported, the
-  messages. Every `{placeholder}` of a message is filled by the `data` of a finding; the checker
-  throws on one left unfilled, so a typo fails your tests.
+- `meta` comes first and reads like the documentation page: the id, where the rule applies, what
+  is reported, the messages. `contexts` is `"core"` for a `layers/` or `tactical/` rule, checked in
+  core bounded contexts and the shared kernel only, and `"every"` for a `strategic/` or `tooling/`
+  rule, about the boundary of every context; `registry.test.ts` holds that line. Every
+  `{placeholder}` of a message is filled by the `data` of a finding; the checker throws on one left
+  unfilled, so a typo fails your tests.
 - The rule asks the `Architecture`, never `ts-morph`: `architecture.is(…)`, `architecture.locationOf(…)`,
   `architecture.blocks.placeOf(…)`. Here `codeClass.typeArguments` gives what the class passes to
   `DomainEvent<Id, Payload>`, and `argument.types` the classes found in it, however deep: `OrderLine[]`
@@ -121,7 +125,8 @@ What to notice:
 - Three templates own the iteration so that you write only the check: `ClassRule` (each class),
   `ImportRule` (each dependency of the files it applies to), `InjectionRule` (what a building block
   may receive, against an allowlist). A rule that looks across files, such as one owner per entity,
-  extends `Rule` and loops over `architecture.files` itself.
+  extends `Rule` and loops over `this.filesOf(architecture)` itself: the files its `contexts`
+  covers.
 
 ### 3. Test it
 

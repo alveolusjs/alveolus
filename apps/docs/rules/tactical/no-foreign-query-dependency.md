@@ -10,7 +10,7 @@ A query handler receives what reads: nothing that writes or changes state.
 	<dt>Rule</dt><dd><code>tactical/no-foreign-query-dependency</code></dd>
 	<dt>Category</dt><dd><a href="/rules/#tactical">Tactical</a>: how building blocks are written</dd>
 	<dt>Reports</dt><dd>A query handler that receives a command repository, an outbox, a unit of work, an event publisher, a handler, a domain service, an event translator or a class that is no building block</dd>
-	<dt>Applies to</dt><dd>The constructor parameters and fields of every <code>QueryHandler</code></dd>
+	<dt>Applies to</dt><dd>The constructor parameters and fields of every <code>QueryHandler</code> of a core bounded context or the shared kernel</dd>
 	<dt>Turn off</dt><dd><a href="#turn-it-off"><code>"tactical/no-foreign-query-dependency": "off"</code></a></dd>
 </dl>
 

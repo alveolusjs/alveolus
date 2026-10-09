@@ -8,6 +8,7 @@ const owned: readonly CoreKind[] = ["AggregateRoot", "Entity", "DomainEvent", "D
 
 export class NoFatSharedKernelRule extends ClassRule<"strategic/no-fat-shared-kernel", "owned"> {
 	public readonly meta: RuleMeta<"strategic/no-fat-shared-kernel", "owned"> = {
+		contexts: "every",
 		description: "An aggregate, an entity, an event, a domain service, a repository or a handler in the shared kernel.",
 		id: "strategic/no-fat-shared-kernel",
 		messages: {

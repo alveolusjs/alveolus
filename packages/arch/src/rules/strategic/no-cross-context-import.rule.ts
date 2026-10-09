@@ -7,11 +7,12 @@ type MessageId = "reexport" | "sharedKernel" | "publishedLanguage" | "notOpenHos
 
 export class NoCrossContextImportRule extends ImportRule<"strategic/no-cross-context-import", MessageId> {
 	public readonly meta: RuleMeta<"strategic/no-cross-context-import", MessageId> = {
+		contexts: "every",
 		description: "An import from another bounded context that is not its open host service, a composition root that re-exports.",
 		id: "strategic/no-cross-context-import",
 		messages: {
 			notOpenHostService: "Imports {target}: only an OpenHostService of another bounded context may be imported.",
-			outsideAntiCorruptionLayer: "Uses the open host service of {context} outside an AntiCorruptionLayer: translate it in an anti-corruption layer.",
+			outsideAntiCorruptionLayer: "Uses the open host service of {context} outside an AntiCorruptionLayer: a core context translates what it consumes in an anti-corruption layer.",
 			publishedLanguage: "Imports the published language of {context}: redeclare the fields you read in your own published-language/.",
 			reexport: "The composition root re-exports {names}: it exports its own module only, so that no other context reaches through it.",
 			sharedKernel: "The shared kernel imports no bounded context, but imports {target}.",
@@ -48,7 +49,7 @@ export class NoCrossContextImportRule extends ImportRule<"strategic/no-cross-con
 		if (!this.importsOnlyOpenHostServices(dependency, target.path, architecture)) {
 			return this.finding(file, dependency.line, dependency.label, "notOpenHostService", { target: this.wording.target(target, architecture) });
 		}
-		if (!from.isCompositionRoot && !this.declaresAntiCorruptionLayer(file, architecture)) {
+		if (from.isInCoreDomain && !from.isCompositionRoot && !this.declaresAntiCorruptionLayer(file, architecture)) {
 			return this.finding(file, dependency.line, dependency.label, "outsideAntiCorruptionLayer", { context: to.context ?? "" });
 		}
 		return undefined;

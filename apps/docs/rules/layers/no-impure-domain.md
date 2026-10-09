@@ -11,7 +11,7 @@ domain building blocks of `@alveolus/core`.
 	<dt>Rule</dt><dd><code>layers/no-impure-domain</code></dd>
 	<dt>Category</dt><dd><a href="/rules/#layers">Layers</a>: what each layer may depend on</dd>
 	<dt>Reports</dt><dd>The domain importing a framework, a database, another layer or a package not allowed, using a global of the host, reading the clock or drawing a random value</dd>
-	<dt>Applies to</dt><dd>Every file in <code>domain/</code>, in every bounded context and the shared kernel</dd>
+	<dt>Applies to</dt><dd>Every file in <code>domain/</code>, in every core bounded context and the shared kernel</dd>
 	<dt>Turn off</dt><dd><a href="#turn-it-off"><code>"layers/no-impure-domain": "off"</code></a></dd>
 </dl>
 

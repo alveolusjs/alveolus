@@ -105,17 +105,23 @@ Start from a use case: the [aggregate](../core/domain/aggregates.md) that keeps 
 
 ## Configure the checks
 
-Create `alveolus.config.ts` at the root of the project. It says where the source code is and which
-folders are bounded contexts; everything else has a default.
+Create `alveolus.config.ts` at the root of the project. It says where the source code is, which
+folders are bounded contexts and which subdomain each one implements; everything else has a
+default.
 
 ```ts [alveolus.config.ts]
 import { defineConfig } from "@alveolus/arch";
 
 export default defineConfig({
-	boundedContexts: { catalog: "catalog", ordering: "ordering" },
+	boundedContexts: { catalog: "catalog", notifications: "notifications", ordering: "ordering" },
 	root: "src",
+	subdomains: { core: ["catalog", "ordering"], generic: ["notifications"] },
 });
 ```
+
+A [core](./project-layout.md#core-supporting-generic) context is checked by every rule. A
+supporting or generic one is checked only at its boundary: it may be written any way you like, as
+long as it reaches the other contexts through their open host services.
 
 ### Options
 
@@ -125,6 +131,7 @@ export default defineConfig({
 | `tsconfig` | `"tsconfig.json"` | The TypeScript configuration the sources are read with, relative to the project folder. |
 | `boundedContexts` | required | Each bounded context and its folder, relative to `root`. `"modules/ordering"` works. |
 | `sharedKernel` | `"shared-kernel"` | The folder shared by every bounded context, relative to `root`. |
+| `subdomains` | required | The [subdomain](./project-layout.md#core-supporting-generic) each bounded context implements: `{ core: ["ordering"], supporting: ["billing"], generic: ["notifications"] }`. Every context is listed once. |
 | `contextMap` | none | For each bounded context, the ones it consumes: `{ payments: ["ledger"] }`. Checked for cycles; without it, only cycles are reported. |
 | `compositionRoot` | `"*.module.ts"` | The file, at the root of a bounded context, that wires it. |
 | `domainDependencies` | `{}` | npm packages the domain may import, besides `@alveolus/core`. |

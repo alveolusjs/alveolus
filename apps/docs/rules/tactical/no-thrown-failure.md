@@ -11,7 +11,7 @@ application never throw; exceptions stay in adapters, for technical failures.
 	<dt>Rule</dt><dd><code>tactical/no-thrown-failure</code></dd>
 	<dt>Category</dt><dd><a href="/rules/#tactical">Tactical</a>: how building blocks are written</dd>
 	<dt>Reports</dt><dd>A public method or function property of an aggregate or entity that returns no <code>Result</code>, a public setter, any <code>throw</code> or <code>Promise.reject</code> in the domain or the application</dd>
-	<dt>Applies to</dt><dd>Classes that extend <code>AggregateRoot</code> or <code>Entity</code>; every file in <code>domain/</code> and <code>application/</code></dd>
+	<dt>Applies to</dt><dd>Classes that extend <code>AggregateRoot</code> or <code>Entity</code>; every file in <code>domain/</code> and <code>application/</code>; in core bounded contexts and the shared kernel</dd>
 	<dt>Turn off</dt><dd><a href="#turn-it-off"><code>"tactical/no-thrown-failure": "off"</code></a></dd>
 </dl>
 

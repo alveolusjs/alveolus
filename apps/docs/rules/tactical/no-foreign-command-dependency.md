@@ -11,7 +11,7 @@ and no other handler.
 	<dt>Rule</dt><dd><code>tactical/no-foreign-command-dependency</code></dd>
 	<dt>Category</dt><dd><a href="/rules/#tactical">Tactical</a>: how building blocks are written</dd>
 	<dt>Reports</dt><dd>A command handler that receives a query repository, another handler or a class that is no building block</dd>
-	<dt>Applies to</dt><dd>The constructor parameters and fields of every <code>CommandHandler</code></dd>
+	<dt>Applies to</dt><dd>The constructor parameters and fields of every <code>CommandHandler</code> of a core bounded context or the shared kernel</dd>
 	<dt>Turn off</dt><dd><a href="#turn-it-off"><code>"tactical/no-foreign-command-dependency": "off"</code></a></dd>
 </dl>
 

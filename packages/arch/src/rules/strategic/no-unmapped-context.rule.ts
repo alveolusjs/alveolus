@@ -15,6 +15,7 @@ interface Consumption {
 
 export class NoUnmappedContextRule extends Rule<"strategic/no-unmapped-context", MessageId> {
 	public readonly meta: RuleMeta<"strategic/no-unmapped-context", MessageId> = {
+		contexts: "every",
 		description: "A bounded context consuming one the context map does not allow, or two contexts that depend on each other.",
 		id: "strategic/no-unmapped-context",
 		messages: {
@@ -46,7 +47,7 @@ export class NoUnmappedContextRule extends Rule<"strategic/no-unmapped-context",
 
 	private consumptionsIn(architecture: Architecture): Consumption[] {
 		const consumptions: Consumption[] = [];
-		for (const file of architecture.files) {
+		for (const file of this.filesOf(architecture)) {
 			const from = architecture.locationOf(file);
 			if (!from.isInBoundedContext || from.context === undefined) {
 				continue;

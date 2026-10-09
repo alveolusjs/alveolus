@@ -11,7 +11,7 @@ file belongs to a layer.
 	<dt>Rule</dt><dd><code>layers/no-outward-import</code></dd>
 	<dt>Category</dt><dd><a href="/rules/#layers">Layers</a>: what each layer may depend on</dd>
 	<dt>Reports</dt><dd>An import that points away from the domain, a package the application may not use, a file outside the layers or in the wrong folder of its layer</dd>
-	<dt>Applies to</dt><dd><code>application/</code>, <code>published-language/</code>, <code>driven/</code>, <code>driving/</code>, composition roots and files at the root of <code>src/</code></dd>
+	<dt>Applies to</dt><dd><code>application/</code>, <code>published-language/</code>, <code>driven/</code>, <code>driving/</code>, composition roots and files at the root of <code>src/</code>; in core bounded contexts and the shared kernel</dd>
 	<dt>Turn off</dt><dd><a href="#turn-it-off"><code>"layers/no-outward-import": "off"</code></a></dd>
 </dl>
 

@@ -10,7 +10,7 @@ A domain service holds configuration only: the command handler passes it what it
 	<dt>Rule</dt><dd><code>tactical/no-stateful-service</code></dd>
 	<dt>Category</dt><dd><a href="/rules/#tactical">Tactical</a>: how building blocks are written</dd>
 	<dt>Reports</dt><dd>A domain service that holds a port, a repository, another service or any class other than a value object</dd>
-	<dt>Applies to</dt><dd>The constructor parameters and fields of every <code>DomainService</code></dd>
+	<dt>Applies to</dt><dd>The constructor parameters and fields of every <code>DomainService</code> of a core bounded context or the shared kernel</dd>
 	<dt>Turn off</dt><dd><a href="#turn-it-off"><code>"tactical/no-stateful-service": "off"</code></a></dd>
 </dl>
 

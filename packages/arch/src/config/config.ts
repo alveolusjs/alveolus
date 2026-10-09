@@ -1,6 +1,6 @@
 import { matchesGlob, relative, resolve, sep } from "node:path";
 
-import type { ContextFolder, ExtraFolders, Upstreams } from "../architecture/index.ts";
+import type { ContextFolder, ExtraFolders, Subdomains, SubdomainType, Upstreams } from "../architecture/index.ts";
 import { AllowedPackages, ContextMap } from "../architecture/index.ts";
 import type { CheckSettings, Severity } from "../check/index.ts";
 import type { RuleId } from "../rules/index.ts";
@@ -34,10 +34,32 @@ export class Config implements CheckSettings {
 		this.rules = config.rules;
 
 		const sharedKernel = config.sharedKernel ?? "shared-kernel";
-		this.contextFolders = [
-			...Object.entries(config.boundedContexts).map(([name, folder]) => ({ dir: resolve(this.rootDir, folder), isSharedKernel: false, name })),
-			{ dir: resolve(this.rootDir, sharedKernel), isSharedKernel: true, name: "shared kernel" },
-		];
+		this.contextFolders = [...this.classifiedContexts(config.subdomains ?? {}, config.boundedContexts), { dir: resolve(this.rootDir, sharedKernel), isSharedKernel: true, name: "shared kernel" }];
+	}
+
+	private classifiedContexts(subdomains: Subdomains, boundedContexts: AlveolusConfig["boundedContexts"]): ContextFolder[] {
+		const types: readonly SubdomainType[] = ["core", "supporting", "generic"];
+		const classified = new Map<string, SubdomainType>();
+		const folders: ContextFolder[] = [];
+		for (const type of types) {
+			for (const name of subdomains[type] ?? []) {
+				const folder = boundedContexts[name];
+				if (folder === undefined) {
+					throw new Error(`subdomains names ${name}, which boundedContexts does not declare.`);
+				}
+				const already = classified.get(name);
+				if (already !== undefined) {
+					throw new Error(`subdomains lists ${name} as ${already} and as ${type}: a bounded context implements one subdomain.`);
+				}
+				classified.set(name, type);
+				folders.push({ dir: resolve(this.rootDir, folder), isSharedKernel: false, name, subdomain: type });
+			}
+		}
+		const unclassified = Object.keys(boundedContexts).filter((name) => !classified.has(name));
+		if (unclassified.length > 0) {
+			throw new Error(`boundedContexts declares ${unclassified.join(", ")}, which subdomains does not classify: list each context under subdomains.core, subdomains.supporting or subdomains.generic.`);
+		}
+		return folders;
 	}
 
 	private validContextMap(upstreams: Upstreams, contexts: readonly string[]): ContextMap {

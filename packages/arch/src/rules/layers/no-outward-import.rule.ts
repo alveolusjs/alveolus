@@ -24,6 +24,7 @@ interface LayerProblem {
 
 export class NoOutwardImportRule extends ImportRule<"layers/no-outward-import", MessageId> {
 	public readonly meta: RuleMeta<"layers/no-outward-import", MessageId> = {
+		contexts: "core",
 		description: "A dependency pointing away from the domain, a file outside the layers or in the wrong folder of its layer.",
 		id: "layers/no-outward-import",
 		messages: {
@@ -77,7 +78,7 @@ export class NoOutwardImportRule extends ImportRule<"layers/no-outward-import", 
 
 	private misplacedFiles(architecture: Architecture): Finding<MessageId>[] {
 		const findings: Finding<MessageId>[] = [];
-		for (const file of architecture.files) {
+		for (const file of this.filesOf(architecture)) {
 			const location = architecture.locationOf(file);
 			if (location.isOutside) {
 				findings.push(this.finding(file, 1, location.fileName, "outsideContexts"));
@@ -105,7 +106,7 @@ export class NoOutwardImportRule extends ImportRule<"layers/no-outward-import", 
 
 	private extraCompositionRoots(architecture: Architecture): Finding<MessageId>[] {
 		const byFolder = new Map<string, SourceFile[]>();
-		for (const file of architecture.files) {
+		for (const file of this.filesOf(architecture)) {
 			if (architecture.locationOf(file).isCompositionRoot) {
 				const folder = dirname(file.path);
 				byFolder.set(folder, [...(byFolder.get(folder) ?? []), file]);

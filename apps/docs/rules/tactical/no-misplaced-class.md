@@ -11,7 +11,7 @@ file.
 	<dt>Rule</dt><dd><code>tactical/no-misplaced-class</code></dd>
 	<dt>Category</dt><dd><a href="/rules/#tactical">Tactical</a>: how building blocks are written</dd>
 	<dt>Reports</dt><dd>A class in the wrong folder or file, two classes in one file</dd>
-	<dt>Applies to</dt><dd>Every class that extends a building block, in every bounded context and the shared kernel</dd>
+	<dt>Applies to</dt><dd>Every class that extends a building block, in every core bounded context and the shared kernel</dd>
 	<dt>Turn off</dt><dd><a href="#turn-it-off"><code>"tactical/no-misplaced-class": "off"</code></a></dd>
 </dl>
 

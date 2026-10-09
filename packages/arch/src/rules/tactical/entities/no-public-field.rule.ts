@@ -8,6 +8,7 @@ const guarded: readonly CoreKind[] = ["Entity", "ValueObject", "Identifier"];
 
 export class NoPublicFieldRule extends ClassRule<"tactical/no-public-field", "publicField"> {
 	public readonly meta: RuleMeta<"tactical/no-public-field", "publicField"> = {
+		contexts: "core",
 		description: "A public field on an aggregate, an entity, a value object or an identifier.",
 		id: "tactical/no-public-field",
 		messages: {

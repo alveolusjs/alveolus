@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 
-import { ruleIds } from "../src/rules/registry.ts";
+import { RuleRegistry, ruleIds } from "../src/rules/registry.ts";
 
 const docs = fileURLToPath(new URL("../../../apps/docs/", import.meta.url));
 const source = fileURLToPath(new URL("../src/", import.meta.url));
@@ -32,6 +32,15 @@ describe("The documentation", () => {
 			expect(page, id).toContain("## Limits");
 			expect(sidebar, id).toContain(`"/rules/${id}"`);
 			expect(rulesIndex, id).toContain(`[\`${id}\`]`);
+		}
+	});
+
+	it("says on each rule page whether the rule applies to every bounded context or to the core domain only", () => {
+		for (const rule of new RuleRegistry().rules) {
+			const page = documentation.page(`rules/${rule.meta.id}.md`);
+			const appliesTo = /<dt>Applies to<\/dt><dd>(.*)<\/dd>/.exec(page)?.[1] ?? "";
+
+			expect(appliesTo.includes("core"), `${rule.meta.id}: ${appliesTo}`).toBe(rule.meta.contexts === "core");
 		}
 	});
 

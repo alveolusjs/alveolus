@@ -11,7 +11,7 @@ aggregate or a domain service itself.
 	<dt>Rule</dt><dd><code>layers/no-driving-shortcut</code></dd>
 	<dt>Category</dt><dd><a href="/rules/#layers">Layers</a>: what each layer may depend on</dd>
 	<dt>Reports</dt><dd>A file of <code>driving/</code> that imports a <code>CommandRepository</code>, a <code>QueryRepository</code>, a <code>Port</code>, an <code>AggregateRoot</code>, an <code>Entity</code> or a <code>DomainService</code></dd>
-	<dt>Applies to</dt><dd>Every file in <code>driving/</code>, in every bounded context and the shared kernel</dd>
+	<dt>Applies to</dt><dd>Every file in <code>driving/</code>, in every core bounded context and the shared kernel</dd>
 	<dt>Turn off</dt><dd><a href="#turn-it-off"><code>"layers/no-driving-shortcut": "off"</code></a></dd>
 </dl>
 

@@ -11,7 +11,7 @@ else: every class extends a building block of `@alveolus/core`, and every functi
 	<dt>Rule</dt><dd><code>tactical/no-loose-code</code></dd>
 	<dt>Category</dt><dd><a href="/rules/#tactical">Tactical</a>: how building blocks are written</dd>
 	<dt>Reports</dt><dd>A plain class, a class with only static members or that extends an expression, a function, an enum, a namespace, a computed constant, module state, a statement run on load; anything but the module class in a composition root</dd>
-	<dt>Applies to</dt><dd>Files in <code>domain/</code> and <code>application/</code>, in every bounded context and the shared kernel</dd>
+	<dt>Applies to</dt><dd>Files in <code>domain/</code> and <code>application/</code>, in every core bounded context and the shared kernel</dd>
 	<dt>Turn off</dt><dd><a href="#turn-it-off"><code>"tactical/no-loose-code": "off"</code></a></dd>
 </dl>
 

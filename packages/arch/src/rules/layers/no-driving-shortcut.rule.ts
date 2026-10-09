@@ -8,6 +8,7 @@ const shortcuts: readonly CoreKind[] = ["CommandRepository", "QueryRepository", 
 
 export class NoDrivingShortcutRule extends ImportRule<"layers/no-driving-shortcut", "shortcut"> {
 	public readonly meta: RuleMeta<"layers/no-driving-shortcut", "shortcut"> = {
+		contexts: "core",
 		description: "A driving adapter importing a port, a repository, an aggregate, an entity or a domain service instead of calling a handler.",
 		id: "layers/no-driving-shortcut",
 		messages: {

@@ -11,7 +11,7 @@ changes it, and what callers need is read through a getter.
 	<dt>Rule</dt><dd><code>tactical/no-public-field</code></dd>
 	<dt>Category</dt><dd><a href="/rules/#tactical">Tactical</a>: how building blocks are written</dd>
 	<dt>Reports</dt><dd>A public instance field, declared or as a constructor parameter, <code>readonly</code> or not</dd>
-	<dt>Applies to</dt><dd>Every class that extends <code>AggregateRoot</code>, <code>Entity</code>, <code>ValueObject</code> or <code>Identifier</code></dd>
+	<dt>Applies to</dt><dd>Every class that extends <code>AggregateRoot</code>, <code>Entity</code>, <code>ValueObject</code> or <code>Identifier</code>, in core bounded contexts and the shared kernel</dd>
 	<dt>Turn off</dt><dd><a href="#turn-it-off"><code>"tactical/no-public-field": "off"</code></a></dd>
 </dl>
 

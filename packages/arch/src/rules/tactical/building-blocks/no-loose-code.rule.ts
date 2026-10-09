@@ -41,6 +41,7 @@ const statementMessages: Readonly<Record<StatementKind, MessageId>> = {
 
 export class NoLooseCodeRule extends Rule<"tactical/no-loose-code", MessageId> {
 	public readonly meta: RuleMeta<"tactical/no-loose-code", MessageId> = {
+		contexts: "core",
 		description: "Code outside a building block in the domain or the application, outside a class in an adapter layer, anything but the module class in a composition root.",
 		id: "tactical/no-loose-code",
 		messages: {
@@ -63,7 +64,7 @@ export class NoLooseCodeRule extends Rule<"tactical/no-loose-code", MessageId> {
 
 	public check(architecture: Architecture): Finding<MessageId>[] {
 		const findings: Finding<MessageId>[] = [];
-		for (const file of architecture.files) {
+		for (const file of this.filesOf(architecture)) {
 			const location = architecture.locationOf(file);
 			if (guarded.has(location.layer)) {
 				findings.push(...this.looseClasses(file, location.layer ?? "domain", architecture));

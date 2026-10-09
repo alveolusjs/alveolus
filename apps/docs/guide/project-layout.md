@@ -174,6 +174,26 @@ anti-corruption layer is the one place that knows the catalog exists: it calls `
 reads its JSON and answers with ordering's objects. If the catalog moves behind HTTP, only that
 adapter changes. Checked by [`strategic/no-cross-context-import`](../rules/strategic/no-cross-context-import.md).
 
+### Core, supporting, generic
+
+Not every bounded context deserves the same investment. Vernon classifies the subdomains a system
+covers, and a bounded context implements one of them: the **core domain** is what the business
+competes on and gets the best developers and the full tactical model; a **supporting subdomain**
+is needed but not distinctive, written in house with a lighter hand; a **generic subdomain** is
+bought, taken off the shelf or wrapped. `alveolus.config.ts` says which is which, under
+`subdomains`, and every context is listed once.
+
+<div class="al-cards">
+<div class="al-card"><span class="al-card-title">Core</span>Every rule applies: the layers, the building blocks, the boundary.</div>
+<div class="al-card"><span class="al-card-title">Supporting and generic</span>Only the <a href="/rules/#where-a-rule-applies">boundary rules</a> apply: the context is closed, reached through its open host service, and consumes the others through theirs. Inside, any layout and any code.</div>
+<div class="al-card"><span class="al-card-title">Shared kernel</span>Every rule applies: what it holds reaches every context.</div>
+</div>
+
+A supporting or generic context needs no layers, no composition root and no building block. The
+one thing it marks is its open host service, when another context calls it. When it consumes the
+core, it imports the open host service from anywhere; only a core context has to translate what it
+consumes in an anti-corruption layer, because only it has a model to protect.
+
 ## Layers
 
 <div class="al-cards">

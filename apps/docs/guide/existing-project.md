@@ -17,17 +17,26 @@ Nothing here requires a rewrite.
 ## 1. Declare what exists
 
 Name the bounded contexts as the code has them today, even when they are folders named
-`modules/orders` or `features/billing`: `boundedContexts` takes any folder under `root`. Leave the
-context map for later. Put under `ignore` what has nothing to do with the architecture: scripts,
-generated code, migrations.
+`modules/orders` or `features/billing`: `boundedContexts` takes any folder under `root`. Say under
+`subdomains` which ones are the [core domain](./project-layout.md#core-supporting-generic): only
+those are checked inside; a supporting or generic context is checked at its boundary only. Leave
+the context map for later. Put under `ignore` what has nothing to do with the architecture:
+scripts, generated code, migrations.
 
 ```ts [alveolus.config.ts]
 export default defineConfig({
 	boundedContexts: { billing: "features/billing", orders: "modules/orders" },
 	ignore: ["src/migrations/**", "src/generated/**"],
 	root: "src",
+	subdomains: { core: ["orders"], supporting: ["billing"] },
 });
 ```
+
+::: tip A legacy module is a supporting context first
+A module you will not rewrite soon goes under `supporting`: the check keeps it closed and makes
+it reach the others through their open host services, and leaves the rest alone. Move it to `core`
+the day you model it.
+:::
 
 Run `npx alveolus arch check`: it fails, and the number of violations is your starting point.
 

@@ -23,6 +23,7 @@ const holders: readonly CoreKind[] = ["Entity", "ValueObject", "DomainEvent"];
 
 export class NoAggregateReferenceRule extends Rule<"tactical/no-aggregate-reference", MessageId> {
 	public readonly meta: RuleMeta<"tactical/no-aggregate-reference", MessageId> = {
+		contexts: "core",
 		description: "An aggregate holding another aggregate instead of its identifier, an entity held by two aggregates.",
 		id: "tactical/no-aggregate-reference",
 		messages: {
@@ -34,7 +35,7 @@ export class NoAggregateReferenceRule extends Rule<"tactical/no-aggregate-refere
 
 	public check(architecture: Architecture): Finding<MessageId>[] {
 		const findings: Finding<MessageId>[] = [];
-		for (const file of architecture.files) {
+		for (const file of this.filesOf(architecture)) {
 			for (const codeClass of file.classes) {
 				findings.push(...this.heldAggregates(codeClass, file, architecture));
 			}
@@ -93,7 +94,7 @@ export class NoAggregateReferenceRule extends Rule<"tactical/no-aggregate-refere
 
 	private holdingsIn(architecture: Architecture): Holding[] {
 		const holdings: Holding[] = [];
-		for (const file of architecture.files) {
+		for (const file of this.filesOf(architecture)) {
 			for (const aggregate of file.classes) {
 				if (!architecture.is(aggregate, "AggregateRoot")) {
 					continue;

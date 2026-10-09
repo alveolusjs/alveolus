@@ -5,7 +5,7 @@ import type { AlveolusConfig } from "../../config/index.ts";
 import { NoUnmappedContextRule } from "./no-unmapped-context.rule.ts";
 
 function bank(config: Partial<AlveolusConfig>, paymentsConsumesLedger: boolean, ledgerConsumesPayments: boolean): TestCodebase {
-	const codebase = new TestCodebase({ boundedContexts: { ledger: "ledger", payments: "payments", reporting: "reporting" }, ...config })
+	const codebase = new TestCodebase({ boundedContexts: { ledger: "ledger", payments: "payments", reporting: "reporting" }, subdomains: { core: ["ledger", "payments", "reporting"] }, ...config })
 		.file("src/ledger/driving/in-process/ledger-api.ts", `import type { OpenHostService } from "@alveolus/core";\nexport class LedgerApi implements OpenHostService {}`)
 		.file("src/payments/driving/in-process/payments-api.ts", `import type { OpenHostService } from "@alveolus/core";\nexport class PaymentsApi implements OpenHostService {}`)
 		.file(

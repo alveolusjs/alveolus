@@ -12,6 +12,7 @@ const guarded: ReadonlySet<Layer | undefined> = new Set<Layer>(["domain", "appli
 
 export class NoThrownFailureRule extends Rule<"tactical/no-thrown-failure", MessageId> {
 	public readonly meta: RuleMeta<"tactical/no-thrown-failure", MessageId> = {
+		contexts: "core",
 		description: "A business failure thrown instead of returned, an entity method without a Result, a setter.",
 		id: "tactical/no-thrown-failure",
 		messages: {
@@ -24,7 +25,7 @@ export class NoThrownFailureRule extends Rule<"tactical/no-thrown-failure", Mess
 
 	public check(architecture: Architecture): Finding<MessageId>[] {
 		const findings: Finding<MessageId>[] = [];
-		for (const file of architecture.files) {
+		for (const file of this.filesOf(architecture)) {
 			findings.push(...this.operationsWithoutResult(file, architecture));
 			if (guarded.has(architecture.locationOf(file).layer)) {
 				findings.push(...this.raisedFailures(file));

@@ -13,6 +13,7 @@ const markerWording: Readonly<Record<CoreMarker, string>> = {
 
 export class NoMisplacedClassRule extends Rule<"tactical/no-misplaced-class", MessageId> {
 	public readonly meta: RuleMeta<"tactical/no-misplaced-class", MessageId> = {
+		contexts: "core",
 		description: "A class in the wrong folder or file, two classes in one file.",
 		id: "tactical/no-misplaced-class",
 		messages: {
@@ -24,7 +25,7 @@ export class NoMisplacedClassRule extends Rule<"tactical/no-misplaced-class", Me
 
 	public check(architecture: Architecture): Finding<MessageId>[] {
 		const findings: Finding<MessageId>[] = [];
-		for (const file of architecture.files) {
+		for (const file of this.filesOf(architecture)) {
 			findings.push(...this.extraClasses(file));
 			const [first] = file.classes;
 			const finding = first === undefined ? undefined : this.misplacement(first, file, architecture.locationOf(file), architecture);

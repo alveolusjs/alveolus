@@ -11,7 +11,7 @@ extends one, and every port is declared by the domain.
 	<dt>Rule</dt><dd><code>layers/no-portless-adapter</code></dd>
 	<dt>Category</dt><dd><a href="/rules/#layers">Layers</a>: what each layer may depend on</dd>
 	<dt>Reports</dt><dd>A driven adapter that extends no port, a port declared outside the domain</dd>
-	<dt>Applies to</dt><dd>Every class in <code>driven/**/adapters/</code>, and every abstract class that extends <code>Port</code></dd>
+	<dt>Applies to</dt><dd>Every class in <code>driven/**/adapters/</code>, and every abstract class that extends <code>Port</code>, in core bounded contexts and the shared kernel</dd>
 	<dt>Turn off</dt><dd><a href="#turn-it-off"><code>"layers/no-portless-adapter": "off"</code></a></dd>
 </dl>
 

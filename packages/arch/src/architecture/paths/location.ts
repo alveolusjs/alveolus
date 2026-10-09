@@ -1,4 +1,5 @@
 import type { Layer } from "../../conventions/index.ts";
+import type { SubdomainType } from "../settings.ts";
 
 export type Area = "context" | "shared-kernel" | "root" | "outside";
 
@@ -7,6 +8,7 @@ export type Unseen = "ignored" | "unresolved";
 export interface LocationProps {
 	readonly area: Area;
 	readonly context?: string;
+	readonly subdomain?: SubdomainType;
 	readonly layer?: Layer;
 	readonly folder?: string;
 	readonly foldersInLayer?: readonly string[];
@@ -18,6 +20,7 @@ export interface LocationProps {
 export class Location {
 	public readonly area: Area;
 	public readonly context: string | undefined;
+	public readonly subdomain: SubdomainType | undefined;
 	public readonly layer: Layer | undefined;
 	public readonly folder: string | undefined;
 	public readonly foldersInLayer: readonly string[];
@@ -28,6 +31,7 @@ export class Location {
 	public constructor(props: LocationProps) {
 		this.area = props.area;
 		this.context = props.context;
+		this.subdomain = props.subdomain;
 		this.layer = props.layer;
 		this.folder = props.folder;
 		this.foldersInLayer = props.foldersInLayer ?? [];
@@ -38,6 +42,10 @@ export class Location {
 
 	public get isInBoundedContext(): boolean {
 		return this.area === "context";
+	}
+
+	public get isInCoreDomain(): boolean {
+		return this.isInBoundedContext && this.subdomain === "core";
 	}
 
 	public get isInSharedKernel(): boolean {

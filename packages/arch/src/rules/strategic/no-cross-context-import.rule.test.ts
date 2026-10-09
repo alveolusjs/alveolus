@@ -3,19 +3,23 @@ import { beforeEach, describe, expect, it } from "vitest";
 import { TestCodebase } from "../../../test/support/test-codebase.ts";
 import { NoCrossContextImportRule } from "./no-cross-context-import.rule.ts";
 
+function withCatalog(codebase: TestCodebase): TestCodebase {
+	return codebase
+		.file(
+			"src/catalog/driving/catalog-api.ts",
+			`import type { OpenHostService } from "@alveolus/core";
+		export class CatalogApi implements OpenHostService {}`,
+		)
+		.file("src/catalog/domain/value-objects/product-id.identifier.ts", `export class ProductId {}`)
+		.file("src/catalog/published-language/product.representation.ts", `export type ProductRepresentation = { id: string };`)
+		.file("src/catalog/catalog.module.ts", `export class CatalogModule {}`);
+}
+
 describe("NoCrossContextImportRule", () => {
 	let catalog: TestCodebase;
 
 	beforeEach(() => {
-		catalog = new TestCodebase()
-			.file(
-				"src/catalog/driving/catalog-api.ts",
-				`import type { OpenHostService } from "@alveolus/core";
-		export class CatalogApi implements OpenHostService {}`,
-			)
-			.file("src/catalog/domain/value-objects/product-id.identifier.ts", `export class ProductId {}`)
-			.file("src/catalog/published-language/product.representation.ts", `export type ProductRepresentation = { id: string };`)
-			.file("src/catalog/catalog.module.ts", `export class CatalogModule {}`);
+		catalog = withCatalog(new TestCodebase());
 	});
 
 	it("lets an anti-corruption layer import the open host service of another context", () => {
@@ -62,6 +66,21 @@ describe("NoCrossContextImportRule", () => {
 		);
 
 		expect(codebase.check(new NoCrossContextImportRule())).toEqual(["src/ordering/driven/adapters/prices.adapter.ts:1 CatalogApi"]);
+	});
+
+	it("lets a supporting or generic context use an open host service anywhere, but still only the open host service", () => {
+		const codebase = withCatalog(new TestCodebase({ subdomains: { core: ["catalog"], supporting: ["ordering"] } })).file(
+			"src/ordering/driven/adapters/prices.adapter.ts",
+			`import type { CatalogApi } from "../../../catalog/driving/catalog-api.ts";
+			import type { ProductId } from "../../../catalog/domain/value-objects/product-id.identifier.ts";
+			import type { ProductRepresentation } from "../../../catalog/published-language/product.representation.ts";
+			export class Prices {}`,
+		);
+
+		expect(codebase.check(new NoCrossContextImportRule())).toEqual([
+			"src/ordering/driven/adapters/prices.adapter.ts:2 ProductId",
+			"src/ordering/driven/adapters/prices.adapter.ts:3 ProductRepresentation",
+		]);
 	});
 
 	it("keeps the shared kernel free of any bounded context", () => {

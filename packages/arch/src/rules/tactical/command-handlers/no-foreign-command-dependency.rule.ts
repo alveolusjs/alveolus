@@ -4,6 +4,7 @@ import { InjectionRule } from "../../framework/index.ts";
 
 export class NoForeignCommandDependencyRule extends InjectionRule<"tactical/no-foreign-command-dependency"> {
 	public readonly meta: RuleMeta<"tactical/no-foreign-command-dependency", "foreign"> = {
+		contexts: "core",
 		description: "A command handler receiving a query repository, an event publisher, another handler or a plain class.",
 		id: "tactical/no-foreign-command-dependency",
 		messages: {

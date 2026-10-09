@@ -12,6 +12,8 @@ const packageDependencies = z.record(z.string(), z.union([z.literal(true), z.arr
 
 const ruleSetting = z.enum(["error", "warn", "info", "off"]);
 
+const contextNames = z.array(z.string()).exactOptional();
+
 const schema = z.strictObject({
 	applicationDependencies: packageDependencies.exactOptional(),
 	boundedContexts: z.record(z.string(), z.string()),
@@ -23,6 +25,7 @@ const schema = z.strictObject({
 	root: z.string(),
 	rules: z.strictObject(Object.fromEntries(new RuleRegistry().ids.map((id) => [id, ruleSetting.exactOptional()]))).exactOptional(),
 	sharedKernel: z.string().exactOptional(),
+	subdomains: z.strictObject({ core: contextNames, generic: contextNames, supporting: contextNames }).exactOptional(),
 	tsconfig: z.string().exactOptional(),
 });
 

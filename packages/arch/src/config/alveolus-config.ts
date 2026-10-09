@@ -1,4 +1,4 @@
-import type { PackageDependencies, Upstreams } from "../architecture/index.ts";
+import type { PackageDependencies, Subdomains, Upstreams } from "../architecture/index.ts";
 import type { RuleId } from "../rules/index.ts";
 
 export type RuleSetting = "error" | "warn" | "info" | "off";
@@ -12,6 +12,7 @@ export interface AlveolusConfig {
 	readonly tsconfig?: string;
 	readonly boundedContexts: Readonly<Record<string, string>>;
 	readonly sharedKernel?: string;
+	readonly subdomains?: Subdomains;
 	readonly contextMap?: Upstreams;
 	readonly compositionRoot?: string;
 	readonly domainDependencies?: PackageDependencies;

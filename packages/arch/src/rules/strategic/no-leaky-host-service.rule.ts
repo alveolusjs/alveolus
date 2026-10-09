@@ -5,6 +5,7 @@ import { ClassRule } from "../framework/index.ts";
 
 export class NoLeakyHostServiceRule extends ClassRule<"strategic/no-leaky-host-service", "exposes"> {
 	public readonly meta: RuleMeta<"strategic/no-leaky-host-service", "exposes"> = {
+		contexts: "every",
 		description: "An open host service that exposes a class of its context instead of the published language.",
 		id: "strategic/no-leaky-host-service",
 		messages: {

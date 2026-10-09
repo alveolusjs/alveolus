@@ -7,6 +7,7 @@ type MessageId = "portless" | "portOutsideDomain";
 
 export class NoPortlessAdapterRule extends ClassRule<"layers/no-portless-adapter", MessageId> {
 	public readonly meta: RuleMeta<"layers/no-portless-adapter", MessageId> = {
+		contexts: "core",
 		description: "A driven adapter that extends no port, a port declared outside the domain.",
 		id: "layers/no-portless-adapter",
 		messages: {

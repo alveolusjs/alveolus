@@ -8,6 +8,7 @@ type MessageId = "noRule" | "unknownRule" | "noReason" | "unused";
 
 export class NoLooseDisableRule extends Rule<"tooling/no-loose-disable", MessageId> {
 	public readonly meta: RuleMeta<"tooling/no-loose-disable", MessageId> = {
+		contexts: "every",
 		description: "A disable comment that names no known rule, gives no reason, or disables nothing.",
 		id: "tooling/no-loose-disable",
 		messages: {
@@ -24,7 +25,7 @@ export class NoLooseDisableRule extends Rule<"tooling/no-loose-disable", Message
 
 	public check(architecture: Architecture): Finding<MessageId>[] {
 		const findings: Finding<MessageId>[] = [];
-		for (const file of architecture.files) {
+		for (const file of this.filesOf(architecture)) {
 			for (const comment of file.disables) {
 				const finding = this.malformed(file, comment);
 				if (finding !== undefined) {

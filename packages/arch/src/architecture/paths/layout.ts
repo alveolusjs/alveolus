@@ -3,6 +3,7 @@ import { basename, dirname, isAbsolute, matchesGlob, relative, resolve, sep } fr
 import type { Layer } from "../../conventions/index.ts";
 import { layers } from "../../conventions/index.ts";
 import type { ContextFolder, Settings } from "../settings.ts";
+import type { LocationProps } from "./location.ts";
 import { Location } from "./location.ts";
 
 export class Layout {
@@ -18,27 +19,31 @@ export class Layout {
 			return new Location({ area: isAtRoot ? "root" : "outside", fileName });
 		}
 
-		const area = folder.isSharedKernel ? "shared-kernel" : "context";
-		const context = folder.name;
+		const inside = this.insideOf(folder);
 		const directories = this.directoriesBetween(folder.dir, file);
 
 		if (directories.length === 0) {
-			return new Location({ area, context, fileName, isCompositionRoot: this.isCompositionRoot(fileName) });
+			return new Location({ ...inside, fileName, isCompositionRoot: this.isCompositionRoot(fileName) });
 		}
 
 		const layerIndex = this.layerIndexOf(directories, folder.isSharedKernel);
 		if (layerIndex === undefined) {
 			const isFeatureRoot = folder.isSharedKernel && directories.length === 1;
-			return new Location({ area, context, fileName, isCompositionRoot: isFeatureRoot && this.isCompositionRoot(fileName) });
+			return new Location({ ...inside, fileName, isCompositionRoot: isFeatureRoot && this.isCompositionRoot(fileName) });
 		}
 
 		const layer = directories[layerIndex];
 		if (layer === undefined || !this.isLayer(layer)) {
-			return new Location({ area, context, fileName });
+			return new Location({ ...inside, fileName });
 		}
 		const foldersInLayer = directories.slice(layerIndex + 1);
 		const subfolder = foldersInLayer.at(-1);
-		return new Location({ area, context, fileName, foldersInLayer, layer, ...(subfolder === undefined ? {} : { folder: subfolder }) });
+		return new Location({ ...inside, fileName, foldersInLayer, layer, ...(subfolder === undefined ? {} : { folder: subfolder }) });
+	}
+
+	private insideOf(folder: ContextFolder): Pick<LocationProps, "area" | "context" | "subdomain"> {
+		const area = folder.isSharedKernel ? "shared-kernel" : "context";
+		return { area, context: folder.name, ...(folder.subdomain === undefined ? {} : { subdomain: folder.subdomain }) };
 	}
 
 	private layerIndexOf(directories: readonly string[], isSharedKernel: boolean): number | undefined {

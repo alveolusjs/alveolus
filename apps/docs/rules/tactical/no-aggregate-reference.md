@@ -10,7 +10,7 @@ An aggregate refers to another aggregate by its identifier, never by holding it.
 	<dt>Rule</dt><dd><code>tactical/no-aggregate-reference</code></dd>
 	<dt>Category</dt><dd><a href="/rules/#tactical">Tactical</a>: how building blocks are written</dd>
 	<dt>Reports</dt><dd>A building block holding another aggregate, an entity held by two aggregates</dd>
-	<dt>Applies to</dt><dd>Every class that extends <code>AggregateRoot</code>, <code>Entity</code>, <code>ValueObject</code> or <code>DomainEvent</code></dd>
+	<dt>Applies to</dt><dd>Every class that extends <code>AggregateRoot</code>, <code>Entity</code>, <code>ValueObject</code> or <code>DomainEvent</code>, in core bounded contexts and the shared kernel</dd>
 	<dt>Turn off</dt><dd><a href="#turn-it-off"><code>"tactical/no-aggregate-reference": "off"</code></a></dd>
 </dl>
 

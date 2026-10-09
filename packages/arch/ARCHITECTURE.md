@@ -117,7 +117,9 @@ To change a convention, change the table: everything reading it follows. The gui
 
 The project read through the conventions. `Architecture` is the façade the rules use:
 
-- where a file sits: `locationOf`, `locationOfTarget`, `shapeIssueOf` (through `paths/`);
+- where a file sits: `locationOf`, `locationOfTarget`, `shapeIssueOf` (through `paths/`); a
+  `Location` in a bounded context carries the `subdomain` the context implements, from
+  `subdomains` in the configuration;
 - what a class is: `is`, `kindOf`, `kindsOf`, `isBuildingBlock`, `implementsMarker`,
   `returnsResult`, `classOf`;
 - the conventions as objects: `core` (`CoreApi`), `layers` (`Layers`), `blocks`
@@ -136,6 +138,7 @@ folder per building block, and `tooling/` for the rules about the checks themsel
 export class NoPortlessAdapterRule extends ClassRule<"layers/no-portless-adapter", MessageId> {
 	public readonly meta = {                       // what it is
 		id: "layers/no-portless-adapter",
+		contexts: "core",                          // core bounded contexts and the shared kernel; "every" for a boundary rule
 		description: "…",
 		messages: { portless: "{class} is a driven adapter but extends no Port: …" },
 	};
@@ -147,11 +150,13 @@ export class NoPortlessAdapterRule extends ClassRule<"layers/no-portless-adapter
 }
 ```
 
-`framework/` holds what every rule shares: `Rule` (with `finding(…)` and the `wording` of places
-and locations), `Finding`, and three templates that own the iteration: `ClassRule` (each class),
-`ImportRule` (each dependency of the files it applies to), `InjectionRule` (what a building block
-receives, against an allowlist). A rule that looks across the project, such as one owner per
-entity, extends `Rule` directly.
+`framework/` holds what every rule shares: `Rule` (with `finding(…)`, the `wording` of places and
+locations, and `filesOf(architecture)`, the files the rule covers: every file for `contexts:
+"every"`, and for `contexts: "core"` those outside a supporting or generic context), `Finding`,
+and three templates that own the iteration: `ClassRule` (each class), `ImportRule` (each
+dependency of the files it applies to), `InjectionRule` (what a building block receives, against
+an allowlist). A rule that looks across the project, such as one owner per entity, extends `Rule`
+directly and loops over `filesOf` itself.
 
 `registry.ts` lists the rule ids, from which `RuleId` derives, and holds the rules. A rule whose
 id is not in the list does not compile; an id without a rule fails `registry.test.ts`. The

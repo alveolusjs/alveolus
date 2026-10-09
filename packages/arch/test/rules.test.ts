@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 
+import type { Subdomains } from "../src/architecture/index.ts";
 import { TestCodebase } from "./support/test-codebase.ts";
 
 /** A small project that follows every rule: ordering reads prices from the catalog through its open host service. */
@@ -99,9 +100,67 @@ export class CatalogApi implements OpenHostService {
 		);
 }
 
+/** The shop with a notifications context written without layers or building blocks, as a generic subdomain may be. */
+function shopWithNotifications(subdomains: Subdomains): TestCodebase {
+	return shop(new TestCodebase({ boundedContexts: { catalog: "catalog", notifications: "notifications", ordering: "ordering" }, subdomains }))
+		.file(
+			"src/notifications/mailer.ts",
+			`import { readFileSync } from "node:fs";
+export function template(name: string): string { return readFileSync(name, "utf8"); }
+export class Mailer { public sent = 0; public send(to: string): void { if (to === "") { throw new Error("No recipient"); } this.sent += 1; } }`,
+		)
+		.file(
+			"src/notifications/domain/email.ts",
+			`import { Identifier } from "@alveolus/core";
+export class Email extends Identifier<string, "Email"> { public domain = ""; }
+export const count = Date.now();`,
+		)
+		.file(
+			"src/notifications/catalog-digest.ts",
+			`import type { CatalogApi } from "../catalog/driving/in-process/catalog-api.ts";
+export class CatalogDigest { public constructor(private readonly catalog: CatalogApi) {} }`,
+		)
+		.file(
+			"src/notifications/notifications-api.ts",
+			`import type { OpenHostService } from "@alveolus/core";
+export class NotificationsApi implements OpenHostService { public notify(to: string): Promise<void> { return Promise.resolve(); } }`,
+		)
+		.file("src/notifications/notifications.module.ts", `export class NotificationsModule {}`);
+}
+
 describe("Rules", () => {
 	it("leave a project that follows every rule without violation", () => {
 		expect(shop().checkAllRules()).toEqual([]);
+	});
+
+	describe("on a supporting or generic context", () => {
+		const classification = { core: ["catalog", "ordering"], generic: ["notifications"] };
+
+		it("check only its boundary: the same code is reported when the context is core", () => {
+			expect(shopWithNotifications(classification).checkAllRules()).toEqual([]);
+			expect(shopWithNotifications({ core: ["catalog", "notifications", "ordering"] }).checkAllRules()).not.toEqual([]);
+		});
+
+		it("still refuse what crosses its boundary outside an open host service", () => {
+			const codebase = shopWithNotifications(classification).file(
+				"src/notifications/order-digest.ts",
+				`import type { Order } from "../ordering/domain/aggregates/order.aggregate.ts";
+import type { ProductRepresentation } from "../catalog/published-language/product.representation.ts";
+export class OrderDigest { public constructor(private readonly order: Order, private readonly product: ProductRepresentation) {} }`,
+			);
+
+			expect(codebase.checkAllRules()).toEqual(["src/notifications/order-digest.ts:1 Order", "src/notifications/order-digest.ts:2 ProductRepresentation"]);
+		});
+
+		it("still make a core context translate what it consumes from it", () => {
+			const codebase = shopWithNotifications(classification).file(
+				"src/ordering/driving/http/order-mailer.controller.ts",
+				`import type { NotificationsApi } from "../../../notifications/notifications-api.ts";
+export class OrderMailerController { public constructor(private readonly notifications: NotificationsApi) {} }`,
+			);
+
+			expect(codebase.checkAllRules()).toEqual(["src/ordering/driving/http/order-mailer.controller.ts:1 NotificationsApi"]);
+		});
 	});
 
 	/**
