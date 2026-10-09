@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import type { Subdomains } from "../src/architecture/index.ts";
+import type { ContextMapConfig } from "../src/config/index.ts";
 import { TestCodebase } from "./support/test-codebase.ts";
 
 /** A small project that follows every rule: ordering reads prices from the catalog through its open host service. */
@@ -101,8 +102,10 @@ export class CatalogApi implements OpenHostService {
 }
 
 /** The shop with a notifications context written without layers or building blocks, as a generic subdomain may be. */
-function shopWithNotifications(subdomains: Subdomains): TestCodebase {
-	return shop(new TestCodebase({ boundedContexts: { catalog: "catalog", notifications: "notifications", ordering: "ordering" }, subdomains }))
+const notificationsConsumesBoth: ContextMapConfig = { catalog: { consumes: [] }, notifications: { consumes: ["catalog", "ordering"] }, ordering: { consumes: ["catalog"] } };
+
+function shopWithNotifications(subdomains: Subdomains, contextMap: ContextMapConfig = notificationsConsumesBoth): TestCodebase {
+	return shop(new TestCodebase({ boundedContexts: { catalog: "catalog", notifications: "notifications", ordering: "ordering" }, contextMap, subdomains }))
 		.file(
 			"src/notifications/mailer.ts",
 			`import { readFileSync } from "node:fs";
@@ -153,7 +156,8 @@ export class OrderDigest { public constructor(private readonly order: Order, pri
 		});
 
 		it("still make a core context translate what it consumes from it", () => {
-			const codebase = shopWithNotifications(classification).file(
+			const orderingConsumesNotifications: ContextMapConfig = { catalog: { consumes: [] }, notifications: { consumes: ["catalog"] }, ordering: { consumes: ["catalog", "notifications"] } };
+			const codebase = shopWithNotifications(classification, orderingConsumesNotifications).file(
 				"src/ordering/driving/http/order-mailer.controller.ts",
 				`import type { NotificationsApi } from "../../../notifications/notifications-api.ts";
 export class OrderMailerController { public constructor(private readonly notifications: NotificationsApi) {} }`,

@@ -151,7 +151,9 @@ export default defineConfig({
 		zod: true,
 	},
 	boundedContexts: { ordering: "ordering" },
+	contextMap: { ordering: { consumes: [] } },
 	root: "src",
+	subdomains: { core: ["ordering"] },
 });
 ```
 

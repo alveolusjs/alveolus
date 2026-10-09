@@ -44,7 +44,7 @@ export class Architecture {
 		return this.settings.applicationDependencies;
 	}
 
-	public get contextMap(): ContextMap | undefined {
+	public get contextMap(): ContextMap {
 		return this.settings.contextMap;
 	}
 

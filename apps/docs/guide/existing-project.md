@@ -19,13 +19,16 @@ Nothing here requires a rewrite.
 Name the bounded contexts as the code has them today, even when they are folders named
 `modules/orders` or `features/billing`: `boundedContexts` takes any folder under `root`. Say under
 `subdomains` which ones are the [core domain](./project-layout.md#core-supporting-generic): only
-those are checked inside; a supporting or generic context is checked at its boundary only. Leave
-the context map for later. Put under `ignore` what has nothing to do with the architecture:
-scripts, generated code, migrations.
+those are checked inside; a supporting or generic context is checked at its boundary only. Under
+`contextMap`, start with `consumes: []` for every context: each import between two contexts is
+then a violation, the baseline of the next step keeps them, and the map fills in as each one is
+decided. Put under `ignore` what has nothing to do with the architecture: scripts, generated code,
+migrations.
 
 ```ts [alveolus.config.ts]
 export default defineConfig({
 	boundedContexts: { billing: "features/billing", orders: "modules/orders" },
+	contextMap: { billing: { consumes: [] }, orders: { consumes: [] } },
 	ignore: ["src/migrations/**", "src/generated/**"],
 	root: "src",
 	subdomains: { core: ["orders"], supporting: ["billing"] },

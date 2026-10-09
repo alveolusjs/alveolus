@@ -153,11 +153,13 @@ to allow everything they export, or with the names you allow:
 ```ts [alveolus.config.ts]
 export default defineConfig({
 	boundedContexts: { ordering: "ordering" },
+	contextMap: { ordering: { consumes: [] } },
 	domainDependencies: {
 		"date-fns": ["addDays", "isBefore"],
 		"decimal.js": true,
 	},
 	root: "src",
+	subdomains: { core: ["ordering"] },
 });
 ```
 

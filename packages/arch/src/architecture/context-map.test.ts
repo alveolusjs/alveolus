@@ -16,14 +16,10 @@ describe("ContextMap", () => {
 		expect(new ContextMap({ ledger: [], payments: ["ledger"] }).cycle()).toBeUndefined();
 	});
 
-	it("builds itself from observed consumptions and tells which ones close a cycle", () => {
-		const map = ContextMap.ofEdges([
-			{ from: "payments", to: "ledger" },
-			{ from: "ledger", to: "payments" },
-			{ from: "reporting", to: "ledger" },
-		]);
+	it("names the contexts consumed, and the ones that consume themselves", () => {
+		const map = new ContextMap({ ledger: ["ledger"], payments: ["ledger", "customers"] });
 
-		expect(map.cycleThrough("payments", "ledger")).toBe(true);
-		expect(map.cycleThrough("reporting", "ledger")).toBe(false);
+		expect(map.consumed.sort()).toEqual(["customers", "ledger"]);
+		expect(map.selfConsumers()).toEqual(["ledger"]);
 	});
 });

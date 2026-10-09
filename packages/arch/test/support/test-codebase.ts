@@ -23,7 +23,16 @@ export class TestCodebase {
 	private readonly project: Project;
 
 	public constructor(config: Partial<AlveolusConfig> = {}) {
-		this.config = new Config({ boundedContexts: { catalog: "catalog", ordering: "ordering" }, root: "src", subdomains: { core: ["catalog", "ordering"] }, ...config }, projectDir);
+		this.config = new Config(
+			{
+				boundedContexts: { catalog: "catalog", ordering: "ordering" },
+				contextMap: { catalog: { consumes: [] }, ordering: { consumes: ["catalog"] } },
+				root: "src",
+				subdomains: { core: ["catalog", "ordering"] },
+				...config,
+			},
+			projectDir,
+		);
 		this.project = new Project({
 			compilerOptions: {
 				allowImportingTsExtensions: true,

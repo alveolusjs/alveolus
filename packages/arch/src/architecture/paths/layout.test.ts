@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import { Config } from "../../config/index.ts";
 import { Layout } from "./layout.ts";
 
-const layout = new Layout(new Config({ boundedContexts: { ordering: "ordering" }, root: "src", subdomains: { core: ["ordering"] } }, "/project"));
+const layout = new Layout(new Config({ boundedContexts: { ordering: "ordering" }, contextMap: { ordering: { consumes: [] } }, root: "src", subdomains: { core: ["ordering"] } }, "/project"));
 
 describe("Layout", () => {
 	it("locates a file in a layer and a folder of a bounded context", () => {
@@ -28,7 +28,17 @@ describe("Layout", () => {
 	});
 
 	it("carries the subdomain of the bounded context, and none for the shared kernel", () => {
-		const billing = new Layout(new Config({ boundedContexts: { billing: "billing", ordering: "ordering" }, root: "src", subdomains: { core: ["ordering"], supporting: ["billing"] } }, "/project"));
+		const billing = new Layout(
+			new Config(
+				{
+					boundedContexts: { billing: "billing", ordering: "ordering" },
+					contextMap: { billing: { consumes: [] }, ordering: { consumes: [] } },
+					root: "src",
+					subdomains: { core: ["ordering"], supporting: ["billing"] },
+				},
+				"/project",
+			),
+		);
 
 		expect(billing.locate("/project/src/ordering/domain/aggregates/order.aggregate.ts").isInCoreDomain).toBe(true);
 		expect(billing.locate("/project/src/billing/invoices.service.ts").subdomain).toBe("supporting");
@@ -43,7 +53,12 @@ describe("Layout", () => {
 	});
 
 	it("supports nested bounded contexts and a shared kernel grouped by feature", () => {
-		const nested = new Layout(new Config({ boundedContexts: { ordering: "modules/ordering" }, root: "src", sharedKernel: "shared", subdomains: { core: ["ordering"] } }, "/project"));
+		const nested = new Layout(
+			new Config(
+				{ boundedContexts: { ordering: "modules/ordering" }, contextMap: { ordering: { consumes: [] } }, root: "src", sharedKernel: "shared", subdomains: { core: ["ordering"] } },
+				"/project",
+			),
+		);
 
 		const order = nested.locate("/project/src/modules/ordering/domain/aggregates/order.aggregate.ts");
 		const clock = nested.locate("/project/src/shared/time/driven/system-clock.adapter.ts");
@@ -54,7 +69,9 @@ describe("Layout", () => {
 	});
 
 	it("recognises the composition root of each feature of the shared kernel, not of a bounded context subfolder", () => {
-		const nested = new Layout(new Config({ boundedContexts: { ordering: "ordering" }, root: "src", sharedKernel: "shared", subdomains: { core: ["ordering"] } }, "/project"));
+		const nested = new Layout(
+			new Config({ boundedContexts: { ordering: "ordering" }, contextMap: { ordering: { consumes: [] } }, root: "src", sharedKernel: "shared", subdomains: { core: ["ordering"] } }, "/project"),
+		);
 
 		expect(nested.locate("/project/src/shared/time/time.module.ts").isCompositionRoot).toBe(true);
 		expect(nested.locate("/project/src/shared/time/helpers.ts").isCompositionRoot).toBe(false);

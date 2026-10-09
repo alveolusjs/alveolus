@@ -100,7 +100,7 @@ describe("Cli", () => {
 		sandbox.write("src/ordering/driven/smtp/adapters/mailer.adapter.ts", "export class Mailer {}\n");
 		sandbox.write(
 			"alveolus.config.ts",
-			`export default { boundedContexts: { catalog: "catalog", ordering: "ordering" }, root: "src", rules: { "layers/no-portless-adapter": "off" }, subdomains: { core: ["catalog", "ordering"] } };\n`,
+			`export default { boundedContexts: { catalog: "catalog", ordering: "ordering" }, contextMap: { catalog: { consumes: [] }, ordering: { consumes: ["catalog"] } }, root: "src", rules: { "layers/no-portless-adapter": "off" }, subdomains: { core: ["catalog", "ordering"] } };\n`,
 		);
 
 		expect(await cli.run(["arch", "check"])).toBe(0);
@@ -171,7 +171,7 @@ describe("Cli", () => {
 		sandbox.write("src/ordering/driven/smtp/adapters/mailer.adapter.ts", "export class Mailer {}\n");
 		sandbox.write(
 			"alveolus.config.ts",
-			`export default { boundedContexts: { catalog: "catalog", ordering: "ordering" }, root: "src", rules: { "layers/no-portless-adapter": "warn" }, subdomains: { core: ["catalog", "ordering"] } };\n`,
+			`export default { boundedContexts: { catalog: "catalog", ordering: "ordering" }, contextMap: { catalog: { consumes: [] }, ordering: { consumes: ["catalog"] } }, root: "src", rules: { "layers/no-portless-adapter": "warn" }, subdomains: { core: ["catalog", "ordering"] } };\n`,
 		);
 
 		expect(await cli.run(["arch", "check"])).toBe(0);
@@ -235,7 +235,7 @@ describe("Cli", () => {
 
 		expect(await cli.run(["init", "--project", "fresh"])).toBe(0);
 		expect(stdout.text).toContain("created  alveolus.config.ts\n");
-		expect(readFileSync(join(sandbox.dir, "fresh/alveolus.config.ts"), "utf8")).toContain("boundedContexts: {}");
+		expect(readFileSync(join(sandbox.dir, "fresh/alveolus.config.ts"), "utf8")).toContain("boundedContexts: {},\n\tcontextMap: {},");
 		expect(readFileSync(join(sandbox.dir, "fresh/AGENTS.md"), "utf8")).toMatch(/^## Alveolus\n/);
 		expect(stderr.text).toBe("");
 
@@ -244,7 +244,10 @@ describe("Cli", () => {
 	});
 
 	it("refuses to check when no file is analysed", async () => {
-		sandbox.write("alveolus.config.ts", `export default { boundedContexts: { catalog: "catalog", ordering: "ordering" }, root: "elsewhere", subdomains: { core: ["catalog", "ordering"] } };\n`);
+		sandbox.write(
+			"alveolus.config.ts",
+			`export default { boundedContexts: { catalog: "catalog", ordering: "ordering" }, contextMap: { catalog: { consumes: [] }, ordering: { consumes: ["catalog"] } }, root: "elsewhere", subdomains: { core: ["catalog", "ordering"] } };\n`,
+		);
 
 		expect(await cli.run(["arch", "check"])).toBe(2);
 		expect(stderr.text).toContain("No file to analyse under");

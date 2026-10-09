@@ -10,7 +10,7 @@ never depend on each other.
 <dl class="al-glance">
 	<dt>Rule</dt><dd><code>strategic/no-unmapped-context</code></dd>
 	<dt>Category</dt><dd><a href="/rules/#strategic">Strategic</a>: what crosses a bounded context</dd>
-	<dt>Reports</dt><dd>An import of another context that <code>contextMap</code> does not allow; without a map, an import that closes a cycle between contexts</dd>
+	<dt>Reports</dt><dd>An import of another context that <code>contextMap</code> does not allow</dd>
 	<dt>Applies to</dt><dd>Every file of every bounded context</dd>
 	<dt>Turn off</dt><dd><a href="#turn-it-off"><code>"strategic/no-unmapped-context": "off"</code></a></dd>
 </dl>
@@ -24,20 +24,22 @@ extracted or rewritten without the other. In a system that lives for years, that
 turns "change this module" into "rewrite the application".
 
 ::: tip The fix
-Write the context map, as DDD asks: which context is upstream of which. Declare it in
-`alveolus.config.ts`, and the code can no longer stray from it. A dependency that goes against
-the map is reversed: `Ledger` publishes an event, `Payments` reacts.
+Write the context map, as DDD asks: which context is upstream of which. `alveolus.config.ts`
+requires it, so the code can no longer stray from it. A dependency that goes against the map is
+reversed: `Ledger` publishes an event, `Payments` reacts. Adding a line to the map is the other
+way out, and it is a strategic decision: take it in a review, not in a fix.
 :::
 
 ## What it checks
 
 Every import from a file of one bounded context to a file of another, open host service or
-composition root alike:
+composition root alike: the importing context lists the imported one under `consumes` in
+`contextMap`.
 
-<div class="al-cards al-cards-2">
-<div class="al-card"><span class="al-card-title">With a context map</span>The importing context lists the imported one in <code>contextMap</code>. The map itself is checked when the configuration loads: an unknown context or a cycle is an error.</div>
-<div class="al-card"><span class="al-card-title">Without a context map</span>The imports observed form no cycle. An import that closes one is reported at both ends.</div>
-</div>
+The map itself is checked when the configuration loads, before any rule runs: a context left out
+of the map, a context the map names that `boundedContexts` does not declare, a context that
+consumes itself, or a cycle, is an error. Two contexts that depend on each other are therefore
+never allowed, whichever way the code is written.
 
 Imports of the shared kernel are not consumptions: every context may import it.
 
@@ -46,18 +48,17 @@ Imports of the shared kernel are not consumptions: every context may import it.
 ```
 src/ledger/driven/payments/adapters/payment-status.adapter.ts
   2  error  strategic/no-unmapped-context: ledger consumes payments, which the
-     context map does not allow: add payments to contextMap.ledger, or
-     reverse the dependency.
+     context map does not allow: reverse the dependency, or if ledger
+     really is downstream of payments, add payments to
+     contextMap.ledger.consumes.
 ```
 
-Without a map:
+A map that would allow it is refused before the check:
 
 ```
-src/ledger/driven/payments/adapters/payment-status.adapter.ts
-  2  error  strategic/no-unmapped-context: ledger consumes payments, which
-     consumes ledger back: two contexts that depend on each other can
-     no longer change alone; declare a contextMap and reverse one
-     dependency.
+Invalid configuration in alveolus.config.ts:
+contextMap has a cycle: ledger → payments → ledger. Two contexts that depend
+on each other can no longer change alone: reverse one dependency.
 ```
 
 ## Fix it
@@ -65,21 +66,23 @@ src/ledger/driven/payments/adapters/payment-status.adapter.ts
 ### Declare the context map
 
 So that the direction of every dependency is a decision, not an accident, list for each context
-the ones it consumes:
+the ones it consumes. Each line reads as a sentence: `payments` consumes `ledger` and `customers`.
 
 ```ts [alveolus.config.ts]
 export default defineConfig({
 	boundedContexts: { customers: "customers", ledger: "ledger", payments: "payments" },
 	contextMap: {
-		customers: [],
-		ledger: ["customers"],
-		payments: ["ledger", "customers"],
+		customers: { consumes: [] },
+		ledger: { consumes: ["customers"] },
+		payments: { consumes: ["ledger", "customers"] },
 	},
 	root: "src",
+	subdomains: { core: ["ledger", "payments"], generic: ["customers"] },
 });
 ```
 
-A context absent from the map consumes nothing.
+Every context is in the map. `consumes: []` is a decision too: that context goes its separate
+way, and the day it needs another one, the import is reported and the map is updated on purpose.
 
 ### Reverse a dependency with an event
 
