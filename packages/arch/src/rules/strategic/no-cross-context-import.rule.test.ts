@@ -233,4 +233,31 @@ export class OrderingModule {
 
 		expect(codebase.check(new NoCrossContextImportRule())).toEqual(["src/ordering/ordering.module.ts:5 catalog.pricing"]);
 	});
+
+	it("reads a module of another context in the wiring by its properties only", () => {
+		const codebase = wired(`import { CatalogModule } from "./catalog/catalog.module.ts";
+import { OrderingModule } from "./ordering/ordering.module.ts";
+declare function get(object: unknown, path: string): any;
+export class AppModule {
+	private readonly catalog = new CatalogModule(() => ({ place: () => true }));
+	private readonly ordering = new OrderingModule(this.catalog);
+	public start(): unknown[] {
+		const prices = this.catalog.api;
+		const viaReflect = Reflect.get(this.ordering, "placeOrder");
+		const viaBrackets = this.ordering["placeOrder"];
+		const viaHelper = get(this.ordering, "placeOrder");
+		const copy = { ...this.ordering };
+		const { placeOrder } = this.ordering;
+		return [prices, viaReflect, viaBrackets, viaHelper, copy, placeOrder];
+	}
+}`);
+
+		expect(codebase.messages(new NoCrossContextImportRule())).toEqual([
+			"Reaches into this.ordering with Reflect.get: in the wiring, a module of another context is read by its properties, so that what crosses can be seen.",
+			"Reaches into this.ordering with brackets: in the wiring, a module of another context is read by its properties, so that what crosses can be seen.",
+			"Reaches into this.ordering with get: in the wiring, a module of another context is read by its properties, so that what crosses can be seen.",
+			"Reaches into this.ordering with a spread: in the wiring, a module of another context is read by its properties, so that what crosses can be seen.",
+			"Reaches into this.ordering with destructuring: in the wiring, a module of another context is read by its properties, so that what crosses can be seen.",
+		]);
+	});
 });

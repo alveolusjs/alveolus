@@ -58,6 +58,12 @@ other class of its model is reported, even when the receiving side declares a ty
 shape. Whether the receiving context may consume the giving one at all is checked by
 [`strategic/no-unmapped-context`](./no-unmapped-context.md).
 
+So that what crosses can be seen, a module of another context is read by its properties
+(`this.emoney.api`), or handed whole to the constructor of another module
+(`new PaymentsModule(this.ledger)`). Any other way into it is reported: brackets
+(`this.emoney["commands"]`), `Reflect.get`, a spread, destructuring, or passing it to a function,
+such as a helper of `src/` or `get` from lodash, that could hand back anything.
+
 ## What it reports
 
 ```
@@ -99,6 +105,9 @@ src/app.module.ts
   this.emoney.commands.requestRedemption, from emoney, to ledger: only
   an OpenHostService of another bounded context may cross, in an import
   or in the wiring.
+ 21  error  strategic/no-cross-context-import: Reaches into this.emoney
+  with Reflect.get: in the wiring, a module of another context is read
+  by its properties, so that what crosses can be seen.
 ```
 
 ## Fix it
@@ -156,6 +165,8 @@ bounded context. Move what it needs into the shared kernel, or keep it in the co
 - A loader reached through a value typed `any` that is neither a `constructor` nor a lookup on
   `globalThis`, such as `(loaders as any).run(code)`, is not recognised. In review, `any` around a
   call is a question to ask.
+- In the wiring, a module chosen by a condition (`flag ? this.emoney : this.ledger`) and then
+  reached into is not recognised as a module: its type is a union.
 - In the wiring, a value whose type is erased on the way, by a cast or a container token written
   as a string, is not seen. In review, the composition root holds no cast.
 :::
