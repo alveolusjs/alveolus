@@ -10,7 +10,7 @@ an anti-corruption layer or its composition root.
 <dl class="al-glance">
 	<dt>Rule</dt><dd><code>strategic/no-cross-context-import</code></dd>
 	<dt>Category</dt><dd><a href="/rules/#strategic">Strategic</a>: what crosses a bounded context</dd>
-	<dt>Reports</dt><dd>An import from another bounded context that is not its open host service, used where it may be</dd>
+	<dt>Reports</dt><dd>An import from another bounded context that is not its open host service, used where it may be; an import of a file the analysis does not see</dd>
 	<dt>Applies to</dt><dd>Every file of every bounded context, whatever its subdomain, and of the shared kernel</dd>
 	<dt>Turn off</dt><dd><a href="#turn-it-off"><code>"strategic/no-cross-context-import": "off"</code></a></dd>
 </dl>
@@ -41,6 +41,10 @@ When a file of one bounded context imports a file of another one:
 
 The shared kernel imports no bounded context at all. Every context may import the shared kernel.
 
+No file of a context or of the shared kernel imports a file the analysis does not see: ignored,
+unresolved, computed at runtime, or outside the declared contexts and the shared kernel. Such a
+file could re-export another context, and the rule could not tell which one.
+
 Every form of import counts, see [Every import counts](../index.md#every-import-counts).
 
 ## What it reports
@@ -67,6 +71,12 @@ src/shared-kernel/domain/value-objects/money.value-object.ts
   bounded context, but imports
   src/catalog/domain/value-objects/currency.value-object.ts
   (catalog domain).
+
+src/ordering/domain/services/pricing.service.ts
+  1  error  strategic/no-cross-context-import: Imports
+  src/ordering/domain/value-objects/product-id.fixture.ts (ignored by
+  the analysis): the analysis cannot tell which bounded context it
+  reaches; move the file into a bounded context or the shared kernel.
 ```
 
 ## Fix it
@@ -119,7 +129,8 @@ bounded context. Move what it needs into the shared kernel, or keep it in the co
 - The rule checks what an anti-corruption layer imports, not what it does with it: an adapter that
   returns the open host service's answer as is, untranslated, is accepted. In review, the ACL
   should build values of its own context.
-- A file that matches `ignore` in `alveolus.config.ts` is not analysed at all.
+- A file that matches `ignore` in `alveolus.config.ts` is not analysed at all, and no file of a
+  context may import it. Review a change to `ignore` as you would review a rule turned off.
 :::
 
 ## Turn it off

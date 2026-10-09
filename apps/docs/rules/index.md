@@ -51,7 +51,7 @@ its own business. The "Applies to" line of each rule page says which it is.
 
 | Rule | Reports |
 | --- | --- |
-| [`strategic/no-cross-context-import`](./strategic/no-cross-context-import.md) | An import from another bounded context that is not its open host service, a composition root that re-exports. |
+| [`strategic/no-cross-context-import`](./strategic/no-cross-context-import.md) | An import from another bounded context that is not its open host service, a file the analysis does not see, a composition root that re-exports. |
 | [`strategic/no-fat-shared-kernel`](./strategic/no-fat-shared-kernel.md) | An aggregate, a repository or a handler in the shared kernel. |
 | [`strategic/no-leaky-host-service`](./strategic/no-leaky-host-service.md) | An open host service that exposes a class of its context instead of the published language. |
 | [`strategic/no-unmapped-context`](./strategic/no-unmapped-context.md) | A context consuming one the context map does not allow, or two contexts that depend on each other. |
@@ -133,8 +133,9 @@ declares it.
 
 An import the analysis cannot see through counts as a file outside the project: one that does not
 resolve, such as a `.js` file without types, one whose path is computed at runtime, or one that is
-ignored, such as a test file. No layer imports it: only the composition root and the files at the
-root of `src/` may.
+ignored, such as a test file. No file imports it, not even a composition root or a file at the
+root of `src/`: a test file that re-exports another context would otherwise carry the import past
+every rule.
 
 ```
 src/ordering/domain/services/pricing.service.ts

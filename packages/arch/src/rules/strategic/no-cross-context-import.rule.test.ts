@@ -83,6 +83,24 @@ describe("NoCrossContextImportRule", () => {
 		]);
 	});
 
+	it("rejects a file the analysis does not see, which could relay another context, in a context of any subdomain", () => {
+		const codebase = withCatalog(new TestCodebase({ ignore: ["**/*.fixture.ts"], subdomains: { core: ["catalog"], generic: ["ordering"] } }))
+			.file("src/ordering/domain/value-objects/product-id.fixture.ts", `export { ProductId } from "../../../catalog/domain/value-objects/product-id.identifier.ts";`)
+			.file("lib/relay.ts", `export { ProductId } from "../src/catalog/domain/value-objects/product-id.identifier.ts";`)
+			.file(
+				"src/ordering/domain/services/pricing.service.ts",
+				`import { ProductId } from "../value-objects/product-id.fixture.ts";
+				import { relay } from "../../../../lib/relay.ts";
+				import { legacy } from "./legacy.js";`,
+			);
+
+		expect(codebase.messages(new NoCrossContextImportRule())).toEqual([
+			"Imports src/ordering/domain/value-objects/product-id.fixture.ts (ignored by the analysis): the analysis cannot tell which bounded context it reaches; move the file into a bounded context or the shared kernel.",
+			"Imports lib/relay.ts (outside the declared bounded contexts and shared kernel): the analysis cannot tell which bounded context it reaches; move the file into a bounded context or the shared kernel.",
+			"Imports src/ordering/domain/services/legacy.js (not resolved by the analysis): the analysis cannot tell which bounded context it reaches; move the file into a bounded context or the shared kernel.",
+		]);
+	});
+
 	it("keeps the shared kernel free of any bounded context", () => {
 		const codebase = catalog.file("src/shared-kernel/domain/value-objects/sku.value-object.ts", `import { CatalogApi } from "../../../catalog/driving/catalog-api.ts";`);
 

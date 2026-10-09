@@ -10,6 +10,7 @@ type MessageId =
 	| "outsideContexts"
 	| "outsideLayers"
 	| "compositionRoots"
+	| "compositionRootImport"
 	| "rootImport"
 	| "wiring"
 	| "outwardLayer"
@@ -28,6 +29,7 @@ export class NoOutwardImportRule extends ImportRule<"layers/no-outward-import", 
 		description: "A dependency pointing away from the domain, a file outside the layers or in the wrong folder of its layer.",
 		id: "layers/no-outward-import",
 		messages: {
+			compositionRootImport: "The composition root imports {target}: it wires its own context and the shared kernel only.",
 			compositionRoots: "{context} has {count} composition roots ({names}): keep one, and move the rest into the layers.",
 			directlyInLayer: "The file sits directly in {layer}/: put it in the folder of its kind, such as {example}.",
 			drivenTooDeep: "The file is nested too deep: driven/ holds driven/<technology>/<folder>/, such as driven/pg/adapters/.",
@@ -129,9 +131,12 @@ export class NoOutwardImportRule extends ImportRule<"layers/no-outward-import", 
 
 	private layerProblem(from: Location, to: Location, architecture: Architecture): LayerProblem | undefined {
 		if (from.isAtRoot) {
-			return to.isInBoundedContext && !to.isCompositionRoot ? { data: {}, messageId: "rootImport" } : undefined;
+			return to.isOutside || (to.isInBoundedContext && !to.isCompositionRoot) ? { data: {}, messageId: "rootImport" } : undefined;
 		}
-		if (from.isCompositionRoot || to.isOtherBoundedContextThan(from)) {
+		if (from.isCompositionRoot) {
+			return to.isOutside ? { data: {}, messageId: "compositionRootImport" } : undefined;
+		}
+		if (to.isOtherBoundedContextThan(from)) {
 			return undefined;
 		}
 		if (to.isCompositionRoot) {
