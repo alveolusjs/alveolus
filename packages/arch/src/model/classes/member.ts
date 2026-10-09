@@ -18,6 +18,8 @@ export interface MemberProps {
 	readonly parameterTypes: readonly ClassType[];
 	readonly returns: ReturnShape | undefined;
 	readonly holdsCollection: boolean;
+	readonly receivesFunction: boolean;
+	readonly erasedType: string | undefined;
 }
 
 export class Member {
@@ -33,6 +35,8 @@ export class Member {
 	public readonly parameterTypes: readonly ClassType[];
 	public readonly returns: ReturnShape | undefined;
 	public readonly holdsCollection: boolean;
+	public readonly receivesFunction: boolean;
+	public readonly erasedType: string | undefined;
 
 	public constructor(props: MemberProps) {
 		this.name = props.name;
@@ -47,6 +51,8 @@ export class Member {
 		this.parameterTypes = props.parameterTypes;
 		this.returns = props.returns;
 		this.holdsCollection = props.holdsCollection;
+		this.receivesFunction = props.receivesFunction;
+		this.erasedType = props.erasedType;
 	}
 
 	public get isPublicInstance(): boolean {

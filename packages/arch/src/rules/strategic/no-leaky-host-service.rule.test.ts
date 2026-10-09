@@ -51,4 +51,44 @@ describe("NoLeakyHostServiceRule", () => {
 			"CatalogApi.first exposes Product, an AggregateRoot of catalog: an open host service speaks the published language.",
 		]);
 	});
+
+	it("rejects a function received at any depth: an open host service receives data, never behaviour", () => {
+		const codebase = catalog(
+			`import type { OpenHostService } from "@alveolus/core";
+			export type RestockCallback = (id: string) => Promise<boolean>;
+			export interface Listener { onRestock(id: string): void }
+			export class CatalogApi implements OpenHostService {
+				onRestockNeeded(callback: RestockCallback): void {}
+				subscribe(options: { readonly id: string; readonly onSettled: () => void }): void {}
+				listen(listeners: readonly Listener[]): void {}
+				public readonly watch = (handler: () => void): void => {};
+				search(query: string, at: Date, signal: AbortSignal, tags: readonly string[]): string[] { return []; }
+			}`,
+		);
+
+		expect(codebase.messages(new NoLeakyHostServiceRule())).toEqual([
+			"CatalogApi.onRestockNeeded receives a function: an open host service receives data, never behaviour, or the upstream context ends up running code of another one. To let another context react, publish an integration event.",
+			"CatalogApi.subscribe receives a function: an open host service receives data, never behaviour, or the upstream context ends up running code of another one. To let another context react, publish an integration event.",
+			"CatalogApi.listen receives a function: an open host service receives data, never behaviour, or the upstream context ends up running code of another one. To let another context react, publish an integration event.",
+			"CatalogApi.watch receives a function: an open host service receives data, never behaviour, or the upstream context ends up running code of another one. To let another context react, publish an integration event.",
+		]);
+	});
+
+	it("rejects an erased type in a result, and accepts it in a parameter", () => {
+		const codebase = catalog(
+			`import type { OpenHostService } from "@alveolus/core";
+			export class CatalogApi implements OpenHostService {
+				inspect(id: string): Promise<unknown> { return Promise.resolve(undefined); }
+				raw(id: string): any { return undefined; }
+				get snapshot(): object { return {}; }
+				validate(payload: unknown): boolean { return true; }
+			}`,
+		);
+
+		expect(codebase.messages(new NoLeakyHostServiceRule())).toEqual([
+			"CatalogApi.inspect returns unknown: an open host service returns a type of its published language, so that what leaves the context can be seen.",
+			"CatalogApi.raw returns any: an open host service returns a type of its published language, so that what leaves the context can be seen.",
+			"CatalogApi.snapshot returns object: an open host service returns a type of its published language, so that what leaves the context can be seen.",
+		]);
+	});
 });

@@ -8,6 +8,8 @@ import type { TypeReader } from "./type-reader.ts";
 interface MemberTypes {
 	readonly isCallable?: boolean;
 	readonly holdsCollection?: boolean;
+	readonly receivesFunction?: boolean;
+	readonly erasedType?: string | undefined;
 	readonly parameterTypes?: readonly ClassType[];
 	readonly returns?: ReturnShape | undefined;
 	readonly valueTypes?: readonly ClassType[];
@@ -37,8 +39,10 @@ export class ClassReader {
 			const [signature] = type.getCallSignatures();
 			return [
 				this.member(member, "field", {
+					erasedType: this.types.erasedNameOf(signature === undefined ? type : signature.getReturnType()),
 					holdsCollection: this.types.holdsCollection(type),
 					isCallable: signature !== undefined,
+					receivesFunction: signature !== undefined && signature.getParameters().some((parameter) => this.types.holdsFunction(parameter.getTypeAtLocation(member))),
 					returns: signature === undefined ? undefined : this.types.returnShapeOf(signature.getReturnType()),
 					valueTypes: this.types.classTypesIn(type),
 				}),
@@ -47,11 +51,20 @@ export class ClassReader {
 		if (Node.isMethodDeclaration(member)) {
 			const returnType = member.getReturnType();
 			const parameterTypes = member.getParameters().flatMap((parameter) => this.types.classTypesIn(parameter.getType()));
-			return [this.member(member, "method", { parameterTypes, returns: this.types.returnShapeOf(returnType), valueTypes: this.types.classTypesIn(returnType) })];
+			const receivesFunction = member.getParameters().some((parameter) => this.types.holdsFunction(parameter.getType()));
+			return [
+				this.member(member, "method", {
+					erasedType: this.types.erasedNameOf(returnType),
+					parameterTypes,
+					receivesFunction,
+					returns: this.types.returnShapeOf(returnType),
+					valueTypes: this.types.classTypesIn(returnType),
+				}),
+			];
 		}
 		if (Node.isGetAccessorDeclaration(member)) {
 			const returnType = member.getReturnType();
-			return [this.member(member, "getter", { returns: this.types.returnShapeOf(returnType), valueTypes: this.types.classTypesIn(returnType) })];
+			return [this.member(member, "getter", { erasedType: this.types.erasedNameOf(returnType), returns: this.types.returnShapeOf(returnType), valueTypes: this.types.classTypesIn(returnType) })];
 		}
 		if (Node.isSetAccessorDeclaration(member)) {
 			return [this.member(member, "setter", {})];
@@ -64,6 +77,7 @@ export class ClassReader {
 		const isStatic = Node.isStaticable(member) && member.isStatic();
 		const scope = Node.isScoped(member) ? member.getScope() : Scope.Public;
 		return new Member({
+			erasedType: types.erasedType,
 			holdsCollection: types.holdsCollection ?? false,
 			isCallable: types.isCallable ?? false,
 			isParameterProperty: false,
@@ -73,6 +87,7 @@ export class ClassReader {
 			line: member.getStartLineNumber(),
 			name,
 			parameterTypes: types.parameterTypes ?? [],
+			receivesFunction: types.receivesFunction ?? false,
 			returns: types.returns,
 			valueTypes: types.valueTypes ?? [],
 			visibility: name.startsWith("#") ? "private" : this.visibilityOf(scope),
@@ -85,6 +100,7 @@ export class ClassReader {
 
 	private constructorParameter(parameter: ParameterDeclaration): Member {
 		return new Member({
+			erasedType: undefined,
 			holdsCollection: this.types.holdsCollection(parameter.getType()),
 			isCallable: false,
 			isParameterProperty: parameter.isParameterProperty(),
@@ -94,6 +110,7 @@ export class ClassReader {
 			line: parameter.getStartLineNumber(),
 			name: parameter.getName(),
 			parameterTypes: [],
+			receivesFunction: false,
 			returns: undefined,
 			valueTypes: this.types.classTypesIn(parameter.getType()),
 			visibility: this.visibilityOf(parameter.getScope() ?? Scope.Public),

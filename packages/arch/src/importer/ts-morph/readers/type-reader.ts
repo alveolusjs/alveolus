@@ -1,4 +1,5 @@
-import type { Symbol as MorphSymbol, Type, ts } from "ts-morph";
+import { ts } from "ts-morph";
+import type { Symbol as MorphSymbol, Type } from "ts-morph";
 
 import { normalize } from "node:path";
 
@@ -41,6 +42,21 @@ export class TypeReader {
 		return type.isAnonymous() && type.getCallSignatures().length === 0 && type.getConstructSignatures().length === 0;
 	}
 
+	public holdsFunction(type: Type): boolean {
+		return this.findsFunction(type, new Set());
+	}
+
+	public erasedNameOf(type: Type): string | undefined {
+		const settled = this.settled(type);
+		if (settled.isAny()) {
+			return "any";
+		}
+		if (settled.isUnknown()) {
+			return "unknown";
+		}
+		return (settled.getFlags() & ts.TypeFlags.NonPrimitive) === 0 ? undefined : "object";
+	}
+
 	public returnShapeOf(type: Type): ReturnShape {
 		if (type.getSymbol()?.getName() === "Promise") {
 			const [inner] = type.getTypeArguments();
@@ -54,6 +70,44 @@ export class TypeReader {
 			alias: alias === undefined ? undefined : this.namedSymbol(alias),
 			union: members.map((member) => this.namedTypeOf(member)),
 		};
+	}
+
+	private findsFunction(type: Type, seen: Set<ts.Type>): boolean {
+		if (seen.has(type.compilerType)) {
+			return false;
+		}
+		seen.add(type.compilerType);
+		if (type.isUnion()) {
+			return type.getUnionTypes().some((member) => this.findsFunction(member, seen));
+		}
+		if (type.isIntersection()) {
+			return type.getIntersectionTypes().some((member) => this.findsFunction(member, seen));
+		}
+		if (type.isClass()) {
+			return false;
+		}
+		if (type.getCallSignatures().length > 0 || type.getConstructSignatures().length > 0) {
+			return true;
+		}
+		return this.dataTypesOf(type).some((inner) => this.findsFunction(inner, seen));
+	}
+
+	private dataTypesOf(type: Type): Type[] {
+		const inner = [...type.getTypeArguments(), ...type.getAliasTypeArguments(), ...type.getTupleElements()];
+		if (this.isDeclaredByProject(type)) {
+			for (const property of type.getProperties()) {
+				const declaration = property.getDeclarations()[0];
+				if (declaration !== undefined) {
+					inner.push(declaration.getType());
+				}
+			}
+		}
+		return inner;
+	}
+
+	private settled(type: Type): Type {
+		const [inner] = type.getTypeArguments();
+		return type.getSymbol()?.getName() === "Promise" && inner !== undefined ? this.settled(inner) : type;
 	}
 
 	private lineageOf(type: Type): NamedType[] {
