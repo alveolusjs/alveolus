@@ -10,7 +10,8 @@ Node 24 and pnpm 11.
 
 ```sh
 pnpm install
-pnpm check          # lint, typecheck, dead code, tests: what CI runs on ubuntu and windows
+pnpm check          # lint, typecheck, dead code, tests: what CI runs
+pnpm test:coverage  # the tests with the coverage gate of CI
 pnpm docs:dev       # the documentation site
 ```
 
@@ -31,10 +32,18 @@ owns it. `readonly` and `private` by default. Loops over clever chains.
 
 ## A pull request
 
+`main` only moves through pull requests. CI runs on each one, in stages: the linter, the types
+and the dead code in parallel; then the tests on ubuntu and windows with a coverage gate, the
+build of both packages with the content of what would be published, and the documentation site.
+`ci` is the status the branch requires: it fails when any job fails. A pull request that changes
+a package without a changeset fails `check: changeset`.
+
 - `pnpm check` is green.
 - A change in what a rule reports, in a message, in a configuration key or in a public type has
   its page updated: users copy messages into issues.
 - A change a user can see has a changeset: `pnpm changeset`, the package, the bump and one line.
+  CI checks it for a change under `src/` or in `package.json` of a package; one that no user
+  will notice, such as a refactoring, adds an empty changeset: `pnpm changeset --empty`.
   The release workflow turns the changesets into the changelog and the versions; see
   [Versioning](https://alveolus.dev/guide/versioning) for what counts as a breaking change.
 - Commits say what changed and why: `feat(arch): report a Date in an event payload`.

@@ -1,0 +1,149 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  # ── Stage 1: static checks, one job per tool so that a failure names the tool ──
+  checks:
+    name: "check: ${{ matrix.name }}"
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { name: linter, cmd: pnpm lint }
+          - { name: type-safety, cmd: pnpm typecheck }
+          - { name: dead-code, cmd: pnpm knip }
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: ${{ matrix.cmd }}
+
+  # ── Stage 1: a pull request that changes a package carries a changeset ──
+  changeset:
+    name: "check: changeset"
+    if: github.event_name == 'pull_request' && github.head_ref != 'changeset-release/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm changeset status --since=origin/${{ github.base_ref }}
+
+  # ── Stage 2: tests on both platforms; the coverage gate runs with them on ubuntu ──
+  tests:
+    name: "tests: ${{ matrix.os }}"
+    needs: checks
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - if: runner.os != 'Linux'
+        run: pnpm test
+      # Fails under the thresholds of vitest.config.ts.
+      - if: runner.os == 'Linux'
+        run: pnpm test:coverage
+      - name: Coverage summary
+        if: runner.os == 'Linux' && always()
+        run: |
+          if [ -f coverage/coverage-summary.json ]; then
+            node -e '
+              const total = require("./coverage/coverage-summary.json").total;
+              const row = (key) => `| ${key} | ${total[key].pct}% (${total[key].covered}/${total[key].total}) |`;
+              console.log("### Coverage\n");
+              console.log("| Metric | Coverage |\n|---|---|");
+              ["lines", "functions", "branches", "statements"].forEach((key) => console.log(row(key)));
+            ' >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - name: Upload coverage
+        if: runner.os == 'Linux'
+        uses: actions/upload-artifact@v7
+        with:
+          name: coverage
+          path: coverage/
+          retention-days: 7
+
+  # ── Stage 2: what would be published builds and packs ──
+  build:
+    name: build
+    needs: checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - run: pnpm -r --filter "./packages/**" exec pnpm pack --pack-destination "$RUNNER_TEMP/packs"
+      - name: Package contents
+        run: |
+          for pack in "$RUNNER_TEMP"/packs/*.tgz; do
+            echo "### $(basename "$pack")" >> "$GITHUB_STEP_SUMMARY"
+            echo '```' >> "$GITHUB_STEP_SUMMARY"
+            tar -tzf "$pack" >> "$GITHUB_STEP_SUMMARY"
+            echo '```' >> "$GITHUB_STEP_SUMMARY"
+          done
+
+  # ── Stage 2: the documentation site builds, and fails on a dead link ──
+  docs:
+    name: docs
+    needs: checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm docs:build
+
+  # ── Gate: the one status check to require on main ──
+  ci:
+    name: ci
+    needs: [checks, changeset, tests, build, docs]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Every job succeeded, or was skipped on purpose
+        run: |
+          echo '${{ toJSON(needs) }}' | node -e '
+            const needs = JSON.parse(require("fs").readFileSync(0, "utf8"));
+            const failed = Object.entries(needs).filter(([, job]) => !["success", "skipped"].includes(job.result));
+            for (const [name, job] of failed) console.error(`${name}: ${job.result}`);
+            process.exit(failed.length === 0 ? 0 : 1);
+          '

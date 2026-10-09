@@ -302,6 +302,16 @@
 					}
 				}
 			}
+		},
+		{
+			"assist": {
+				"actions": {
+					"source": {
+						"useSortedKeys": "off"
+					}
+				}
+			},
+			"includes": ["packages/*/package.json"]
 		}
 	],
 	"vcs": {
