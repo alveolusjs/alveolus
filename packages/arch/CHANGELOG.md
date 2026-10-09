@@ -1,5 +1,15 @@
 # @alveolus/arch
 
+## 0.5.0
+
+### Minor Changes
+
+- 608904a: Code loaded at runtime counts as an import the analysis does not see, refused in every file: an import of `node:module` (`createRequire`) or `node:vm`, `module.require`, `process.getBuiltinModule`, `eval`, `Function` and `new Function`. `createRequire(import.meta.url)` in an adapter, or `new Function("s", "return import(s)")` in the domain, loaded another context with no rule noticing. `strategic/no-cross-context-import` reports it in any context, `layers/no-outward-import` from a file at the root or a composition root. To read a JSON file, import it with `with { type: "json" }`.
+- 66d06f5: New rule `strategic/no-shared-state`, reported as an error: a static field of the shared kernel without `readonly`, or holding a collection (a `Map`, a `Set`, a mutable array, an index signature, an object literal). A `ServiceRegistry` in the shared kernel let two contexts call each other with no import and no line in the context map. Constants such as `static readonly ZERO = new Money(…)` stay allowed.
+- 1325f97: A `/// <reference path="…" />` or `/// <reference types="…" />` directive and a `declare module "…"` augmentation count as imports, for every rule that checks imports. A reference to a file of another bounded context went unnoticed, and an augmentation of another context's file was only reported in the domain, by `tactical/no-loose-code`.
+- 9897c4c: A file the analysis does not see (ignored, unresolved, computed at runtime, or outside the declared contexts and the shared kernel) can no longer relay another bounded context. An ignored `wiring.fixture.ts` that re-exported another context carried the import past every rule. `layers/no-outward-import` now reports such an import from a composition root or a file at the root of `src/`, and `strategic/no-cross-context-import` reports it from any file of a context, whatever its subdomain, or of the shared kernel. To fix it, move the file into a context, the shared kernel or a package, or record it in the baseline.
+- 5f3ab92: The wiring counts as a dependency. In the composition roots and the files at the root of `src/`, a value of one context given to another (an argument, a property, the body of an arrow function, an assignment, a typed variable) is read through the type checker: `strategic/no-unmapped-context` reports it when the context map does not allow the receiving context to consume the giving one, and `strategic/no-cross-context-import` when it is not an open host service. `new LedgerModule({ redemptions: () => this.emoney.commands.requestRedemption })` in `app.module.ts` tied two contexts with no import between them. `ImportScope` gains `readsWiring(path)`.
+
 ## 0.4.0
 
 ### Minor Changes
