@@ -47,6 +47,7 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm changeset status --since=origin/${{ github.base_ref }}
+      - run: node packages/claude-rules/scripts/check-changeset.ts origin/${{ github.base_ref }}
 
   tests:
     name: "tests: ${{ matrix.os }}"
