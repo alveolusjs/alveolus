@@ -7,7 +7,7 @@ A Claude Code plugin, `alveolus`, to build an app slice by slice from its produc
 In this repository, `.claude/settings.json` registers the repository as the marketplace `harness` and enables the plugin, once the folder is trusted, from the next session. In an app's repository, add the marketplace from GitHub:
 
 ```
-/plugin marketplace add Jeremy-Fleury/harness-v2
+/plugin marketplace add alveolusjs/alveolus
 /plugin install alveolus@harness
 ```
 

@@ -8,9 +8,9 @@ Turn _Implementing Domain-Driven Design_ (Vaughn Vernon, 2013) into **Alveolus**
 
 The repository has two parts: `docs/`, the site, and `packages/`, what an app installs.
 
-- `docs/`: the **Alveolus** site, its DDD and architecture rules, a VitePress site meant to be **published publicly**;
-- `packages/core/`: `@alveolus/core`, the building blocks of DDD for TypeScript (aggregates, entities, value objects, events, ports, handlers, outbox, `Result`), with no runtime dependency;
-- `packages/claude-rules/`: the package `@alveolus/claude-rules`, which installs in an app the approved rules as Claude Code path-scoped rules, and the skills to design, implement and review a user story with them;
+- `docs/`: the **Alveolus** site, its DDD and architecture rules, a VitePress site **published publicly** at [alveolus.dev](https://alveolus.dev/);
+- `packages/core/`: `@alveolus/core` on npm, the building blocks of DDD for TypeScript (aggregates, entities, value objects, events, ports, handlers, outbox, `Result`), with no runtime dependency;
+- `packages/claude-rules/`: the package `@alveolus/claude-rules` on npm, which installs in an app the approved rules as Claude Code path-scoped rules, and the skills to design, implement and review a user story with them;
 - `packages/claude-plugin/`: the Claude Code plugin `alveolus`, its skills and agents;
 - `packages/context-mapper/`: validates a context map written in CML and draws it (Context Mapper CLI in Docker), for any app;
 - `ebooks/`: the reference book, **local only** (ignored by Git).
@@ -106,7 +106,7 @@ sources:                      # book section titles, behind the scenes: never sh
 
 ## Plugin
 
-The plugin `alveolus` (`packages/claude-plugin`) builds any app that follows the rules, slice by slice, from that app's product documentation. The repository is its marketplace (`.claude-plugin/marketplace.json`, name `harness`), enabled here by `.claude/settings.json`. An app adds it with `/plugin marketplace add Jeremy-Fleury/harness-v2`. It grows one brick at a time; its README lists the bricks and what comes next.
+The plugin `alveolus` (`packages/claude-plugin`) builds any app that follows the rules, slice by slice, from that app's product documentation. The repository is its marketplace (`.claude-plugin/marketplace.json`, name `harness`), enabled here by `.claude/settings.json`. An app adds it with `/plugin marketplace add alveolusjs/alveolus`. It grows one brick at a time; its README lists the bricks and what comes next.
 
 - Skills, run by the user, who reviews between steps: `/alveolus:spec`, `/alveolus:design`, `/alveolus:tasks`, `/alveolus:build`, `/alveolus:verify`. The spec `status` follows: `draft`, `approved`, `designed`, `planned`, `building`, `done`.
 - Agent `alveolus:reviewer`: reviews a change against the rules whose detection is `LLM` or `hybrid`.
@@ -139,6 +139,14 @@ pnpm build          # the site, @alveolus/core, and the rules of claude-rules
 Before handing back: `pnpm check && pnpm typecheck && pnpm test && pnpm build`.
 
 - `@alveolus/core` keeps its own TypeScript settings (`packages/core/tsconfig.json`): strict, with `isolatedDeclarations`. Its type assertions are deliberate, so `noUnsafeTypeAssertion` is off for it in `biome.json`.
+
+## Releases
+
+`@alveolus/core` and `@alveolus/claude-rules` are published on npm; the plugin and `context-mapper` are not.
+
+- A pull request that changes what a package ships adds a changeset: `pnpm changeset`, the package, the bump and one line a user can read. A change no user will notice adds an empty one: `pnpm changeset --empty`.
+- `@alveolus/claude-rules` ships the approved rules of `docs/src/rules/`: a pull request that changes an approved rule, or approves one, needs a changeset for it. CI checks it.
+- On `main`, the release workflow opens a "Version packages" pull request; merging it publishes to npm with provenance. Never bump a version or publish by hand.
 
 ## Watch out
 

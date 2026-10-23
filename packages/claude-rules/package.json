@@ -2,7 +2,27 @@
 	"name": "@alveolus/claude-rules",
 	"version": "0.1.0",
 	"description": "The Alveolus rules for Claude Code: its approved rules as path-scoped rules, and the skills to design, implement and review a user story with them.",
+	"keywords": [
+		"ddd",
+		"domain-driven-design",
+		"typescript",
+		"nestjs",
+		"claude-code",
+		"claude-code-rules",
+		"code-review",
+		"hexagonal-architecture"
+	],
+	"homepage": "https://alveolus.dev/start/getting-started#claude-code",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/alveolusjs/alveolus.git",
+		"directory": "packages/claude-rules"
+	},
+	"license": "MIT",
 	"type": "module",
+	"engines": {
+		"node": ">=24"
+	},
 	"bin": {
 		"alveolus-claude": "bin/alveolus-claude.js"
 	},

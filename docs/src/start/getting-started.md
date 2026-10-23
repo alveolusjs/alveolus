@@ -2,7 +2,7 @@
 
 Alveolus s’adopte en trois temps : déclarer ses bounded contexts, écrire le modèle avec les building blocks, puis laisser Claude Code coder avec les règles. Chaque étape sert seule. Ensemble, elles se renforcent.
 
-Il faut Node.js 24 ou plus récent, TypeScript et pnpm.
+Il faut Node.js 24 ou plus récent et TypeScript. Les packages sont publiés sur npm. Les commandes ci-dessous utilisent pnpm : avec npm, `npm install` remplace `pnpm add`, et `npx` remplace `pnpm exec`.
 
 ## 1. Déclarer les bounded contexts {#contexts}
 
