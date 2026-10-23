@@ -2,7 +2,7 @@
 
 The [Alveolus](https://alveolus.dev/) rules for Claude Code, installed in an app:
 
-- its approved rules as [path-scoped rules](https://code.claude.com/docs/en/memory#path-specific-rules), one file per scope and style in `.claude/rules/alveolus/`. Claude Code loads each file only when it reads or edits a file of that scope: the rules of `domain` when it works in `src/wallets/domain/`, those of `driven` in `src/wallets/driven/`;
+- its approved rules as [path-scoped rules](https://code.claude.com/docs/en/memory#path-specific-rules), one folder per style and one file per scope in `.claude/rules/alveolus/`. Claude Code loads each file only when it reads or edits a file of that scope: the rules of `domain` when it works in `src/wallets/domain/`, those of `driven` in `src/wallets/driven/`;
 - three skills that take a user story from design to review, and a reviewer agent.
 
 The site walks through it in [getting started](https://alveolus.dev/start/getting-started#claude-code).
@@ -50,6 +50,22 @@ Run `install` again after each update of the package, or after adding a bounded 
 
 ## What it writes
 
+```
+.claude/rules/alveolus/
+├── index.md
+├── tactical/
+│   ├── domain.md
+│   ├── application.md
+│   └── …
+├── transaction-script/
+│   ├── application.md
+│   └── …
+└── big-ball-of-mud/
+    └── legacy.md
+```
+
+One folder per style, one file per scope:
+
 | Scope | Files it matches, for each bounded context |
 | --- | --- |
 | `domain` | `src/<context>/domain/**`, tactical contexts only (TXS-05) |
@@ -58,11 +74,11 @@ Run `install` again after each update of the package, or after adding a bounded 
 | `tests` | `src/<context>/**/__test__/**`, `*.spec.ts`, `*.test.ts` |
 | `structure` | `src/<context>/*.ts`: module, config, wiring |
 
-A big ball of mud gets no layer rules: it has no layers. Its own file, `big-ball-of-mud.<context>.md`, matches its whole folder and keeps it contained: fix it at the minimum, never model it, and propose a bounded context of its own for a feature that deserves one (MAP-04). The index lists every big ball of mud, so that code elsewhere reads it only through an anticorruption layer in `driven`. A big ball of mud outside the project, at a `path` starting with `..` or absolute, is only listed.
+A big ball of mud gets no layer rules: it has no layers. Its own file, `big-ball-of-mud/<context>.md`, matches its whole folder and keeps it contained: fix it at the minimum, never model it, and propose a bounded context of its own for a feature that deserves one (MAP-04). The index lists every big ball of mud, so that code elsewhere reads it only through an anticorruption layer in `driven`. A big ball of mud outside the project, at a `path` starting with `..` or absolute, is only listed.
 
-Each rule keeps its Signal, Exceptions, Correction, Adaptation and Example. Its Why and Related sections are left out to save context. Only approved rules are shipped: a rule still to review, or rejected, stays out until its verdict is `approved`. A rule whose detection is `fitness` stays in: Claude follows it while writing, the tooling checks it after.
+A rules file starts with its contents, its rules listed by theme, then gives the rules in that order, under one heading per theme. Each rule keeps its Signal, Exceptions, Correction, Adaptation and Example. Its Why and Related sections are left out to save context. Only approved rules are shipped: a rule still to review, or rejected, stays out until its verdict is `approved`. A rule whose detection is `fitness` stays in: Claude follows it while writing, the tooling checks it after.
 
-`index.md` has no `paths`, so it is loaded at the start of every session. A new file only loads its rules after it is written: the index tells Claude which file of rules to read before creating a file in each folder.
+`index.md` has no `paths`, so it is loaded at the start of every session. It has one section per bounded context: each of its folders, its rules file, how many rules that file holds and their themes. A new file only loads its rules after it is written: the index tells Claude which file of rules to read before creating a file in each folder.
 
 ## Build it
 

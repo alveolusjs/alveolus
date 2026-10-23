@@ -14,9 +14,10 @@ const rulesFile = join(packageDir, 'generated', 'rules.json');
 
 const usage = `Usage: alveolus-claude install [options]
 
-Writes the Alveolus rules into ${outputDir}/, one file per scope and style, each loaded by Claude Code
-only when it reads or edits a file of that scope, and one file per big ball of mud. Installs the skills
-/alveolus-design, /alveolus-implement and /alveolus-review, and the agent alveolus-reviewer.
+Writes the Alveolus rules into ${outputDir}/, one folder per style and one file per scope, each loaded
+by Claude Code only when it reads or edits a file of that scope, and one file per big ball of mud.
+Installs the skills /alveolus-design, /alveolus-implement and /alveolus-review, and the agent
+alveolus-reviewer.
 
 Options:
   --architecture <file>  bounded contexts and their style (default: architecture.json)
@@ -72,8 +73,27 @@ function isOutsideProject(path) {
 	return isAbsolute(path) || path === '..' || path.startsWith('../');
 }
 
+function groupByTheme(rules) {
+	const themes = new Map();
+
+	for (const rule of rules) {
+		themes.set(rule.theme, [...(themes.get(rule.theme) ?? []), rule]);
+	}
+
+	return [...themes].map(([theme, themeRules]) => ({ theme, rules: themeRules }));
+}
+
 function renderPaths(paths) {
 	return ['---', 'paths:', ...paths.map((path) => `  - "${path}"`), '---'].join('\n');
+}
+
+function renderContents(rules) {
+	const lines = groupByTheme(rules).flatMap(({ theme, rules: themeRules }) => [
+		`- ${theme}`,
+		...themeRules.map((rule) => `  - ${rule.code} · ${rule.title}`),
+	]);
+
+	return ['## Contents', lines.join('\n')].join('\n\n');
 }
 
 function renderRule(rule) {
@@ -82,7 +102,14 @@ function renderRule(rule) {
 		...(rule.context ? [`Applies only when: ${rule.context}`] : []),
 	];
 
-	return [`## ${rule.code} · ${rule.title}`, facts.join('\n'), rule.body].join('\n\n');
+	return [`### ${rule.code} · ${rule.title}`, facts.join('\n'), rule.body].join('\n\n');
+}
+
+function renderRules(rules) {
+	return groupByTheme(rules).flatMap(({ theme, rules: themeRules }) => [
+		`## ${theme}`,
+		...themeRules.map(renderRule),
+	]);
 }
 
 function renderFile(scope, style, paths, rules) {
@@ -96,7 +123,7 @@ function renderFile(scope, style, paths, rules) {
 		].join(' '),
 	].join('\n\n');
 
-	return `${[renderPaths(paths), intro, ...rules.map(renderRule)].join('\n\n')}\n`;
+	return `${[renderPaths(paths), intro, renderContents(rules), ...renderRules(rules)].join('\n\n')}\n`;
 }
 
 function renderBigBallOfMud(mud, paths, rules) {
@@ -112,23 +139,48 @@ function renderBigBallOfMud(mud, paths, rules) {
 		].join(' '),
 	].join('\n\n');
 
-	return `${[renderPaths(paths), intro, ...rules.map(renderRule)].join('\n\n')}\n`;
+	return `${[renderPaths(paths), intro, ...renderRules(rules)].join('\n\n')}\n`;
 }
 
-function renderIndex(entries, muds) {
-	const rows = entries.map(
-		({ file, paths }) => `| ${paths.map((path) => `\`${path}\``).join('<br>')} | \`${file}\` |`,
-	);
-	const containment = muds.map(({ name, path }) => `- \`${name}\`: \`${path}/\``);
+function renderThemes(rules) {
+	return groupByTheme(rules)
+		.map(({ theme, rules: themeRules }) => `${theme} (${themeRules.length})`)
+		.join(', ');
+}
 
+function renderContext(context, files, options) {
+	const rows = files
+		.filter((file) => file.style === context.style)
+		.map(({ scope, file, rules }) => {
+			const paths = scopePaths[scope](context, options)
+				.map((path) => `\`${path}\``)
+				.join('<br>');
+
+			return `| ${paths} | \`${file}\` | ${rules.length} | ${renderThemes(rules)} |`;
+		});
+
+	return [
+		`## ${context.name} · ${context.style}`,
+		['| Files | Rules file | Rules | Themes |', '| --- | --- | --- | --- |', ...rows].join('\n'),
+	].join('\n\n');
+}
+
+function renderMud({ name, path, file }) {
+	return file
+		? `- \`${name}\`: \`${path}/\`, rules in \`${file}\``
+		: `- \`${name}\`: \`${path}/\`, outside the project`;
+}
+
+function renderIndex(contexts, files, muds, options) {
 	return `${[
 		'# Alveolus rules',
 		[
-			`This app follows the Alveolus rules. Its rules live in \`${outputDir}/\`, one file per scope and style,`,
-			'and one per big ball of mud. Claude Code loads a file of rules when you read or edit a file it matches,',
-			'but a new file only loads them after it is written. Before you create a file, read the rules file of its folder.',
+			`This app follows the Alveolus rules. Its rules live in \`${outputDir}/\`, one folder per style and one file`,
+			'per scope, and one file per big ball of mud. Claude Code loads a file of rules when you read or edit a file',
+			'it matches, but a new file only loads them after it is written. Before you create a file, read the rules',
+			'file of its folder. Each rules file starts with its contents.',
 		].join(' '),
-		['| Files | Rules |', '| --- | --- |', ...rows].join('\n'),
+		...contexts.map((context) => renderContext(context, files, options)),
 		...(muds.length === 0
 			? []
 			: [
@@ -138,10 +190,57 @@ function renderIndex(entries, muds) {
 							'These folders are big balls of mud, contained by MAP-04. Code outside them never imports from them,',
 							'except an anticorruption layer in a `driven` folder.',
 						].join(' '),
-						containment.join('\n'),
+						muds.map(renderMud).join('\n'),
 					].join('\n\n'),
 				]),
 	].join('\n\n')}\n`;
+}
+
+function writeScopeFiles(scopes, rules, contexts, options) {
+	const files = [];
+
+	for (const style of styles) {
+		const styleContexts = contexts.filter((context) => context.style === style);
+
+		for (const scope of scopes) {
+			const scopeRules = rules.filter((rule) => rule.scope.includes(scope) && rule.style.includes(style));
+
+			if (styleContexts.length === 0 || scopeRules.length === 0 || scopesWithoutFolder[style].includes(scope)) {
+				continue;
+			}
+
+			const paths = styleContexts.flatMap((context) => scopePaths[scope](context, options));
+			const file = join(outputDir, style, `${scope}.md`);
+			const text = renderFile(scope, style, paths, scopeRules);
+
+			mkdirSync(dirname(file), { recursive: true });
+			writeFileSync(file, text);
+			files.push({ style, scope, file, rules: scopeRules });
+			console.log(`${file}: ${scopeRules.length} rules, ${Math.round(Buffer.byteLength(text) / 1024)} KB`);
+		}
+	}
+
+	return files;
+}
+
+function writeMudFiles(muds, rules) {
+	const containment = rules.filter((rule) => rule.code === 'MAP-04');
+
+	return muds.map((mud) => {
+		if (isOutsideProject(mud.path)) {
+			console.log(`${mud.name}: big ball of mud outside the project, listed in the index only`);
+
+			return mud;
+		}
+
+		const file = join(outputDir, bigBallOfMud, `${mud.name}.md`);
+
+		mkdirSync(dirname(file), { recursive: true });
+		writeFileSync(file, renderBigBallOfMud(mud, [`${mud.path}/**`], containment));
+		console.log(`${file}: big ball of mud, contained by MAP-04`);
+
+		return { ...mud, file };
+	});
 }
 
 function install(options) {
@@ -151,49 +250,18 @@ function install(options) {
 
 	const { scopes, rules } = JSON.parse(readFileSync(rulesFile, 'utf8'));
 	const contexts = readContexts(options.architecture, options.src);
+	const modelled = contexts.filter((context) => context.style !== bigBallOfMud);
 
 	rmSync(outputDir, { recursive: true, force: true });
 	mkdirSync(outputDir, { recursive: true });
 
-	const entries = [];
+	const files = writeScopeFiles(scopes, rules, modelled, options);
+	const muds = writeMudFiles(
+		contexts.filter((context) => context.style === bigBallOfMud),
+		rules,
+	);
 
-	for (const scope of scopes) {
-		for (const style of styles) {
-			const styleContexts = contexts.filter((context) => context.style === style);
-			const scopeRules = rules.filter((rule) => rule.scope.includes(scope) && rule.style.includes(style));
-
-			if (styleContexts.length === 0 || scopeRules.length === 0 || scopesWithoutFolder[style].includes(scope)) {
-				continue;
-			}
-
-			const paths = styleContexts.flatMap((context) => scopePaths[scope](context, options));
-			const file = join(outputDir, `${scope}.${style}.md`);
-			const text = renderFile(scope, style, paths, scopeRules);
-
-			writeFileSync(file, text);
-			entries.push({ file, paths });
-			console.log(`${file}: ${scopeRules.length} rules, ${Math.round(Buffer.byteLength(text) / 1024)} KB`);
-		}
-	}
-
-	const muds = contexts.filter((context) => context.style === bigBallOfMud);
-	const containment = rules.filter((rule) => rule.code === 'MAP-04');
-
-	for (const mud of muds) {
-		if (isOutsideProject(mud.path)) {
-			console.log(`${mud.name}: big ball of mud outside the project, listed in the index only`);
-			continue;
-		}
-
-		const paths = [`${mud.path}/**`];
-		const file = join(outputDir, `big-ball-of-mud.${mud.name}.md`);
-
-		writeFileSync(file, renderBigBallOfMud(mud, paths, containment));
-		entries.push({ file, paths });
-		console.log(`${file}: big ball of mud, contained by MAP-04`);
-	}
-
-	writeFileSync(join(outputDir, 'index.md'), renderIndex(entries, muds));
+	writeFileSync(join(outputDir, 'index.md'), renderIndex(modelled, files, muds, options));
 	console.log(`${join(outputDir, 'index.md')}: always loaded, points each folder to its rules`);
 
 	installWorkflow();
