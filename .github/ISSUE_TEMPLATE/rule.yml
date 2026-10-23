@@ -1,0 +1,24 @@
+name: Rule proposal
+description: A rule to add, or a rule that says something wrong
+labels: [rule]
+body:
+  - type: input
+    id: code
+    attributes:
+      label: Rule
+      description: The code of the rule it changes, or the theme a new rule belongs to.
+      placeholder: "AGG-06, or Aggregates"
+  - type: textarea
+    id: drift
+    attributes:
+      label: The drift
+      description: What ends up written in the code, and what it costs later. A short TypeScript example.
+    validations:
+      required: true
+  - type: textarea
+    id: signal
+    attributes:
+      label: What a reviewer would look for
+      description: The signal, as it would read in the rule.
+    validations:
+      required: true

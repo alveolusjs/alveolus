@@ -14,9 +14,13 @@
 		"build": "pnpm -r build",
 		"context-map": "pnpm -r context-map",
 		"docs:dev": "pnpm --filter @alveolus/docs dev",
-		"docs:build": "pnpm --filter @alveolus/docs build"
+		"docs:build": "pnpm --filter @alveolus/docs build",
+		"build:packages": "pnpm -r --filter \"./packages/**\" run build",
+		"changeset": "changeset",
+		"release": "pnpm build:packages && changeset publish"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "2.5.15"
+		"@biomejs/biome": "2.5.15",
+		"@changesets/cli": "^3.0.3"
 	}
 }
