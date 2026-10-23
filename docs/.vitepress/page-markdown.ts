@@ -2,7 +2,6 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import matter from 'gray-matter';
 import { parts } from './parts';
-import { reviews } from './reviews';
 import { type Rule, srcDir, writtenThemes } from './rules';
 import { scopeLabel } from './scopes';
 import { styleLegend, styleListLabel, styles } from './styles';
@@ -69,8 +68,6 @@ function ruleMeta(relativePath: string): string {
 	const withNote = (value: string, note: string | undefined): string => (note ? `${value} (${note})` : value);
 
 	return [
-		`- **Verdict** : ${reviews[rule.review].label}`,
-		...rule.reviewNotes.map((note) => `  - ${note}`),
 		...(rule.context ? [`- **Condition** : ${rule.context}`] : []),
 		`- **Style** : ${rule.style.map((style) => styles[style].label).join(', ')}`,
 		`- **Sévérité** : ${withNote(badgeLabel(rule.severity), rule.severityNote)}`,
@@ -82,11 +79,11 @@ function ruleMeta(relativePath: string): string {
 
 function ruleRows(rules: readonly Rule[]): string[] {
 	return [
-		'| Code | Règle | Sévérité | Détection | Verdict |',
-		'| --- | --- | --- | --- | --- |',
+		'| Code | Règle | Sévérité | Détection |',
+		'| --- | --- | --- | --- |',
 		...rules.map(
 			(rule) =>
-				`| [${rule.code}](${rule.link}) | ${rule.title} | ${badgeLabel(rule.severity)} | ${badgeLabel(rule.detection)} | ${reviews[rule.review].label} |`,
+				`| [${rule.code}](${rule.link}) | ${rule.title} | ${badgeLabel(rule.severity)} | ${badgeLabel(rule.detection)} |`,
 		),
 	];
 }

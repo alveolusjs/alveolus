@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { useData, withBase } from 'vitepress';
 import { computed } from 'vue';
-import { reviews } from '../../reviews';
 import { data as rules } from '../rules.data';
 import { matchesStyleFilter } from '../style-filter';
 import FilterNote from './FilterNote.vue';
@@ -28,7 +27,6 @@ const groups = computed(() => Map.groupBy(shown.value, (rule) => rule.group));
     <h3 :id="anchor(group)" class="rule-table__group">{{ group }}</h3>
     <table class="rule-table rule-table--aligned">
       <colgroup>
-        <col class="rule-table__col-review" />
         <col class="rule-table__col-code" />
         <col />
         <col class="rule-table__col-severity" />
@@ -36,7 +34,6 @@ const groups = computed(() => Map.groupBy(shown.value, (rule) => rule.group));
       </colgroup>
       <thead>
         <tr>
-          <th class="rule-table__review" title="Verdict"></th>
           <th>Code</th>
           <th>Règle</th>
           <th>Sévérité</th>
@@ -45,7 +42,6 @@ const groups = computed(() => Map.groupBy(shown.value, (rule) => rule.group));
       </thead>
       <tbody>
         <tr v-for="rule in groupRules" :key="rule.code">
-          <td class="rule-table__review" :title="reviews[rule.review].label">{{ reviews[rule.review].emoji }}</td>
           <td><a :href="withBase(rule.url)" class="rule-code">{{ rule.code }}</a></td>
           <td :class="{ 'rule-table__rejected': rule.review === 'rejected' }">
             {{ rule.title }}

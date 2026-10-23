@@ -1,28 +1,8 @@
 .rb-rule-item {
 	display: grid;
-	grid-template-columns: 6px auto minmax(0, 1fr);
+	grid-template-columns: auto minmax(0, 1fr);
 	column-gap: 7px;
 	align-items: baseline;
-}
-
-.rb-rule-item__review {
-	width: 6px;
-	height: 6px;
-	border-radius: 50%;
-	align-self: start;
-	margin-top: calc(0.75em - 3px);
-}
-
-.rb-rule-item__review--to-review {
-	background-color: var(--vp-c-warning-1);
-}
-
-.rb-rule-item__review--approved {
-	background-color: var(--vp-c-success-1);
-}
-
-.rb-rule-item__review--rejected {
-	background-color: var(--vp-c-danger-1);
 }
 
 .rb-rule-item__code {

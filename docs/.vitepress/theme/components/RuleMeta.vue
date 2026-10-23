@@ -3,8 +3,8 @@ import { useData } from 'vitepress';
 import { computed } from 'vue';
 import { scopeLabel } from '../../scopes';
 import { styles } from '../../styles';
+import { inlineCode } from '../inline-code';
 import { setStyleFilter, styleFilter } from '../style-filter';
-import ReviewBadge from './ReviewBadge.vue';
 import RuleBadge from './RuleBadge.vue';
 import StyleBadge from './StyleBadge.vue';
 
@@ -15,12 +15,6 @@ const { frontmatter } = useData();
 const outOfFilter = computed(
   () => Boolean(styleFilter.value) && !(frontmatter.value.style ?? []).includes(styleFilter.value),
 );
-
-/** Escapes the text and renders backtick code, as in Markdown. */
-function inlineCode(text: string): string {
-  const escaped = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-  return escaped.replace(/`([^`]+)`/g, '<code>$1</code>');
-}
 </script>
 
 <template>
@@ -35,15 +29,6 @@ function inlineCode(text: string): string {
     <div v-if="frontmatter.review === 'rejected' && variant === 'inline'" class="rule-meta__rejected">
       <dt>Rejetée après relecture</dt>
       <dd>Cette règle ne fait plus partie des règles. Elle reste ici pour que son code ne soit jamais réutilisé.</dd>
-    </div>
-    <div class="rule-meta__review">
-      <dt>Verdict</dt>
-      <dd>
-        <ReviewBadge :value="frontmatter.review" />
-        <ul v-if="frontmatter.reviewNotes?.length" class="rule-meta__notes">
-          <li v-for="note in frontmatter.reviewNotes" :key="note" v-html="inlineCode(note)" />
-        </ul>
-      </dd>
     </div>
     <div v-if="frontmatter.context && variant === 'inline'" class="rule-meta__context">
       <dt>Condition</dt>

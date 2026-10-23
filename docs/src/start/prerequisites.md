@@ -104,4 +104,4 @@ Les building blocks et les règles pour Claude Code sont livrés dans deux packa
 | Package | Contenu |
 | --- | --- |
 | [`@alveolus/core`](https://www.npmjs.com/package/@alveolus/core) | `AggregateRoot`, `Entity`, `ValueObject`, `Identifier`, `DomainEvent`, `DomainError`, les ports (`Clock`, `IdGenerator`), les repositories, `CommandHandler` et `QueryHandler`, `UnitOfWork`, `Outbox` et `OutboxRelay`, `Result`. Aucune dépendance à l’exécution. |
-| [`@alveolus/claude-rules`](https://www.npmjs.com/package/@alveolus/claude-rules) | Les règles relues, en règles de Claude Code chargées par dossier, trois skills pour mener une user story de la conception à la revue, et un agent de revue. S’installe en dépendance de développement. |
+| [`@alveolus/claude-rules`](https://www.npmjs.com/package/@alveolus/claude-rules) | Les règles, en règles de Claude Code chargées par dossier, trois skills pour mener une user story de la conception à la revue, et un agent de revue. S’installe en dépendance de développement. |

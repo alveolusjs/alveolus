@@ -71,8 +71,6 @@ La commande lit `architecture.json` et écrit dans `.claude/` :
 - trois skills, qui mènent une user story de la conception à la revue ;
 - un agent de revue, qui vérifie les règles dans son propre contexte.
 
-Seules les règles relues sont livrées. Une règle encore à relire n’y figure pas, une règle rejetée non plus.
-
 Relancer la commande après chaque mise à jour du package ou l’ajout d’un bounded context, et versionner `.claude/` : toute l’équipe code alors avec les mêmes règles.
 
 1. **Concevoir**, avec `/alveolus-design` suivi de la user story. Le skill lit le code et les règles de chaque dossier touché, puis écrit une conception technique : critères d’acceptation, modèle, use cases, adapters, fichiers, tests, règles appliquées, questions ouvertes. Aucun code.

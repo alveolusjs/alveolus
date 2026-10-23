@@ -5,7 +5,7 @@ import matter from 'gray-matter';
 import type { DefaultTheme, MarkdownRenderer } from 'vitepress';
 import { iconSvg } from './icons';
 import { parts } from './parts';
-import { isReview, type Review, reviews } from './reviews';
+import { isReview, type Review } from './reviews';
 import { isStyleList, type Style } from './styles';
 import { type Theme, themes } from './themes';
 
@@ -26,7 +26,6 @@ export interface Rule {
 	title: string;
 	group: string;
 	review: Review;
-	reviewNotes: string[];
 	severity: string;
 	severityNote?: string;
 	detection: string;
@@ -59,7 +58,6 @@ function loadThemeRules(theme: Theme): Rule[] {
 				title: data.title,
 				group: data.group ?? 'Rules',
 				review: data.review,
-				reviewNotes: data.reviewNotes ?? [],
 				severity: data.severity,
 				severityNote: data.severityNote,
 				detection: data.detection,
@@ -107,11 +105,8 @@ function escapeHtml(text: string): string {
 }
 
 function ruleItemText(rule: Rule): string {
-	const review = reviews[rule.review];
-
 	return [
 		'<span class="rb-rule-item">',
-		`<span class="rb-rule-item__review rb-rule-item__review--${rule.review}" title="${review.label}" aria-label="${review.label}"></span>`,
 		`<span class="rb-rule-item__code">${rule.code}</span>`,
 		`<span class="rb-rule-item__label">${escapeHtml(rule.title)}</span>`,
 		'</span>',
