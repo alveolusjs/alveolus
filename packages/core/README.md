@@ -8,16 +8,20 @@ unit of work, the outbox, and `Result`. No runtime dependency.
 pnpm add @alveolus/core
 ```
 
-```ts
-import { AggregateRoot, err, ok, type Result } from "@alveolus/core";
+A value object extends `ValueObject` and refuses an invalid value with a `Result`, not an exception:
 
-export class Order extends AggregateRoot<OrderId, OrderPlaced, OrderSnapshot> {
-	place(total: number, eventId: string, now: Date): Result<void, InvalidTotal> {
-		if (total <= 0) {
-			return err(new InvalidTotal({ total }));
+```ts
+import { DomainError, err, ok, type Result, ValueObject } from '@alveolus/core';
+
+export class InvalidMoney extends DomainError<{ minor: bigint }> {}
+
+export class Money extends ValueObject<{ minor: bigint; currency: string }> {
+	static of(minor: bigint, currency: string): Result<Money, InvalidMoney> {
+		if (minor < 0n) {
+			return err(new InvalidMoney({ minor }));
 		}
-		this.record(new OrderPlaced({ aggregateId: this.id, id: eventId, occurredAt: now, payload: { total } }));
-		return ok();
+
+		return ok(new Money({ minor, currency }));
 	}
 }
 ```
@@ -25,7 +29,7 @@ export class Order extends AggregateRoot<OrderId, OrderPlaced, OrderSnapshot> {
 Each class says what it is: an aggregate extends `AggregateRoot`, a value object `ValueObject`.
 
 - [Documentation](https://alveolus.dev/)
-- [Getting started](https://alveolus.dev/guide/getting-started)
-- [Building blocks](https://alveolus.dev/core/)
+- [Getting started](https://alveolus.dev/start/getting-started)
+- [Source](https://github.com/alveolusjs/alveolus/tree/main/packages/core)
 
 Node.js 24 or later. MIT.

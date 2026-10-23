@@ -41,30 +41,22 @@ features:
 
 <HomeSearch />
 
-## Avant, après
+## Trois façons de s’en servir
 
-Chaque règle se termine par la correction, souvent en code. AGG-01 : c’est l’aggregate qui décide, et il refuse avec un résultat, pas avec une exception.
+Chaque brique sert seule. Ensemble, elles se renforcent : les règles disent quoi faire, `@alveolus/core` donne les classes pour le faire, et Claude Code les applique en codant.
 
-::: code-group
+<HomeUses />
 
-```ts [Avant]
-// The use case decides, the aggregate obeys
-if (transfer.status === TransferStatus.Executed) {
-  throw new TransferAlreadyExecutedError(transfer.id);
-}
+## Une règle, une fiche
 
-transfer.status = TransferStatus.Cancelled;
-```
+Toutes les règles suivent le même format, pensé pour la revue de code : ce qu’on voit dans le diff, ce que cela coûte, et comment corriger. Ici, un extrait d’AGG-15.
 
-```ts [Après · AGG-01]
-// The aggregate decides, and answers with a result
-const cancelled = transfer.cancel();
+<HomeAnatomy />
 
-if (!cancelled.ok) {
-  return cancelled;
-}
-```
+## Deux styles, un filtre
 
-:::
+Un bounded context ne mérite pas toujours un modèle tactique. Chaque règle dit à quel style elle s’applique, et le filtre en haut de page adapte tout le site, chiffres compris.
+
+<HomeStyles />
 
 </div>

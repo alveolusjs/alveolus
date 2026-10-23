@@ -1,9 +1,11 @@
-# claude-rules
+# @alveolus/claude-rules
 
-The Alveolus rules for Claude Code, installed in an app:
+The [Alveolus](https://alveolus.dev/) rules for Claude Code, installed in an app:
 
 - its approved rules as [path-scoped rules](https://code.claude.com/docs/en/memory#path-specific-rules), one file per scope and style in `.claude/rules/alveolus/`. Claude Code loads each file only when it reads or edits a file of that scope: the rules of `domain` when it works in `src/wallets/domain/`, those of `driven` in `src/wallets/driven/`;
 - three skills that take a user story from design to review, and a reviewer agent.
+
+The site walks through it in [getting started](https://alveolus.dev/start/getting-started#claude-code).
 
 ## From a user story to a review
 
@@ -65,3 +67,7 @@ Each rule keeps its Signal, Exceptions, Correction, Adaptation and Example. Its 
 ## Build it
 
 `pnpm build` turns the rules of `docs/src/rules/` into `generated/rules.json`, the only data the command reads. The skills live in `skills/`, the agent in `agents/`, copied as they are. To try a change in an app before publishing, install the package with `pnpm add -D link:<path to this folder>`.
+
+The package ships the approved rules: a pull request that changes an approved rule, or approves one, adds a changeset for `@alveolus/claude-rules`, so that the rules reach npm.
+
+Node.js 24 or later. MIT.

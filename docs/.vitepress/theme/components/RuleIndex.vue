@@ -2,7 +2,6 @@
 import { withBase } from 'vitepress';
 import { computed, ref, watch } from 'vue';
 import { parts } from '../../parts';
-import { reviewOrder, reviews } from '../../reviews';
 import { scopes } from '../../scopes';
 import { styles } from '../../styles';
 import { themes } from '../../themes';
@@ -13,7 +12,6 @@ import RuleBadge from './RuleBadge.vue';
 
 const search = ref('');
 const part = ref('');
-const review = ref('');
 const theme = ref('');
 const severity = ref('');
 const scope = ref('');
@@ -29,16 +27,11 @@ watch(part, () => {
   }
 });
 
-function reviewCount(value: string): number {
-  return rules.filter((rule) => rule.review === value).length;
-}
-
 const filtered = computed(() => {
   const terms = search.value.trim().toLowerCase();
   return rules.filter(
     (rule) =>
       (!part.value || partOf.get(rule.theme) === part.value) &&
-      (!review.value || rule.review === review.value) &&
       matchesStyleFilter(rule.style) &&
       (!theme.value || rule.theme === theme.value) &&
       (!severity.value || rule.severity === severity.value) &&
@@ -59,10 +52,6 @@ const filtered = computed(() => {
       <option value="">Tous les thèmes</option>
       <option v-for="t in writtenThemes" :key="t.slug" :value="t.slug">{{ t.title }}</option>
     </select>
-    <select v-model="review">
-      <option value="">Tous les verdicts</option>
-      <option v-for="r in reviewOrder" :key="r" :value="r">{{ reviews[r].emoji }} {{ reviews[r].label }}</option>
-    </select>
     <select v-model="severity">
       <option value="">Toutes les sévérités</option>
       <option v-for="s in severities" :key="s" :value="s">{{ badgeLabel(s) }}</option>
@@ -73,13 +62,11 @@ const filtered = computed(() => {
     </select>
   </div>
   <p class="rule-filters__count">
-    {{ filtered.length }} règles sur {{ rules.length }}<span v-if="styleFilter">, pour les {{ styles[styleFilter].contexts }}</span> ·
-    <span v-for="r in reviewOrder" :key="r" class="rule-filters__review">{{ reviews[r].emoji }} {{ reviewCount(r) }} </span>
+    {{ filtered.length }} règles sur {{ rules.length }}<span v-if="styleFilter">, pour les {{ styles[styleFilter].contexts }}</span>
   </p>
   <table class="rule-table">
     <thead>
       <tr>
-        <th class="rule-table__review" title="Verdict"></th>
         <th>Code</th>
         <th>Règle</th>
         <th>Sévérité</th>
@@ -88,7 +75,6 @@ const filtered = computed(() => {
     </thead>
     <tbody>
       <tr v-for="rule in filtered" :key="rule.code">
-        <td class="rule-table__review" :title="reviews[rule.review].label">{{ reviews[rule.review].emoji }}</td>
         <td><a :href="withBase(rule.url)" class="rule-code">{{ rule.code }}</a></td>
         <td :class="{ 'rule-table__rejected': rule.review === 'rejected' }">
           {{ rule.title }}

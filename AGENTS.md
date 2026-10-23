@@ -8,9 +8,9 @@ Turn _Implementing Domain-Driven Design_ (Vaughn Vernon, 2013) into **Alveolus**
 
 The repository has two parts: `docs/`, the site, and `packages/`, what an app installs.
 
-- `docs/`: the **Alveolus** site, its DDD and architecture rules, a VitePress site meant to be **published publicly**;
-- `packages/core/`: `@alveolus/core`, the building blocks of DDD for TypeScript (aggregates, entities, value objects, events, ports, handlers, outbox, `Result`), with no runtime dependency;
-- `packages/claude-rules/`: the package `@alveolus/claude-rules`, which installs in an app the approved rules as Claude Code path-scoped rules, and the skills to design, implement and review a user story with them;
+- `docs/`: the **Alveolus** site, its DDD and architecture rules, a VitePress site **published publicly** at [alveolus.dev](https://alveolus.dev/);
+- `packages/core/`: `@alveolus/core` on npm, the building blocks of DDD for TypeScript (aggregates, entities, value objects, events, ports, handlers, outbox, `Result`), with no runtime dependency;
+- `packages/claude-rules/`: the package `@alveolus/claude-rules` on npm, which installs in an app the approved rules as Claude Code path-scoped rules, and the skills to design, implement and review a user story with them;
 - `packages/claude-plugin/`: the Claude Code plugin `alveolus`, its skills and agents;
 - `packages/context-mapper/`: validates a context map written in CML and draws it (Context Mapper CLI in Docker), for any app;
 - `ebooks/`: the reference book, **local only** (ignored by Git).
@@ -39,7 +39,7 @@ One chapter at a time. For each: read the chapter in `ebooks/`, draft the rules,
 | 14 | Application | **drafted** |
 | A | Aggregates and Event Sourcing: A+ES | **dropped**: event sourcing is out of the rules |
 
-The rules were then regrouped by theme and renumbered so that each prefix belongs to one theme (`themes.ts`): 196 rules, including CTX-14 and the Transaction scripts theme (TXS-01 to TXS-08), which go beyond the book. The architecture and placement part was then regrouped in three axes: structure (LAY, PLC, NAM, WIR), flow (UC, API, PER) and proof (TST). Under way: the translation into French and the review of each rule, theme by theme. Left to do: a cross-cutting review (consistency of cross-references, severities).
+The rules were then regrouped by theme and renumbered so that each prefix belongs to one theme (`themes.ts`): 196 rules, including CTX-14 and the Transaction scripts theme (TXS-01 to TXS-08), which go beyond the book. The architecture and placement part was then regrouped in three axes: structure (LAY, PLC, NAM, WIR), flow (UC, API, PER) and proof (TST). Every rule has been reviewed. Under way: the translation into French, theme by theme. Left to do: a cross-cutting review (consistency of cross-references, severities).
 
 ### Build apps with these rules
 
@@ -84,12 +84,12 @@ sources:                      # book section titles, behind the scenes: never sh
 
 - Each theme has an `index.md` with a short introduction and `<RuleTable />`. Themes, their order, their prefix, their summary and their part are declared in `docs/.vitepress/themes.ts`.
 - Themes are grouped in four **parts**, declared in `docs/.vitepress/parts.ts`. Each part is a folder of `src/rules/` holding its page (`index.md`) and the folders of its themes: `strategic-design/`, `domain-logic/`, `architecture-and-placement/`, `integration/`. Rule URLs follow the folders: `/rules/<part>/<theme>/<code>`. A theme's `part` in `themes.ts` must match the folder it lives in.
-- A theme is `written` or `coming`. A `coming` theme reserves its prefix and shows, greyed, on the home page and the part pages, but not in the sidebar. It becomes `written` with its folder under its part, its `index.md` and its first rule. The site build fails when two themes share a prefix, a theme names an unknown part, or a status does not match the folder.
+- A theme is `written` or `coming`. A `coming` theme reserves its prefix and shows, greyed, on the part pages, but not in the sidebar. It becomes `written` with its folder under its part, its `index.md` and its first rule. The site build fails when two themes share a prefix, a theme names an unknown part, or a status does not match the folder.
 - Each theme overview has an **In practice** section, between its introduction and its rule table: a short example written in the page, and the rules it shows. There is no example project: code examples live in the Markdown. The context map of the strategic design part is `docs/src/rules/strategic-design/context-map/payment-services.cml`, drawn by `pnpm context-map`.
 - Sidebar, tables and the global index are **generated** from the frontmatter: maintain nothing by hand.
 - Translating a page also translates its entry in the sidebar, in the same change: a rule through its `title`, a part or theme overview through `menu: Vue d’ensemble` in its frontmatter (the sidebar shows `Overview` without it), along with the `title` and `group` of every rule listed under that theme, and the rule's `#` heading to match, a page of the `start` section or `choosing-a-style` through its label in `rulesSidebar()` (`.vitepress/rules.ts`).
 - Every rule says which **implementation style** it applies to: `tactical` (core contexts, tactical DDD), `transaction-script` (supporting and generic contexts), or both. The site shows it as a badge, and a global filter in the top bar (All, Tactical, Transaction script), remembered by the browser, narrows the sidebar, the tables, the index and the home page to the rules that apply to one style, shared rules included; a rule outside the filter stays reachable with a banner. The site build fails on a rule without a valid `style`. Themes of the tactical model are `tactical`; the strategic, integration and architecture themes apply to both unless a rule targets the model itself.
-- Every rule carries a **review verdict**: `to-review` (⚠️) until the user has read it, `approved` (✅) once kept, `rejected` (❌) when it leaves the rules. A rejected rule keeps its page and its code, so the code is never reused. The sidebar, the rule tables and the index show the verdict; the index filters by it and counts each. The site build fails on a rule without a valid `review`. Only the user changes a verdict.
+- Every rule carries a **review verdict** in its frontmatter: `to-review` until the user has read it, `approved` once kept, `rejected` when it leaves the rules. Every rule is now approved, so the site no longer shows the verdict; it only strikes out a rejected rule in the tables and gives its page a banner. A rejected rule keeps its page and its code, so the code is never reused. `@alveolus/claude-rules` ships approved rules only. The site build fails on a rule without a valid `review`. Only the user changes a verdict.
 - Writing a rule code (`AGG-04`) in any page is enough: it becomes a link automatically.
 - Groups (`group`) structure the theme; rules of the same group follow each other in the numbering.
 
@@ -106,7 +106,7 @@ sources:                      # book section titles, behind the scenes: never sh
 
 ## Plugin
 
-The plugin `alveolus` (`packages/claude-plugin`) builds any app that follows the rules, slice by slice, from that app's product documentation. The repository is its marketplace (`.claude-plugin/marketplace.json`, name `harness`), enabled here by `.claude/settings.json`. An app adds it with `/plugin marketplace add Jeremy-Fleury/harness-v2`. It grows one brick at a time; its README lists the bricks and what comes next.
+The plugin `alveolus` (`packages/claude-plugin`) builds any app that follows the rules, slice by slice, from that app's product documentation. The repository is its marketplace (`.claude-plugin/marketplace.json`, name `harness`), enabled here by `.claude/settings.json`. An app adds it with `/plugin marketplace add alveolusjs/alveolus`. It grows one brick at a time; its README lists the bricks and what comes next.
 
 - Skills, run by the user, who reviews between steps: `/alveolus:spec`, `/alveolus:design`, `/alveolus:tasks`, `/alveolus:build`, `/alveolus:verify`. The spec `status` follows: `draft`, `approved`, `designed`, `planned`, `building`, `done`.
 - Agent `alveolus:reviewer`: reviews a change against the rules whose detection is `LLM` or `hybrid`.
@@ -139,6 +139,14 @@ pnpm build          # the site, @alveolus/core, and the rules of claude-rules
 Before handing back: `pnpm check && pnpm typecheck && pnpm test && pnpm build`.
 
 - `@alveolus/core` keeps its own TypeScript settings (`packages/core/tsconfig.json`): strict, with `isolatedDeclarations`. Its type assertions are deliberate, so `noUnsafeTypeAssertion` is off for it in `biome.json`.
+
+## Releases
+
+`@alveolus/core` and `@alveolus/claude-rules` are published on npm; the plugin and `context-mapper` are not.
+
+- A pull request that changes what a package ships adds a changeset: `pnpm changeset`, the package, the bump and one line a user can read. A change no user will notice adds an empty one: `pnpm changeset --empty`.
+- `@alveolus/claude-rules` ships the approved rules of `docs/src/rules/`: a pull request that changes an approved rule, or approves one, needs a changeset for it. CI checks it.
+- On `main`, the release workflow opens a "Version packages" pull request; merging it publishes to npm with provenance. Never bump a version or publish by hand.
 
 ## Watch out
 

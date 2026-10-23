@@ -14,7 +14,6 @@ interface RuleSummary {
 	theme: string;
 	url: string;
 	review: Review;
-	reviewNotes: string[];
 	style: Style[];
 }
 
@@ -37,7 +36,6 @@ export default createContentLoader('rules/*/*/*.md', {
 				theme: page.url.split('/').filter(Boolean)[2] ?? '',
 				url: page.url,
 				review: page.frontmatter.review,
-				reviewNotes: page.frontmatter.reviewNotes ?? [],
 				style: page.frontmatter.style ?? [],
 			}))
 			.sort((a, b) => a.code.localeCompare(b.code, 'en', { numeric: true })),

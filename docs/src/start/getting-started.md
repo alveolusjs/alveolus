@@ -2,7 +2,7 @@
 
 Alveolus s’adopte en trois temps : déclarer ses bounded contexts, écrire le modèle avec les building blocks, puis laisser Claude Code coder avec les règles. Chaque étape sert seule. Ensemble, elles se renforcent.
 
-Il faut Node.js 24 ou plus récent, TypeScript et pnpm.
+Il faut Node.js 24 ou plus récent et TypeScript. Les packages sont publiés sur npm. Les commandes ci-dessous utilisent pnpm : avec npm, `npm install` remplace `pnpm add`, et `npx` remplace `pnpm exec`.
 
 ## 1. Déclarer les bounded contexts {#contexts}
 
@@ -70,8 +70,6 @@ La commande lit `architecture.json` et écrit dans `.claude/` :
 - les règles, un fichier par couche et par style. Claude Code charge celles de `domain` quand il travaille dans `src/wallets/domain/`, celles de `driven` dans `src/wallets/driven/` ;
 - trois skills, qui mènent une user story de la conception à la revue ;
 - un agent de revue, qui vérifie les règles dans son propre contexte.
-
-Seules les règles relues sont livrées. Une règle encore à relire n’y figure pas, une règle rejetée non plus.
 
 Relancer la commande après chaque mise à jour du package ou l’ajout d’un bounded context, et versionner `.claude/` : toute l’équipe code alors avec les mêmes règles.
 

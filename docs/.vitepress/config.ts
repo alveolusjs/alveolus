@@ -18,6 +18,15 @@ export default defineConfig({
 	head: [
 		['link', { rel: 'icon', type: 'image/svg+xml', href: '/logo.svg' }],
 		['style', {}, sectionIconsCss()],
+		[
+			'script',
+			{
+				defer: '',
+				src: 'https://cloud.umami.is/script.js',
+				'data-website-id': 'f08d2258-37c3-4859-870a-145181b8b3d1',
+				'data-domains': 'alveolus.dev',
+			},
+		],
 	],
 	markdown: {
 		config: ruleLinks,

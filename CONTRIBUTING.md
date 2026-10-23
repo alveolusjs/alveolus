@@ -24,8 +24,8 @@ pnpm build          # the site, @alveolus/core, and the rules of claude-rules
 
 - `docs/`: the site, in French, built with VitePress. One rule is one Markdown file; the sidebar,
   the tables and the index are generated from the frontmatter.
-- `packages/core`: `@alveolus/core`, the building blocks, with no runtime dependency.
-- `packages/claude-rules`: `@alveolus/claude-rules`, the approved rules as Claude Code rules.
+- `packages/core`: `@alveolus/core` on npm, the building blocks, with no runtime dependency.
+- `packages/claude-rules`: `@alveolus/claude-rules` on npm, the approved rules as Claude Code rules.
 - `packages/claude-plugin`: the Claude Code plugin `alveolus`.
 - `packages/context-mapper`: validates and draws a context map written in CML.
 
@@ -39,4 +39,6 @@ a package without a changeset fails `check: changeset`.
 - `pnpm check && pnpm typecheck && pnpm test && pnpm build` is green.
 - A change a user of a package can see has a changeset: `pnpm changeset`, the package, the bump
   and one line. A change no user will notice adds an empty one: `pnpm changeset --empty`.
+- `@alveolus/claude-rules` ships the approved rules: a change to an approved rule, or an approval,
+  has a changeset for it. CI checks it.
 - Commits follow Conventional Commits: `docs(rules): translate the messaging theme into French`.

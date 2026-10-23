@@ -190,6 +190,7 @@ Alveolus est écrit en français. Les termes techniques et ceux de la littératu
 | waiver | m. | La dérogation documentée à une règle, signalée par un commentaire dans le code. |
 | ADR | f. | Une décision d’architecture, numérotée, jamais réécrite. |
 | building block | m. | Une classe de base fournie par un package (`AggregateRoot`, `ValueObject`), que le code du modèle étend. |
+| package | m. | Une bibliothèque publiée sur npm, qu’un projet installe en dépendance. |
 | user story | f. | Un besoin décrit du point de vue de celui qui l’exprime, avec ses critères d’acceptation. |
 | skill | m. | Une commande de Claude Code qui guide une étape du travail, lancée par `/` suivi de son nom. |
 

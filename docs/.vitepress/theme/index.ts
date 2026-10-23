@@ -2,7 +2,10 @@ import { type Theme, useRoute } from 'vitepress';
 import DefaultTheme from 'vitepress/theme';
 import { h, nextTick, onMounted, watch } from 'vue';
 import CopyMarkdown from './components/CopyMarkdown.vue';
+import HomeAnatomy from './components/HomeAnatomy.vue';
 import HomeSearch from './components/HomeSearch.vue';
+import HomeStyles from './components/HomeStyles.vue';
+import HomeUses from './components/HomeUses.vue';
 import PartEyebrow from './components/PartEyebrow.vue';
 import RuleAside from './components/RuleAside.vue';
 import RuleIndex from './components/RuleIndex.vue';
@@ -49,7 +52,10 @@ export default {
 		);
 	},
 	enhanceApp({ app }) {
+		app.component('HomeAnatomy', HomeAnatomy);
 		app.component('HomeSearch', HomeSearch);
+		app.component('HomeStyles', HomeStyles);
+		app.component('HomeUses', HomeUses);
 		app.component('RuleIndex', RuleIndex);
 		app.component('RuleMeta', RuleMeta);
 		app.component('RuleTable', RuleTable);
