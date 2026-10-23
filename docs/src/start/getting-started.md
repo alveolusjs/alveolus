@@ -73,9 +73,11 @@ La commande lit `architecture.json` et écrit dans `.claude/` :
 
 Relancer la commande après chaque mise à jour du package ou l’ajout d’un bounded context, et versionner `.claude/` : toute l’équipe code alors avec les mêmes règles.
 
-1. **Concevoir**, avec `/alveolus-design` suivi de la user story. Le skill lit le code et les règles de chaque dossier touché, puis écrit une conception technique : critères d’acceptation, modèle, use cases, adapters, fichiers, tests, règles appliquées, questions ouvertes. Aucun code.
-2. **Implémenter**, avec `/alveolus-implement` suivi de la conception approuvée. Un test d’abord, critère par critère, de `domain` vers les adapters. Le skill s’arrête sur un manque de la story ou de la conception, ou sur une règle qu’il ne peut pas tenir.
-3. **Relire**, avec `/alveolus-review`. Le skill lance les contrôles du projet, fait vérifier les règles par l’agent de revue, et compare le code à la conception et à ses critères. Il ne corrige rien.
+1. **Concevoir**, avec `/alveolus-design` suivi de la user story. Le skill lit le code et les règles de chaque dossier touché, puis écrit une conception technique : critères d’acceptation, modèle, use cases, adapters, fichiers, tests, incréments, règles appliquées, questions ouvertes. Aucun code.
+2. **Implémenter**, avec `/alveolus-implement` suivi de la conception approuvée. Le skill construit un seul incrément, le suivant, sur sa propre branche : un test d’abord, puis le code, en lisant les règles de chaque dossier avant d’y écrire. Il coche l’incrément et l’enregistre dans Git, sans le pousser. Il s’arrête sur un manque de la story ou de la conception, sur une règle qu’il ne peut pas tenir, ou sur un incrément qui déborde de son plan.
+3. **Relire**, avec `/alveolus-review`. Le skill lance les contrôles du projet, fait vérifier les règles par l’agent de revue, et compare l’incrément à la conception : son test, ses fichiers, ce qui le rend sûr à fusionner. Au dernier incrément, il vérifie aussi chaque critère de la story. Il propose la merge request et ne corrige rien.
+
+La conception découpe la story en incréments, une merge request chacun, assez petite pour être relue d’une traite. Chacun se fusionne seul, garde tous les contrôles au vert et ne casse rien : le premier critère se construit couche par couche, de `domain` vers les adapters, et reste injoignable jusqu’à son wiring ; chaque autre critère tient en un incrément, de bout en bout ; un changement de comportement existant passe par un changement en parallèle, l’ancien chemin restant en place jusqu’au dernier pas. On relit la conception et on la fusionne avant tout code. Puis, pour chaque incrément : implémenter, relire, pousser, fusionner, et passer au suivant.
 
 Chaque skill attend d’être lancé : on relit entre deux étapes, et la conception reste en brouillon tant qu’on ne l’a pas approuvée.
 

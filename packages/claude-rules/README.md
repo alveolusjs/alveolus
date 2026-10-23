@@ -11,9 +11,11 @@ The site walks through it in [getting started](https://alveolus.dev/start/gettin
 
 | Step | Run | What it does | Design `status` after |
 | --- | --- | --- | --- |
-| Design | `/alveolus-design <story>` | Reads the story, the code and the rules of each folder it touches, and writes `docs/designs/<slug>.md`: acceptance criteria, model, use cases, adapters, persistence, files, tests, rules applied, open questions. No code. | `draft`, then `approved` by the user |
-| Implement | `/alveolus-implement <design>` | Only from an `approved` design. Test first, criterion by criterion, inside out, reading each folder's rules before writing in it. Stops on a gap in the story or the design, or a rule it cannot keep. | `implemented` |
-| Review | `/alveolus-review [design]` | Runs the app's checks, has the `alveolus-reviewer` agent check the rules on the changed files, and checks the code against the design and its criteria. Fixes nothing. | `reviewed`, once the user accepts the verdict |
+| Design | `/alveolus-design <story>` | Reads the story, the code and the rules of each folder it touches, and writes `docs/designs/<slug>.md`: acceptance criteria, model, use cases, adapters, persistence, files, tests, increments, rules applied, open questions. No code. | `draft`, then `approved` by the user |
+| Implement | `/alveolus-implement <design>` | Only from an approved design, merged. Builds one increment, the next unticked one, on its own branch: test first, reading each folder's rules before writing in it. Ticks it and commits, never pushes. Stops on a gap in the story or the design, a rule it cannot keep, or an increment that outgrows its plan. | `in-progress`, `implemented` after the last increment |
+| Review | `/alveolus-review [design]` | Runs the app's checks, has the `alveolus-reviewer` agent check the rules on the changed files, and checks the increment against the design: its test, its files, why it is safe to merge. On the last increment, every criterion of the story too. Proposes the pull request. Fixes nothing. | `reviewed`, once the user accepts the verdict on the last increment |
+
+The design cuts the story into increments, one pull request each, that a person reviews in one sitting. Each one merges on its own, leaves every check green and breaks nothing: the first criterion is built one layer at a time, inside out, and stays unreachable until its wiring; each other criterion is one increment, end to end; a change to existing behaviour is a parallel change. Then, for each increment: `/alveolus-implement`, `/alveolus-review`, the user pushes and merges, and runs the next one.
 
 The user reviews between steps: each skill runs only when invoked, never on its own. Designs go to `docs/designs/` unless the app's CLAUDE.md names another folder.
 
