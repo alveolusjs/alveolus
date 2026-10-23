@@ -1,5 +1,11 @@
 # @alveolus/core
 
+## 0.2.1
+
+### Patch Changes
+
+- 6da206c: The npm page links to the site and its getting started, and shows an example that compiles.
+
 ## 0.2.0
 
 ### Minor Changes
