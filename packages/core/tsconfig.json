@@ -1,0 +1,27 @@
+{
+	"compilerOptions": {
+		"allowImportingTsExtensions": true,
+		"customConditions": ["@alveolus/source"],
+		"declaration": true,
+		"declarationMap": true,
+		"exactOptionalPropertyTypes": true,
+		"isolatedDeclarations": true,
+		"isolatedModules": true,
+		"lib": ["es2024"],
+		"module": "nodenext",
+		"moduleDetection": "force",
+		"moduleResolution": "nodenext",
+		"noEmit": true,
+		"noFallthroughCasesInSwitch": true,
+		"noImplicitOverride": true,
+		"noPropertyAccessFromIndexSignature": true,
+		"noUncheckedIndexedAccess": true,
+		"skipLibCheck": true,
+		"sourceMap": true,
+		"strict": true,
+		"target": "es2024",
+		"types": ["node"],
+		"verbatimModuleSyntax": true
+	},
+	"include": ["src", "test"]
+}

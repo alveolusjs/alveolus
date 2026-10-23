@@ -1,0 +1,11 @@
+{
+	"name": "harness",
+	"owner": { "name": "Jérémy Fleury" },
+	"plugins": [
+		{
+			"name": "alveolus",
+			"source": "./packages/claude-plugin",
+			"description": "Build an app slice by slice from its product documentation, within the Alveolus rules."
+		}
+	]
+}

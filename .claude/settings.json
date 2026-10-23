@@ -1,0 +1,10 @@
+{
+	"extraKnownMarketplaces": {
+		"harness": {
+			"source": { "source": "directory", "path": "./" }
+		}
+	},
+	"enabledPlugins": {
+		"alveolus@harness": true
+	}
+}

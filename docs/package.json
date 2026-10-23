@@ -1,0 +1,17 @@
+{
+	"name": "@alveolus/docs",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"dev": "vitepress dev",
+		"build": "vitepress build",
+		"preview": "vitepress preview",
+		"context-map": "sh ../packages/context-mapper/generate.sh src/rules/strategic-design/context-map/payment-services.cml"
+	},
+	"devDependencies": {
+		"gray-matter": "^4.0.3",
+		"lucide-static": "1.48.0",
+		"vitepress": "1.6.4",
+		"vue": "^3.5.43"
+	}
+}

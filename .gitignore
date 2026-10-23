@@ -1,0 +1,11 @@
+node_modules/
+*/.vitepress/cache/
+*/.vitepress/dist/
+packages/claude-rules/generated/
+packages/*/dist/
+
+.DS_Store
+.idea/
+
+# Reference books (copyrighted, not versioned)
+ebooks/
