@@ -5,8 +5,6 @@ group: Noms de fichiers
 scope: [structure]
 style: [tactical, transaction-script]
 severity: major
-detection: LLM
-detectionNote: La revue compare l’export principal du fichier à son rôle.
 review: approved
 sources: []
 ---

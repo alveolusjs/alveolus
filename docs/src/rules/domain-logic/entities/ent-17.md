@@ -5,7 +5,6 @@ group: Historique
 scope: [domain]
 style: [tactical]
 severity: question
-detection: LLM
 review: approved
 sources:
   - "Change Tracking"

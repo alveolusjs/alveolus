@@ -5,7 +5,6 @@ group: Style d’implémentation
 scope: [structure]
 style: [tactical, transaction-script]
 severity: blocking
-detection: LLM
 review: approved
 sources:
   - "Chapter introduction"

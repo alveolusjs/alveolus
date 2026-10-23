@@ -71,20 +71,15 @@ function ruleMeta(relativePath: string): string {
 		...(rule.context ? [`- **Condition** : ${rule.context}`] : []),
 		`- **Style** : ${rule.style.map((style) => styles[style].label).join(', ')}`,
 		`- **Sévérité** : ${withNote(badgeLabel(rule.severity), rule.severityNote)}`,
-		`- **Détection** : ${withNote(badgeLabel(rule.detection), rule.detectionNote)}`,
-		...(rule.fitness ? [`- **Contrôle automatique** : ${rule.fitness}`] : []),
 		`- **S’applique à** : ${rule.scope.map(scopeLabel).join(', ')}`,
 	].join('\n');
 }
 
 function ruleRows(rules: readonly Rule[]): string[] {
 	return [
-		'| Code | Règle | Sévérité | Détection |',
-		'| --- | --- | --- | --- |',
-		...rules.map(
-			(rule) =>
-				`| [${rule.code}](${rule.link}) | ${rule.title} | ${badgeLabel(rule.severity)} | ${badgeLabel(rule.detection)} |`,
-		),
+		'| Code | Règle | Sévérité |',
+		'| --- | --- | --- |',
+		...rules.map((rule) => `| [${rule.code}](${rule.link}) | ${rule.title} | ${badgeLabel(rule.severity)} |`),
 	];
 }
 

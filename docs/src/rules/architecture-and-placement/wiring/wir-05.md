@@ -5,8 +5,6 @@ group: Dépendances
 scope: [domain, application, driven]
 style: [tactical, transaction-script]
 severity: major
-detection: deterministic
-detectionNote: "Un plugin Biome peut signaler `@Injectable`, `@Inject` et `@Optional` hors de `driving/http` et des fichiers de wiring."
 review: approved
 sources:
   - "Avoid Dependency Injection"

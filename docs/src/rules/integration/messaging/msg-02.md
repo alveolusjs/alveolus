@@ -5,8 +5,6 @@ group: Publication
 scope: [driven, schema]
 style: [tactical, transaction-script]
 severity: major
-detection: fitness
-detectionNote: Des requêtes `UPDATE` ou `DELETE` sur la table des events.
 review: approved
 sources:
   - "Event Store"

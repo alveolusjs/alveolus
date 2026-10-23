@@ -5,7 +5,6 @@ group: Quand changer de style
 scope: [structure, application]
 style: [transaction-script]
 severity: question
-detection: LLM
 review: approved
 sources: []
 ---

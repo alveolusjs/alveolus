@@ -6,7 +6,6 @@ scope: [schema, driven, tests]
 style: [tactical, transaction-script]
 severity: minor
 severityNote: Majeure pour une lecture derrière la requête d’un titulaire, sur une table qui grossit sans limite.
-detection: LLM
 review: approved
 sources: []
 ---

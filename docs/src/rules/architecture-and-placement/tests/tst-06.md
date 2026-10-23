@@ -5,8 +5,6 @@ group: Place et nom
 scope: [tests]
 style: [tactical, transaction-script]
 severity: minor
-detection: LLM
-detectionNote: "La revue lit le nom des fichiers sous `__test__`."
 review: approved
 sources: []
 ---

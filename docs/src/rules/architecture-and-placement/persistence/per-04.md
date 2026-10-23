@@ -5,8 +5,6 @@ group: Mappers
 scope: [driven]
 style: [tactical]
 severity: major
-detection: hybrid
-detectionNote: "La revue vérifie que chaque valeur passe par sa factory ; un contrôle peut signaler `?? 0` et `?? ''` dans un mapper."
 review: approved
 sources: []
 ---

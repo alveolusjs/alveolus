@@ -5,7 +5,6 @@ group: Sens des dépendances
 scope: [domain]
 style: [tactical]
 severity: minor
-detection: hybrid
 review: approved
 sources:
   - "Modules of the Agile Project Management Context (the generic Identity type)"

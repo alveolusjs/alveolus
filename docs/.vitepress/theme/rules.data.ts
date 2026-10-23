@@ -7,7 +7,6 @@ interface RuleSummary {
 	title: string;
 	group: string;
 	severity: string;
-	detection: string;
 	/** Applicability condition, when the rule is not universal. */
 	context?: string;
 	scope: string[];
@@ -30,7 +29,6 @@ export default createContentLoader('rules/*/*/*.md', {
 				title: page.frontmatter.title,
 				group: page.frontmatter.group ?? 'Rules',
 				severity: page.frontmatter.severity,
-				detection: page.frontmatter.detection,
 				context: page.frontmatter.context,
 				scope: page.frontmatter.scope ?? [],
 				theme: page.url.split('/').filter(Boolean)[2] ?? '',

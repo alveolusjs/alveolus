@@ -5,8 +5,6 @@ group: Appels distants
 scope: [driven]
 style: [tactical, transaction-script]
 severity: major
-detection: hybrid
-detectionNote: Des clients HTTP créés sans timeout, des appels distants dans une boucle.
 review: approved
 sources:
   - "Integration Basics"

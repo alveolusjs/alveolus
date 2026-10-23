@@ -5,8 +5,6 @@ group: Forme d’un script
 scope: [application]
 style: [transaction-script]
 severity: major
-detection: hybrid
-detectionNote: Les rôles de fichiers sont vérifiés ; ce que fait chaque méthode se juge en revue.
 review: approved
 sources: []
 ---

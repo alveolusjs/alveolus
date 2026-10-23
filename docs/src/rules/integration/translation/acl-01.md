@@ -5,8 +5,6 @@ group: Anticorruption layer
 scope: [driven, domain]
 style: [tactical, transaction-script]
 severity: major
-detection: hybrid
-detectionNote: Des types de l’upstream importés hors de leur dossier `driven/<technology>/<upstream>`.
 review: approved
 sources:
   - "Anticorruption Layer (definition)"

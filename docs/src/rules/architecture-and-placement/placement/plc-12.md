@@ -5,7 +5,6 @@ group: Dans la durée
 scope: [structure, driven, driving]
 style: [tactical, transaction-script]
 severity: minor
-detection: LLM
 review: approved
 sources: []
 ---

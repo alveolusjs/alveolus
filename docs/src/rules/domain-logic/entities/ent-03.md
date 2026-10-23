@@ -5,8 +5,6 @@ group: Identité
 scope: [domain]
 style: [tactical]
 severity: minor
-detection: hybrid
-detectionNote: En revue, repérer le code appelant qui découpe le format brut d’une identité.
 review: approved
 sources:
   - "Unique Identity"

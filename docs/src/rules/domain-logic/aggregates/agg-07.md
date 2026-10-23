@@ -5,7 +5,6 @@ group: Transactions et cohérence
 scope: [domain]
 style: [tactical]
 severity: major
-detection: LLM
 review: approved
 sources:
   - "Model Navigation"

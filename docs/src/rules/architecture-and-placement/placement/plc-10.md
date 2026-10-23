@@ -5,8 +5,6 @@ group: Dans la durée
 scope: [structure, driving]
 style: [tactical, transaction-script]
 severity: major
-detection: hybrid
-detectionNote: "dependency-cruiser signale un fichier hors de `src` qui importe le client Prisma ; la revue lit les jobs et les corrections de données."
 review: approved
 sources: []
 ---

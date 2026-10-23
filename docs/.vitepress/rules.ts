@@ -28,9 +28,6 @@ export interface Rule {
 	review: Review;
 	severity: string;
 	severityNote?: string;
-	detection: string;
-	detectionNote?: string;
-	fitness?: string;
 	context?: string;
 	scope: string[];
 	style: Style[];
@@ -60,9 +57,6 @@ function loadThemeRules(theme: Theme): Rule[] {
 				review: data.review,
 				severity: data.severity,
 				severityNote: data.severityNote,
-				detection: data.detection,
-				detectionNote: data.detectionNote,
-				fitness: data.fitness,
 				context: data.context,
 				scope: data.scope ?? [],
 				style: data.style,

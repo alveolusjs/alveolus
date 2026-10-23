@@ -5,8 +5,6 @@ group: Transactions
 scope: [driven, application]
 style: [tactical, transaction-script]
 severity: blocking
-detection: hybrid
-detectionNote: "Un contrôle peut signaler `_max` et `MAX(` dans une requête qui précède une écriture ; la revue juge le reste."
 review: approved
 sources: []
 ---

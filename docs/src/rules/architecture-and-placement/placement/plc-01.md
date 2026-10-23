@@ -5,8 +5,6 @@ group: L’application
 scope: [structure]
 style: [tactical, transaction-script]
 severity: major
-detection: hybrid
-detectionNote: La revue vérifie le contenu du dossier de chaque bounded context.
 review: approved
 sources: []
 ---

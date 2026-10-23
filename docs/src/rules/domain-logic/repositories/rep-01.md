@@ -5,8 +5,6 @@ group: Contrat
 scope: [domain, driven]
 style: [tactical]
 severity: major
-detection: hybrid
-detectionNote: Les repositories dont le type géré n’est pas un aggregate root.
 review: approved
 sources:
   - "Chapter introduction"

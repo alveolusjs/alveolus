@@ -5,8 +5,6 @@ group: REST
 scope: [driving]
 style: [tactical, transaction-script]
 severity: major
-detection: hybrid
-detectionNote: Les types renvoyés et reçus par les controllers, comparés aux classes du domaine.
 review: approved
 sources:
   - "Representational State Transfer › REST and DDD"

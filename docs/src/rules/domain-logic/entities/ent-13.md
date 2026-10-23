@@ -6,8 +6,6 @@ scope: [domain, driving]
 style: [tactical]
 severity: blocking
 severityNote: Bloquante si le secret sort dans une API, un event ou un log. Majeure pour un getter.
-detection: hybrid
-detectionNote: Les getters et la sérialisation des champs sensibles.
 review: approved
 sources:
   - "Digging for Essential Behavior (changePassword(), AuthenticationService)"

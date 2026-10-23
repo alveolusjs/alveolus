@@ -5,8 +5,6 @@ group: La composition root
 scope: [structure, public]
 style: [tactical, transaction-script]
 severity: major
-detection: hybrid
-detectionNote: "La revue lit les `exports` du module de chaque bounded context."
 review: approved
 sources:
   - "Hexagonal or Ports and Adapters"

@@ -5,8 +5,6 @@ group: Modéliser l’event
 scope: [domain, application]
 style: [tactical]
 severity: major
-detection: hybrid
-detectionNote: L’instanciation d’une classe d’event hors de domain/ ; le reste se juge en revue.
 review: approved
 sources:
   - "The Challenges of Applying DDD (commitTo example)"

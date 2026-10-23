@@ -6,8 +6,6 @@ scope: [domain]
 style: [tactical]
 severity: major
 severityNote: Majeure pour un état gardé entre deux appels. Mineure pour le nommage.
-detection: hybrid
-detectionNote: Des champs modifiables dans les classes de domain service ; le nommage se juge en revue.
 review: approved
 sources:
   - "What a Domain Service Is (but First, What It Is Not) (Evans quote)"

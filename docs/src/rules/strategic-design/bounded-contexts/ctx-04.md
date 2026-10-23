@@ -5,8 +5,6 @@ group: Langage et frontière
 scope: [domain]
 style: [tactical]
 severity: major
-detection: hybrid
-detectionNote: "dependency-cruiser : domain/ n’importe aucun module d’identité ou d’autorisation, jugement pour les autres subdomains."
 review: approved
 sources:
   - "Why Strategic Design Is So Incredibly Essential"

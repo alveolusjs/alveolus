@@ -6,8 +6,6 @@ scope: [driving]
 style: [tactical, transaction-script]
 severity: major
 severityNote: Major for a GET that changes state or a non-idempotent PUT/DELETE. Minor otherwise.
-detection: hybrid
-detectionNote: Les routes `GET` qui appellent une command ; la revue juge l’idempotence.
 review: approved
 sources:
   - "Representational State Transfer › Key Aspects of a RESTful HTTP Server"

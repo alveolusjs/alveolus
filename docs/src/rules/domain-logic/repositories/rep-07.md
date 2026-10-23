@@ -5,7 +5,6 @@ group: Écritures
 scope: [domain, driven]
 style: [tactical]
 severity: major
-detection: fitness
 review: approved
 sources:
   - "Hibernate Implementation (persistence through the repository only, versus persistence managed by the aggregate)"

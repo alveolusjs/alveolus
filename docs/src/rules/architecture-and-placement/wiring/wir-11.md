@@ -5,7 +5,6 @@ group: Configuration
 scope: [structure, domain, application, driving, driven]
 style: [tactical, transaction-script]
 severity: major
-detection: fitness
 review: approved
 sources: []
 ---

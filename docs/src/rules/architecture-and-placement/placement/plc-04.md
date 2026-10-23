@@ -5,8 +5,6 @@ group: Modules
 scope: [structure, domain, application]
 style: [tactical, transaction-script]
 severity: minor
-detection: hybrid
-detectionNote: "Un contrôle signale les dossiers de `domain/` et `application/` nommés d’après un type de fichier ; la revue vérifie que chaque fichier est dans le dossier de son concept."
 review: approved
 sources:
   - "Designing with Modules (Table 9.1, the kitchen drawers analogy)"

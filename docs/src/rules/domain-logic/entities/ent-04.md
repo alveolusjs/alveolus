@@ -6,7 +6,6 @@ scope: [domain]
 style: [tactical]
 severity: major
 severityNote: Majeure si le modèle permet de changer la valeur qui sert d’identité. Question sinon.
-detection: LLM
 review: approved
 sources:
   - "Unique Identity › User Provides Identity"

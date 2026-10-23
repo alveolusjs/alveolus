@@ -5,8 +5,6 @@ group: Le schéma
 scope: [schema]
 style: [tactical, transaction-script]
 severity: major
-detection: hybrid
-detectionNote: "Un script de projet peut vérifier que chaque modèle de `<context>.prisma` déclare `@@schema(\"<context>\")` ; la revue vérifie les rôles de la base."
 review: approved
 sources: []
 ---

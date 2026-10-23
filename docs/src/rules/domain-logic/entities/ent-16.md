@@ -5,7 +5,6 @@ group: Construction et validation
 scope: [domain]
 style: [tactical]
 severity: minor
-detection: LLM
 review: approved
 sources:
   - "Validation › Validating Whole Objects"

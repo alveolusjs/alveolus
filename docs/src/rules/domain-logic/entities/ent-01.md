@@ -5,7 +5,6 @@ group: Nature d’une entity
 scope: [domain]
 style: [tactical]
 severity: minor
-detection: LLM
 review: approved
 sources:
   - "Chapter introduction"

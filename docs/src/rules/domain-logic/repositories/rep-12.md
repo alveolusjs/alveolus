@@ -5,8 +5,6 @@ group: Requêtes
 scope: [driven, schema]
 style: [tactical]
 severity: major
-detection: hybrid
-detectionNote: Des procédures, des triggers et des fonctions dans les migrations, des conditions métier dans les requêtes.
 review: approved
 sources:
   - "Additional Behavior"

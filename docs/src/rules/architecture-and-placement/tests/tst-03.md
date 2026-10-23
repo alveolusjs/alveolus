@@ -5,8 +5,6 @@ group: Ce qu’un test prouve
 scope: [tests]
 style: [tactical, transaction-script]
 severity: minor
-detection: hybrid
-detectionNote: "Un contrôle peut signaler `overrideProvider` et un module de test qui déclare des `providers` ; la revue juge le reste."
 review: approved
 sources: []
 ---

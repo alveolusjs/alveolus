@@ -5,8 +5,6 @@ group: La context map et le code
 scope: [driven, schema]
 style: [tactical, transaction-script]
 severity: major
-detection: hybrid
-detectionNote: Relire les tables qui copient les données d’un autre bounded context.
 review: approved
 sources:
   - "Mapping the Three Contexts (passage on autonomy and replication)"

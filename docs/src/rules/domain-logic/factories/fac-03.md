@@ -5,8 +5,6 @@ group: Règles
 scope: [domain]
 style: [tactical]
 severity: major
-detection: hybrid
-detectionNote: Les appels à `new X(` hors du module quand une factory method existe.
 review: approved
 sources:
   - "Creating CalendarEntry Instances (constructeur protected)"

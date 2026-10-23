@@ -5,8 +5,6 @@ group: Stockage et reconstitution
 scope: [driven, schema]
 style: [tactical]
 severity: major
-detection: hybrid
-detectionNote: Un diff qui renomme un champ d’une classe sérialisée en JSON, sans toucher au mapper ni aux migrations.
 review: approved
 sources:
   - "MongoDB Implementation (field mapping on deserialization)"

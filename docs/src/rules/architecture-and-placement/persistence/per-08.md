@@ -5,7 +5,6 @@ group: Transactions
 scope: [application, driven]
 style: [tactical, transaction-script]
 severity: major
-detection: LLM
 review: approved
 sources:
   - "Managing Transactions"

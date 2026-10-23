@@ -5,8 +5,6 @@ group: Tests
 scope: [tests]
 style: [tactical]
 severity: minor
-detection: hybrid
-detectionNote: Les implémentations de repository sans test d’intégration correspondant.
 review: approved
 sources:
   - "Testing Repositories"

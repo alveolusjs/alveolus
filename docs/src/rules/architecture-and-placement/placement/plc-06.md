@@ -5,7 +5,6 @@ group: Modules
 scope: [structure]
 style: [tactical, transaction-script]
 severity: minor
-detection: hybrid
 review: approved
 sources:
   - "Designing with Modules (Table 9.1)"

@@ -5,7 +5,6 @@ group: Durée de vie
 scope: [structure, application]
 style: [tactical, transaction-script]
 severity: minor
-detection: LLM
 review: approved
 sources: []
 ---

@@ -5,7 +5,6 @@ group: Anticorruption layer
 scope: [driven]
 style: [tactical, transaction-script]
 severity: major
-detection: LLM
 review: approved
 sources:
   - "Mapping the Three Contexts › Collaboration Context (sidebar after the Translation Map)"

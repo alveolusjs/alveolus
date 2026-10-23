@@ -5,8 +5,6 @@ group: Migrations
 scope: [schema, tests, structure]
 style: [tactical, transaction-script]
 severity: major
-detection: deterministic
-detectionNote: "Un script de projet peut vérifier que les migrations produisent le schéma (`prisma migrate diff`), et qu’aucune migration appliquée n’a été modifiée."
 review: approved
 sources: []
 ---

@@ -5,8 +5,6 @@ group: La composition root
 scope: [structure]
 style: [tactical, transaction-script]
 severity: minor
-detection: deterministic
-detectionNote: "Un script de projet peut vérifier que `app.module.ts` ne déclare que des `imports`, et que `main.bootstrap.ts` ne déclare aucun provider."
 review: approved
 sources: []
 ---

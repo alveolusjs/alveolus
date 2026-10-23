@@ -5,7 +5,6 @@ group: Migrations
 scope: [schema]
 style: [tactical, transaction-script]
 severity: blocking
-detection: LLM
 review: approved
 sources: []
 ---

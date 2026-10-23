@@ -5,8 +5,6 @@ group: Dépendances
 scope: [domain, application, structure]
 style: [tactical, transaction-script]
 severity: minor
-detection: deterministic
-detectionNote: "Un plugin Biome peut signaler une chaîne ou un `Symbol` passé à `provide` ou à `@Inject`."
 review: approved
 sources:
   - "Dependency Inversion Principle"

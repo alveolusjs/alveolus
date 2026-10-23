@@ -5,8 +5,6 @@ group: Forme d’un test
 scope: [tests]
 style: [tactical, transaction-script]
 severity: minor
-detection: hybrid
-detectionNote: "Un lint peut vérifier les trois commentaires, dans l’ordre, et signaler un `expect` qui appelle lui-même la méthode testée ; la revue juge le reste."
 review: approved
 sources: []
 ---

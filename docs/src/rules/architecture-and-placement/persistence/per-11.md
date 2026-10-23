@@ -5,8 +5,6 @@ group: Migrations
 scope: [schema]
 style: [tactical, transaction-script]
 severity: major
-detection: hybrid
-detectionNote: "Un contrôle peut signaler `DROP`, `RENAME` et `SET NOT NULL` dans une migration ; la revue juge si la version qui tourne en a encore besoin."
 review: approved
 sources: []
 ---

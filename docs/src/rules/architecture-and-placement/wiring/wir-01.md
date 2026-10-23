@@ -5,8 +5,6 @@ group: La composition root
 scope: [structure, application, driving, driven]
 style: [tactical, transaction-script]
 severity: major
-detection: hybrid
-detectionNote: La revue vérifie qu’aucun lien n’est choisi ailleurs, à l’exécution ou dans un autre module.
 review: approved
 sources:
   - "Dependency Inversion Principle"

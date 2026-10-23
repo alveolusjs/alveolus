@@ -43,7 +43,7 @@ The rules were then regrouped by theme and renumbered so that each prefix belong
 
 ### Build apps with these rules
 
-Apps live in their own repositories. They opt in to the `alveolus` plugin with a `harness.md` at their root (see "Plugin"). Every deviation from a rule is a documented waiver. Every `deterministic` rule is meant to be automated in an app's CI: a rule fully checked by the tooling is `fitness`; a rule partly checked is `hybrid` with a `fitness` field. The tooling is not delivered yet: no rule carries a `fitness` field until it is.
+Apps live in their own repositories. They opt in to the `alveolus` plugin with a `harness.md` at their root (see "Plugin"). Every deviation from a rule is a documented waiver. Checks that run in an app's CI are automated one rule at a time, never in a batch.
 
 ## Writing a rule
 
@@ -58,10 +58,7 @@ scope: [application, driving]  # domain | application | driving | driven | publi
 style: [tactical]             # tactical | transaction-script, one or both
 severity: major               # blocking | major | minor | question
 severityNote: ...             # optional, severity nuance
-detection: hybrid             # deterministic | hybrid | LLM | fitness
-detectionNote: ...            # optional, tool or method
 context: ...                  # optional, the rule only applies if this style is adopted
-fitness: ...                  # optional, what the tooling already checks
 review: to-review              # to-review | approved | rejected
 reviewNotes:                  # optional, why it was approved with changes or rejected
   - ...
@@ -109,7 +106,7 @@ sources:                      # book section titles, behind the scenes: never sh
 The plugin `alveolus` (`packages/claude-plugin`) builds any app that follows the rules, slice by slice, from that app's product documentation. The repository is its marketplace (`.claude-plugin/marketplace.json`, name `harness`), enabled here by `.claude/settings.json`. An app adds it with `/plugin marketplace add alveolusjs/alveolus`. It grows one brick at a time; its README lists the bricks and what comes next.
 
 - Skills, run by the user, who reviews between steps: `/alveolus:spec`, `/alveolus:design`, `/alveolus:tasks`, `/alveolus:build`, `/alveolus:verify`. The spec `status` follows: `draft`, `approved`, `designed`, `planned`, `building`, `done`.
-- Agent `alveolus:reviewer`: reviews a change against the rules whose detection is `LLM` or `hybrid`.
+- Agent `alveolus:reviewer`: reviews a change against the rules.
 - An app opts in with a `harness.md` at its root: where its documentation, catalog, slices and rules are, how to read an entry, how an entry ships, its checks and its conformance test. Nothing specific to an app goes into this repository.
 
 ## Language

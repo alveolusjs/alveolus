@@ -5,7 +5,6 @@ group: Transactions et cohérence
 scope: [application, driving]
 style: [tactical]
 severity: major
-detection: hybrid
 review: approved
 sources:
   - "Rule: Model True Invariants in Consistency Boundaries"

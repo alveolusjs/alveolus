@@ -5,8 +5,6 @@ group: Les couches
 scope: [structure]
 style: [tactical, transaction-script]
 severity: major
-detection: hybrid
-detectionNote: "La revue vérifie qu’un `.service`, un `.errors` ou un `.value-object` de `application` appartient à un bounded context en transaction scripts."
 review: approved
 sources: []
 ---

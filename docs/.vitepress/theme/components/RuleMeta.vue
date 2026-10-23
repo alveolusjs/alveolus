@@ -3,7 +3,6 @@ import { useData } from 'vitepress';
 import { computed } from 'vue';
 import { scopeLabel } from '../../scopes';
 import { styles } from '../../styles';
-import { inlineCode } from '../inline-code';
 import { setStyleFilter, styleFilter } from '../style-filter';
 import RuleBadge from './RuleBadge.vue';
 import StyleBadge from './StyleBadge.vue';
@@ -44,17 +43,6 @@ const outOfFilter = computed(
         <RuleBadge kind="severity" :value="frontmatter.severity" />
         <span v-if="frontmatter.severityNote" class="rule-meta__note">{{ frontmatter.severityNote }}</span>
       </dd>
-    </div>
-    <div v-if="frontmatter.detection === 'fitness'" class="rule-meta__detection">
-      <dt>Détection</dt>
-      <dd>
-        <RuleBadge kind="detection" :value="frontmatter.detection" />
-        <span v-if="frontmatter.detectionNote" class="rule-meta__note">{{ frontmatter.detectionNote }}</span>
-      </dd>
-    </div>
-    <div v-if="frontmatter.fitness" class="rule-meta__automated">
-      <dt>Contrôle automatique</dt>
-      <dd v-html="inlineCode(frontmatter.fitness)" />
     </div>
     <div class="rule-meta__scope">
       <dt>S’applique à</dt>

@@ -6,8 +6,6 @@ scope: [domain]
 style: [tactical]
 severity: minor
 severityNote: Question quand un concept semble manquer. Un setter public relève d’ENT-10.
-detection: hybrid
-detectionNote: Un lint de nommage sur domain/ ; les concepts manquants se jugent en revue.
 review: approved
 sources:
   - "How to Do DDD › Ubiquitous Language (Table 1.4)"

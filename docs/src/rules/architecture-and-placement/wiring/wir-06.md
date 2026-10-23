@@ -5,8 +5,6 @@ group: Dépendances
 scope: [driving, structure]
 style: [tactical, transaction-script]
 severity: major
-detection: deterministic
-detectionNote: "Un plugin Biome peut signaler un paramètre de constructeur d’un `@Controller` sans `@Inject`, et `useClass` dans un module."
 review: approved
 sources: []
 ---

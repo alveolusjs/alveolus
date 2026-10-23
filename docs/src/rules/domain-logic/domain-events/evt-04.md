@@ -5,8 +5,6 @@ group: Modéliser l’event
 scope: [domain]
 style: [tactical]
 severity: minor
-detection: hybrid
-detectionNote: Les noms de classes d’event qui ne finissent pas par un participe passé ; le langage se juge en revue.
 review: approved
 sources:
   - "Modeling Events"

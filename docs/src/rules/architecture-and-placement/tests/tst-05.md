@@ -5,7 +5,6 @@ group: Place et nom
 scope: [tests]
 style: [tactical, transaction-script]
 severity: minor
-detection: LLM
 review: approved
 sources: []
 ---

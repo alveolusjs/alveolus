@@ -5,8 +5,6 @@ group: Quand créer un domain service
 scope: [domain]
 style: [tactical]
 severity: major
-detection: hybrid
-detectionNote: L’opération appartient-elle à un objet ? L’outillage ne voit que les fonctions libres.
 review: approved
 sources:
   - "Chapter introduction"

@@ -6,8 +6,6 @@ scope: [schema]
 style: [tactical, transaction-script]
 severity: major
 severityNote: Bloquante pour un montant stocké en nombre à virgule flottante.
-detection: deterministic
-detectionNote: "Un script de projet peut signaler, dans le schéma Prisma, un `Float`, un `DateTime` sans `@db.Date` ni `@db.Timestamptz`, et un statut en `String`."
 review: approved
 sources:
   - "Persisting Value Objects › Reject Undue Influence of Data Model Leakage"

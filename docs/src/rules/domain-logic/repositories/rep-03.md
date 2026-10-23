@@ -6,8 +6,6 @@ scope: [domain, driven]
 style: [tactical]
 severity: minor
 severityNote: Majeure si l’erreur brute du stockage atteint la réponse de l’API.
-detection: hybrid
-detectionNote: Des types d’ORM dans les signatures, des classes ou des codes d’erreur du driver utilisés hors de driven/.
 review: approved
 sources:
   - "Collection-Oriented Repositories"

@@ -42,11 +42,6 @@
 	color: var(--rule-question);
 }
 
-.rule-badge--detection {
-	font-weight: 500;
-	border-style: dashed;
-}
-
 /* Rule summary card, below the title */
 .vp-doc .rule-meta {
 	display: grid;
@@ -96,9 +91,6 @@
 }
 .vp-doc .rule-table__col-severity {
 	width: 128px;
-}
-.vp-doc .rule-table__col-detection {
-	width: 112px;
 }
 .vp-doc .rule-table td {
 	padding-top: 9px;
@@ -177,14 +169,6 @@
 	white-space: nowrap;
 }
 
-/* What fitness functions already check */
-.vp-doc .rule-meta__automated {
-	grid-column: 1 / -1;
-}
-.vp-doc .rule-meta__automated dd {
-	color: var(--vp-c-text-1);
-}
-
 .rule-meta--aside {
 	display: grid;
 	gap: 14px;
@@ -244,8 +228,8 @@
 		background: transparent;
 	}
 
-	.vp-doc .rule-meta--inline :is(.rule-meta__scope, .rule-meta__automated, .rule-meta__note),
-	.vp-doc .rule-meta--inline :is(.rule-meta__severity, .rule-meta__detection) dt {
+	.vp-doc .rule-meta--inline :is(.rule-meta__scope, .rule-meta__note),
+	.vp-doc .rule-meta--inline .rule-meta__severity dt {
 		display: none;
 	}
 

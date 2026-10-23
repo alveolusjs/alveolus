@@ -6,8 +6,6 @@ scope: [driving]
 style: [tactical, transaction-script]
 severity: major
 severityNote: Majeure pour une règle métier hors du modèle. Mineure pour un endpoint qui contourne le use case.
-detection: hybrid
-detectionNote: Un adapter driving qui injecte un repository, jugement pour les règles.
 review: approved
 sources:
   - "Room for More than the Model"

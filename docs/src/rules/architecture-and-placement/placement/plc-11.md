@@ -5,8 +5,6 @@ group: Dans la durée
 scope: [structure]
 style: [tactical, transaction-script]
 severity: minor
-detection: hybrid
-detectionNote: "La CI régénère le code et échoue s’il diffère ; la revue vérifie où il est importé."
 review: approved
 sources: []
 ---

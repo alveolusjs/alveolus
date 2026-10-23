@@ -5,8 +5,6 @@ group: Sens des dépendances
 scope: [structure]
 style: [tactical, transaction-script]
 severity: major
-detection: fitness
-detectionNote: Détection des cycles avec dependency-cruiser ou madge.
 review: approved
 sources:
   - "Designing with Modules (Table 9.1)"

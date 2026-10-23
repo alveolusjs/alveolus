@@ -5,8 +5,6 @@ group: Stockage et reconstitution
 scope: [domain, driven]
 style: [tactical]
 severity: major
-detection: hybrid
-detectionNote: Des setters publics ou un constructeur vide sur une classe du domaine.
 review: approved
 sources:
   - "MongoDB Implementation (serialization through direct field access)"

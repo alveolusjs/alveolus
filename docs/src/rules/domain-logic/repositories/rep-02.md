@@ -5,8 +5,6 @@ group: Contrat
 scope: [driven]
 style: [tactical]
 severity: major
-detection: hybrid
-detectionNote: Les méthodes update* ou set* d’un repository, et un DELETE sur la table de l’aggregate root sans les tables enfants.
 review: approved
 sources:
   - "Chapter introduction"

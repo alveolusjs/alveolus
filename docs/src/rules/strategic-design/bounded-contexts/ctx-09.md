@@ -5,8 +5,6 @@ group: Ce que contient un bounded context
 scope: [schema]
 style: [tactical, transaction-script]
 severity: minor
-detection: hybrid
-detectionNote: Comparer les noms des migrations au modèle et au glossaire.
 review: approved
 sources:
   - "Room for More than the Model"

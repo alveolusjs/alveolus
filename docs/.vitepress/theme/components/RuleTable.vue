@@ -30,14 +30,12 @@ const groups = computed(() => Map.groupBy(shown.value, (rule) => rule.group));
         <col class="rule-table__col-code" />
         <col />
         <col class="rule-table__col-severity" />
-        <col class="rule-table__col-detection" />
       </colgroup>
       <thead>
         <tr>
           <th>Code</th>
           <th>Règle</th>
           <th>Sévérité</th>
-          <th>Détection</th>
         </tr>
       </thead>
       <tbody>
@@ -48,7 +46,6 @@ const groups = computed(() => Map.groupBy(shown.value, (rule) => rule.group));
             <span v-if="rule.context" class="rule-conditional" :title="rule.context">conditionnelle</span>
           </td>
           <td><RuleBadge kind="severity" :value="rule.severity" /></td>
-          <td><RuleBadge kind="detection" :value="rule.detection" /></td>
         </tr>
       </tbody>
     </table>

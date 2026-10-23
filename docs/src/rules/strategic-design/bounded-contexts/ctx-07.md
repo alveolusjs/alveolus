@@ -6,8 +6,6 @@ scope: [domain, structure]
 style: [tactical, transaction-script]
 severity: major
 severityNote: Majeure pour un modèle central. Question pour une copie identique, qui signale une erreur probable mais pas certaine.
-detection: hybrid
-detectionNote: Repérage des classes dupliquées entre bounded contexts, jugement pour le reste.
 review: approved
 sources:
   - "Making Sense of Bounded Contexts (Table 2.1 and Figure 2.5 on Account, the publisher's Book example, 'Whiteboard Time' sidebar on copied concepts)"
