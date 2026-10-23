@@ -67,7 +67,7 @@ pnpm exec alveolus-claude install
 
 La commande lit `architecture.json` et écrit dans `.claude/` :
 
-- les règles, un fichier par couche et par style. Claude Code charge celles de `domain` quand il travaille dans `src/wallets/domain/`, celles de `driven` dans `src/wallets/driven/` ;
+- les règles, un dossier par style et un fichier par couche, chacun ouvert par son sommaire. Claude Code charge celles de `domain` quand il travaille dans `src/wallets/domain/`, celles de `driven` dans `src/wallets/driven/` ;
 - trois skills, qui mènent une user story de la conception à la revue ;
 - un agent de revue, qui vérifie les règles dans son propre contexte.
 

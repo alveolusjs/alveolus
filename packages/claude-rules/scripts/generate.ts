@@ -36,7 +36,7 @@ function sectionTitle(line: string): string {
 
 function prose(line: string): string {
 	return line
-		.replace(/^(#{3,5}) /, '#$1 ')
+		.replace(/^(#{3,4}) /, '##$1 ')
 		.replace(/\s*\{#[\w-]+\}\s*$/, '')
 		.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1');
 }
@@ -53,7 +53,7 @@ function compactBody(content: string): string {
 			keep = line.startsWith('## ') && keptSections.has(sectionTitle(line));
 
 			if (keep) {
-				kept.push(`### ${sectionTitle(line)}`);
+				kept.push(`#### ${sectionTitle(line)}`);
 			}
 
 			continue;
