@@ -1,0 +1,58 @@
+ContextMap PaymentServices {
+	type = SYSTEM_LANDSCAPE
+	state = TO_BE
+
+	contains Customer, Payment, Ledger, Safeguarding, Compliance, CSM
+
+	Customer [U,OHS,PL]->[D,ACL] Payment : Debtors
+
+	Compliance [U,OHS,PL]->[D,ACL] Payment : Screening
+
+	Customer [U,OHS,PL]->[D,CF] Compliance : KnowYourCustomer
+
+	CSM [U,PL]->[D,ACL] Payment : Clearing
+
+	Ledger [U,OHS,PL]->[D,ACL] Payment : Bookings
+
+	Ledger [U,OHS,PL]->[D,CF] Safeguarding : Balances
+}
+
+Domain PaymentServices {
+	Subdomain CreditTransfers {
+		type = CORE_DOMAIN
+	}
+
+	Subdomain Bookkeeping {
+		type = CORE_DOMAIN
+	}
+
+	Subdomain CustomerRelationship {
+		type = SUPPORTING_DOMAIN
+	}
+
+	Subdomain FundsSafeguarding {
+		type = SUPPORTING_DOMAIN
+	}
+
+	Subdomain AntiMoneyLaundering {
+		type = CORE_DOMAIN
+	}
+
+	Subdomain Clearing {
+		type = GENERIC_SUBDOMAIN
+	}
+}
+
+BoundedContext Customer implements CustomerRelationship
+
+BoundedContext Payment implements CreditTransfers
+
+BoundedContext Ledger implements Bookkeeping
+
+BoundedContext Safeguarding implements FundsSafeguarding
+
+BoundedContext Compliance implements AntiMoneyLaundering
+
+BoundedContext CSM implements Clearing {
+	type = SYSTEM
+}

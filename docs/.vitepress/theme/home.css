@@ -1,0 +1,113 @@
+:root {
+	--vp-home-hero-name-color: transparent;
+	--vp-home-hero-name-background: -webkit-linear-gradient(120deg, var(--al-honey-light) 10%, var(--al-honey-dark));
+	--vp-home-hero-image-background-image: linear-gradient(
+		-45deg,
+		rgba(245, 163, 0, 0.5) 40%,
+		rgba(255, 201, 77, 0.3) 50%
+	);
+	--vp-home-hero-image-filter: blur(44px);
+}
+
+@media (min-width: 640px) {
+	:root {
+		--vp-home-hero-image-filter: blur(56px);
+	}
+}
+
+@media (min-width: 960px) {
+	:root {
+		--vp-home-hero-image-filter: blur(68px);
+	}
+}
+
+.VPFeature .icon {
+	color: var(--vp-c-brand-1);
+	background-color: var(--vp-c-brand-soft);
+}
+
+.VPFeature .icon svg {
+	width: 24px;
+	height: 24px;
+}
+
+.al-preview {
+	display: inline-block;
+	margin-bottom: 12px;
+	padding: 2px 10px;
+	border: 1px solid var(--vp-c-brand-soft);
+	border-radius: 999px;
+	background-color: var(--vp-c-brand-soft);
+	color: var(--vp-c-brand-1);
+	font-size: 13px;
+	font-weight: 500;
+	line-height: 22px;
+}
+
+.home-content {
+	padding: 48px 0 96px;
+}
+
+@media (min-width: 640px) {
+	.home-content {
+		padding: 64px 0 96px;
+	}
+}
+
+@media (min-width: 960px) {
+	.home-content {
+		padding: 64px 0 112px;
+	}
+}
+
+.vp-doc .home-content h2 {
+	margin-top: 56px;
+	border-top: none;
+	padding-top: 0;
+}
+
+.vp-doc .home-content h2:first-child {
+	margin-top: 0;
+}
+
+.home-search {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+	width: 100%;
+	margin-bottom: 56px;
+	padding: 16px 20px;
+	border: 1px solid var(--vp-c-bg-soft);
+	border-radius: 12px;
+	background-color: var(--vp-c-bg-soft);
+	font-size: 16px;
+	color: var(--vp-c-text-2);
+	text-align: left;
+	cursor: pointer;
+	transition: border-color 0.25s;
+}
+
+.home-search:hover {
+	border-color: var(--vp-c-brand-1);
+}
+
+.home-search__icon {
+	flex-shrink: 0;
+	width: 20px;
+	height: 20px;
+	color: var(--vp-c-brand-1);
+}
+
+.home-search__text {
+	flex: 1;
+	min-width: 0;
+}
+
+.vp-doc .home-search__keys {
+	padding: 2px 8px;
+	border: 1px solid var(--vp-c-divider);
+	border-radius: 6px;
+	font-family: var(--vp-font-family-mono);
+	font-size: 12px;
+	color: var(--vp-c-text-2);
+}

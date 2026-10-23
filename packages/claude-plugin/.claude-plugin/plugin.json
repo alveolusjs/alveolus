@@ -1,0 +1,7 @@
+{
+	"name": "alveolus",
+	"version": "0.1.0",
+	"description": "Build an app slice by slice from its product documentation, within the Alveolus rules: spec, design, tasks, build, verify, and a rules reviewer.",
+	"author": { "name": "Jérémy Fleury" },
+	"keywords": ["ddd", "spec-driven-development", "alveolus"]
+}
