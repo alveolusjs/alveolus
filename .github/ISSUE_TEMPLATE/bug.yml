@@ -1,0 +1,25 @@
+name: Bug
+description: A package, the plugin or the site behaves differently from what it says
+labels: [bug]
+body:
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      placeholder: "@alveolus/core 0.1.0, Node 24.1, macOS"
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: The command or the page, what you saw, and what you expected.
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: How to reproduce
+      description: The smallest code or steps that show it. A link to a repository is best.
+    validations:
+      required: true

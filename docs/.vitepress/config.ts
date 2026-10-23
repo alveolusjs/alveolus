@@ -14,6 +14,7 @@ export default defineConfig({
 	srcDir: 'src',
 	cleanUrls: true,
 	lastUpdated: true,
+	sitemap: { hostname: 'https://alveolus.dev' },
 	head: [
 		['link', { rel: 'icon', type: 'image/svg+xml', href: '/logo.svg' }],
 		['style', {}, sectionIconsCss()],

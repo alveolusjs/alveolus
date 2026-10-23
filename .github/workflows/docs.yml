@@ -1,0 +1,62 @@
+name: Docs
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - docs/**
+      - pnpm-lock.yaml
+      - .github/workflows/docs.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm docs:build
+      - uses: actions/configure-pages@v6
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: docs/.vitepress/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v5
+
+  indexnow:
+    needs: deploy
+    runs-on: ubuntu-latest
+    env:
+      HOST: alveolus.dev
+      KEY: a9874704c7ad2b00096d1b8be358044b
+    steps:
+      - run: |
+          urls=$(curl -fsS "https://$HOST/sitemap.xml" | grep -oP '(?<=<loc>)[^<]+' | jq -R . | jq -s .)
+          jq -n --arg host "$HOST" --arg key "$KEY" --argjson urls "$urls" \
+            '{host: $host, key: $key, keyLocation: "https://\($host)/\($key).txt", urlList: $urls}' \
+            | curl -fsS -X POST https://api.indexnow.org/indexnow \
+                -H "Content-Type: application/json; charset=utf-8" --data @-
