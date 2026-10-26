@@ -1,5 +1,5 @@
-import type { Codebase } from '../../../../codebase/codebase.ts';
-import { Placement } from '../../../../layout/placement.ts';
+import type { Placement } from '../../../../layout/placement.ts';
+import type { Project } from '../../../../project/project.ts';
 import type { Violation } from '../../../../violations/violation.ts';
 import { FitnessFunction } from '../../../fitness-function.ts';
 import { Rule } from '../../../rule.ts';
@@ -9,13 +9,14 @@ export class Lay04 extends FitnessFunction {
 		'LAY-04',
 		'Un autre bounded context n’entre que par `public`, qui ne contient que le contrat',
 		'https://alveolus.dev/rules/architecture-and-placement/layers/lay-04',
+		['tactical', 'transaction-script'],
 	);
 
-	public check(codebase: Codebase): Violation[] {
+	public check(project: Project): Violation[] {
 		const violations: Violation[] = [];
 
-		for (const file of codebase.files) {
-			const source = Placement.of(file.path);
+		for (const file of project.files) {
+			const source = project.placementOf(file.path);
 
 			if (source === undefined) {
 				continue;
@@ -26,17 +27,19 @@ export class Lay04 extends FitnessFunction {
 					continue;
 				}
 
-				const target = Placement.of(dependency.target);
+				const target = project.placementOf(dependency.target);
 
-				if (target === undefined || !target.isInAnotherContextThan(source) || target.isPublic()) {
-					continue;
+				if (target !== undefined && this.reachesInside(source, target)) {
+					const message = `imports ${dependency.target}, outside ${target.context.publicFolder()}`;
+					violations.push(this.violation(file.path, dependency.line, message));
 				}
-
-				const message = `imports ${dependency.target}, outside ${target.publicFolder()}`;
-				violations.push(this.violation(file.path, dependency.line, message));
 			}
 		}
 
 		return violations;
+	}
+
+	private reachesInside(source: Placement, target: Placement): boolean {
+		return target.isInAnotherContextThan(source) && !target.isPublic() && !target.context.isBigBallOfMud();
 	}
 }
