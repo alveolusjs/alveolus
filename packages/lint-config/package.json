@@ -4,24 +4,26 @@
 	"description": "The Alveolus rules for oxlint and dependency-cruiser: the checks a linter decides without false positives",
 	"keywords": [
 		"ddd",
+		"dependency-cruiser",
 		"domain-driven-design",
-		"typescript",
+		"hexagonal-architecture",
 		"nestjs",
 		"oxlint",
-		"dependency-cruiser",
-		"hexagonal-architecture"
+		"typescript"
 	],
 	"homepage": "https://alveolus.dev/",
+	"license": "MIT",
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/alveolusjs/alveolus.git",
 		"directory": "packages/lint-config"
 	},
-	"license": "MIT",
+	"files": [
+		"dist",
+		"dependency-cruiser.mjs"
+	],
 	"type": "module",
-	"engines": {
-		"node": ">=24"
-	},
+	"sideEffects": false,
 	"exports": {
 		"./dependency-cruiser": {
 			"@alveolus/source": "./src/dependency-cruiser.ts",
@@ -40,15 +42,20 @@
 			"./package.json": "./package.json"
 		}
 	},
-	"files": [
-		"dist",
-		"dependency-cruiser.mjs"
-	],
-	"sideEffects": false,
 	"scripts": {
-		"build": "tsdown && biome check --write package.json",
+		"build": "tsdown && oxfmt package.json",
 		"test": "vitest run",
 		"typecheck": "tsc -p tsconfig.json"
+	},
+	"devDependencies": {
+		"@types/node": "26.6.3",
+		"dependency-cruiser": "18.7.0",
+		"gray-matter": "^4.0.3",
+		"oxlint": "1.89.0",
+		"tsdown": "0.23.0",
+		"typescript": "6.0.3",
+		"vite": "8.3.1",
+		"vitest": "5.0.2"
 	},
 	"peerDependencies": {
 		"dependency-cruiser": ">=18.7.0",
@@ -62,14 +69,7 @@
 			"optional": true
 		}
 	},
-	"devDependencies": {
-		"@types/node": "26.6.3",
-		"dependency-cruiser": "18.7.0",
-		"gray-matter": "^4.0.3",
-		"oxlint": "1.89.0",
-		"tsdown": "0.23.0",
-		"typescript": "6.0.3",
-		"vite": "8.3.1",
-		"vitest": "5.0.2"
+	"engines": {
+		"node": ">=24"
 	}
 }

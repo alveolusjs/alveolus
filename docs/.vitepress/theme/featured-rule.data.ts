@@ -1,4 +1,5 @@
 import { createContentLoader } from 'vitepress';
+
 import type { Style } from '../styles';
 
 interface RuleExcerpt {

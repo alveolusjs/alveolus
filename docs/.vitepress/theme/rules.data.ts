@@ -1,4 +1,5 @@
 import { createContentLoader } from 'vitepress';
+
 import type { Review } from '../reviews';
 import type { Style } from '../styles';
 

@@ -1,5 +1,6 @@
 import { globSync } from 'node:fs';
 import { basename, dirname } from 'node:path';
+
 import { defineConfig } from 'tsdown';
 
 const entry = Object.fromEntries(

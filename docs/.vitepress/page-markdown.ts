@@ -1,6 +1,8 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
+
 import matter from 'gray-matter';
+
 import { parts } from './parts';
 import { type Rule, srcDir, writtenThemes } from './rules';
 import { scopeLabel } from './scopes';

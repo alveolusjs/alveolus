@@ -1,4 +1,5 @@
 import { ref } from 'vue';
+
 import type { Style } from '../styles';
 
 const STORAGE_KEY = 'alveolus-style-filter';

@@ -3,25 +3,21 @@
 	"version": "0.2.1",
 	"description": "The Alveolus rules for Claude Code: its approved rules as path-scoped rules, and the skills to design, implement and review a user story with them.",
 	"keywords": [
-		"ddd",
-		"domain-driven-design",
-		"typescript",
-		"nestjs",
 		"claude-code",
 		"claude-code-rules",
 		"code-review",
-		"hexagonal-architecture"
+		"ddd",
+		"domain-driven-design",
+		"hexagonal-architecture",
+		"nestjs",
+		"typescript"
 	],
 	"homepage": "https://alveolus.dev/start/getting-started#claude-code",
+	"license": "MIT",
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/alveolusjs/alveolus.git",
 		"directory": "packages/claude-rules"
-	},
-	"license": "MIT",
-	"type": "module",
-	"engines": {
-		"node": ">=24"
 	},
 	"bin": {
 		"alveolus-claude": "bin/alveolus-claude.js"
@@ -32,11 +28,15 @@
 		"skills",
 		"agents"
 	],
+	"type": "module",
 	"scripts": {
 		"build": "node scripts/generate.ts",
 		"prepack": "node scripts/generate.ts"
 	},
 	"devDependencies": {
 		"gray-matter": "^4.0.3"
+	},
+	"engines": {
+		"node": ">=24"
 	}
 }

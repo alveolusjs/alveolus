@@ -14,7 +14,7 @@ Node 24 and pnpm 11.
 ```sh
 pnpm install
 pnpm docs:dev       # the site
-pnpm check          # Biome (lint + format)
+pnpm check          # oxfmt (format) and oxlint (lint)
 pnpm typecheck      # TypeScript, package by package
 pnpm test           # the tests of the packages
 pnpm build          # the site, @alveolus/core, and the rules of claude-rules
@@ -33,7 +33,7 @@ pnpm build          # the site, @alveolus/core, and the rules of claude-rules
 
 ## A pull request
 
-`main` only moves through pull requests. CI runs on each one: Biome and the types in parallel,
+`main` only moves through pull requests. CI runs on each one: oxc and the types in parallel,
 then the tests on ubuntu and windows, the build and the content of each package, and the site.
 `ci` is the status the branch requires: it fails when any job fails. A pull request that changes
 a package without a changeset fails `check: changeset`.

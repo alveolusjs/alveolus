@@ -129,7 +129,7 @@ The plugin `alveolus` (`packages/claude-plugin`) builds any app that follows the
 ```sh
 pnpm install
 pnpm docs:dev       # the site
-pnpm check          # Biome (lint + format) — pnpm check:fix to fix
+pnpm check          # oxfmt (format) and oxlint (lint) — pnpm check:fix to fix
 pnpm typecheck      # TypeScript, package by package
 pnpm test           # the tests of the packages
 pnpm context-map    # validates and draws the context map of the rule examples (Context Mapper CLI in Docker)
@@ -138,7 +138,7 @@ pnpm build          # the site, @alveolus/core, and the rules of claude-rules
 
 Before handing back: `pnpm check && pnpm typecheck && pnpm test && pnpm build`.
 
-- `@alveolus/core` keeps its own TypeScript settings (`packages/core/tsconfig.json`): strict, with `isolatedDeclarations`. Its type assertions are deliberate, so `noUnsafeTypeAssertion` is off for it in `biome.json`.
+- `@alveolus/core` keeps its own TypeScript settings (`packages/core/tsconfig.json`): strict, with `isolatedDeclarations`. Its type assertions are deliberate, so `typescript/no-unsafe-type-assertion` is off for it in `oxlint.config.ts`.
 
 ## Releases
 
