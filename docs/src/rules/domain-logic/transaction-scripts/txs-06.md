@@ -5,8 +5,7 @@ group: Organisation et accès aux données
 scope: [application]
 style: [transaction-script]
 severity: blocking
-detection: hybrid
-detectionNote: Les imports sont vérifiés ; le client qu’un script utilise se juge en revue.
+detection: []
 review: approved
 sources: []
 ---

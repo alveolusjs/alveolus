@@ -5,7 +5,7 @@ group: Frontière et taille
 scope: [domain]
 style: [tactical]
 severity: major
-detection: LLM
+detection: []
 review: approved
 sources:
   - "Rule: Design Small Aggregates"

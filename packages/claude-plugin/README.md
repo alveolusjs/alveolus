@@ -23,7 +23,7 @@ Check the plugin with `claude plugin validate ./packages/claude-plugin`. Edits a
 | `/alveolus:tasks` | Writes `tasks.md`, test first | 0.1 |
 | `/alveolus:build` | Builds one task at a time, test seen failing first | 0.1 |
 | `/alveolus:verify` | Runs the checks and the reviewer, then ships the entries | 0.1 |
-| `alveolus:reviewer` agent | Reviews a change against the rules tooling cannot check | 0.1 |
+| `alveolus:reviewer` agent | Reviews a change against the rules | 0.1 |
 
 The user runs each skill and reviews between steps. A spec moves through `draft`, `approved`, `designed`, `planned`, `building`, `done`.
 

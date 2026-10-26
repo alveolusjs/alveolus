@@ -5,8 +5,7 @@ group: Références et dépendances
 scope: [domain]
 style: [tactical]
 severity: major
-detection: hybrid
-detectionNote: "dependency-cruiser : un fichier d’aggregate n’importe ni repository ni @nestjs/*."
+detection: []
 review: approved
 sources:
   - "Model Navigation"

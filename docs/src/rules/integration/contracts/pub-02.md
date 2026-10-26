@@ -5,8 +5,7 @@ group: Published language
 scope: [driving, public]
 style: [tactical, transaction-script]
 severity: major
-detection: hybrid
-detectionNote: Des imports de classes d’event ou de DTO d’un autre bounded context, des champs dérivés recalculés dans un handler.
+detection: []
 review: approved
 sources:
   - "Exchanging Information across System Boundaries"

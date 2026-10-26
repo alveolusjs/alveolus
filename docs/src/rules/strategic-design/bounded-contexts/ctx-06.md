@@ -5,8 +5,7 @@ group: Langage et frontière
 scope: [domain]
 style: [tactical]
 severity: major
-detection: fitness
-detectionNote: "dependency-cruiser : domain/ n’importe aucun package tiers."
+detection: []
 review: approved
 sources:
   - "Real-World Domains and Subdomains (the mapping service consumed by inventory)"

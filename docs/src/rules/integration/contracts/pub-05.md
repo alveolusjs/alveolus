@@ -6,8 +6,7 @@ scope: [driving]
 style: [tactical, transaction-script]
 severity: minor
 severityNote: Majeure si un champ ajouté par le producer peut bloquer la consommation.
-detection: hybrid
-detectionNote: Une validation stricte (`z.strictObject`, `.strict()`) des messages d’un autre bounded context.
+detection: []
 review: approved
 sources:
   - "Exchanging Information across System Boundaries (lecture d'une notification comme version 1)"

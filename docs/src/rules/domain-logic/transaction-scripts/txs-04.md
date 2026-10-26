@@ -5,7 +5,7 @@ group: Forme d’un script
 scope: [application]
 style: [transaction-script]
 severity: major
-detection: LLM
+detection: []
 review: approved
 sources: []
 ---

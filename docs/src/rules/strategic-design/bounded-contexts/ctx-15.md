@@ -5,7 +5,7 @@ group: Taille et organisation
 scope: [structure]
 style: [tactical, transaction-script]
 severity: question
-detection: LLM
+detection: []
 review: approved
 sources:
   - "Module before Bounded Context"

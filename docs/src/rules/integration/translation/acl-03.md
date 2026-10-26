@@ -5,8 +5,7 @@ group: Données copiées
 scope: [domain, driving]
 style: [tactical, transaction-script]
 severity: major
-detection: hybrid
-detectionNote: Des attributs d’un autre bounded context dans un aggregate, des handlers de création sans handlers de modification.
+detection: []
 review: approved
 sources:
   - "Can You Handle the Responsibility?"

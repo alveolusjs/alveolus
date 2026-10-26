@@ -5,7 +5,7 @@ group: Consommation
 scope: [driving]
 style: [tactical, transaction-script]
 severity: major
-detection: hybrid
+detection: []
 review: approved
 sources:
   - "Implementation › Event De-duplication"

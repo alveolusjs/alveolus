@@ -6,8 +6,7 @@ scope: [application, driving, driven]
 style: [tactical, transaction-script]
 severity: major
 severityNote: Bloquante quand le champ garde les données d’un titulaire ou la transaction en cours.
-detection: hybrid
-detectionNote: "Un contrôle peut signaler une affectation à un champ hors du constructeur, et `Scope.REQUEST` ; la revue juge les exceptions."
+detection: []
 review: approved
 sources: []
 ---

@@ -5,8 +5,7 @@ group: Lectures
 scope: [driven, application]
 style: [tactical, transaction-script]
 severity: major
-detection: hybrid
-detectionNote: "Un contrôle peut signaler un `findMany` sans `take` dans `driven` ; la revue vérifie l’ordre et la page."
+detection: []
 review: approved
 sources: []
 ---

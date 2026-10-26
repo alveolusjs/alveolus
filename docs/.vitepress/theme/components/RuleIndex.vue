@@ -70,7 +70,6 @@ const filtered = computed(() => {
         <th>Code</th>
         <th>Règle</th>
         <th>Sévérité</th>
-        <th>Détection</th>
       </tr>
     </thead>
     <tbody>
@@ -82,7 +81,6 @@ const filtered = computed(() => {
           <br /><small>{{ rule.group }}</small>
         </td>
         <td><RuleBadge kind="severity" :value="rule.severity" /></td>
-        <td><RuleBadge kind="detection" :value="rule.detection" /></td>
       </tr>
     </tbody>
   </table>

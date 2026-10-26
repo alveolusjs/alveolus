@@ -5,8 +5,7 @@ group: Modéliser l’event
 scope: [domain]
 style: [tactical]
 severity: major
-detection: fitness
-detectionNote: Vérifier que les champs des events sont `readonly`.
+detection: []
 review: approved
 sources:
   - "Modeling Events"

@@ -5,8 +5,7 @@ group: Encapsulation
 scope: [domain]
 style: [tactical]
 severity: major
-detection: hybrid
-detectionNote: Un lint repère les getters qui renvoient un champ privé modifiable ; le reste se juge en revue.
+detection: []
 review: approved
 sources:
   - "Using Law of Demeter and Tell, Don't Ask"

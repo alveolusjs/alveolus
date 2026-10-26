@@ -5,7 +5,7 @@ group: Références et dépendances
 scope: [domain]
 style: [tactical]
 severity: major
-detection: fitness
+detection: []
 review: approved
 sources:
   - "Rule: Reference Other Aggregates by Identity"

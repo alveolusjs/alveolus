@@ -12,10 +12,6 @@ const figures = computed(() => [
   { value: shown.value.length, label: 'règles' },
   { value: new Set(shown.value.map((rule) => rule.theme)).size, label: 'thèmes' },
   { value: shown.value.filter((rule) => rule.severity === 'blocking').length, label: 'bloquantes' },
-  {
-    value: shown.value.filter((rule) => rule.detection !== 'LLM').length,
-    label: 'détectables, en tout ou en partie, par un outil',
-  },
 ]);
 
 const purposes: Record<Style, string> = {

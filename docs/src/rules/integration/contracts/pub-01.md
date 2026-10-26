@@ -5,8 +5,7 @@ group: Published language
 scope: [public]
 style: [tactical, transaction-script]
 severity: major
-detection: hybrid
-detectionNote: Un DTO de réponse ou un payload d’event qui est une classe du domaine.
+detection: []
 review: approved
 sources:
   - "Open Host Service and Published Language (definitions)"

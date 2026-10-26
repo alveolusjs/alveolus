@@ -5,8 +5,7 @@ group: Modules
 scope: [structure]
 style: [tactical, transaction-script]
 severity: minor
-detection: hybrid
-detectionNote: Une liste de noms génériques à refuser, et la comparaison avec le glossaire.
+detection: []
 review: approved
 sources:
   - "Designing with Modules (Evans quote, Table 9.1)"

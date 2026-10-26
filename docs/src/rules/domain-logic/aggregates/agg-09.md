@@ -5,7 +5,7 @@ group: Transactions et cohérence
 scope: [domain, public]
 style: [tactical]
 severity: major
-detection: fitness
+detection: []
 review: approved
 sources:
   - "Scalability and Distribution"

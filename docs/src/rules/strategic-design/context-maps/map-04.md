@@ -6,8 +6,7 @@ scope: [structure]
 style: [tactical, transaction-script]
 severity: major
 severityNote: Majeure pour une fuite. Question pour de la modélisation à l’intérieur.
-detection: hybrid
-detectionNote: Imports depuis le dossier déclaré comme big ball of mud.
+detection: []
 review: approved
 sources:
   - "Big Ball of Mud (definition)"

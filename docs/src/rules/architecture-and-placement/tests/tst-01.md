@@ -5,8 +5,7 @@ group: Ce qu’un test prouve
 scope: [application, driven, tests]
 style: [tactical, transaction-script]
 severity: minor
-detection: hybrid
-detectionNote: La revue lit les tests qui mockent une librairie, ou qui remplacent un port par un test double in-memory.
+detection: []
 review: approved
 sources:
   - "Interviewing the Successful CIO"

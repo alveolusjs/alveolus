@@ -5,8 +5,7 @@ group: Pannes
 scope: [driving, driven]
 style: [tactical, transaction-script]
 severity: major
-detection: hybrid
-detectionNote: La configuration du client du broker, aucune gestion des déconnexions.
+detection: []
 review: approved
 sources:
   - "When Messaging or Your System Is Unavailable"

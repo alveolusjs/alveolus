@@ -5,8 +5,7 @@ group: Identité
 scope: [domain]
 style: [tactical]
 severity: minor
-detection: hybrid
-detectionNote: Les comparaisons `===` entre instances d’entity.
+detection: []
 review: approved
 sources:
   - "When the Timing of Identity Generation Matters"

@@ -5,7 +5,7 @@ group: Appels distants
 scope: [domain]
 style: [tactical]
 severity: major
-detection: LLM
+detection: []
 review: approved
 sources:
   - "Mapping the Three Contexts › Integration with the Collaboration Context (DiscussionAvailability)"

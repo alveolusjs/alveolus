@@ -5,8 +5,7 @@ group: Transactions
 scope: [application, driven]
 style: [tactical]
 severity: major
-detection: hybrid
-detectionNote: En revue, repérer les use cases qui écrivent plusieurs choses sans le Unit of Work.
+detection: []
 review: approved
 sources:
   - "Managing Transactions (and chapter note 5)"

@@ -5,7 +5,7 @@ group: Modéliser l’event
 scope: [domain]
 style: [tactical]
 severity: question
-detection: LLM
+detection: []
 review: approved
 sources:
   - "The When and Why of Domain Events"

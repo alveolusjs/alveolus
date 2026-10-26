@@ -7,8 +7,7 @@ style: [tactical]
 context: Seulement si le système est multi-tenant.
 severity: blocking
 severityNote: Bloquante pour une requête sans filtre sur le tenant. Majeure sinon.
-detection: hybrid
-detectionNote: En revue, vérifier que les champs et l’égalité des entities incluent l’identité du tenant.
+detection: []
 review: approved
 sources:
   - "Uncovering Entities and Properties"

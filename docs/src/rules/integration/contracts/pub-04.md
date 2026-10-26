@@ -5,8 +5,7 @@ group: Published language
 scope: [public]
 style: [tactical, transaction-script]
 severity: major
-detection: hybrid
-detectionNote: Le diff d’un contrat d’event publié hors du bounded context.
+detection: []
 review: approved
 sources:
   - "Autonomous Services and Systems"

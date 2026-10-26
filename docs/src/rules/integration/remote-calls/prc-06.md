@@ -6,7 +6,7 @@ scope: [application, structure]
 style: [tactical, transaction-script]
 severity: question
 severityNote: Majeure si la composition porte des règles du core domain.
-detection: LLM
+detection: []
 review: approved
 sources:
   - "Composing Multiple Bounded Contexts"

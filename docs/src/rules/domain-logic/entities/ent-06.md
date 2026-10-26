@@ -5,8 +5,7 @@ group: Identité
 scope: [domain]
 style: [tactical]
 severity: major
-detection: hybrid
-detectionNote: Vérifier que les champs d’identité sont `readonly`, sans setter.
+detection: []
 review: approved
 sources:
   - "Unique Identity › Identity Stability"

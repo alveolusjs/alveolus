@@ -5,8 +5,7 @@ group: Noms de types
 scope: [domain, application]
 style: [tactical, transaction-script]
 severity: minor
-detection: LLM
-detectionNote: "La revue lit les noms des fichiers `.id.ts` et `.errors.ts`."
+detection: []
 review: approved
 sources: []
 ---

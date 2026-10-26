@@ -5,7 +5,7 @@ group: Ce qu’un test prouve
 scope: [tests]
 style: [tactical, transaction-script]
 severity: minor
-detection: LLM
+detection: []
 review: approved
 sources:
   - "Justification for Domain Modeling › DDD Is Not Heavy"

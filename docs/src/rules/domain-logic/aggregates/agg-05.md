@@ -5,8 +5,7 @@ group: Références et dépendances
 scope: [domain]
 style: [tactical]
 severity: minor
-detection: hybrid
-detectionNote: "En revue, vérifier l’id de persistance : une colonne auto-incrémentée ne sert jamais d’identité du domaine."
+detection: []
 review: approved
 sources:
   - "Create a Root Entity with Unique Identity"

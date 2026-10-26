@@ -6,8 +6,7 @@ scope: [structure, domain]
 style: [tactical, transaction-script]
 severity: major
 severityNote: Majeure si la context map existe et ne déclare pas ce partage. Question sinon.
-detection: hybrid
-detectionNote: "dependency-cruiser : un bounded context n’importe rien d’un autre bounded context hormis son dossier public/, sauf partage déclaré."
+detection: []
 review: approved
 sources:
   - "How to Do DDD › Ubiquitous, but Not Universal"

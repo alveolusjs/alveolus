@@ -5,7 +5,7 @@ group: L’application
 scope: [structure]
 style: [tactical, transaction-script]
 severity: major
-detection: LLM
+detection: []
 review: approved
 sources: []
 ---

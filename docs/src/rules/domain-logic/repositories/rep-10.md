@@ -5,8 +5,7 @@ group: Requêtes
 scope: [driven]
 style: [tactical]
 severity: major
-detection: hybrid
-detectionNote: Les finders dont le type de retour est une partie d’aggregate.
+detection: []
 review: approved
 sources:
   - "Additional Behavior"

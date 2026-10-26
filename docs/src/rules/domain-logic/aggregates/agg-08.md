@@ -5,7 +5,7 @@ group: Transactions et cohérence
 scope: [driving, driven]
 style: [tactical]
 severity: major
-detection: hybrid
+detection: []
 review: approved
 sources:
   - "Rule: Use Eventual Consistency Outside the Boundary"

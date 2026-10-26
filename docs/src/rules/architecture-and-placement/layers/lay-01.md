@@ -5,8 +5,7 @@ group: Sens des dépendances
 scope: [domain, application, driven]
 style: [tactical, transaction-script]
 severity: major
-detection: fitness
-detectionNote: "dependency-cruiser sur `domain/` et `application/`."
+detection: []
 review: approved
 sources:
   - "Layers"

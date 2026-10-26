@@ -6,7 +6,7 @@ scope: [application, driven]
 style: [tactical]
 severity: minor
 severityNote: Mineure pour une view assemblée à la main. Question quand ces finders se multiplient.
-detection: LLM
+detection: []
 review: approved
 sources:
   - "Additional Behavior (use case optimal query, and the 'Repository masks Aggregate mis-design' smell)"

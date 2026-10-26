@@ -5,8 +5,7 @@ group: Adapters
 scope: [driving, driven]
 style: [tactical, transaction-script]
 severity: major
-detection: hybrid
-detectionNote: La revue vérifie le nom des dossiers.
+detection: []
 review: approved
 sources: []
 ---

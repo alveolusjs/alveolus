@@ -6,7 +6,7 @@ scope: [domain, application]
 style: [tactical]
 severity: major
 severityNote: Bloquante dans un système multi-tenant si le tenant du nouvel aggregate peut être faux.
-detection: LLM
+detection: []
 review: approved
 sources:
   - "Factories in the Domain Model"

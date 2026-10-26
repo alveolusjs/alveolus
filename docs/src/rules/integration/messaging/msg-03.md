@@ -5,7 +5,7 @@ group: Publication
 scope: [application, driven]
 style: [tactical, transaction-script]
 severity: major
-detection: LLM
+detection: []
 review: approved
 sources:
   - "Publishing Notifications through Messaging Middleware"

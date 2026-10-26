@@ -5,7 +5,7 @@ group: Quand créer un domain service
 scope: [application]
 style: [tactical]
 severity: major
-detection: LLM
+detection: []
 review: approved
 sources:
   - "Make Sure You Need a Service (l'authentification)"

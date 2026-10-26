@@ -5,7 +5,7 @@ group: Langage et frontière
 scope: [application, domain]
 style: [tactical, transaction-script]
 severity: major
-detection: LLM
+detection: []
 review: approved
 sources:
   - "Making Sense of Bounded Contexts (Figure 2.6)"

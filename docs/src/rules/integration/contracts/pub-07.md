@@ -5,7 +5,7 @@ group: Open host service
 scope: [driving, public]
 style: [tactical, transaction-script]
 severity: major
-detection: LLM
+detection: []
 review: approved
 sources:
   - "Integration Using RESTful Resources"

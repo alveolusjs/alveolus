@@ -6,8 +6,7 @@ scope: [application, driving]
 style: [tactical, transaction-script]
 severity: blocking
 severityNote: Bloquante si l’opération déplace de l’argent ou engage un tiers. Majeure sinon.
-detection: hybrid
-detectionNote: Des handlers de messages qui créent sans lire d’abord par clé métier, des erreurs d’unicité attrapées puis seulement journalisées.
+detection: []
 review: approved
 sources:
   - "Long-Running Processes, and Avoiding Responsibility (initiateDiscussion())"

@@ -5,8 +5,7 @@ group: Organisation et accès aux données
 scope: [application, public]
 style: [transaction-script]
 severity: major
-detection: hybrid
-detectionNote: Le contrat publié est vérifié ; les classes wrapper se jugent en revue.
+detection: []
 review: approved
 sources: []
 ---

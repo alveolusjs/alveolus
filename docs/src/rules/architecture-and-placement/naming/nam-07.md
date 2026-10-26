@@ -5,7 +5,7 @@ group: Noms de types
 scope: [domain, application, public]
 style: [tactical, transaction-script]
 severity: minor
-detection: fitness
+detection: []
 review: approved
 sources:
   - "Is Separated Interface a Necessity? (sidebar 'Naming Your Implementation Class')"

@@ -6,8 +6,7 @@ scope: [domain, driven]
 style: [tactical]
 severity: minor
 severityNote: Mineure pour un cas isolé. Majeure quand l’aiguillage sur le type devient la norme chez les appelants.
-detection: hybrid
-detectionNote: Des finders par sous-type, des instanceof ou des switch sur le type d’un aggregate dans l’application.
+detection: []
 review: approved
 sources:
   - "Type Hierarchies"

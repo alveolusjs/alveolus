@@ -5,7 +5,7 @@ group: Published language
 scope: [public]
 style: [tactical, transaction-script]
 severity: minor
-detection: fitness
+detection: []
 review: approved
 sources:
   - "Exchanging Information across System Boundaries (typeName)"

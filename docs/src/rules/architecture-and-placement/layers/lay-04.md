@@ -5,8 +5,7 @@ group: Frontière du bounded context
 scope: [public, driving]
 style: [tactical, transaction-script]
 severity: major
-detection: hybrid
-detectionNote: "La revue vérifie que `public` ne contient aucune implémentation."
+detection: []
 review: approved
 sources: []
 ---

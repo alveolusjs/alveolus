@@ -6,7 +6,7 @@ scope: [domain]
 style: [tactical]
 severity: major
 severityNote: Majeure si la croissance n’est pas bornée. Question sinon.
-detection: LLM
+detection: []
 review: approved
 sources:
   - "Rule: Design Small Aggregates"

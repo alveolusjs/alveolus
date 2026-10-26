@@ -5,7 +5,7 @@ group: Règles
 scope: [domain, application]
 style: [tactical]
 severity: major
-detection: hybrid
+detection: []
 review: approved
 sources:
   - "Creating CalendarEntry Instances"

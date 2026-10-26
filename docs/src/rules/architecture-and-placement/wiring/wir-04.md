@@ -5,8 +5,7 @@ group: Dépendances
 scope: [domain, application, driving, driven]
 style: [tactical, transaction-script]
 severity: major
-detection: hybrid
-detectionNote: "Un contrôle peut signaler `ModuleRef` et une instance créée au niveau d’un module hors des fichiers de wiring ; la revue trouve les autres recherches cachées."
+detection: []
 review: approved
 sources:
   - "Is Separated Interface a Necessity?"

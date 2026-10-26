@@ -6,8 +6,7 @@ scope: [structure]
 style: [tactical, transaction-script]
 severity: major
 severityNote: Majeure pour un changement fait sans l’autre équipe. Question quand le shared kernel grossit.
-detection: hybrid
-detectionNote: CODEOWNERS et la CI se vérifient, la croissance demande du jugement.
+detection: []
 review: approved
 sources:
   - "Shared Kernel (definition)"

@@ -5,7 +5,7 @@ group: Transactions et cohérence
 scope: [structure, application]
 style: [tactical]
 severity: question
-detection: LLM
+detection: []
 review: approved
 sources:
   - "Ask Whose Job It Is"

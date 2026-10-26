@@ -5,8 +5,7 @@ group: Écritures
 scope: [application, driven]
 style: [tactical]
 severity: major
-detection: hybrid
-detectionNote: Un use case qui appelle une méthode métier sur un aggregate chargé, sans save sur le repository correspondant.
+detection: []
 review: approved
 sources:
   - "Collection-Oriented Repositories"

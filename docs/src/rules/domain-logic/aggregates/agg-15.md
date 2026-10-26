@@ -6,7 +6,7 @@ scope: [driven, schema]
 style: [tactical]
 severity: blocking
 severityNote: Bloquante si deux écritures concurrentes peuvent casser un invariant. Majeure sinon.
-detection: hybrid
+detection: []
 review: approved
 sources:
   - "First Attempt: Large-Cluster Aggregate"

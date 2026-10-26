@@ -5,8 +5,7 @@ group: Modéliser l’event
 scope: [domain, driving]
 style: [tactical, transaction-script]
 severity: major
-detection: hybrid
-detectionNote: Les subscribers de hooks d’ORM ou de CDC qui appellent du code métier.
+detection: []
 review: approved
 sources:
   - "Event-Driven Architecture"

@@ -43,7 +43,7 @@ The rules were then regrouped by theme and renumbered so that each prefix belong
 
 ### Build apps with these rules
 
-Apps live in their own repositories. They opt in to the `alveolus` plugin with a `harness.md` at their root (see "Plugin"). Every deviation from a rule is a documented waiver. Every `deterministic` rule is meant to be automated in an app's CI: a rule fully checked by the tooling is `fitness`; a rule partly checked is `hybrid` with a `fitness` field. The tooling is not delivered yet: no rule carries a `fitness` field until it is.
+Apps live in their own repositories. They opt in to the `alveolus` plugin with a `harness.md` at their root (see "Plugin"). Every deviation from a rule is a documented waiver. Checks that run in an app's CI are automated one rule at a time, never in a batch.
 
 ## Writing a rule
 
@@ -58,10 +58,8 @@ scope: [application, driving]  # domain | application | driving | driven | publi
 style: [tactical]             # tactical | transaction-script, one or both
 severity: major               # blocking | major | minor | question
 severityNote: ...             # optional, severity nuance
-detection: hybrid             # deterministic | hybrid | LLM | fitness
-detectionNote: ...            # optional, tool or method
+detection: []                 # the checks that automate the rule, empty until one ships
 context: ...                  # optional, the rule only applies if this style is adopted
-fitness: ...                  # optional, what the tooling already checks
 review: to-review              # to-review | approved | rejected
 reviewNotes:                  # optional, why it was approved with changes or rejected
   - ...
@@ -90,6 +88,7 @@ sources:                      # book section titles, behind the scenes: never sh
 - Translating a page also translates its entry in the sidebar, in the same change: a rule through its `title`, a part or theme overview through `menu: Vue d’ensemble` in its frontmatter (the sidebar shows `Overview` without it), along with the `title` and `group` of every rule listed under that theme, and the rule's `#` heading to match, a page of the `start` section or `choosing-a-style` through its label in `rulesSidebar()` (`.vitepress/rules.ts`).
 - Every rule says which **implementation style** it applies to: `tactical` (core contexts, tactical DDD), `transaction-script` (supporting and generic contexts), or both. The site shows it as a badge, and a global filter in the top bar (All, Tactical, Transaction script), remembered by the browser, narrows the sidebar, the tables, the index and the home page to the rules that apply to one style, shared rules included; a rule outside the filter stays reachable with a banner. The site build fails on a rule without a valid `style`. Themes of the tactical model are `tactical`; the strategic, integration and architecture themes apply to both unless a rule targets the model itself.
 - Every rule carries a **review verdict** in its frontmatter: `to-review` until the user has read it, `approved` once kept, `rejected` when it leaves the rules. Every rule is now approved, so the site no longer shows the verdict; it only strikes out a rejected rule in the tables and gives its page a banner. A rejected rule keeps its page and its code, so the code is never reused. `@alveolus/claude-rules` ships approved rules only. The site build fails on a rule without a valid `review`. Only the user changes a verdict.
+- Every rule carries `detection`, the list of the checks that automate it. It stays `[]` until one ships: the rules are revisited one by one while writing the fitness functions of `@alveolus/fitness-functions`, which fill the list and edit the rule when needed. The site build fails on a rule without a `detection` list.
 - Writing a rule code (`AGG-04`) in any page is enough: it becomes a link automatically.
 - Groups (`group`) structure the theme; rules of the same group follow each other in the numbering.
 
@@ -109,7 +108,7 @@ sources:                      # book section titles, behind the scenes: never sh
 The plugin `alveolus` (`packages/claude-plugin`) builds any app that follows the rules, slice by slice, from that app's product documentation. The repository is its marketplace (`.claude-plugin/marketplace.json`, name `harness`), enabled here by `.claude/settings.json`. An app adds it with `/plugin marketplace add alveolusjs/alveolus`. It grows one brick at a time; its README lists the bricks and what comes next.
 
 - Skills, run by the user, who reviews between steps: `/alveolus:spec`, `/alveolus:design`, `/alveolus:tasks`, `/alveolus:build`, `/alveolus:verify`. The spec `status` follows: `draft`, `approved`, `designed`, `planned`, `building`, `done`.
-- Agent `alveolus:reviewer`: reviews a change against the rules whose detection is `LLM` or `hybrid`.
+- Agent `alveolus:reviewer`: reviews a change against the rules.
 - An app opts in with a `harness.md` at its root: where its documentation, catalog, slices and rules are, how to read an entry, how an entry ships, its checks and its conformance test. Nothing specific to an app goes into this repository.
 
 ## Language

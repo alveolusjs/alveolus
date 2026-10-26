@@ -5,8 +5,7 @@ group: Identité
 scope: [domain, driven]
 style: [tactical]
 severity: major
-detection: hybrid
-detectionNote: Une identité générée par l’ORM sur une classe qui enregistre un event de création.
+detection: []
 review: approved
 sources:
   - "Unique Identity › Persistence Mechanism Generates Identity (sidebar 'Order May Matter')"

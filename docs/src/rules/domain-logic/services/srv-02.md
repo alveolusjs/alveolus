@@ -5,7 +5,7 @@ group: Quand créer un domain service
 scope: [domain]
 style: [tactical]
 severity: minor
-detection: fitness
+detection: []
 review: approved
 sources:
   - "Chapter introduction and opening case (Product.businessPriorityTotals)"

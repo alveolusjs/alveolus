@@ -5,8 +5,7 @@ group: Transactions
 scope: [driven]
 style: [tactical]
 severity: blocking
-detection: hybrid
-detectionNote: Les repositories qui passent par un pool ou un client global, au lieu du contexte transactionnel.
+detection: []
 review: approved
 sources:
   - "Managing Transactions (access to the same session or Unit of Work)"

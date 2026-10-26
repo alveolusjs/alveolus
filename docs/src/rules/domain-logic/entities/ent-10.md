@@ -5,8 +5,7 @@ group: Comportement
 scope: [domain, application]
 style: [tactical]
 severity: major
-detection: hybrid
-detectionNote: Un lint repère les setters et les propriétés publiques modifiables dans domain/ ; la logique dans les services se juge en revue.
+detection: []
 review: approved
 sources:
   - "Why You Should Do DDD › Anemia and Memory Loss (Table 1.2)"

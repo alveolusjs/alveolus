@@ -5,8 +5,7 @@ group: Forme du service
 scope: [domain]
 style: [tactical]
 severity: major
-detection: hybrid
-detectionNote: En revue, repérer les vérifications de droits écrites à la main dans les domain services.
+detection: []
 review: approved
 sources:
   - "Using a Mini-Layer of Domain Services"

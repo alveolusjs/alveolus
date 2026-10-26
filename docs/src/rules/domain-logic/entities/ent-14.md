@@ -5,7 +5,7 @@ group: Construction et validation
 scope: [domain]
 style: [tactical]
 severity: major
-detection: hybrid
+detection: []
 review: approved
 sources:
   - "Construction"

@@ -5,7 +5,7 @@ group: Identité
 scope: [domain, driven, schema]
 style: [tactical]
 severity: minor
-detection: hybrid
+detection: []
 review: approved
 sources:
   - "Unique Identity › Surrogate Identity"

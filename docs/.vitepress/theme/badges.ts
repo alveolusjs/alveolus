@@ -4,8 +4,6 @@ const badgeLabels: Record<string, string> = {
 	blocking: 'bloquante',
 	major: 'majeure',
 	minor: 'mineure',
-	deterministic: 'déterministe',
-	hybrid: 'hybride',
 };
 
 export function badgeLabel(value: string): string {
@@ -13,7 +11,7 @@ export function badgeLabel(value: string): string {
 }
 
 /** CSS class of a badge, without accents or capitals. */
-export function badgeClass(kind: 'severity' | 'detection', value: string): string {
+export function badgeClass(kind: 'severity', value: string): string {
 	const slug = value
 		.normalize('NFD')
 		.replace(/\p{Diacritic}/gu, '')

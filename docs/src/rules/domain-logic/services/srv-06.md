@@ -5,8 +5,7 @@ group: Forme du service
 scope: [domain, driven]
 style: [tactical]
 severity: minor
-detection: hybrid
-detectionNote: Déterministe pour le suffixe Impl ; le reste se juge en revue.
+detection: []
 review: approved
 sources:
   - "Modeling a Service in the Domain"

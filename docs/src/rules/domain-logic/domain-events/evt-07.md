@@ -5,8 +5,7 @@ group: Les subscribers du bounded context
 scope: [driving]
 style: [tactical]
 severity: major
-detection: hybrid
-detectionNote: Les listeners in-process qui appellent un repository pour écrire.
+detection: []
 review: approved
 sources:
   - "Publishing Events from the Domain Model"

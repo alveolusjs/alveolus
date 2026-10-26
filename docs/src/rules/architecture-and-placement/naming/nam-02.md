@@ -5,7 +5,7 @@ group: Noms de fichiers
 scope: [structure]
 style: [tactical, transaction-script]
 severity: minor
-detection: fitness
+detection: []
 review: approved
 sources: []
 ---

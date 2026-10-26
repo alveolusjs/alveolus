@@ -5,8 +5,7 @@ group: Données copiées
 scope: [domain, driving]
 style: [tactical, transaction-script]
 severity: major
-detection: hybrid
-detectionNote: Des handlers d’events étrangers qui changent un aggregate sans lui passer la date du fait.
+detection: []
 review: approved
 sources:
   - "Can You Handle the Responsibility?"

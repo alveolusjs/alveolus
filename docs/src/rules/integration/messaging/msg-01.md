@@ -5,8 +5,7 @@ group: Publication
 scope: [application, driven]
 style: [tactical, transaction-script]
 severity: blocking
-detection: hybrid
-detectionNote: Des appels au broker dans un use case ou un handler, à côté d’un enregistrement.
+detection: []
 review: approved
 sources:
   - "Spreading the News to Remote Bounded Contexts › Messaging Infrastructure Consistency"

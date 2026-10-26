@@ -5,8 +5,7 @@ group: Contrat
 scope: [driven, schema]
 style: [tactical]
 severity: major
-detection: hybrid
-detectionNote: Un schéma sans contrainte d’unicité sur l’identité du domaine, un save sans ON CONFLICT ni lecture préalable.
+detection: []
 review: approved
 sources:
   - "Collection-Oriented Repositories (take-aways sidebar)"

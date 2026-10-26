@@ -5,7 +5,7 @@ group: Noms de types
 scope: [domain]
 style: [tactical]
 severity: minor
-detection: fitness
+detection: []
 review: approved
 sources:
   - "How to Do DDD › Ubiquitous Language (Table 1.4)"

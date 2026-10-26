@@ -37,7 +37,7 @@ Chaque règle déclare aussi son **périmètre** : les parties du code qu’elle
 
 Une règle peut aussi porter un **contexte** : elle ne s’applique alors que si le bounded context a adopté le style correspondant (multi-tenant…), par une décision enregistrée. Sinon, on l’ignore.
 
-En haut de la page, une fiche résume la **sévérité**, le mode de **détection**, et le **périmètre**. Les termes gardés en anglais sont dans le [glossaire](./glossary).
+En haut de la page, une fiche résume le **style**, la **sévérité** et le **périmètre**. Les termes gardés en anglais sont dans le [glossaire](./glossary).
 
 ### Sévérité {#severity}
 
@@ -67,7 +67,7 @@ La présentation de chaque thème le montre sur un court exemple, avec des notio
 ## Par où commencer
 
 - **Découvrir le code** : l’[architecture de référence](./reference-architecture), puis la [logique du domaine](../rules/domain-logic/).
-- **Relire un changement** : l’[index de toutes les règles](../rules/), filtrable par partie, thème, périmètre, sévérité et détection.
+- **Relire un changement** : l’[index de toutes les règles](../rules/), filtrable par partie, thème, sévérité et périmètre.
 - **Mettre en place un projet** : [mettre en place un projet](./prerequisites) (context map, glossaire, ADR, CODEOWNERS, outillage), l’[architecture de référence](./reference-architecture) et les [choix par défaut](./default-choices), puis [architecture et placement](../rules/architecture-and-placement/).
 
 ## Thèmes
