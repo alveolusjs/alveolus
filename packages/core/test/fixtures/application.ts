@@ -102,9 +102,9 @@ export class InMemoryOrders extends Orders {
 		return Promise.resolve(snapshot === undefined ? undefined : Order.fromSnapshot(snapshot));
 	}
 
-	public save(order: Order): Promise<void> {
+	public save(order: Order): Promise<Result<void, never>> {
 		this.snapshots.set(order.id.value, order.toSnapshot());
-		return Promise.resolve();
+		return Promise.resolve(ok());
 	}
 
 	public countPlaced(): Promise<number> {
@@ -171,7 +171,10 @@ export class PlaceOrderHandler extends CommandHandler<PlaceOrder, void, OrderNot
 		if (!placed.ok) {
 			return placed;
 		}
-		await this.orders.save(order);
+		const saved = await this.orders.save(order);
+		if (!saved.ok) {
+			return saved;
+		}
 		await this.outbox.add(
 			order.pullDomainEvents().map((event) => this.translator.translate(event, { correlationId: orderId })),
 		);

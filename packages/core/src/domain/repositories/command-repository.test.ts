@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
 import { InMemoryOrders, Order, OrderId, Orders } from '../../../test/fixtures/application.ts';
+import { OrderAlreadyPlaced } from '../../../test/fixtures/domain-error.ts';
 import { CustomerId } from '../../../test/fixtures/identifier.ts';
+import { err, ok } from '../../utilities/result/index.ts';
 import { Port } from '../ports/index.ts';
 import { CommandRepository } from './command-repository.ts';
 
@@ -10,7 +12,8 @@ describe('CommandRepository', () => {
 		const order = new Order(new OrderId('o1'));
 		order.place(42, 'evt_1', new Date('2026-01-01T00:00:00Z'));
 		const orders = new InMemoryOrders();
-		await orders.save(order);
+
+		expect(await orders.save(order)).toEqual(ok());
 
 		const found = await orders.findById(new OrderId('o1'));
 
@@ -29,6 +32,17 @@ describe('CommandRepository', () => {
 		const byOtherId = orders.findById(new CustomerId('c1'));
 
 		expect(byOtherId).toBeInstanceOf(Promise);
+	});
+
+	it('returns in a Result the refusals the storage enforces, and none by default', () => {
+		const refused: Awaited<ReturnType<CommandRepository<Order, OrderAlreadyPlaced>['save']>> = err(
+			new OrderAlreadyPlaced(),
+		);
+		// @ts-expect-error
+		const refusedByDefault: Awaited<ReturnType<Orders['save']>> = err(new OrderAlreadyPlaced());
+
+		expect(refused.ok).toBe(false);
+		expect(refusedByDefault.ok).toBe(false);
 	});
 
 	it('holds an aggregate', () => {
