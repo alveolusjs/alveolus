@@ -12,20 +12,23 @@ FitnessFunctions.of(root)
 fitness.check('LAY-04')
 ├── project/Project.seenBy        the files of the bounded contexts of the rule's styles
 ├── rules/…/Lay04.check           facts + layout → violations
+├── waivers/Waivers               `// waiver LAY-04: <reason>` comments → covered violations, set apart
 └── violations/Violation          code, title, url, file, line, message
 ```
 
-`of()` reads everything once. Each `check()` gives one fitness function the part of the app its styles cover.
+`of()` reads everything once. Each `check()` gives one fitness function the part of the app its styles cover, once:
+`waivers()` reads the same review.
 
 ## Folders
 
 | Folder | Role | Reads |
 | --- | --- | --- |
-| `codebase/` | Reads the code of the app and states facts about it: files, their imports and where they resolve. The only folder that imports oxc. | nothing else |
+| `codebase/` | Reads the code of the app and states facts about it: files, their imports and where they resolve, their comments. The only folder that imports oxc. | nothing else |
 | `layout/` | Interprets the app against the reference architecture: bounded contexts, styles, folders. | `codebase` |
 | `project/` | What one fitness function sees: the files of the bounded contexts of its styles, and where any file sits. | `codebase`, `layout` |
 | `rules/` | One fitness function per automated rule, in the tree of the site, with the registry. | `layout`, `project`, `violations` |
-| `violations/` | What a fitness function reports. | `rules` |
+| `violations/` | What a fitness function reports, and what a waiver covers. | `rules` |
+| `waivers/` | Reads the waivers of a rule from the comments, sets apart the violations they cover, reports the ones that give no reason or cover nothing. | `codebase`, `rules`, `violations` |
 
 `src/__test__/boundaries.test.ts` reads the package with its own `Codebase` and fails on any other dependency, and on
 an import of oxc outside `codebase/`.
@@ -53,6 +56,7 @@ written:
 | --- | --- | --- |
 | `paths` | 111 | here: `SourceFile.path`, `project.placementOf` |
 | `imports` | 53 | here: `Dependency` |
+| comments | waivers | here: `Comment` |
 | `syntax` | 88 | next: what each file declares (classes, members, decorators, exports, calls) |
 | `heritage` | 52 | then: a name followed to its declaration in another file |
 | `config` | 15 | one reader per file kind, when a rule needs it: the context map, `CODEOWNERS`, the Prisma schema |

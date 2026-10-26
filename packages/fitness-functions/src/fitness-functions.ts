@@ -8,11 +8,15 @@ import { registry } from './rules/registry.ts';
 import type { Rule } from './rules/rule.ts';
 import type { RuleCode } from './rules/rule-code.ts';
 import type { Violation } from './violations/violation.ts';
+import type { WaivedViolation } from './violations/waived-violation.ts';
+import type { WaiverReview } from './waivers/waiver-review.ts';
+import { Waivers } from './waivers/waivers.ts';
 
 export class FitnessFunctions {
 	private readonly functions: ReadonlyMap<RuleCode, FitnessFunction> = new Map(
 		registry.map((fitnessFunction) => [fitnessFunction.rule.code, fitnessFunction]),
 	);
+	private readonly reviews: Map<RuleCode, WaiverReview> = new Map();
 
 	private constructor(
 		private readonly codebase: Codebase,
@@ -31,10 +35,27 @@ export class FitnessFunctions {
 	}
 
 	public check(code: RuleCode): Violation[] {
+		return [...this.review(code).remaining];
+	}
+
+	public waivers(code: RuleCode): WaivedViolation[] {
+		return [...this.review(code).waived];
+	}
+
+	private review(code: RuleCode): WaiverReview {
+		const known = this.reviews.get(code);
+
+		if (known !== undefined) {
+			return known;
+		}
+
 		const fitnessFunction = this.fitnessFunction(code);
 		const project = Project.seenBy(fitnessFunction.rule.styles, this.codebase, this.architecture);
+		const violations = fitnessFunction.check(project);
+		const review = Waivers.of(fitnessFunction.rule, project.files).review(violations);
+		this.reviews.set(code, review);
 
-		return fitnessFunction.check(project);
+		return review;
 	}
 
 	private fitnessFunction(code: RuleCode): FitnessFunction {
