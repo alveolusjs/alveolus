@@ -26,6 +26,8 @@ pnpm build          # the site, @alveolus/core, and the rules of claude-rules
   the tables and the index are generated from the frontmatter.
 - `packages/core`: `@alveolus/core` on npm, the building blocks, with no runtime dependency.
 - `packages/claude-rules`: `@alveolus/claude-rules` on npm, the approved rules as Claude Code rules.
+- `packages/lint-config`: `@alveolus/lint-config` on npm, the rules a linter decides without false
+  positives, for oxlint and dependency-cruiser.
 - `packages/claude-plugin`: the Claude Code plugin `alveolus`.
 - `packages/context-mapper`: validates and draws a context map written in CML.
 

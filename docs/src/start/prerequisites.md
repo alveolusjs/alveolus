@@ -99,9 +99,10 @@ Un fichier `CODEOWNERS` attribue chaque dossier de contexte à une seule équipe
 
 ## Outillage {#tooling}
 
-Les building blocks et les règles pour Claude Code sont livrés dans deux packages publiés sur npm, réutilisables d’un projet à l’autre. [Premiers pas](./getting-started) montre comment les installer.
+Les building blocks, les règles pour Claude Code et les règles vérifiées par lint sont livrés dans trois packages publiés sur npm, réutilisables d’un projet à l’autre. [Premiers pas](./getting-started) montre comment les installer.
 
 | Package | Contenu |
 | --- | --- |
 | [`@alveolus/core`](https://www.npmjs.com/package/@alveolus/core) | `AggregateRoot`, `Entity`, `ValueObject`, `Identifier`, `DomainEvent`, `DomainError`, les ports (`Clock`, `IdGenerator`), les repositories, `CommandHandler` et `QueryHandler`, `UnitOfWork`, `Outbox` et `OutboxRelay`, `Result`. Aucune dépendance à l’exécution. |
 | [`@alveolus/claude-rules`](https://www.npmjs.com/package/@alveolus/claude-rules) | Les règles, en règles de Claude Code chargées par dossier, trois skills pour mener une user story de la conception à la revue, et un agent de revue. S’installe en dépendance de développement. |
+| [`@alveolus/lint-config`](https://www.npmjs.com/package/@alveolus/lint-config) | Les règles qu’un lint décide sans faux positif, pour oxlint et dependency-cruiser : dépendances entre couches et entre bounded contexts, cycles entre modules, packages interdits par dossier. S’installe en dépendance de développement. |

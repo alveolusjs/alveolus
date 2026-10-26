@@ -81,7 +81,30 @@ La conception découpe la story en incréments, une merge request chacun, assez 
 
 Chaque skill attend d’être lancé : on relit entre deux étapes, et la conception reste en brouillon tant qu’on ne l’a pas approuvée.
 
-## 4. Déclarer les artefacts du projet {#artifacts}
+## 4. Vérifier en CI {#lint}
+
+Les règles qu’un lint décide sans faux positif sont livrées pour deux outils : oxlint, que `nest new` installe, et dependency-cruiser, qui suit les imports.
+
+```sh
+pnpm add -D @alveolus/lint-config oxlint dependency-cruiser
+```
+
+```ts
+// oxlint.config.mts
+import { defineConfig } from 'oxlint';
+import alveolus from '@alveolus/lint-config/oxlint';
+
+export default defineConfig({ extends: [alveolus] });
+```
+
+```js
+// .dependency-cruiser.cjs
+module.exports = { extends: '@alveolus/lint-config/dependency-cruiser' };
+```
+
+Chaque erreur cite le code de sa règle et l’adresse de sa page. Peu de règles sont vérifiées ainsi : les autres restent à la revue, par l’agent de revue et par l’équipe. Le [README du package](https://github.com/alveolusjs/alveolus/tree/main/packages/lint-config) liste ce que chaque outil vérifie, et ce qu’il ne voit pas.
+
+## 5. Déclarer les artefacts du projet {#artifacts}
 
 Certaines règles lisent ce que le projet a déclaré : context map, glossaire, ADR, propriété du code. [Mettre en place un projet](./prerequisites) les décrit.
 

@@ -5,7 +5,7 @@ group: Frontière du bounded context
 scope: [public, driving]
 style: [tactical, transaction-script]
 severity: major
-detection: []
+detection: [dependency-cruiser]
 review: approved
 sources: []
 ---
