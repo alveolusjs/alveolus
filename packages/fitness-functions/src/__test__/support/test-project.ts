@@ -18,6 +18,18 @@ export class TestProject {
 		return new TestProject({ ...this.files, [path]: text });
 	}
 
+	public without(path: string): TestProject {
+		const files: Record<string, string> = {};
+
+		for (const [name, text] of Object.entries(this.files)) {
+			if (name !== path) {
+				files[name] = text;
+			}
+		}
+
+		return new TestProject(files);
+	}
+
 	public check(code: RuleCode): Violation[] {
 		return this.fitness().check(code);
 	}

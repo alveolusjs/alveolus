@@ -4,6 +4,23 @@ import { TestProject } from '../../../../../__test__/support/test-project.ts';
 
 const app = TestProject.app();
 const outsidePublic = 'LAY-04 imports src/wallets/domain/wallet.aggregate.ts, outside src/wallets/public';
+const withLegacy = app
+	.with(
+		'architecture.json',
+		`{
+	"contexts": {
+		"wallets": "tactical",
+		"notifications": "transaction-script",
+		"legacy": { "style": "big-ball-of-mud", "path": "legacy" },
+		"reports": { "style": "transaction-script", "path": "modules/reports" }
+	}
+}`,
+	)
+	.with(
+		'legacy/users.ts',
+		`import { Wallet } from '../src/wallets/domain/wallet.aggregate.ts';\n\nexport const users = [Wallet];`,
+	)
+	.with('modules/reports/application/report.service.ts', 'export class ReportService {}');
 
 describe('LAY-04', () => {
 	it('reports a relative import of another bounded context', () => {
@@ -81,6 +98,26 @@ describe('LAY-04', () => {
 		const project = app.with(
 			'src/notifications/__test__/notify-holder.spec.ts',
 			`import { Wallet } from '../../wallets/domain/wallet.aggregate.ts';`,
+		);
+
+		expect(project.check('LAY-04')).toEqual([]);
+	});
+
+	it('reports an import of a bounded context declared outside src', () => {
+		const project = withLegacy.with(
+			'src/notifications/application/notify.ts',
+			`import { ReportService } from '../../../modules/reports/application/report.service.ts';`,
+		);
+
+		expect(project.check('LAY-04').map(String)).toEqual([
+			'src/notifications/application/notify.ts:1 LAY-04 imports modules/reports/application/report.service.ts, outside modules/reports/public',
+		]);
+	});
+
+	it('leaves the big ball of mud to MAP-04, from the outside and from the inside', () => {
+		const project = withLegacy.with(
+			'src/notifications/driven/legacy-users.ts',
+			`import { users } from '../../../legacy/users.ts';\n\nexport const legacyUsers = users;`,
 		);
 
 		expect(project.check('LAY-04')).toEqual([]);

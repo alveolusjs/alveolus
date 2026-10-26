@@ -40,7 +40,7 @@ folder per automated rule, named by its code. LAY-04 lives in
 
 ```txt
 lay-04/
-├── lay-04.ts                  class Lay04 extends FitnessFunction, its Rule: code, title, url
+├── lay-04.ts                  class Lay04 extends FitnessFunction, its Rule: code, title, url, styles
 └── __test__/
     └── lay-04.test.ts         one it() per form the rule reports, its files written inline
 ```
@@ -60,12 +60,18 @@ expect(project.check('LAY-04').map(String)).toEqual([
 ```
 
 Every fitness function must accept the reference app: `reference-app.test.ts` checks it. When a
-new rule needs a compliant form the app does not show yet, add it to the reference app.
+new rule needs a compliant form the app does not show yet, add it to the reference app. Its
+`wallets` is tactical and its `notifications` a transaction script.
 
-To add one: create the folder, copy the code and the title of the page into the `Rule` of the
-class, then add the class to the `index.ts` of its theme. The registry test fails when a folder
-is not registered, when a class does not carry the code of its folder, when its title or url
-differs from its page, or when the rule is not approved on the site, in the same part and theme.
+A fitness function receives a `Project`: the files of the bounded contexts of its styles, plus
+shared and root files, never the inside of a big ball of mud. `project.placementOf(path)` gives
+the bounded context and the folder of any file, the targets of imports included.
+
+To add one: create the folder, copy the code, the title and the styles of the page into the
+`Rule` of the class, then add the class to the `index.ts` of its theme. The registry test fails
+when a folder is not registered, when a class does not carry the code of its folder, when its
+title, url or styles differ from its page, or when the rule is not approved on the site, in the
+same part and theme.
 
 ## A pull request
 

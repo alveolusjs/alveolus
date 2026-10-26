@@ -1,4 +1,16 @@
 export const referenceApp: Readonly<Record<string, string>> = {
+	'architecture.json': `{
+	"contexts": {
+		"wallets": "tactical",
+		"notifications": "transaction-script"
+	}
+}
+`,
+	'package.json': `{
+	"name": "reference-app",
+	"type": "module"
+}
+`,
 	'tsconfig.json': `{
 	"compilerOptions": {
 		"module": "nodenext",
@@ -44,33 +56,28 @@ export class Deposit {
 	readonly id: string;
 }
 `,
-	'src/notifications/notifications.module.ts': `import { NotifyHolder } from './application/notify-holder.command.ts';
+	'src/notifications/notifications.module.ts': `import { NotificationService } from './application/notification.service.ts';
 
 export class NotificationsModule {
-	public readonly providers = [NotifyHolder];
+	public readonly providers = [NotificationService];
 }
 `,
-	'src/notifications/domain/notification.aggregate.ts': `export class Notification {
-	public constructor(public readonly walletId: string) {}
-}
-`,
-	'src/notifications/application/notify-holder.command.ts': `import type { WalletContract } from '@wallets/public/wallet-contract.ts';
-import { Notification } from '../domain/notification.aggregate.ts';
+	'src/notifications/application/notification.service.ts': `import type { WalletContract } from '@wallets/public/wallet-contract.ts';
 
-export class NotifyHolder {
-	public run(wallet: WalletContract): Notification {
-		return new Notification(wallet.id);
+export class NotificationService {
+	public notifyHolder(wallet: WalletContract): string {
+		return wallet.id;
 	}
 }
 `,
 	'src/notifications/driving/deposit-made.consumer.ts': `import type { WalletContract } from '../../wallets/public/wallet-contract.ts';
-import type { NotifyHolder } from '../application/notify-holder.command.ts';
+import type { NotificationService } from '../application/notification.service.ts';
 
 export class DepositMadeConsumer {
-	public constructor(private readonly notifyHolder: NotifyHolder) {}
+	public constructor(private readonly notifications: NotificationService) {}
 
 	public consume(wallet: WalletContract): void {
-		this.notifyHolder.run(wallet);
+		this.notifications.notifyHolder(wallet);
 	}
 }
 `,

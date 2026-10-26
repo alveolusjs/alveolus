@@ -24,9 +24,27 @@ it(`${lay04.code} ${lay04.title}`, () => {
 A new version of the package adds no check to the app by itself, and a rule the app waives has no test. Each
 violation gives `code`, `title` and `url` of its rule, and `file`, `line` and `message` of what it found.
 
-`FitnessFunctions.of` takes the root of the app. It follows the reference architecture: each folder of `src/` is a
-bounded context, except `shared`, and `__test__` folders are left out. Imports are resolved the way TypeScript
-resolves them, `paths` of the nearest `tsconfig.json` included.
+`FitnessFunctions.of` takes the root of the app and reads its `architecture.json`, the file
+[CTX-14](https://alveolus.dev/rules/strategic-design/bounded-contexts/ctx-14) asks for: each bounded context and its
+style, and its folder when it does not live in `src/<name>/`.
+
+```json
+{
+	"contexts": {
+		"wallets": "tactical",
+		"notifications": "transaction-script",
+		"legacy": { "style": "big-ball-of-mud", "path": "apps/back-office/src" }
+	}
+}
+```
+
+A rule only checks the bounded contexts of its styles. No rule checks a big ball of mud from the inside. Files in
+`src/shared/` and at the root of `src/` are checked by every rule, and `__test__` folders are left out. Imports are
+resolved the way TypeScript resolves them, `paths` of the nearest `tsconfig.json` and `@types` packages included.
+
+`FitnessFunctions.of` throws rather than pass on a project it cannot read: when `architecture.json` is missing or
+invalid, when a declared folder does not exist, when a folder of `src/` other than `shared` is not declared, and
+when an import does not resolve, unless it targets a Node module or a package declared in `package.json`.
 
 | Code | What it checks |
 | --- | --- |
