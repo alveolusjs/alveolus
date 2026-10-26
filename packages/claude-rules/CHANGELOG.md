@@ -1,5 +1,11 @@
 # @alveolus/claude-rules
 
+## 0.2.2
+
+### Patch Changes
+
+- 070c526: LAY-02 now names cycles between sibling modules of any layer, and the rules checked by `@alveolus/lint-config` list `oxlint` or `dependency-cruiser` in their `detection`.
+
 ## 0.2.1
 
 ### Patch Changes
