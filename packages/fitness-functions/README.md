@@ -46,9 +46,13 @@ resolved the way TypeScript resolves them, `paths` of the nearest `tsconfig.json
 invalid, when a declared folder does not exist, when a folder of `src/` other than `shared` is not declared, and
 when an import does not resolve, unless it targets a Node module or a package declared in `package.json`.
 
-| Code | What it checks |
-| --- | --- |
-| [LAY-04](https://alveolus.dev/rules/architecture-and-placement/layers/lay-04) | A file of a bounded context imports nothing from another bounded context outside its `public` folder: static, type-only, re-exported or dynamic with a literal path. |
+Most rules are only partly checkable: a fitness function then checks the signals it can decide without false
+positives, and leaves the rest to review. `fitness.rule(code)` gives its `coverage`, `full` or `partial`, and what it
+`checks`.
+
+| Code | Coverage | What it checks |
+| --- | --- | --- |
+| [LAY-04](https://alveolus.dev/rules/architecture-and-placement/layers/lay-04) | partial | Imports of another bounded context outside its public folder: static, type-only, re-exported or dynamic with a literal path. |
 
 - [Documentation](https://alveolus.dev/)
 - [Source](https://github.com/alveolusjs/alveolus/tree/main/packages/fitness-functions)

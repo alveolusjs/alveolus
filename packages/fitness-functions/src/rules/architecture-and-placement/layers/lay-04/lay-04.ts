@@ -10,6 +10,10 @@ export class Lay04 extends FitnessFunction {
 		'Un autre bounded context n’entre que par `public`, qui ne contient que le contrat',
 		'https://alveolus.dev/rules/architecture-and-placement/layers/lay-04',
 		['tactical', 'transaction-script'],
+		{
+			coverage: 'partial',
+			checks: 'Imports of another bounded context outside its public folder: static, type-only, re-exported or dynamic with a literal path.',
+		},
 	);
 
 	public check(project: Project): Violation[] {

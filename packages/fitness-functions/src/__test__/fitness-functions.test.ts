@@ -7,12 +7,14 @@ const fitness = TestProject.app()
 	.fitness();
 
 describe('FitnessFunctions', () => {
-	it('describes an automated rule with the code, title, url and styles of its page', () => {
+	it('describes an automated rule: its page, its styles and what it covers', () => {
 		expect(fitness.rule('LAY-04')).toEqual({
 			code: 'LAY-04',
 			title: 'Un autre bounded context n’entre que par `public`, qui ne contient que le contrat',
 			url: 'https://alveolus.dev/rules/architecture-and-placement/layers/lay-04',
 			styles: ['tactical', 'transaction-script'],
+			coverage: 'partial',
+			checks: 'Imports of another bounded context outside its public folder: static, type-only, re-exported or dynamic with a literal path.',
 		});
 	});
 
