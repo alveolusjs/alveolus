@@ -6,6 +6,7 @@ scope: [application, driving, driven]
 style: [tactical, transaction-script]
 severity: major
 severityNote: Bloquante quand le champ garde les données d’un titulaire ou la transaction en cours.
+detection: []
 review: approved
 sources: []
 ---

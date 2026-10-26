@@ -6,6 +6,7 @@ scope: [schema]
 style: [tactical, transaction-script]
 severity: major
 severityNote: Bloquante pour un montant stocké en nombre à virgule flottante.
+detection: []
 review: approved
 sources:
   - "Persisting Value Objects › Reject Undue Influence of Data Model Leakage"

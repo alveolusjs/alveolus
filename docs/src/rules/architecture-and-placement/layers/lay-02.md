@@ -5,6 +5,7 @@ group: Sens des dépendances
 scope: [structure]
 style: [tactical, transaction-script]
 severity: major
+detection: []
 review: approved
 sources:
   - "Designing with Modules (Table 9.1)"

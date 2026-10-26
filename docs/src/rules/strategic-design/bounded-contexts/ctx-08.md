@@ -5,6 +5,7 @@ group: Homonymes entre bounded contexts
 scope: [domain]
 style: [tactical]
 severity: minor
+detection: []
 review: approved
 sources:
   - "Making Sense of Bounded Contexts, sidebar 'The Context Gives Each Term a Very Specific Meaning'"

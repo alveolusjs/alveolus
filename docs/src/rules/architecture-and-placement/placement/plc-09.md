@@ -5,6 +5,7 @@ group: Adapters
 scope: [driving, driven]
 style: [tactical, transaction-script]
 severity: minor
+detection: []
 review: approved
 sources: []
 ---

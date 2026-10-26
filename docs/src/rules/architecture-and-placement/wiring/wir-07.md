@@ -5,6 +5,7 @@ group: Dépendances
 scope: [domain, application, structure]
 style: [tactical, transaction-script]
 severity: minor
+detection: []
 review: approved
 sources:
   - "Dependency Inversion Principle"

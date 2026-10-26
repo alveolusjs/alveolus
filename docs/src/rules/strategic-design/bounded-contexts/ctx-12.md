@@ -6,6 +6,7 @@ scope: [structure]
 style: [tactical, transaction-script]
 severity: major
 severityNote: Majeure pour CODEOWNERS. Question pour une merge request.
+detection: []
 review: approved
 sources:
   - "Aligning with Technical Components, sidebar 'A Single Team for a Single Bounded Context'"

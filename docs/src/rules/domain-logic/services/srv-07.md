@@ -5,6 +5,7 @@ group: Forme du service
 scope: [domain]
 style: [tactical]
 severity: minor
+detection: []
 review: approved
 sources:
   - "Make Sure You Need a Service (UserDescriptor)"

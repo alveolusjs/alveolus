@@ -5,6 +5,7 @@ group: Frontière et taille
 scope: [domain]
 style: [tactical]
 severity: major
+detection: []
 review: approved
 sources:
   - "Rule: Design Small Aggregates"

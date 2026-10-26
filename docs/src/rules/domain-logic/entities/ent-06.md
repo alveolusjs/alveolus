@@ -5,6 +5,7 @@ group: Identité
 scope: [domain]
 style: [tactical]
 severity: major
+detection: []
 review: approved
 sources:
   - "Unique Identity › Identity Stability"

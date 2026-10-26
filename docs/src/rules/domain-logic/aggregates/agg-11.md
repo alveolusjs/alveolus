@@ -6,6 +6,7 @@ scope: [domain]
 style: [tactical]
 severity: major
 severityNote: À poser comme une question si l’invariant peut exister hors du code.
+detection: []
 review: approved
 sources:
   - "First Attempt: Large-Cluster Aggregate"

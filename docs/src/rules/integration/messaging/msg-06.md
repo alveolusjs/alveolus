@@ -6,6 +6,7 @@ scope: [driving]
 style: [tactical, transaction-script]
 severity: major
 severityNote: Majeure quand l’ordre change le résultat. Question sinon.
+detection: []
 review: approved
 sources:
   - "Publishing Notifications as RESTful Resources"

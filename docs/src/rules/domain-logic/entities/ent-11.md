@@ -6,6 +6,7 @@ scope: [domain]
 style: [tactical]
 severity: minor
 severityNote: Question quand un concept semble manquer. Un setter public relève d’ENT-10.
+detection: []
 review: approved
 sources:
   - "How to Do DDD › Ubiquitous Language (Table 1.4)"

@@ -5,6 +5,7 @@ group: Style d’implémentation
 scope: [structure]
 style: [tactical, transaction-script]
 severity: major
+detection: []
 review: approved
 sources: []
 ---

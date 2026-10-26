@@ -5,6 +5,7 @@ group: Mappers
 scope: [driven]
 style: [tactical]
 severity: minor
+detection: []
 review: approved
 sources: []
 ---

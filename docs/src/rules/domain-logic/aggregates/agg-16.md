@@ -5,6 +5,7 @@ group: Concurrence
 scope: [domain, driven]
 style: [tactical]
 severity: minor
+detection: []
 review: approved
 sources:
   - "Optimistic Concurrency"

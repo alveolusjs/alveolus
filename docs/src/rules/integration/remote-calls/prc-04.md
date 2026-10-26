@@ -5,6 +5,7 @@ group: Processus entre bounded contexts
 scope: [driving, structure]
 style: [tactical, transaction-script]
 severity: question
+detection: []
 review: approved
 sources:
   - "Long-Running Processes, and Avoiding Responsibility"

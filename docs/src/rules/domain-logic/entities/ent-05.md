@@ -5,6 +5,7 @@ group: Identité
 scope: [domain, driven]
 style: [tactical]
 severity: major
+detection: []
 review: approved
 sources:
   - "Unique Identity › Persistence Mechanism Generates Identity (sidebar 'Order May Matter')"

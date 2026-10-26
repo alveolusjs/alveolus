@@ -6,6 +6,7 @@ scope: [domain, public]
 style: [tactical]
 severity: major
 severityNote: Majeure quand un subscriber ne peut pas agir sans relire la source. Mineure sinon.
+detection: []
 review: approved
 sources:
   - "Modeling Events"

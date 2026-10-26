@@ -5,6 +5,7 @@ group: Forme du service
 scope: [domain]
 style: [tactical]
 severity: major
+detection: []
 review: approved
 sources:
   - "Using a Mini-Layer of Domain Services"

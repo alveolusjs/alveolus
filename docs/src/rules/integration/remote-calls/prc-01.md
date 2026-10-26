@@ -5,6 +5,7 @@ group: Appels distants
 scope: [driven]
 style: [tactical, transaction-script]
 severity: major
+detection: []
 review: approved
 sources:
   - "Integration Basics"

@@ -5,6 +5,7 @@ group: Requêtes
 scope: [driven]
 style: [tactical]
 severity: major
+detection: []
 review: approved
 sources:
   - "Additional Behavior"

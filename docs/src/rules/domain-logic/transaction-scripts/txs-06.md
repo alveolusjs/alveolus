@@ -5,6 +5,7 @@ group: Organisation et accès aux données
 scope: [application]
 style: [transaction-script]
 severity: blocking
+detection: []
 review: approved
 sources: []
 ---

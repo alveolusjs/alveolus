@@ -58,6 +58,7 @@ scope: [application, driving]  # domain | application | driving | driven | publi
 style: [tactical]             # tactical | transaction-script, one or both
 severity: major               # blocking | major | minor | question
 severityNote: ...             # optional, severity nuance
+detection: []                 # the checks that automate the rule, empty until one ships
 context: ...                  # optional, the rule only applies if this style is adopted
 review: to-review              # to-review | approved | rejected
 reviewNotes:                  # optional, why it was approved with changes or rejected
@@ -87,6 +88,7 @@ sources:                      # book section titles, behind the scenes: never sh
 - Translating a page also translates its entry in the sidebar, in the same change: a rule through its `title`, a part or theme overview through `menu: Vue d’ensemble` in its frontmatter (the sidebar shows `Overview` without it), along with the `title` and `group` of every rule listed under that theme, and the rule's `#` heading to match, a page of the `start` section or `choosing-a-style` through its label in `rulesSidebar()` (`.vitepress/rules.ts`).
 - Every rule says which **implementation style** it applies to: `tactical` (core contexts, tactical DDD), `transaction-script` (supporting and generic contexts), or both. The site shows it as a badge, and a global filter in the top bar (All, Tactical, Transaction script), remembered by the browser, narrows the sidebar, the tables, the index and the home page to the rules that apply to one style, shared rules included; a rule outside the filter stays reachable with a banner. The site build fails on a rule without a valid `style`. Themes of the tactical model are `tactical`; the strategic, integration and architecture themes apply to both unless a rule targets the model itself.
 - Every rule carries a **review verdict** in its frontmatter: `to-review` until the user has read it, `approved` once kept, `rejected` when it leaves the rules. Every rule is now approved, so the site no longer shows the verdict; it only strikes out a rejected rule in the tables and gives its page a banner. A rejected rule keeps its page and its code, so the code is never reused. `@alveolus/claude-rules` ships approved rules only. The site build fails on a rule without a valid `review`. Only the user changes a verdict.
+- Every rule carries `detection`, the list of the checks that automate it. It stays `[]` until one ships: the rules are revisited one by one while writing the fitness functions of `@alveolus/fitness-functions`, which fill the list and edit the rule when needed. The site build fails on a rule without a `detection` list.
 - Writing a rule code (`AGG-04`) in any page is enough: it becomes a link automatically.
 - Groups (`group`) structure the theme; rules of the same group follow each other in the numbering.
 

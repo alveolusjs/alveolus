@@ -5,6 +5,7 @@ group: Identité
 scope: [domain]
 style: [tactical]
 severity: minor
+detection: []
 review: approved
 sources:
   - "Unique Identity"

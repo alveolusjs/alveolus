@@ -5,6 +5,7 @@ group: Durée de vie
 scope: [structure, driving, driven]
 style: [tactical, transaction-script]
 severity: minor
+detection: []
 review: approved
 sources: []
 ---

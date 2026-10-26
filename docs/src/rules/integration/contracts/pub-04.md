@@ -5,6 +5,7 @@ group: Published language
 scope: [public]
 style: [tactical, transaction-script]
 severity: major
+detection: []
 review: approved
 sources:
   - "Autonomous Services and Systems"

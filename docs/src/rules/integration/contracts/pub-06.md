@@ -5,6 +5,7 @@ group: Open host service
 scope: [public]
 style: [tactical, transaction-script]
 severity: question
+detection: []
 review: approved
 sources:
   - "Open Host Service (definition)"

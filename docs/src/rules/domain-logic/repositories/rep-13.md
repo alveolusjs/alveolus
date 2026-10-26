@@ -5,6 +5,7 @@ group: Transactions
 scope: [application, driven]
 style: [tactical]
 severity: major
+detection: []
 review: approved
 sources:
   - "Managing Transactions (and chapter note 5)"

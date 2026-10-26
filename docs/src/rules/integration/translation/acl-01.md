@@ -5,6 +5,7 @@ group: Anticorruption layer
 scope: [driven, domain]
 style: [tactical, transaction-script]
 severity: major
+detection: []
 review: approved
 sources:
   - "Anticorruption Layer (definition)"

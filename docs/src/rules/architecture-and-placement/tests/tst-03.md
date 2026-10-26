@@ -5,6 +5,7 @@ group: Ce qu’un test prouve
 scope: [tests]
 style: [tactical, transaction-script]
 severity: minor
+detection: []
 review: approved
 sources: []
 ---

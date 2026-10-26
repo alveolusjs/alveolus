@@ -5,6 +5,7 @@ group: Dans la durée
 scope: [structure, driving]
 style: [tactical, transaction-script]
 severity: major
+detection: []
 review: approved
 sources: []
 ---

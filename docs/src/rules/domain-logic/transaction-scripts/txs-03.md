@@ -5,6 +5,7 @@ group: Forme d’un script
 scope: [application, driving, driven]
 style: [transaction-script]
 severity: major
+detection: []
 review: approved
 sources: []
 ---

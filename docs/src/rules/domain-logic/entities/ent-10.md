@@ -5,6 +5,7 @@ group: Comportement
 scope: [domain, application]
 style: [tactical]
 severity: major
+detection: []
 review: approved
 sources:
   - "Why You Should Do DDD › Anemia and Memory Loss (Table 1.2)"

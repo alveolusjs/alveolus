@@ -5,6 +5,7 @@ group: Langage et frontière
 scope: [domain]
 style: [tactical]
 severity: major
+detection: []
 review: approved
 sources:
   - "Why Strategic Design Is So Incredibly Essential"

@@ -5,6 +5,7 @@ group: La composition root
 scope: [structure, public]
 style: [tactical, transaction-script]
 severity: major
+detection: []
 review: approved
 sources:
   - "Hexagonal or Ports and Adapters"

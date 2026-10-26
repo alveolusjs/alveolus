@@ -5,6 +5,7 @@ group: Modules
 scope: [structure]
 style: [tactical, transaction-script]
 severity: minor
+detection: []
 review: approved
 sources:
   - "Designing with Modules (Evans quote, Table 9.1)"

@@ -5,6 +5,7 @@ group: Stockage et reconstitution
 scope: [driven, schema]
 style: [tactical]
 severity: major
+detection: []
 review: approved
 sources:
   - "MongoDB Implementation (field mapping on deserialization)"

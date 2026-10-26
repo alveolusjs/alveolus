@@ -6,6 +6,7 @@ scope: [structure]
 style: [tactical, transaction-script]
 severity: major
 severityNote: Majeure pour une fuite. Question pour de la modélisation à l’intérieur.
+detection: []
 review: approved
 sources:
   - "Big Ball of Mud (definition)"

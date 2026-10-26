@@ -6,6 +6,7 @@ scope: [structure, driven]
 style: [tactical, transaction-script]
 severity: major
 severityNote: Majeure si le code contredit la relation déclarée. Question pour une intégration absente de la context map.
+detection: []
 review: approved
 sources:
   - "Chapter introduction"

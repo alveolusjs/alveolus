@@ -5,6 +5,7 @@ group: Le schéma
 scope: [schema]
 style: [tactical, transaction-script]
 severity: major
+detection: []
 review: approved
 sources: []
 ---

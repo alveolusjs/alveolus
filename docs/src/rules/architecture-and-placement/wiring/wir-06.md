@@ -5,6 +5,7 @@ group: Dépendances
 scope: [driving, structure]
 style: [tactical, transaction-script]
 severity: major
+detection: []
 review: approved
 sources: []
 ---

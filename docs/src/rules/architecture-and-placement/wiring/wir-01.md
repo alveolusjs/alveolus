@@ -5,6 +5,7 @@ group: La composition root
 scope: [structure, application, driving, driven]
 style: [tactical, transaction-script]
 severity: major
+detection: []
 review: approved
 sources:
   - "Dependency Inversion Principle"

@@ -5,6 +5,7 @@ group: Langage et frontière
 scope: [domain]
 style: [tactical]
 severity: question
+detection: []
 review: approved
 sources:
   - "Subdomains and Bounded Contexts at Work (Figure 2.1: Customer in the e-commerce system, Item in inventory)"

@@ -5,6 +5,7 @@ group: Règles
 scope: [domain]
 style: [tactical]
 severity: minor
+detection: []
 review: approved
 sources:
   - "Factories in the Domain Model"

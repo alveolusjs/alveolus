@@ -5,6 +5,7 @@ group: Lectures
 scope: [driven, application]
 style: [tactical, transaction-script]
 severity: major
+detection: []
 review: approved
 sources: []
 ---

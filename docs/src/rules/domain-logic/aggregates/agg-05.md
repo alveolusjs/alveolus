@@ -5,6 +5,7 @@ group: Références et dépendances
 scope: [domain]
 style: [tactical]
 severity: minor
+detection: []
 review: approved
 sources:
   - "Create a Root Entity with Unique Identity"

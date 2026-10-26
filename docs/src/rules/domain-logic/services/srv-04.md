@@ -6,6 +6,7 @@ scope: [domain]
 style: [tactical]
 severity: major
 severityNote: Majeure pour un état gardé entre deux appels. Mineure pour le nommage.
+detection: []
 review: approved
 sources:
   - "What a Domain Service Is (but First, What It Is Not) (Evans quote)"

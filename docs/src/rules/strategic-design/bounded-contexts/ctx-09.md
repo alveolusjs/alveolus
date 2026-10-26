@@ -5,6 +5,7 @@ group: Ce que contient un bounded context
 scope: [schema]
 style: [tactical, transaction-script]
 severity: minor
+detection: []
 review: approved
 sources:
   - "Room for More than the Model"

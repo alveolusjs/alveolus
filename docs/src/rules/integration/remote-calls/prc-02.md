@@ -6,6 +6,7 @@ scope: [application, driven]
 style: [tactical, transaction-script]
 severity: question
 severityNote: Majeure si l’échec de l’appel distant n’est pas traité du tout.
+detection: []
 review: approved
 sources:
   - "Mapping the Three Contexts (autonomie)"

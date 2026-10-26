@@ -5,6 +5,7 @@ group: Langage et frontière
 scope: [domain]
 style: [tactical]
 severity: major
+detection: []
 review: approved
 sources:
   - "Real-World Domains and Subdomains (the mapping service consumed by inventory)"

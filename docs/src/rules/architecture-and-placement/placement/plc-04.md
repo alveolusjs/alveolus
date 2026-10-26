@@ -5,6 +5,7 @@ group: Modules
 scope: [structure, domain, application]
 style: [tactical, transaction-script]
 severity: minor
+detection: []
 review: approved
 sources:
   - "Designing with Modules (Table 9.1, the kitchen drawers analogy)"

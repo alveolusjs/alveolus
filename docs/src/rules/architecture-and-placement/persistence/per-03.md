@@ -5,6 +5,7 @@ group: Le schéma
 scope: [schema, driven]
 style: [tactical, transaction-script]
 severity: blocking
+detection: []
 review: approved
 sources: []
 ---

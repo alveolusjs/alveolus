@@ -6,6 +6,7 @@ scope: [driving]
 style: [tactical, transaction-script]
 severity: major
 severityNote: Majeure pour une règle métier hors du modèle. Mineure pour un endpoint qui contourne le use case.
+detection: []
 review: approved
 sources:
   - "Room for More than the Model"

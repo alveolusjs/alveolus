@@ -5,6 +5,7 @@ group: Forme du service
 scope: [domain, driven]
 style: [tactical]
 severity: minor
+detection: []
 review: approved
 sources:
   - "Modeling a Service in the Domain"

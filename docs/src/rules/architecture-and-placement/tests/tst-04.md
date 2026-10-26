@@ -5,6 +5,7 @@ group: Forme d’un test
 scope: [tests]
 style: [tactical, transaction-script]
 severity: minor
+detection: []
 review: approved
 sources: []
 ---

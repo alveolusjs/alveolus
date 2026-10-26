@@ -5,6 +5,7 @@ group: Publication
 scope: [application, driven]
 style: [tactical, transaction-script]
 severity: blocking
+detection: []
 review: approved
 sources:
   - "Spreading the News to Remote Bounded Contexts › Messaging Infrastructure Consistency"

@@ -5,6 +5,7 @@ group: Identité
 scope: [domain]
 style: [tactical]
 severity: minor
+detection: []
 review: approved
 sources:
   - "When the Timing of Identity Generation Matters"

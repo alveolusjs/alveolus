@@ -6,6 +6,7 @@ scope: [domain, driven]
 style: [tactical]
 severity: blocking
 severityNote: Bloquante si une obligation de conservation s’applique. Majeure sinon.
+detection: []
 review: approved
 sources:
   - "Hibernate Implementation (paragraph on aggregates that are never deleted)"

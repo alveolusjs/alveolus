@@ -6,6 +6,7 @@ scope: [domain, driven]
 style: [tactical]
 severity: minor
 severityNote: Mineure pour un cas isolé. Majeure quand l’aiguillage sur le type devient la norme chez les appelants.
+detection: []
 review: approved
 sources:
   - "Type Hierarchies"

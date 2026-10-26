@@ -6,6 +6,7 @@ scope: [domain, driven]
 style: [tactical]
 severity: minor
 severityNote: Majeure si l’erreur brute du stockage atteint la réponse de l’API.
+detection: []
 review: approved
 sources:
   - "Collection-Oriented Repositories"

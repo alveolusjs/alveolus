@@ -5,6 +5,7 @@ group: Noms de types
 scope: [driving, driven]
 style: [tactical, transaction-script]
 severity: minor
+detection: []
 review: approved
 sources:
   - "Is Separated Interface a Necessity? (sidebar 'Naming Your Implementation Class')"

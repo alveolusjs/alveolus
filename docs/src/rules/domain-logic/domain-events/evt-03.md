@@ -5,6 +5,7 @@ group: Modéliser l’event
 scope: [domain, application]
 style: [tactical]
 severity: major
+detection: []
 review: approved
 sources:
   - "The Challenges of Applying DDD (commitTo example)"

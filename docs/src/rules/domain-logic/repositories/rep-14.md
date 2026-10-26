@@ -5,6 +5,7 @@ group: Transactions
 scope: [driven]
 style: [tactical]
 severity: blocking
+detection: []
 review: approved
 sources:
   - "Managing Transactions (access to the same session or Unit of Work)"

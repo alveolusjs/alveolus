@@ -5,6 +5,7 @@ group: Tests
 scope: [tests]
 style: [tactical]
 severity: minor
+detection: []
 review: approved
 sources:
   - "Testing Services"

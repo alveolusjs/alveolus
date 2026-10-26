@@ -5,6 +5,7 @@ group: Style d’implémentation
 scope: [structure]
 style: [tactical, transaction-script]
 severity: question
+detection: []
 review: approved
 sources:
   - "Why You Should Do DDD › Grappling with the Complexity of Your Domain (Table 1.1 and 'Use DDD to Simplify, Not to Complicate' sidebar)"

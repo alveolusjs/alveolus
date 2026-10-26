@@ -5,6 +5,7 @@ group: Les subscribers du bounded context
 scope: [driving]
 style: [tactical]
 severity: major
+detection: []
 review: approved
 sources:
   - "Publishing Events from the Domain Model"

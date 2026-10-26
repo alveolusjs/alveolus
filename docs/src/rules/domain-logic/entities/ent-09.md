@@ -7,6 +7,7 @@ style: [tactical]
 context: Seulement si le système est multi-tenant.
 severity: blocking
 severityNote: Bloquante pour une requête sans filtre sur le tenant. Majeure sinon.
+detection: []
 review: approved
 sources:
   - "Uncovering Entities and Properties"

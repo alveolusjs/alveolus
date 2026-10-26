@@ -5,6 +5,7 @@ group: Écritures
 scope: [application, driven]
 style: [tactical]
 severity: major
+detection: []
 review: approved
 sources:
   - "Collection-Oriented Repositories"

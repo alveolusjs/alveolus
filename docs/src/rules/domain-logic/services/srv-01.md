@@ -5,6 +5,7 @@ group: Quand créer un domain service
 scope: [domain]
 style: [tactical]
 severity: major
+detection: []
 review: approved
 sources:
   - "Chapter introduction"

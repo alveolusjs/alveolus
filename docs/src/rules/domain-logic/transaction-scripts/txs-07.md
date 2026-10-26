@@ -5,6 +5,7 @@ group: Organisation et accès aux données
 scope: [application, public]
 style: [transaction-script]
 severity: major
+detection: []
 review: approved
 sources: []
 ---

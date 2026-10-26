@@ -6,6 +6,7 @@ scope: [domain]
 style: [tactical]
 severity: major
 severityNote: Majeure pour plusieurs setters par intention. Mineure pour un seul setter que le langage ne justifie pas.
+detection: []
 review: approved
 sources:
   - "Discovering Entities and Their Intrinsic Characteristics › Digging for Essential Behavior"

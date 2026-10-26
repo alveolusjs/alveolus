@@ -5,6 +5,7 @@ group: Transactions
 scope: [driven, application]
 style: [tactical, transaction-script]
 severity: blocking
+detection: []
 review: approved
 sources: []
 ---

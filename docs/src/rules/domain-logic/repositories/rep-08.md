@@ -5,6 +5,7 @@ group: Stockage et reconstitution
 scope: [domain, driven]
 style: [tactical]
 severity: major
+detection: []
 review: approved
 sources:
   - "MongoDB Implementation (serialization through direct field access)"

@@ -5,6 +5,7 @@ group: Migrations
 scope: [schema, tests, structure]
 style: [tactical, transaction-script]
 severity: major
+detection: []
 review: approved
 sources: []
 ---

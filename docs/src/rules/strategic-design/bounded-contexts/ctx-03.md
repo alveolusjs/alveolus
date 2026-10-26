@@ -6,6 +6,7 @@ scope: [domain, application, driving]
 style: [tactical, transaction-script]
 severity: major
 severityNote: "Majeure pour un terme rejeté ou un double nom. Question pour un terme absent. Sans glossaire (voir Mettre en place un projet), la règle est inactive, et la revue le signale dans son résumé."
+detection: []
 review: approved
 sources:
   - "Why You Should Do DDD (zero translation)"

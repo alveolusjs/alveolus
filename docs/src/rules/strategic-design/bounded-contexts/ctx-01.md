@@ -6,6 +6,7 @@ scope: [structure, domain]
 style: [tactical, transaction-script]
 severity: major
 severityNote: Majeure si la context map existe et ne déclare pas ce partage. Question sinon.
+detection: []
 review: approved
 sources:
   - "How to Do DDD › Ubiquitous, but Not Universal"

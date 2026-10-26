@@ -5,6 +5,7 @@ group: Noms de types
 scope: [domain, application]
 style: [tactical, transaction-script]
 severity: minor
+detection: []
 review: approved
 sources: []
 ---

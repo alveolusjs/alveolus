@@ -5,6 +5,7 @@ group: Publication
 scope: [driven, schema]
 style: [tactical, transaction-script]
 severity: major
+detection: []
 review: approved
 sources:
   - "Event Store"

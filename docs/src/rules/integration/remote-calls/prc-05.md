@@ -5,6 +5,7 @@ group: Processus entre bounded contexts
 scope: [application, domain]
 style: [tactical, transaction-script]
 severity: major
+detection: []
 review: approved
 sources:
   - "Long-Running Processes, aka Sagas"

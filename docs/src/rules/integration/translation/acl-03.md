@@ -5,6 +5,7 @@ group: Données copiées
 scope: [domain, driving]
 style: [tactical, transaction-script]
 severity: major
+detection: []
 review: approved
 sources:
   - "Can You Handle the Responsibility?"

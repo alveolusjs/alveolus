@@ -5,6 +5,7 @@ group: Taille et organisation
 scope: [structure]
 style: [tactical, transaction-script]
 severity: question
+detection: []
 review: approved
 sources:
   - "Size of Bounded Contexts"

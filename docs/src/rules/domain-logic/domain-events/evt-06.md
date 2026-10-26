@@ -5,6 +5,7 @@ group: Modéliser l’event
 scope: [domain]
 style: [tactical]
 severity: major
+detection: []
 review: approved
 sources:
   - "Modeling Events"

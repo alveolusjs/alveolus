@@ -28,6 +28,7 @@ export interface Rule {
 	review: Review;
 	severity: string;
 	severityNote?: string;
+	detection: string[];
 	context?: string;
 	scope: string[];
 	style: Style[];
@@ -50,6 +51,12 @@ function loadThemeRules(theme: Theme): Rule[] {
 				throw new Error(`${themePath(theme)}/${file}: review must be to-review, approved or rejected`);
 			}
 
+			if (!Array.isArray(data.detection)) {
+				throw new Error(
+					`${themePath(theme)}/${file}: detection must be a list, empty until a check automates the rule`,
+				);
+			}
+
 			return {
 				code: data.code,
 				title: data.title,
@@ -57,6 +64,7 @@ function loadThemeRules(theme: Theme): Rule[] {
 				review: data.review,
 				severity: data.severity,
 				severityNote: data.severityNote,
+				detection: data.detection,
 				context: data.context,
 				scope: data.scope ?? [],
 				style: data.style,

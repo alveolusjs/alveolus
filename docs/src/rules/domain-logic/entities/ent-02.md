@@ -5,6 +5,7 @@ group: Nature d’une entity
 scope: [domain]
 style: [tactical]
 severity: question
+detection: []
 review: approved
 sources:
   - "Unique Identity (Evans quote)"

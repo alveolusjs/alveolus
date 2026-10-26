@@ -5,6 +5,7 @@ group: La composition root
 scope: [structure]
 style: [tactical, transaction-script]
 severity: minor
+detection: []
 review: approved
 sources: []
 ---

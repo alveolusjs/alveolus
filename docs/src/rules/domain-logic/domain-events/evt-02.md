@@ -5,6 +5,7 @@ group: Modéliser l’event
 scope: [domain, driving]
 style: [tactical, transaction-script]
 severity: major
+detection: []
 review: approved
 sources:
   - "Event-Driven Architecture"

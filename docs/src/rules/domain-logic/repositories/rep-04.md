@@ -5,6 +5,7 @@ group: Contrat
 scope: [driven, schema]
 style: [tactical]
 severity: major
+detection: []
 review: approved
 sources:
   - "Collection-Oriented Repositories (take-aways sidebar)"

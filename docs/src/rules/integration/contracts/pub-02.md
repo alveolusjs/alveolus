@@ -5,6 +5,7 @@ group: Published language
 scope: [driving, public]
 style: [tactical, transaction-script]
 severity: major
+detection: []
 review: approved
 sources:
   - "Exchanging Information across System Boundaries"

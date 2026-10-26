@@ -5,6 +5,7 @@ group: Encapsulation
 scope: [domain]
 style: [tactical]
 severity: major
+detection: []
 review: approved
 sources:
   - "Using Law of Demeter and Tell, Don't Ask"

@@ -5,6 +5,7 @@ group: REST
 scope: [driving]
 style: [tactical, transaction-script]
 severity: major
+detection: []
 review: approved
 sources:
   - "Representational State Transfer › REST and DDD"

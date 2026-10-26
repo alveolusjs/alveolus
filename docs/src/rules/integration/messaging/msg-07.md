@@ -5,6 +5,7 @@ group: Pannes
 scope: [driving, driven]
 style: [tactical, transaction-script]
 severity: major
+detection: []
 review: approved
 sources:
   - "When Messaging or Your System Is Unavailable"

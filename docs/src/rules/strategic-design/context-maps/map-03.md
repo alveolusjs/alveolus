@@ -6,6 +6,7 @@ scope: [structure]
 style: [tactical, transaction-script]
 severity: major
 severityNote: Majeure pour un changement fait sans l’autre équipe. Question quand le shared kernel grossit.
+detection: []
 review: approved
 sources:
   - "Shared Kernel (definition)"

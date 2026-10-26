@@ -5,6 +5,7 @@ group: Règles
 scope: [domain]
 style: [tactical]
 severity: major
+detection: []
 review: approved
 sources:
   - "Creating CalendarEntry Instances (constructeur protected)"
