@@ -1,6 +1,6 @@
 {
 	"name": "@alveolus/lint-config",
-	"version": "0.0.0",
+	"version": "0.1.0",
 	"description": "The Alveolus rules for oxlint and dependency-cruiser: the checks a linter decides without false positives",
 	"keywords": [
 		"ddd",
