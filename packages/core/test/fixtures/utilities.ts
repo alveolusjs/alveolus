@@ -1,6 +1,6 @@
 import { EventPublisher } from '../../src/application/event-publishers/index.ts';
 import type { AnyIntegrationEvent } from '../../src/application/integration-events/index.ts';
-import { Outbox } from '../../src/application/outbox/index.ts';
+import { Outbox, type StoredEvent } from '../../src/application/outbox/index.ts';
 import { Transaction, UnitOfWork } from '../../src/application/unit-of-work/index.ts';
 
 class RecordingTransaction extends Transaction {
@@ -35,22 +35,26 @@ export class RecordingUnitOfWork extends UnitOfWork {
 }
 
 export class InMemoryOutbox extends Outbox {
-	private readonly events: AnyIntegrationEvent[] = [];
-	private readonly published = new Set<string>();
+	private readonly stored: StoredEvent[] = [];
+	private readonly positions = new Map<string, number>();
 
 	public add(events: readonly AnyIntegrationEvent[]): Promise<void> {
-		this.events.push(...events);
+		for (const event of events) {
+			this.stored.push({ sequence: this.stored.length + 1, event });
+		}
 		return Promise.resolve();
 	}
 
-	public pending(limit: number): Promise<readonly AnyIntegrationEvent[]> {
-		return Promise.resolve(this.events.filter((event) => !this.published.has(event.id)).slice(0, limit));
+	public pending(after: number, limit: number): Promise<readonly StoredEvent[]> {
+		return Promise.resolve(this.stored.filter((entry) => entry.sequence > after).slice(0, limit));
 	}
 
-	public markPublished(ids: readonly string[]): Promise<void> {
-		for (const id of ids) {
-			this.published.add(id);
-		}
+	public lastPublished(channel: string): Promise<number> {
+		return Promise.resolve(this.positions.get(channel) ?? 0);
+	}
+
+	public recordPublished(channel: string, sequence: number): Promise<void> {
+		this.positions.set(channel, sequence);
 		return Promise.resolve();
 	}
 }
