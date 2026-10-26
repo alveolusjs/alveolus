@@ -26,8 +26,46 @@ pnpm build          # the site, @alveolus/core, and the rules of claude-rules
   the tables and the index are generated from the frontmatter.
 - `packages/core`: `@alveolus/core` on npm, the building blocks, with no runtime dependency.
 - `packages/claude-rules`: `@alveolus/claude-rules` on npm, the approved rules as Claude Code rules.
+- `packages/fitness-functions`: `@alveolus/fitness-functions` on npm, the checks of an app against
+  the rules, added one rule at a time.
 - `packages/claude-plugin`: the Claude Code plugin `alveolus`.
 - `packages/context-mapper`: validates and draws a context map written in CML.
+
+## A fitness function
+
+`packages/fitness-functions/src/rules/` mirrors the rules of the site: a part, a theme, then one
+folder per automated rule, named by its code. LAY-04 lives in
+`architecture-and-placement/layers/lay-04/`, next to its page
+`docs/src/rules/architecture-and-placement/layers/lay-04.md`.
+
+```txt
+lay-04/
+├── lay-04.ts                  class Lay04 extends FitnessFunction, its Rule: code, title, url
+└── __test__/
+    └── lay-04.test.ts         one it() per form the rule reports, its files written inline
+```
+
+A test starts from the reference app (`src/__test__/support/reference-app.ts`), a small app that
+follows every rule, and adds the files of its case:
+
+```ts
+const project = TestProject.app().with(
+	'src/notifications/application/notify.ts',
+	`import { Wallet } from '../../wallets/domain/wallet.aggregate.ts';`,
+);
+
+expect(project.check('LAY-04').map(String)).toEqual([
+	'src/notifications/application/notify.ts:1 LAY-04 imports src/wallets/domain/wallet.aggregate.ts, outside src/wallets/public',
+]);
+```
+
+Every fitness function must accept the reference app: `reference-app.test.ts` checks it. When a
+new rule needs a compliant form the app does not show yet, add it to the reference app.
+
+To add one: create the folder, copy the code and the title of the page into the `Rule` of the
+class, then add the class to the `index.ts` of its theme. The registry test fails when a folder
+is not registered, when a class does not carry the code of its folder, when its title or url
+differs from its page, or when the rule is not approved on the site, in the same part and theme.
 
 ## A pull request
 
