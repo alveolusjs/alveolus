@@ -1,8 +1,10 @@
 import { readdirSync, readFileSync, utimesSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+
 import matter from 'gray-matter';
 import type { Plugin } from 'vitepress';
+
 import { srcDir } from './rules';
 
 const rulesDir = join(srcDir, 'rules');

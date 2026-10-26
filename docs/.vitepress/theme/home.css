@@ -280,7 +280,7 @@
 .vp-doc .home-uses__links a:first-child::after,
 .vp-doc .home-anatomy__links a::after,
 .vp-doc .home-styles__links a::after {
-	content: " →";
+	content: ' →';
 }
 
 .home-anatomy {

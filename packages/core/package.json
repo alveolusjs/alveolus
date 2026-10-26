@@ -1,8 +1,35 @@
 {
+	"name": "@alveolus/core",
+	"version": "0.3.0",
 	"description": "Domain-Driven Design building blocks for TypeScript",
-	"engines": {
-		"node": ">=24"
+	"keywords": [
+		"aggregate",
+		"clean-architecture",
+		"cqrs",
+		"ddd",
+		"domain-driven-design",
+		"domain-events",
+		"entity",
+		"hexagonal-architecture",
+		"outbox",
+		"repository",
+		"result",
+		"typescript",
+		"unit-of-work",
+		"value-object"
+	],
+	"homepage": "https://alveolus.dev/start/getting-started#core",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/alveolusjs/alveolus.git",
+		"directory": "packages/core"
 	},
+	"files": [
+		"dist"
+	],
+	"type": "module",
+	"sideEffects": false,
 	"exports": {
 		".": {
 			"@alveolus/source": "./src/index.ts",
@@ -90,28 +117,6 @@
 		},
 		"./package.json": "./package.json"
 	},
-	"files": [
-		"dist"
-	],
-	"homepage": "https://alveolus.dev/start/getting-started#core",
-	"keywords": [
-		"ddd",
-		"domain-driven-design",
-		"typescript",
-		"aggregate",
-		"entity",
-		"value-object",
-		"domain-events",
-		"repository",
-		"cqrs",
-		"hexagonal-architecture",
-		"clean-architecture",
-		"outbox",
-		"unit-of-work",
-		"result"
-	],
-	"license": "MIT",
-	"name": "@alveolus/core",
 	"publishConfig": {
 		"exports": {
 			".": "./dist/index.mjs",
@@ -138,24 +143,19 @@
 			"./package.json": "./package.json"
 		}
 	},
-	"repository": {
-		"directory": "packages/core",
-		"type": "git",
-		"url": "git+https://github.com/alveolusjs/alveolus.git"
-	},
 	"scripts": {
-		"build": "tsdown && biome check --write package.json",
+		"build": "tsdown && oxfmt package.json",
 		"test": "vitest run",
 		"typecheck": "tsc -p tsconfig.json"
 	},
-	"sideEffects": false,
-	"type": "module",
-	"version": "0.3.0",
 	"devDependencies": {
 		"@types/node": "26.6.3",
 		"tsdown": "0.23.0",
 		"typescript": "7.0.2",
 		"vite": "8.3.1",
 		"vitest": "5.0.2"
+	},
+	"engines": {
+		"node": ">=24"
 	}
 }

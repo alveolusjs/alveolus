@@ -1,4 +1,5 @@
 import { defineConfig } from 'vitepress';
+
 import { iconSvg, withIcons } from './icons';
 import { pageMarkdown } from './page-markdown';
 import { parts } from './parts';

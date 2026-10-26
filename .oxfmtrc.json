@@ -1,0 +1,23 @@
+{
+	"$schema": "./node_modules/oxfmt/configuration_schema.json",
+	"useTabs": true,
+	"tabWidth": 4,
+	"printWidth": 120,
+	"singleQuote": true,
+	"trailingComma": "all",
+	"semi": true,
+	"ignorePatterns": [
+		"**/dist",
+		"**/coverage",
+		"*/.vitepress/cache",
+		"*/.vitepress/dist",
+		"**/generated",
+		"**/*.md",
+		"**/*.yml",
+		"**/*.yaml"
+	],
+	"sortImports": {
+		"groups": ["builtin", "external", ["internal", "parent", "sibling", "index", "subpath"]],
+		"newlinesBetween": true
+	}
+}

@@ -1,7 +1,9 @@
 import { mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+
 import matter from 'gray-matter';
+
 import { isReview, type Review } from '../../../docs/.vitepress/reviews.ts';
 import { scopes } from '../../../docs/.vitepress/scopes.ts';
 import { isStyleList, type Style } from '../../../docs/.vitepress/styles.ts';

@@ -5,5 +5,5 @@ defineProps<{ kind: 'severity'; value: string }>();
 </script>
 
 <template>
-  <span :class="badgeClass(kind, value)">{{ badgeLabel(value) }}</span>
+	<span :class="badgeClass(kind, value)">{{ badgeLabel(value) }}</span>
 </template>

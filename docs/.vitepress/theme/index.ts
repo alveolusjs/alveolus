@@ -1,6 +1,7 @@
 import { type Theme, useRoute } from 'vitepress';
 import DefaultTheme from 'vitepress/theme';
 import { h, nextTick, onMounted, watch } from 'vue';
+
 import CopyMarkdown from './components/CopyMarkdown.vue';
 import HomeAnatomy from './components/HomeAnatomy.vue';
 import HomeSearch from './components/HomeSearch.vue';
