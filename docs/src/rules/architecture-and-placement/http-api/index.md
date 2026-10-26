@@ -14,6 +14,8 @@ Bloquer les débits d’un wallet par HTTP :
 // driving/http/wallet.controller.ts
 @Controller('wallets')
 export class WalletController extends ResultController {
+	protected readonly statuses = { WalletNotFound: 404, WalletIsClosed: 409 };
+
 	readonly #blockWallet: BlockWalletHandler;
 
 	constructor(@Inject(BlockWalletHandler) blockWallet: BlockWalletHandler) {

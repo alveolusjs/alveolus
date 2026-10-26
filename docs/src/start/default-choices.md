@@ -7,6 +7,7 @@ Plusieurs décisions appartiennent à l’équipe. Alveolus en prend une par dé
 | Un style par bounded context, déclaré dans `architecture.json` : modèle tactique pour les core subdomains, transaction scripts pour les supporting et generic | CTX-14, TXS-05, TXS-08 |
 | Les transaction scripts utilisent Prisma directement, à travers le client du Unit of Work | TXS-06, TXS-07 |
 | Les refus métier en `Result<T, E>`, les exceptions réservées aux pannes | AGG-01, UC-02, UC-08, UC-07, ENT-15, ENT-16, REP-03, TXS-04 |
+| Un refus devient un statut HTTP par son `type`, sans importer le domaine | UC-02, UC-07, API-01 |
 | Le Unit of Work dans `application`, la transaction portée par `AsyncLocalStorage` | REP-13, REP-14 |
 | Outbox et forwarder interne, pas de broker au départ | AGG-08, MSG-01, MSG-03, MSG-07 |
 | Des identités UUIDv7 générées par l’application, une classe par identité | ENT-03, ENT-05, ENT-08 |
