@@ -11,7 +11,6 @@ The repository has two parts: `docs/`, the site, and `packages/`, what an app in
 - `docs/`: the **Alveolus** site, its DDD and architecture rules, a VitePress site **published publicly** at [alveolus.dev](https://alveolus.dev/);
 - `packages/core/`: `@alveolus/core` on npm, the building blocks of DDD for TypeScript (aggregates, entities, value objects, events, ports, handlers, outbox, `Result`), with no runtime dependency;
 - `packages/claude-rules/`: the package `@alveolus/claude-rules` on npm, which installs in an app the approved rules as Claude Code path-scoped rules, and the skills to design, implement and review a user story with them;
-- `packages/fitness-functions/`: `@alveolus/fitness-functions` on npm, the fitness functions that check an app against the rules, added one rule at a time;
 - `packages/claude-plugin/`: the Claude Code plugin `alveolus`, its skills and agents;
 - `packages/context-mapper/`: validates a context map written in CML and draws it (Context Mapper CLI in Docker), for any app;
 - `ebooks/`: the reference book, **local only** (ignored by Git).
@@ -89,7 +88,7 @@ sources:                      # book section titles, behind the scenes: never sh
 - Translating a page also translates its entry in the sidebar, in the same change: a rule through its `title`, a part or theme overview through `menu: Vue d’ensemble` in its frontmatter (the sidebar shows `Overview` without it), along with the `title` and `group` of every rule listed under that theme, and the rule's `#` heading to match, a page of the `start` section or `choosing-a-style` through its label in `rulesSidebar()` (`.vitepress/rules.ts`).
 - Every rule says which **implementation style** it applies to: `tactical` (core contexts, tactical DDD), `transaction-script` (supporting and generic contexts), or both. The site shows it as a badge, and a global filter in the top bar (All, Tactical, Transaction script), remembered by the browser, narrows the sidebar, the tables, the index and the home page to the rules that apply to one style, shared rules included; a rule outside the filter stays reachable with a banner. The site build fails on a rule without a valid `style`. Themes of the tactical model are `tactical`; the strategic, integration and architecture themes apply to both unless a rule targets the model itself.
 - Every rule carries a **review verdict** in its frontmatter: `to-review` until the user has read it, `approved` once kept, `rejected` when it leaves the rules. Every rule is now approved, so the site no longer shows the verdict; it only strikes out a rejected rule in the tables and gives its page a banner. A rejected rule keeps its page and its code, so the code is never reused. `@alveolus/claude-rules` ships approved rules only. The site build fails on a rule without a valid `review`. Only the user changes a verdict.
-- Every rule carries `detection`, the list of the checks that automate it. It stays `[]` until one ships: the rules are revisited one by one while writing the fitness functions of `@alveolus/fitness-functions`, which fill the list and edit the rule when needed. The site build fails on a rule without a `detection` list.
+- Every rule carries `detection`, the list of the checks that automate it. It stays `[]` until one ships: a check that automates the rule adds itself to the list, and edits the rule when needed. The site build fails on a rule without a `detection` list.
 - Writing a rule code (`AGG-04`) in any page is enough: it becomes a link automatically.
 - Groups (`group`) structure the theme; rules of the same group follow each other in the numbering.
 
@@ -142,7 +141,7 @@ Before handing back: `pnpm check && pnpm typecheck && pnpm test && pnpm build`.
 
 ## Releases
 
-`@alveolus/core`, `@alveolus/fitness-functions` and `@alveolus/claude-rules` are published on npm; the plugin and `context-mapper` are not.
+`@alveolus/core` and `@alveolus/claude-rules` are published on npm; the plugin and `context-mapper` are not.
 
 - A pull request that changes what a package ships adds a changeset: `pnpm changeset`, the package, the bump and one line a user can read. A change no user will notice adds an empty one: `pnpm changeset --empty`.
 - `@alveolus/claude-rules` ships the approved rules of `docs/src/rules/`: a pull request that changes an approved rule, or approves one, needs a changeset for it. CI checks it.
