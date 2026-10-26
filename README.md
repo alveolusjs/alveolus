@@ -33,6 +33,7 @@ An app opts in to the plugin with a `harness.md` at its root.
 | `docs/` | The Alveolus site: the DDD and architecture rules, a VitePress site published at [alveolus.dev](https://alveolus.dev/): `pnpm docs:dev` |
 | `packages/core/` | `@alveolus/core`, published on npm |
 | `packages/claude-rules/` | `@alveolus/claude-rules`, published on npm |
+| `packages/fitness-functions/` | `@alveolus/fitness-functions`, published on npm: the checks of an app against the rules, run from its tests |
 | `packages/claude-plugin/` | The Claude Code plugin `alveolus`: skills to build an app slice by slice from its product documentation, and a reviewer agent |
 | `packages/context-mapper/` | Validates a context map written in CML and draws it, with the Context Mapper CLI in Docker |
 

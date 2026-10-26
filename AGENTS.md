@@ -11,6 +11,7 @@ The repository has two parts: `docs/`, the site, and `packages/`, what an app in
 - `docs/`: the **Alveolus** site, its DDD and architecture rules, a VitePress site **published publicly** at [alveolus.dev](https://alveolus.dev/);
 - `packages/core/`: `@alveolus/core` on npm, the building blocks of DDD for TypeScript (aggregates, entities, value objects, events, ports, handlers, outbox, `Result`), with no runtime dependency;
 - `packages/claude-rules/`: the package `@alveolus/claude-rules` on npm, which installs in an app the approved rules as Claude Code path-scoped rules, and the skills to design, implement and review a user story with them;
+- `packages/fitness-functions/`: `@alveolus/fitness-functions` on npm, the fitness functions that check an app against the rules, added one rule at a time;
 - `packages/claude-plugin/`: the Claude Code plugin `alveolus`, its skills and agents;
 - `packages/context-mapper/`: validates a context map written in CML and draws it (Context Mapper CLI in Docker), for any app;
 - `ebooks/`: the reference book, **local only** (ignored by Git).
@@ -141,7 +142,7 @@ Before handing back: `pnpm check && pnpm typecheck && pnpm test && pnpm build`.
 
 ## Releases
 
-`@alveolus/core` and `@alveolus/claude-rules` are published on npm; the plugin and `context-mapper` are not.
+`@alveolus/core`, `@alveolus/fitness-functions` and `@alveolus/claude-rules` are published on npm; the plugin and `context-mapper` are not.
 
 - A pull request that changes what a package ships adds a changeset: `pnpm changeset`, the package, the bump and one line a user can read. A change no user will notice adds an empty one: `pnpm changeset --empty`.
 - `@alveolus/claude-rules` ships the approved rules of `docs/src/rules/`: a pull request that changes an approved rule, or approves one, needs a changeset for it. CI checks it.
