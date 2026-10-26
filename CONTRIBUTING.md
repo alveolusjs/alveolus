@@ -33,7 +33,8 @@ pnpm build          # the site, @alveolus/core, and the rules of claude-rules
 
 ## A fitness function
 
-`packages/fitness-functions/src/rules/` mirrors the rules of the site: a part, a theme, then one
+`packages/fitness-functions/ARCHITECTURE.md` maps the package and its principles: read it
+first. `packages/fitness-functions/src/rules/` mirrors the rules of the site: a part, a theme, then one
 folder per automated rule, named by its code. LAY-04 lives in
 `architecture-and-placement/layers/lay-04/`, next to its page
 `docs/src/rules/architecture-and-placement/layers/lay-04.md`.
