@@ -58,6 +58,8 @@ Plusieurs règles admettent une exception « à documenter ». Un waiver se sign
 // waiver AGG-03: <reason>, see ADR-NNNN
 ```
 
+Une règle vérifiée par oxlint garde la même forme, après le `--` du commentaire qui désactive le lint : `// oxlint-disable-next-line no-restricted-imports -- waiver WIR-05: <reason>`.
+
 Quand le waiver touche l’architecture ou plusieurs fichiers, il s’appuie aussi sur une ADR, citée dans le commentaire. Une recherche de `waiver [A-Z]+-[0-9]+` trouve ainsi tous les waivers, en revue comme en CI.
 
 ## Exemples

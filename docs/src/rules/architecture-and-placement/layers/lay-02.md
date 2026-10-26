@@ -5,7 +5,7 @@ group: Sens des dépendances
 scope: [structure]
 style: [tactical, transaction-script]
 severity: major
-detection: []
+detection: [dependency-cruiser]
 review: approved
 sources:
   - "Designing with Modules (Table 9.1)"
@@ -18,7 +18,11 @@ sources:
 
 ## Signal
 
-Une dépendance circulaire entre deux modules du domaine de même niveau : A importe B, et B importe A.
+- Une dépendance circulaire entre deux modules frères d’une même couche : `domain/wallet` importe `domain/holder`, et `domain/holder` importe `domain/wallet`.
+- Un cycle plus long : A importe B, B importe C, et C importe A.
+- Le même cycle entre deux modules de l’`application`, ou entre deux technologies de `driving` ou de `driven`.
+
+Un module et ses propres sous-modules ne sont pas de même niveau.
 
 ## Pourquoi
 

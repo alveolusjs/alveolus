@@ -5,7 +5,7 @@ group: Dépendances
 scope: [domain, application, driven]
 style: [tactical, transaction-script]
 severity: major
-detection: []
+detection: [oxlint]
 review: approved
 sources:
   - "Avoid Dependency Injection"

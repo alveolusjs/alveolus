@@ -4,3 +4,8 @@ packages:
 
 allowBuilds:
   esbuild: true
+
+packageExtensions:
+  dependency-cruiser:
+    peerDependencies:
+      typescript: '*'
