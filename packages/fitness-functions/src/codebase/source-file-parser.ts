@@ -1,7 +1,9 @@
 import { readFileSync } from 'node:fs';
 import { type EcmaScriptModule, parseSync } from 'oxc-parser';
 
+import { Comment } from './comment.ts';
 import { Dependency } from './dependency.ts';
+import { Lines } from './lines.ts';
 import { ModuleRequest } from './module-request.ts';
 import type { ModuleResolver } from './module-resolver.ts';
 import type { ProjectRoot } from './project-root.ts';
@@ -18,15 +20,21 @@ export class SourceFileParser {
 	public parse(path: string): SourceFile {
 		const file = this.root.absolute(path);
 		const text = readFileSync(file, 'utf8');
-		const module = parseSync(file, text).module;
+		const parsed = parseSync(file, text);
+		const lines = new Lines(text);
 		const dependencies: Dependency[] = [];
+		const comments: Comment[] = [];
 
-		for (const request of this.requests(module, text)) {
+		for (const request of this.requests(parsed.module, text)) {
 			const target = this.resolver.resolve(file, request.specifier);
-			dependencies.push(new Dependency(request.specifier, target, this.lineAt(text, request.offset)));
+			dependencies.push(new Dependency(request.specifier, target, lines.at(request.offset)));
 		}
 
-		return new SourceFile(this.root.relative(file), dependencies);
+		for (const comment of parsed.comments) {
+			comments.push(new Comment(comment.value.trim(), lines.at(comment.start)));
+		}
+
+		return new SourceFile(this.root.relative(file), dependencies, comments);
 	}
 
 	private requests(module: EcmaScriptModule, text: string): ModuleRequest[] {
@@ -54,17 +62,5 @@ export class SourceFileParser {
 		}
 
 		return requests;
-	}
-
-	private lineAt(text: string, offset: number): number {
-		let line = 1;
-
-		for (let index = 0; index < offset; index++) {
-			if (text[index] === '\n') {
-				line++;
-			}
-		}
-
-		return line;
 	}
 }

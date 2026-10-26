@@ -24,6 +24,16 @@ it(`${lay04.code} ${lay04.title}`, () => {
 A new version of the package adds no check to the app by itself, and a rule the app waives has no test. Each
 violation gives `code`, `title` and `url` of its rule, and `file`, `line` and `message` of what it found.
 
+A waiver, as the site defines it, covers a violation on its own line or on the line just below:
+
+```ts
+// waiver LAY-04: the monthly report reads wallets directly until it moves, see ADR-0007
+import { Wallet } from '../../wallets/domain/wallet.aggregate.ts';
+```
+
+`check(code)` leaves out what a waiver covers, and `waivers(code)` lists it with its reason. `check(code)` reports a
+waiver of its rule that gives no reason, or covers no violation any more.
+
 `FitnessFunctions.of` takes the root of the app and reads its `architecture.json`, the file
 [CTX-14](https://alveolus.dev/rules/strategic-design/bounded-contexts/ctx-14) asks for: each bounded context and its
 style, and its folder when it does not live in `src/<name>/`.

@@ -10,6 +10,7 @@ const reads: Readonly<Record<string, readonly string[]>> = {
 	project: ['codebase', 'layout'],
 	rules: ['layout', 'project', 'violations'],
 	violations: ['rules'],
+	waivers: ['codebase', 'rules', 'violations'],
 };
 const syntaxPackages = ['oxc-parser', 'oxc-resolver'];
 
