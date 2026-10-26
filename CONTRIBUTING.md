@@ -67,11 +67,17 @@ A fitness function receives a `Project`: the files of the bounded contexts of it
 shared and root files, never the inside of a big ball of mud. `project.placementOf(path)` gives
 the bounded context and the folder of any file, the targets of imports included.
 
+`packages/fitness-functions/TRIAGE.md` says, for every rule of the site, whether a fitness
+function can check it (`full`, `partial` or `no`), with which facts about the code, and what it
+would report. Pick the next rule there, among those whose facts exist.
+
 To add one: create the folder, copy the code, the title and the styles of the page into the
-`Rule` of the class, then add the class to the `index.ts` of its theme. The registry test fails
+`Rule` of the class, with the coverage of its row in `TRIAGE.md` and one sentence on what it
+checks, then add the class to the `index.ts` of its theme. The registry test fails
 when a folder is not registered, when a class does not carry the code of its folder, when its
 title, url or styles differ from its page, or when the rule is not approved on the site, in the
-same part and theme.
+same part and theme. The triage test fails when an approved rule has no row in `TRIAGE.md`, or
+when a fitness function declares another coverage than its row.
 
 ## A pull request
 
