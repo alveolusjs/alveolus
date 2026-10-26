@@ -1,5 +1,12 @@
 # @alveolus/claude-rules
 
+## 0.2.1
+
+### Patch Changes
+
+- 1a1e8b3: UC-02 and UC-07 say how `driving` turns a refusal into an HTTP status: by its `type`, without importing `domain`.
+- 189d8fa: Drop the detection mode from the rules: each rule now carries an empty `detection` list, filled when a check automates it, one rule at a time.
+
 ## 0.2.0
 
 ### Minor Changes
