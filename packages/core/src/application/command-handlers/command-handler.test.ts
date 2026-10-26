@@ -36,7 +36,7 @@ describe('CommandHandler', () => {
 
 	it('returns ok and adds the translated events to the outbox after saving', async () => {
 		expect(await handler.handle({ orderId: 'o1', total: 42 })).toEqual(ok());
-		expect(await outbox.pending(10)).toHaveLength(1);
+		expect(await outbox.pending(0, 10)).toHaveLength(1);
 		expect(handler).toBeInstanceOf(CommandHandler);
 	});
 
