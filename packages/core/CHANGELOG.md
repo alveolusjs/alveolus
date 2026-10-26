@@ -1,5 +1,12 @@
 # @alveolus/core
 
+## 0.3.0
+
+### Minor Changes
+
+- bd17e80: Breaking: the outbox is append-only, as MSG-02 and MSG-03 say. `Outbox.markPublished` is gone: `pending(after, limit)` reads the stored events after a sequence number, in order, and `OutboxRelay` records the last published sequence of its channel with `recordPublished(channel, sequence)`, read back with `lastPublished(channel)`. `OutboxRelay` takes its channel before its batch size.
+- 7b6d9be: Breaking: `CommandRepository.save` returns `Promise<Result<void, Refusal>>`, as REP-03 says. `CommandRepository<Aggregate, Refusal>` takes the uniqueness refusals the storage enforces, `never` by default; a repository without one returns `ok()`.
+
 ## 0.2.1
 
 ### Patch Changes
