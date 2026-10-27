@@ -72,10 +72,12 @@ TypeScript 7 yet.
 | [LAY-01](https://alveolus.dev/rules/architecture-and-placement/layers/lay-01), [CTX-06](https://alveolus.dev/rules/strategic-design/bounded-contexts/ctx-06) | ESLint | `domain` importing any package but `@alveolus/core` and the `node:` modules. |
 | [WIR-05](https://alveolus.dev/rules/architecture-and-placement/wiring/wir-05) | ESLint | `Injectable`, `Inject` or `Optional` of `@nestjs/common` imported outside `driving/http` and wiring files, under another name or through a namespace included. |
 | [PLC-07](https://alveolus.dev/rules/architecture-and-placement/placement/plc-07) | ESLint | `@prisma/client` imported outside `driven/prisma` and `application`, and `@nestjs/swagger` outside `driving/http`. |
-| [UC-11](https://alveolus.dev/rules/architecture-and-placement/use-cases/uc-11) | ESLint | A `Result` dropped as a statement, awaited or voided (`alveolus/uc-11-must-use-result`, which reads the type of the expression), a variable that nothing reads (`alveolus/uc-11-no-unused-vars`), and a promise that is never awaited (`alveolus/uc-11-no-floating-promises`). |
+| [UC-11](https://alveolus.dev/rules/architecture-and-placement/use-cases/uc-11) | ESLint | A `Result` dropped as a statement, awaited or voided, but not assigned (`alveolus/uc-11-must-use-result`, which reads the type of the expression), a local variable holding a `Result` or its promise that nothing reads (`alveolus/uc-11-no-unused-vars`), and a promise of a `Result` that is never awaited (`alveolus/uc-11-no-floating-promises`). |
 | [NAM-09](https://alveolus.dev/rules/architecture-and-placement/naming/nam-09) | ESLint | A parameter property: `constructor(private readonly clock: Clock)` (`alveolus/nam-09-parameter-properties`). |
 
 The rules of typescript-eslint behind UC-11 and NAM-09 come under the name and with the url of the Alveolus rule.
+Behind UC-11, they report only what holds a `Result`: an unused parameter, or a promise of nothing, is left to the
+linter of the app.
 Wiring files (`.module`, `.wiring`, `.bootstrap`, `.config`) may import packages, and tests (`__test__`, `.spec.ts`)
 are left out. The rules on imports between folders ask the TypeScript program where each import leads, as the
 compiler resolves it: they need the type information of typescript-eslint, which the preset turns on

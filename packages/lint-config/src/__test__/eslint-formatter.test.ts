@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { wir05 } from '../rules.ts';
 import { TestApp } from './support/test-app.ts';
 
-const app = TestApp.reference().withEslintRule('alveolus/uc-11-no-unused-vars', 'off');
+const app = TestApp.reference();
 
 describe('the ESLint formatter', () => {
 	it('frames what breaks a rule of Alveolus, with the title and the url of the rule', () => {

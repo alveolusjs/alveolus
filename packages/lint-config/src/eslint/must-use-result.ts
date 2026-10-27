@@ -1,12 +1,7 @@
 import type { Rule as EslintRule } from 'eslint';
-import ts from 'typescript';
 
 import type { Rule } from '../rule.ts';
-import { ModuleTargets } from './module-targets.ts';
-
-type Statement = {
-	readonly expression: { readonly type: string; readonly range?: [number, number] | undefined };
-};
+import { ResultTypes } from './result-types.ts';
 
 export class MustUseResult {
 	readonly #rule: Rule;
@@ -28,91 +23,29 @@ export class MustUseResult {
 	}
 
 	#visitors(context: EslintRule.RuleContext): EslintRule.RuleListener {
-		const program: unknown = context.sourceCode.parserServices?.program;
+		const results = ResultTypes.of(context);
 
-		if (!ModuleTargets.isProgram(program)) {
-			return {};
-		}
-
-		const source = program.getSourceFile(context.filename);
-		const checker = program.getTypeChecker();
-
-		if (source === undefined) {
+		if (results === undefined) {
 			return {};
 		}
 
 		return {
 			ExpressionStatement: (node) => {
-				const range = this.#range(node);
-				const expression = range === undefined ? undefined : this.#node(source, range);
+				const { expression } = node;
 
-				if (expression !== undefined && this.#isResult(checker, this.#dropped(checker, expression))) {
+				if (expression.type === 'AssignmentExpression') {
+					return;
+				}
+
+				const dropped =
+					expression.type === 'UnaryExpression' && expression.operator === 'void'
+						? results.isAwaitedResult(expression.argument)
+						: results.isResult(expression);
+
+				if (dropped) {
 					context.report({ node, messageId: 'dropped' });
 				}
 			},
 		};
-	}
-
-	#range(statement: Statement): [number, number] | undefined {
-		return statement.expression.range;
-	}
-
-	#node(source: ts.SourceFile, [start, end]: [number, number]): ts.Expression | undefined {
-		let found: ts.Expression | undefined;
-		const visit = (node: ts.Node): void => {
-			if (node.getStart(source) <= start && node.getEnd() >= end) {
-				if (ts.isExpression(node) && node.getStart(source) === start && node.getEnd() === end) {
-					found = node;
-				}
-
-				ts.forEachChild(node, visit);
-			}
-		};
-
-		visit(source);
-
-		return found;
-	}
-
-	#dropped(checker: ts.TypeChecker, expression: ts.Expression): ts.Type {
-		const inner = ts.isParenthesizedExpression(expression) ? expression.expression : expression;
-
-		if (ts.isVoidExpression(inner)) {
-			const type = checker.getTypeAtLocation(inner.expression);
-
-			return checker.getAwaitedType(type) ?? type;
-		}
-
-		return checker.getTypeAtLocation(inner);
-	}
-
-	#isResult(checker: ts.TypeChecker, type: ts.Type): boolean {
-		if (!type.isUnion()) {
-			return false;
-		}
-
-		const outcomes = type.types;
-
-		return (
-			outcomes.every((outcome) => this.#ok(checker, outcome) !== undefined) &&
-			outcomes.some((outcome) => outcome.getProperty('value') !== undefined) &&
-			outcomes.some((outcome) => outcome.getProperty('error') !== undefined)
-		);
-	}
-
-	#ok(checker: ts.TypeChecker, outcome: ts.Type): boolean | undefined {
-		const ok = outcome.getProperty('ok');
-
-		if (ok === undefined) {
-			return undefined;
-		}
-
-		const type = checker.getTypeOfSymbol(ok);
-
-		if (type.flags & ts.TypeFlags.BooleanLiteral) {
-			return checker.typeToString(type) === 'true';
-		}
-
-		return undefined;
 	}
 }
