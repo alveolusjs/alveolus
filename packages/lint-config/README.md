@@ -2,7 +2,7 @@
 
 The Alveolus rules that a linter decides without false positives, for [oxlint](https://oxc.rs/docs/guide/usage/linter)
 and [dependency-cruiser](https://github.com/sverweij/dependency-cruiser). Few rules, each one exact: the rest stays
-for review. Each message gives the code of its rule, its title and the url of its page.
+for review. Each message gives the code of its rule, its title in English and the url of its page.
 
 ```sh
 pnpm add -D @alveolus/lint-config oxlint dependency-cruiser
@@ -35,11 +35,30 @@ module.exports = { extends: '@alveolus/lint-config/dependency-cruiser' };
 ```
 
 ```sh
-depcruise src --output-type err-long
+depcruise src --output-type plugin:@alveolus/lint-config/dependency-cruiser-reporter
 ```
 
-`err-long` prints the title and the url of each rule. dependency-cruiser reads TypeScript with `typescript` 6 or
-earlier, which `nest new` installs: it does not read TypeScript 7 yet.
+The reporter prints each violation as oxlint does: the code and the title of the rule, the import framed in its file,
+the module it reaches, and the url of the rule. A cycle shows once, with the modules it goes through. It exits with the
+number of errors, so a CI step fails on any of them.
+
+```txt
+  × LAY-04: Another bounded context comes in only through `public`, which holds only the contract
+   ╭─[src/notifications/application/notification/notify.ts:2:24]
+ 1 │ import type { Clock } from '@alveolus/core';
+ 2 │ import { Wallet } from '../../../wallets/domain/wallet/wallet.aggregate.ts';
+   ·                        ──────────────────────────┬─────────────────────────
+   ·                                                  ╰── src/wallets/domain/wallet/wallet.aggregate.ts
+ 3 │
+   ╰────
+  help: https://alveolus.dev/rules/architecture-and-placement/layers/lay-04
+
+Found 0 warnings and 1 error.
+```
+
+The line of an import is found by its text: an import written twice in a file points to the first one.
+dependency-cruiser reads TypeScript with `typescript` 6 or earlier, which `nest new` installs: it does not read
+TypeScript 7 yet.
 
 ## What it checks
 

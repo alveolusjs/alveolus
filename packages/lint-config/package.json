@@ -29,6 +29,10 @@
 			"@alveolus/source": "./src/dependency-cruiser.ts",
 			"default": "./dist/dependency-cruiser.mjs"
 		},
+		"./dependency-cruiser-reporter": {
+			"@alveolus/source": "./src/dependency-cruiser-reporter.ts",
+			"default": "./dist/dependency-cruiser-reporter.mjs"
+		},
 		"./oxlint": {
 			"@alveolus/source": "./src/oxlint.ts",
 			"default": "./dist/oxlint.mjs"
@@ -38,6 +42,7 @@
 	"publishConfig": {
 		"exports": {
 			"./dependency-cruiser": "./dist/dependency-cruiser.mjs",
+			"./dependency-cruiser-reporter": "./dist/dependency-cruiser-reporter.mjs",
 			"./oxlint": "./dist/oxlint.mjs",
 			"./package.json": "./package.json"
 		}

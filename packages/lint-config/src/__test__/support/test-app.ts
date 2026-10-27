@@ -11,6 +11,7 @@ const oxlintBin = join(packageRoot, 'node_modules/oxlint/bin/oxlint');
 const depcruiseBin = join(packageRoot, 'node_modules/dependency-cruiser/bin/dependency-cruiser.mjs');
 const oxlintPreset = pathToFileURL(join(packageRoot, 'src/oxlint.ts')).href;
 const dependencyCruiserPreset = join(packageRoot, 'src/dependency-cruiser.ts');
+const dependencyCruiserReporter = pathToFileURL(join(packageRoot, 'src/dependency-cruiser-reporter.ts')).href;
 
 const restrictedImports = 'eslint(no-restricted-imports)';
 
@@ -25,6 +26,11 @@ type DependencyCruiserViolation = {
 	readonly from: string;
 	readonly to: string;
 	readonly rule: { readonly name: string };
+};
+
+type Run = {
+	readonly output: string;
+	readonly status: number | null;
 };
 
 type OxlintReport = {
@@ -80,13 +86,25 @@ export class TestApp {
 		return findings.sort();
 	}
 
+	public dependencyCruiserReport(): Run {
+		return this.#spawn(depcruiseBin, ['src', '--output-type', `plugin:${dependencyCruiserReporter}`]);
+	}
+
 	#run(bin: string, args: readonly string[]): string {
+		return this.#spawn(bin, args).output;
+	}
+
+	#spawn(bin: string, args: readonly string[]): Run {
 		const directory = mkdtempSync(join(tmpdir(), 'alveolus-lint-'));
 
 		try {
 			this.#write(directory);
+			const { stdout, status } = spawnSync(process.execPath, [bin, ...args], {
+				cwd: directory,
+				encoding: 'utf8',
+			});
 
-			return spawnSync(process.execPath, [bin, ...args], { cwd: directory, encoding: 'utf8' }).stdout;
+			return { output: stdout, status };
 		} finally {
 			rmSync(directory, { recursive: true, force: true });
 		}

@@ -13,14 +13,11 @@ const site = fileURLToPath(new URL('../../../../docs/src/rules/', import.meta.ur
 const oxlintMessages = JSON.stringify(oxlint);
 const dependencyCruiserRules = (dependencyCruiser.forbidden ?? []).map((forbidden) => forbidden.name);
 const linters = ['dependency-cruiser', 'oxlint'];
-const pages = new Map<
-	string,
-	{ readonly title: string; readonly review: string; readonly detection: string[]; readonly path: string }
->();
+const pages = new Map<string, { readonly review: string; readonly detection: string[]; readonly path: string }>();
 
 for (const path of globSync('*/*/*-*.md', { cwd: site })) {
-	const { code, title, review, detection } = matter(readFileSync(`${site}${path}`, 'utf8')).data;
-	pages.set(code, { title, review, detection, path: path.replaceAll('\\', '/').replace(/\.md$/, '') });
+	const { code, review, detection } = matter(readFileSync(`${site}${path}`, 'utf8')).data;
+	pages.set(code, { review, detection, path: path.replaceAll('\\', '/').replace(/\.md$/, '') });
 }
 
 class Detection {
@@ -46,12 +43,15 @@ class Detection {
 }
 
 describe('the rules', () => {
-	it.each(rules)('$code is an approved rule of the site, with its title and url', (rule) => {
+	it.each(rules)('$code is an approved rule of the site, with its url', (rule) => {
 		const page = pages.get(rule.code);
 
 		expect(page?.review).toBe('approved');
-		expect(rule.title).toBe(page?.title);
 		expect(rule.url).toBe(`https://alveolus.dev/rules/${page?.path}`);
+	});
+
+	it.each(rules)('$code has its title in English, in plain ASCII unlike the French of the site', (rule) => {
+		expect(rule.title).toMatch(/^[\x20-\x7e]+$/);
 	});
 
 	it.each(rules)('$code names in its detection the tools that check it', (rule) => {
