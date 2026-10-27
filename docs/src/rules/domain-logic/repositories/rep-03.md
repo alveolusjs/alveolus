@@ -39,7 +39,7 @@ Aucune.
 
 ## Correction
 
-`save` renvoie un `Result` dont les erreurs sont les refus métier que le stockage fait respecter (`DuplicateTransfer`). Les autres échecs du stockage lancent une exception nommée. Un finder renvoie l’aggregate ou `undefined`, et un finder par lot dit quelles identités il n’a pas trouvées. Les paramètres et les valeurs de retour utilisent les types du modèle.
+`save` renvoie un `Result` dont les erreurs sont les refus métier que le stockage fait respecter (`DuplicateTransfer`). Les autres échecs du stockage lancent une exception nommée. Un finder renvoie l’aggregate ou `undefined`, et un finder par lot dit quelles identités il n’a pas trouvées, comme `findByIds` (REP-04). Les paramètres et les valeurs de retour utilisent les types du modèle.
 
 ## Adaptation
 

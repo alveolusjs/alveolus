@@ -26,6 +26,31 @@ describe('CommandRepository', () => {
 		expect(orders).toBeInstanceOf(Port);
 	});
 
+	it('finds several aggregates and names the identities it did not find', async () => {
+		const orders = new InMemoryOrders();
+		await orders.save(new Order(new OrderId('o1')));
+		await orders.save(new Order(new OrderId('o3')));
+
+		const { found, missing } = await orders.findByIds([new OrderId('o3'), new OrderId('o2'), new OrderId('o1')]);
+
+		expect(found.map((order) => order.id.value)).toEqual(['o3', 'o1']);
+		expect(missing.map((id) => id.value)).toEqual(['o2']);
+	});
+
+	it('reads each identity once', async () => {
+		const orders = new InMemoryOrders();
+		await orders.save(new Order(new OrderId('o1')));
+
+		const { found, missing } = await orders.findByIds([new OrderId('o1'), new OrderId('o1'), new OrderId('o2')]);
+
+		expect(found).toHaveLength(1);
+		expect(missing).toHaveLength(1);
+	});
+
+	it('finds nothing for no identity', async () => {
+		expect(await new InMemoryOrders().findByIds([])).toEqual({ found: [], missing: [] });
+	});
+
 	it('finds by the identifier of its aggregate', () => {
 		const orders = new InMemoryOrders();
 		// @ts-expect-error
