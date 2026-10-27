@@ -79,6 +79,19 @@ compiler resolves it: they need the type information of typescript-eslint, which
 (`projectService`) for `src/**/*.ts`. ESLint shows them in the editor; only the cycles of LAY-02 wait for
 dependency-cruiser, which sees the whole graph.
 
+## Rules waiting for review
+
+The preset turns these on once their rule is approved. An app can turn them on already.
+
+| Rule | ESLint rule | What it reports |
+| --- | --- | --- |
+| [UC-11](https://alveolus.dev/rules/architecture-and-placement/use-cases/uc-11) | `alveolus/uc-11-must-use-result` | A `Result` dropped as a statement, awaited or voided. It reads the type of the expression. |
+| [UC-11](https://alveolus.dev/rules/architecture-and-placement/use-cases/uc-11) | `alveolus/uc-11-no-unused-vars` | A variable that nothing reads, such as a `Result` kept and forgotten. |
+| [UC-11](https://alveolus.dev/rules/architecture-and-placement/use-cases/uc-11) | `alveolus/uc-11-no-floating-promises` | A promise that is never awaited. |
+| [NAM-09](https://alveolus.dev/rules/architecture-and-placement/naming/nam-09) | `alveolus/nam-09-parameter-properties` | A parameter property: `constructor(private readonly clock: Clock)`. |
+
+The last three are the rules of typescript-eslint, under the name and with the url of the Alveolus rule.
+
 ## What it does not see
 
 - The layout is the reference one: each bounded context in `src/<context>/`, shared code in `src/shared/`. A bounded

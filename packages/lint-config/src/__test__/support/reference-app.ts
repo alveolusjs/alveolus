@@ -112,8 +112,11 @@ export class WalletController {
 import { WalletsFacade } from '../../public/wallets.facade.ts';
 
 export class WalletsFacadeAdapter extends WalletsFacade {
-	public constructor(private readonly deposit: DepositHandler) {
+	readonly #deposit: DepositHandler;
+
+	public constructor(deposit: DepositHandler) {
 		super();
+		this.#deposit = deposit;
 	}
 }
 `,
@@ -139,8 +142,11 @@ import type { WalletsFacade } from '@wallets/public/wallets.facade.ts';
 
 export class NotificationService {
 	readonly #client = new PrismaClient();
+	readonly #wallets: WalletsFacade;
 
-	public constructor(private readonly wallets: WalletsFacade) {}
+	public constructor(wallets: WalletsFacade) {
+		this.#wallets = wallets;
+	}
 }
 `,
 };

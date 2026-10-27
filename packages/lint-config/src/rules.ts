@@ -44,4 +44,18 @@ export const wir05: Rule = new Rule(
 	`${site}/architecture-and-placement/wiring/wir-05`,
 );
 
+export const nam09: Rule = new Rule(
+	'NAM-09',
+	'A private member is written `#`, declared in the body of the class',
+	`${site}/architecture-and-placement/naming/nam-09`,
+);
+
+export const uc11: Rule = new Rule(
+	'UC-11',
+	'A `Result` is tested or returned, never dropped',
+	`${site}/architecture-and-placement/use-cases/uc-11`,
+);
+
 export const rules: readonly Rule[] = [ctx06, lay01, lay02, lay04, plc07, pub01, wir05];
+
+export const rulesUnderReview: readonly Rule[] = [nam09, uc11];

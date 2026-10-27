@@ -37,22 +37,32 @@ type Run = {
 export class TestApp {
 	readonly #files: Readonly<Record<string, string>>;
 	readonly #dependencyCruiserRules: readonly object[];
+	readonly #eslintRules: Readonly<Record<string, string>>;
 
-	private constructor(files: Readonly<Record<string, string>>, dependencyCruiserRules: readonly object[]) {
+	private constructor(
+		files: Readonly<Record<string, string>>,
+		dependencyCruiserRules: readonly object[],
+		eslintRules: Readonly<Record<string, string>>,
+	) {
 		this.#files = files;
 		this.#dependencyCruiserRules = dependencyCruiserRules;
+		this.#eslintRules = eslintRules;
 	}
 
 	public static reference(): TestApp {
-		return new TestApp(referenceApp, []);
+		return new TestApp(referenceApp, [], {});
 	}
 
 	public with(path: string, text: string): TestApp {
-		return new TestApp({ ...this.#files, [path]: text }, this.#dependencyCruiserRules);
+		return new TestApp({ ...this.#files, [path]: text }, this.#dependencyCruiserRules, this.#eslintRules);
 	}
 
 	public withDependencyCruiserRule(rule: object): TestApp {
-		return new TestApp(this.#files, [...this.#dependencyCruiserRules, rule]);
+		return new TestApp(this.#files, [...this.#dependencyCruiserRules, rule], this.#eslintRules);
+	}
+
+	public withEslintRule(name: string): TestApp {
+		return new TestApp(this.#files, this.#dependencyCruiserRules, { ...this.#eslintRules, [name]: 'error' });
 	}
 
 	public eslint(): string[] {
@@ -133,7 +143,7 @@ export class TestApp {
 	#write(directory: string): void {
 		const files = {
 			...this.#files,
-			'eslint.config.mjs': `import alveolus from '${eslintPreset}';\n\nexport default alveolus;\n`,
+			'eslint.config.mjs': `import alveolus from '${eslintPreset}';\n\nexport default [...alveolus, { files: ['src/**/*.ts'], rules: ${JSON.stringify(this.#eslintRules)} }];\n`,
 			'.dependency-cruiser.cjs': `module.exports = { extends: ${JSON.stringify(dependencyCruiserPreset)}, forbidden: ${JSON.stringify(this.#dependencyCruiserRules)} };\n`,
 		};
 
