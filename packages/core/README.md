@@ -49,6 +49,10 @@ export class WalletId extends UuidIdentifier<'WalletId'> {
 
 Each class says what it is: an aggregate extends `AggregateRoot`, a value object `ValueObject`.
 
+Each outcome has one channel. A business refusal is a `Result` with a named error, an absence is `undefined`, a
+failure is an exception. A repository's `save` returns a `Result`, even when nothing can refuse (`never`), and its
+finders return the aggregate or `undefined`: the use case decides which refusal an absence becomes.
+
 - [Documentation](https://alveolus.dev/)
 - [Getting started](https://alveolus.dev/start/getting-started)
 - [Source](https://github.com/alveolusjs/alveolus/tree/main/packages/core)
