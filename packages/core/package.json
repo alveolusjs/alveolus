@@ -1,6 +1,6 @@
 {
 	"name": "@alveolus/core",
-	"version": "0.3.0",
+	"version": "0.4.0",
 	"description": "Domain-Driven Design building blocks for TypeScript",
 	"keywords": [
 		"aggregate",

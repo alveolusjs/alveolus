@@ -1,6 +1,6 @@
 {
 	"name": "@alveolus/claude-rules",
-	"version": "0.2.2",
+	"version": "0.3.0",
 	"description": "The Alveolus rules for Claude Code: its approved rules as path-scoped rules, and the skills to design, implement and review a user story with them.",
 	"keywords": [
 		"claude-code",
