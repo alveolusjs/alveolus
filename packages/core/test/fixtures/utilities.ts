@@ -1,38 +1,32 @@
+import { AsyncLocalStorage } from 'node:async_hooks';
+
 import { EventPublisher } from '../../src/application/event-publishers/index.ts';
 import type { AnyIntegrationEvent } from '../../src/application/integration-events/index.ts';
 import { Outbox, type StoredEvent } from '../../src/application/outbox/index.ts';
-import { Transaction, UnitOfWork } from '../../src/application/unit-of-work/index.ts';
-
-class RecordingTransaction extends Transaction {
-	readonly #name: string;
-	readonly #log: string[];
-
-	public constructor(name: string, log: string[]) {
-		super();
-		this.#name = name;
-		this.#log = log;
-	}
-
-	public commit(): Promise<void> {
-		this.#log.push(`${this.#name}:commit`);
-		return Promise.resolve();
-	}
-
-	public rollback(): Promise<void> {
-		this.#log.push(`${this.#name}:rollback`);
-		return Promise.resolve();
-	}
-}
+import { type TransactionScope, UnitOfWork } from '../../src/application/unit-of-work/index.ts';
 
 export class RecordingUnitOfWork extends UnitOfWork {
 	public readonly log: string[] = [];
+	readonly #scopes = new AsyncLocalStorage<TransactionScope>();
 	#count = 0;
 
-	protected begin(): Promise<Transaction> {
+	protected current(): TransactionScope | undefined {
+		return this.#scopes.getStore();
+	}
+
+	protected async transaction<R>(scope: TransactionScope, work: () => Promise<R>): Promise<R> {
 		this.#count += 1;
 		const name = `tx${this.#count}`;
 		this.log.push(`${name}:begin`);
-		return Promise.resolve(new RecordingTransaction(name, this.log));
+
+		try {
+			const result = await this.#scopes.run(scope, work);
+			this.log.push(`${name}:commit`);
+			return result;
+		} catch (error) {
+			this.log.push(`${name}:rollback`);
+			throw error;
+		}
 	}
 }
 
