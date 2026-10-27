@@ -1,13 +1,19 @@
 import { describe, expect, it } from 'vitest';
 
-import { lay02, lay04 } from '../rules.ts';
+import { lay02 } from '../rules.ts';
 import { TestApp } from './support/test-app.ts';
 
 const app = TestApp.reference();
 
 describe('the dependency-cruiser reporter', () => {
-	it('frames the import that breaks a rule, as oxlint does', () => {
+	it('frames the import that breaks a rule of the app', () => {
 		const { output, status } = app
+			.withDependencyCruiserRule({
+				name: 'no-notifications-to-wallets',
+				severity: 'error',
+				from: { path: '^src/notifications/' },
+				to: { path: '^src/wallets/domain/' },
+			})
 			.with(
 				'src/notifications/application/notification/notify.ts',
 				[
@@ -20,7 +26,7 @@ describe('the dependency-cruiser reporter', () => {
 
 		expect(output).toBe(
 			[
-				`  × LAY-04: ${lay04.title}`,
+				'  × no-notifications-to-wallets',
 				'   ╭─[src/notifications/application/notification/notify.ts:2:25]',
 				` 1 │ import type { Clock } from '@alveolus/core';`,
 				` 2 │     import { Wallet } from '../../../wallets/domain/wallet/wallet.aggregate.ts';`,
@@ -28,7 +34,6 @@ describe('the dependency-cruiser reporter', () => {
 				'   ·                                                      ╰── src/wallets/domain/wallet/wallet.aggregate.ts',
 				' 3 │',
 				'   ╰────',
-				`  help: ${lay04.url}`,
 				'',
 				'Found 0 warnings and 1 error.',
 				'',

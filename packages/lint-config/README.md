@@ -65,15 +65,19 @@ TypeScript 7 yet.
 
 | Rule | Tool | What it reports |
 | --- | --- | --- |
-| [LAY-04](https://alveolus.dev/rules/architecture-and-placement/layers/lay-04) | dependency-cruiser | An import of another bounded context outside its `public` folder: relative, through a `paths` alias, type-only, dynamic or re-exported. |
+| [LAY-04](https://alveolus.dev/rules/architecture-and-placement/layers/lay-04) | ESLint | An import of another bounded context outside its `public` folder: relative, through a `paths` alias, type-only, dynamic or re-exported. |
 | [LAY-02](https://alveolus.dev/rules/architecture-and-placement/layers/lay-02) | dependency-cruiser | A cycle between sibling modules of a layer, even when no file imports itself back. A module and its own sub-module are not siblings. |
-| [LAY-01](https://alveolus.dev/rules/architecture-and-placement/layers/lay-01) | dependency-cruiser | `domain` or `application` importing `driving` or `driven`. |
-| [PUB-01](https://alveolus.dev/rules/integration/contracts/pub-01) | dependency-cruiser | `public` importing `domain`, `application`, `driving` or `driven` of its bounded context. |
+| [LAY-01](https://alveolus.dev/rules/architecture-and-placement/layers/lay-01) | ESLint | `domain` or `application` importing `driving` or `driven`. |
+| [PUB-01](https://alveolus.dev/rules/integration/contracts/pub-01) | ESLint | `public` importing `domain`, `application`, `driving` or `driven` of its bounded context. |
 | [LAY-01](https://alveolus.dev/rules/architecture-and-placement/layers/lay-01), [CTX-06](https://alveolus.dev/rules/strategic-design/bounded-contexts/ctx-06) | ESLint | `domain` importing any package but `@alveolus/core` and the `node:` modules. |
 | [WIR-05](https://alveolus.dev/rules/architecture-and-placement/wiring/wir-05) | ESLint | `Injectable`, `Inject` or `Optional` of `@nestjs/common` imported outside `driving/http` and wiring files, under another name or through a namespace included. |
 | [PLC-07](https://alveolus.dev/rules/architecture-and-placement/placement/plc-07) | ESLint | `@prisma/client` imported outside `driven/prisma` and `application`, and `@nestjs/swagger` outside `driving/http`. |
 
-Wiring files (`.module`, `.wiring`, `.bootstrap`, `.config`) and tests (`__test__`, `.spec.ts`) are left out.
+Wiring files (`.module`, `.wiring`, `.bootstrap`, `.config`) may import packages, and tests (`__test__`, `.spec.ts`)
+are left out. The rules on imports between folders ask the TypeScript program where each import leads, as the
+compiler resolves it: they need the type information of typescript-eslint, which the preset turns on
+(`projectService`) for `src/**/*.ts`. ESLint shows them in the editor; only the cycles of LAY-02 wait for
+dependency-cruiser, which sees the whole graph.
 
 ## What it does not see
 
@@ -92,6 +96,9 @@ it.
 ```ts
 // eslint-disable-next-line no-restricted-imports -- waiver WIR-05: <reason>, see ADR-NNNN
 import { Injectable } from '@nestjs/common';
+
+// eslint-disable-next-line alveolus/lay-04 -- waiver LAY-04: <reason>, see ADR-NNNN
+import { Wallet } from '../../../wallets/domain/wallet/wallet.aggregate.ts';
 ```
 
 dependency-cruiser has no comment for it. `depcruise-baseline src` records the violations that remain, and

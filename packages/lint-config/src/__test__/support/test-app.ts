@@ -14,8 +14,6 @@ const eslintFormatter = join(packageRoot, 'src/eslint-formatter.ts');
 const dependencyCruiserPreset = join(packageRoot, 'src/dependency-cruiser.ts');
 const dependencyCruiserReporter = pathToFileURL(join(packageRoot, 'src/dependency-cruiser-reporter.ts')).href;
 
-const alveolusMessage = /[A-Z]{2,3}-\d{2} · .*$/s;
-
 type EslintResult = {
 	readonly filePath: string;
 	readonly messages: readonly { readonly message: string; readonly line: number }[];
@@ -38,20 +36,30 @@ type Run = {
 
 export class TestApp {
 	readonly #files: Readonly<Record<string, string>>;
+	readonly #dependencyCruiserRules: readonly object[];
 
-	private constructor(files: Readonly<Record<string, string>>) {
+	private constructor(files: Readonly<Record<string, string>>, dependencyCruiserRules: readonly object[]) {
 		this.#files = files;
+		this.#dependencyCruiserRules = dependencyCruiserRules;
 	}
 
 	public static reference(): TestApp {
-		return new TestApp(referenceApp);
+		return new TestApp(referenceApp, []);
 	}
 
 	public with(path: string, text: string): TestApp {
-		return new TestApp({ ...this.#files, [path]: text });
+		return new TestApp({ ...this.#files, [path]: text }, this.#dependencyCruiserRules);
+	}
+
+	public withDependencyCruiserRule(rule: object): TestApp {
+		return new TestApp(this.#files, [...this.#dependencyCruiserRules, rule]);
 	}
 
 	public eslint(): string[] {
+		return this.eslintMessages().map((finding) => finding.replace(/^(\S+) .*?([A-Z]{2,3}-\d{2} · )/s, '$1 $2'));
+	}
+
+	public eslintMessages(): string[] {
 		const findings: string[] = [];
 
 		this.#inDirectory((directory) => {
@@ -62,7 +70,7 @@ export class TestApp {
 				const path = relative(directory, result.filePath).replaceAll('\\', '/');
 
 				for (const { message, line } of result.messages) {
-					findings.push(`${path}:${line} ${alveolusMessage.exec(message)?.[0] ?? message}`);
+					findings.push(`${path}:${line} ${message}`);
 				}
 			}
 		});
@@ -126,7 +134,7 @@ export class TestApp {
 		const files = {
 			...this.#files,
 			'eslint.config.mjs': `import alveolus from '${eslintPreset}';\n\nexport default alveolus;\n`,
-			'.dependency-cruiser.cjs': `module.exports = { extends: ${JSON.stringify(dependencyCruiserPreset)} };\n`,
+			'.dependency-cruiser.cjs': `module.exports = { extends: ${JSON.stringify(dependencyCruiserPreset)}, forbidden: ${JSON.stringify(this.#dependencyCruiserRules)} };\n`,
 		};
 
 		for (const [path, text] of Object.entries(files)) {
