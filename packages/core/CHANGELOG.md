@@ -1,5 +1,19 @@
 # @alveolus/core
 
+## 0.4.0
+
+### Minor Changes
+
+- cf56a9e: Breaking: `AggregateRoot` takes its events and its snapshot as required type parameters (`never` when it records none), and declares `toSnapshot()`. `Entity` loses its snapshot: an inner entity is written through the snapshot of its aggregate. `AnySnapshot` and `SnapshotValue` are still exported.
+- cf56a9e: Breaking: a `DomainEvent` has no id, and its `type` is the name of its class. The `EventTranslator` takes an `IdGenerator` and gives each integration event its id; `translateAll` translates the events of a call under one correlation.
+- cf56a9e: `CommandRepository` gains `findByIds`, which returns the aggregates it found and the identities it did not (`{ found, missing }`). By default it calls `findById` for each identity; an adapter replaces it with one query.
+- cf56a9e: Breaking: `UnitOfWork` joins the open transaction from a nested `run`, and a nested refusal makes it rollback-only: if the work around it still succeeds, `run` throws `NestedWorkRefused` and rolls back. An adapter now implements `transaction(scope, work)` and `current()` instead of `begin()`, which fits callback transactions such as Prisma's; `Transaction` is removed and `TransactionScope` added.
+- cf56a9e: Add `UuidIdentifier`, whose `parse` reads any RFC 9562 UUID in lowercase, and `InvalidIdentifier`, the refusal it returns. Core still generates nothing: an identity builds a generated value from the app's `IdGenerator`.
+
+### Patch Changes
+
+- cf56a9e: Private members are `#` fields, private for JavaScript itself: `OutboxRelay` no longer exposes its outbox, publisher, channel and batch size once compiled.
+
 ## 0.3.0
 
 ### Minor Changes
