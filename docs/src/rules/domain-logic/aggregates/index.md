@@ -20,15 +20,17 @@ Un wallet protège un invariant : son solde ne descend jamais sous zéro. Ce sol
 export type WalletStatus = 'open' | 'closed';
 export type Direction = 'credits' | 'debits';
 export type Directions = [Direction, ...Direction[]];
+export type WalletEvent = WalletOpened | WalletBlocked | WalletUnblocked | WalletClosed;
+// WalletSnapshot: the plain data that toSnapshot() returns to the repository
 
-export class Wallet extends AggregateRoot<WalletId> {
+export class Wallet extends AggregateRoot<WalletId, WalletEvent, WalletSnapshot> {
 	readonly #holder: HolderId;
 	readonly #account: AccountCode;
 	readonly #balance: Money;
 	readonly #blocks: Map<string, WalletBlock>;
 	#status: WalletStatus;
 
-	// constructor, openFor(holder, currency, at), restore(snapshot) and snapshot() for the repository
+	// constructor, openFor(id, holder, currency, at), restore(...) and toSnapshot() for the repository
 
 	debit(
 		reference: OperationReference,
@@ -73,13 +75,7 @@ export class Wallet extends AggregateRoot<WalletId> {
 		}
 
 		this.#blocks.set(reference.value, block);
-		this.record<WalletBlocked>({
-			...eventMetadata(at),
-			type: 'wallets.wallet.WalletBlocked',
-			walletId: this.id,
-			reference,
-			directions,
-		});
+		this.record(new WalletBlocked({ aggregateId: this.id, occurredAt: at, payload: { reference, directions } }));
 
 		return ok();
 	}
@@ -118,7 +114,7 @@ async handle(command: DebitWalletCommand): Promise<Result<void, DebitWalletError
 			return booked;
 		}
 
-		await this.#outbox.append(entry.value.pullEvents());
+		await this.#outbox.add(this.#translator.translateAll(entry.value.pullDomainEvents()));
 
 		return ok();
 	});

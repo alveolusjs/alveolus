@@ -5,7 +5,7 @@ group: Published language
 scope: [public]
 style: [tactical, transaction-script]
 severity: major
-detection: [dependency-cruiser]
+detection: [eslint]
 review: approved
 sources:
   - "Open Host Service and Published Language (definitions)"

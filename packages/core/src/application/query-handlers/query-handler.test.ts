@@ -19,7 +19,7 @@ describe('QueryHandler', () => {
 
 	it('requires its output type and only accepts domain errors', () => {
 		// @ts-expect-error
-		const withoutOutput: QueryHandler<GetOrderSummary> | undefined = undefined; // oxlint-disable-line typescript/no-redundant-type-constituents -- the missing type argument is the error under test
+		const withoutOutput: QueryHandler<GetOrderSummary> | undefined = undefined;
 		// @ts-expect-error
 		const withError: QueryHandler<GetOrderSummary, number, Error> | undefined = undefined;
 

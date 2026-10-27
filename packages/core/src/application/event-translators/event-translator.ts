@@ -1,4 +1,5 @@
 import type { AnyDomainEvent } from '../../domain/domain-events/index.ts';
+import type { IdGenerator } from '../../domain/ports/index.ts';
 import type { JsonValue } from '../../strategic/published-language/index.ts';
 import type { AnyIntegrationEvent, IntegrationEvent, IntegrationEventContext } from '../integration-events/index.ts';
 
@@ -8,7 +9,19 @@ export abstract class EventTranslator<
 > {
 	protected abstract readonly source: string;
 
+	readonly #ids: IdGenerator;
+
+	public constructor(ids: IdGenerator) {
+		this.#ids = ids;
+	}
+
 	public abstract translate(event: Event, context: IntegrationEventContext): Output;
+
+	public translateAll(events: readonly Event[], context?: IntegrationEventContext): Output[] {
+		const shared = context ?? { correlationId: this.#ids.next() };
+
+		return events.map((event) => this.translate(event, shared));
+	}
 
 	protected wrap<Type extends string, Payload extends JsonValue>(
 		event: Event,
@@ -18,7 +31,7 @@ export abstract class EventTranslator<
 		return {
 			...(context.causationId === undefined ? {} : { causationId: context.causationId }),
 			correlationId: context.correlationId,
-			id: event.id,
+			id: this.#ids.next(),
 			occurredAt: event.occurredAt.toISOString(),
 			payload: contract.payload,
 			source: this.source,

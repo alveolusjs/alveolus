@@ -1,60 +1,56 @@
+import { AsyncLocalStorage } from 'node:async_hooks';
+
 import { EventPublisher } from '../../src/application/event-publishers/index.ts';
 import type { AnyIntegrationEvent } from '../../src/application/integration-events/index.ts';
 import { Outbox, type StoredEvent } from '../../src/application/outbox/index.ts';
-import { Transaction, UnitOfWork } from '../../src/application/unit-of-work/index.ts';
-
-class RecordingTransaction extends Transaction {
-	public constructor(
-		private readonly name: string,
-		private readonly log: string[],
-	) {
-		super();
-	}
-
-	public commit(): Promise<void> {
-		this.log.push(`${this.name}:commit`);
-		return Promise.resolve();
-	}
-
-	public rollback(): Promise<void> {
-		this.log.push(`${this.name}:rollback`);
-		return Promise.resolve();
-	}
-}
+import { type TransactionScope, UnitOfWork } from '../../src/application/unit-of-work/index.ts';
 
 export class RecordingUnitOfWork extends UnitOfWork {
 	public readonly log: string[] = [];
-	private count = 0;
+	readonly #scopes = new AsyncLocalStorage<TransactionScope>();
+	#count = 0;
 
-	protected begin(): Promise<Transaction> {
-		this.count += 1;
-		const name = `tx${this.count}`;
+	protected current(): TransactionScope | undefined {
+		return this.#scopes.getStore();
+	}
+
+	protected async transaction<R>(scope: TransactionScope, work: () => Promise<R>): Promise<R> {
+		this.#count += 1;
+		const name = `tx${this.#count}`;
 		this.log.push(`${name}:begin`);
-		return Promise.resolve(new RecordingTransaction(name, this.log));
+
+		try {
+			const result = await this.#scopes.run(scope, work);
+			this.log.push(`${name}:commit`);
+			return result;
+		} catch (error) {
+			this.log.push(`${name}:rollback`);
+			throw error;
+		}
 	}
 }
 
 export class InMemoryOutbox extends Outbox {
-	private readonly stored: StoredEvent[] = [];
-	private readonly positions = new Map<string, number>();
+	readonly #stored: StoredEvent[] = [];
+	readonly #positions = new Map<string, number>();
 
 	public add(events: readonly AnyIntegrationEvent[]): Promise<void> {
 		for (const event of events) {
-			this.stored.push({ sequence: this.stored.length + 1, event });
+			this.#stored.push({ sequence: this.#stored.length + 1, event });
 		}
 		return Promise.resolve();
 	}
 
 	public pending(after: number, limit: number): Promise<readonly StoredEvent[]> {
-		return Promise.resolve(this.stored.filter((entry) => entry.sequence > after).slice(0, limit));
+		return Promise.resolve(this.#stored.filter((entry) => entry.sequence > after).slice(0, limit));
 	}
 
 	public lastPublished(channel: string): Promise<number> {
-		return Promise.resolve(this.positions.get(channel) ?? 0);
+		return Promise.resolve(this.#positions.get(channel) ?? 0);
 	}
 
 	public recordPublished(channel: string, sequence: number): Promise<void> {
-		this.positions.set(channel, sequence);
+		this.#positions.set(channel, sequence);
 		return Promise.resolve();
 	}
 }

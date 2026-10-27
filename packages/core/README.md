@@ -26,7 +26,33 @@ export class Money extends ValueObject<{ minor: bigint; currency: string }> {
 }
 ```
 
+An identity extends `UuidIdentifier`: `of` reads any RFC 9562 UUID and refuses the rest with `InvalidIdentifier`.
+Core generates nothing: `generate` builds a value that the app's `IdGenerator` gives.
+
+```ts
+import { IdGenerator, InvalidIdentifier, type Result, UuidIdentifier } from '@alveolus/core';
+
+export class WalletId extends UuidIdentifier<'WalletId'> {
+	private constructor(value: string) {
+		super(value);
+	}
+
+	static generate(ids: IdGenerator): WalletId {
+		return new WalletId(ids.next());
+	}
+
+	static of(value: string): Result<WalletId, InvalidIdentifier> {
+		return WalletId.parse(value, (valid) => new WalletId(valid));
+	}
+}
+```
+
 Each class says what it is: an aggregate extends `AggregateRoot`, a value object `ValueObject`.
+
+Each outcome has one channel. A business refusal is a `Result` with a named error, an absence is `undefined`, a
+failure is an exception. A repository's `save` returns a `Result`, even when nothing can refuse (`never`), and its
+finders return the aggregate or `undefined`: the use case decides which refusal an absence becomes.
+`findByIds` returns the aggregates it found and the identities it did not (`{ found, missing }`).
 
 - [Documentation](https://alveolus.dev/)
 - [Getting started](https://alveolus.dev/start/getting-started)

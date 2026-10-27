@@ -5,24 +5,34 @@ const defaultChannel = 'default';
 const defaultBatchSize = 100;
 
 export class OutboxRelay {
+	readonly #outbox: Outbox;
+	readonly #publisher: EventPublisher;
+	readonly #channel: string;
+	readonly #batchSize: number;
+
 	public constructor(
-		private readonly outbox: Outbox,
-		private readonly publisher: EventPublisher,
-		private readonly channel: string = defaultChannel,
-		private readonly batchSize: number = defaultBatchSize,
-	) {}
+		outbox: Outbox,
+		publisher: EventPublisher,
+		channel: string = defaultChannel,
+		batchSize: number = defaultBatchSize,
+	) {
+		this.#outbox = outbox;
+		this.#publisher = publisher;
+		this.#channel = channel;
+		this.#batchSize = batchSize;
+	}
 
 	public async relay(): Promise<number> {
-		const lastPublished = await this.outbox.lastPublished(this.channel);
-		const stored = await this.outbox.pending(lastPublished, this.batchSize);
+		const lastPublished = await this.#outbox.lastPublished(this.#channel);
+		const stored = await this.#outbox.pending(lastPublished, this.#batchSize);
 		const last = stored.at(-1);
 
 		if (last === undefined) {
 			return 0;
 		}
 
-		await this.publisher.publish(stored.map((entry) => entry.event));
-		await this.outbox.recordPublished(this.channel, last.sequence);
+		await this.#publisher.publish(stored.map((entry) => entry.event));
+		await this.#outbox.recordPublished(this.#channel, last.sequence);
 
 		return stored.length;
 	}

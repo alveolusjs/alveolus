@@ -54,7 +54,7 @@ export interface WalletRepository {
 
 ```ts
 // Preferred: a typed identity, set at construction and never changed
-export class Wallet extends AggregateRoot<WalletId> {
+export class Wallet extends AggregateRoot<WalletId, WalletEvent, WalletSnapshot> {
 	// the wallet's state and behavior
 }
 

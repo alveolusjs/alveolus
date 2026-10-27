@@ -1,24 +1,23 @@
 import { spawnSync } from 'node:child_process';
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, realpathSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { dirname, join } from 'node:path';
+import { dirname, join, relative } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
+import type { Rule } from '../../rule.ts';
 import { referenceApp } from './reference-app.ts';
 
 const packageRoot = fileURLToPath(new URL('../../../', import.meta.url));
-const oxlintBin = join(packageRoot, 'node_modules/oxlint/bin/oxlint');
+const eslintBin = join(packageRoot, 'node_modules/eslint/bin/eslint.js');
 const depcruiseBin = join(packageRoot, 'node_modules/dependency-cruiser/bin/dependency-cruiser.mjs');
-const oxlintPreset = pathToFileURL(join(packageRoot, 'src/oxlint.ts')).href;
+const eslintPreset = pathToFileURL(join(packageRoot, 'src/eslint.ts')).href;
+const eslintFormatter = join(packageRoot, 'src/eslint-formatter.ts');
 const dependencyCruiserPreset = join(packageRoot, 'src/dependency-cruiser.ts');
+const dependencyCruiserReporter = pathToFileURL(join(packageRoot, 'src/dependency-cruiser-reporter.ts')).href;
 
-const restrictedImports = 'eslint(no-restricted-imports)';
-
-type OxlintDiagnostic = {
-	readonly code: string;
-	readonly filename: string;
-	readonly help: string;
-	readonly labels: readonly { readonly span: { readonly line: number } }[];
+type EslintResult = {
+	readonly filePath: string;
+	readonly messages: readonly { readonly message: string; readonly line: number }[];
 };
 
 type DependencyCruiserViolation = {
@@ -27,76 +26,134 @@ type DependencyCruiserViolation = {
 	readonly rule: { readonly name: string };
 };
 
-type OxlintReport = {
-	readonly diagnostics: readonly OxlintDiagnostic[];
-};
-
 type DependencyCruiserReport = {
 	readonly summary: { readonly violations: readonly DependencyCruiserViolation[] };
 };
 
+type Run = {
+	readonly output: string;
+	readonly status: number | null;
+};
+
 export class TestApp {
 	readonly #files: Readonly<Record<string, string>>;
+	readonly #dependencyCruiserRules: readonly object[];
+	readonly #eslintRules: Readonly<Record<string, string>>;
 
-	private constructor(files: Readonly<Record<string, string>>) {
+	private constructor(
+		files: Readonly<Record<string, string>>,
+		dependencyCruiserRules: readonly object[],
+		eslintRules: Readonly<Record<string, string>>,
+	) {
 		this.#files = files;
+		this.#dependencyCruiserRules = dependencyCruiserRules;
+		this.#eslintRules = eslintRules;
 	}
 
 	public static reference(): TestApp {
-		return new TestApp(referenceApp);
+		return new TestApp(referenceApp, [], {});
 	}
 
 	public with(path: string, text: string): TestApp {
-		return new TestApp({ ...this.#files, [path]: text });
+		return new TestApp({ ...this.#files, [path]: text }, this.#dependencyCruiserRules, this.#eslintRules);
 	}
 
-	public oxlint(): string[] {
-		const output = this.#run(oxlintBin, ['--format', 'json']);
-		const { diagnostics }: OxlintReport = JSON.parse(output);
-		const findings: string[] = [];
+	public withDependencyCruiserRule(rule: object): TestApp {
+		return new TestApp(this.#files, [...this.#dependencyCruiserRules, rule], this.#eslintRules);
+	}
 
-		for (const diagnostic of diagnostics) {
-			if (diagnostic.code !== restrictedImports) {
-				continue;
-			}
+	public withEslintRule(name: string, level: 'error' | 'off'): TestApp {
+		return new TestApp(this.#files, this.#dependencyCruiserRules, { ...this.#eslintRules, [name]: level });
+	}
 
-			findings.push(
-				`${diagnostic.filename.replaceAll('\\', '/')}:${diagnostic.labels[0]?.span.line} ${diagnostic.help}`,
-			);
+	public eslint(...checked: readonly Rule[]): string[] {
+		const findings = this.eslintMessages().map((finding) =>
+			finding.replace(/^(\S+) .*?([A-Z]{2,3}-\d{2} · )/s, '$1 $2'),
+		);
+
+		if (checked.length === 0) {
+			return findings;
 		}
 
+		return findings.filter((finding) => checked.some((rule) => finding.includes(`${rule.code} · `)));
+	}
+
+	public eslintMessages(): string[] {
+		const findings: string[] = [];
+
+		this.#inDirectory((directory) => {
+			const { output } = this.#spawn(directory, eslintBin, ['src', '--format', 'json']);
+			const results: readonly EslintResult[] = JSON.parse(output);
+
+			for (const result of results) {
+				const path = relative(directory, result.filePath).replaceAll('\\', '/');
+
+				for (const { message, line } of result.messages) {
+					findings.push(`${path}:${line} ${message}`);
+				}
+			}
+		});
+
 		return findings.sort();
+	}
+
+	public eslintReport(): Run {
+		let run: Run = { output: '', status: null };
+
+		this.#inDirectory((directory) => {
+			run = this.#spawn(directory, eslintBin, ['src', '--format', eslintFormatter]);
+		});
+
+		return run;
 	}
 
 	public dependencyCruiser(): string[] {
-		const output = this.#run(depcruiseBin, ['src', '--output-type', 'json']);
-		const { summary }: DependencyCruiserReport = JSON.parse(output);
 		const findings: string[] = [];
 
-		for (const violation of summary.violations) {
-			findings.push(`${violation.rule.name} ${violation.from} → ${violation.to}`);
-		}
+		this.#inDirectory((directory) => {
+			const { output } = this.#spawn(directory, depcruiseBin, ['src', '--output-type', 'json']);
+			const { summary }: DependencyCruiserReport = JSON.parse(output);
+
+			for (const violation of summary.violations) {
+				findings.push(`${violation.rule.name} ${violation.from} → ${violation.to}`);
+			}
+		});
 
 		return findings.sort();
 	}
 
-	#run(bin: string, args: readonly string[]): string {
-		const directory = mkdtempSync(join(tmpdir(), 'alveolus-lint-'));
+	public dependencyCruiserReport(): Run {
+		let run: Run = { output: '', status: null };
+
+		this.#inDirectory((directory) => {
+			run = this.#spawn(directory, depcruiseBin, ['src', '--output-type', `plugin:${dependencyCruiserReporter}`]);
+		});
+
+		return run;
+	}
+
+	#inDirectory(use: (directory: string) => void): void {
+		const directory = realpathSync(mkdtempSync(join(tmpdir(), 'alveolus-lint-')));
 
 		try {
 			this.#write(directory);
-
-			return spawnSync(process.execPath, [bin, ...args], { cwd: directory, encoding: 'utf8' }).stdout;
+			use(directory);
 		} finally {
 			rmSync(directory, { recursive: true, force: true });
 		}
 	}
 
+	#spawn(directory: string, bin: string, args: readonly string[]): Run {
+		const { stdout, status } = spawnSync(process.execPath, [bin, ...args], { cwd: directory, encoding: 'utf8' });
+
+		return { output: stdout, status };
+	}
+
 	#write(directory: string): void {
 		const files = {
 			...this.#files,
-			'oxlint.config.mts': `import alveolus from '${oxlintPreset}';\n\nexport default { extends: [alveolus] };\n`,
-			'.dependency-cruiser.cjs': `module.exports = { extends: ${JSON.stringify(dependencyCruiserPreset)} };\n`,
+			'eslint.config.mjs': `import alveolus from '${eslintPreset}';\n\nexport default [...alveolus, { files: ['src/**/*.ts'], rules: ${JSON.stringify(this.#eslintRules)} }];\n`,
+			'.dependency-cruiser.cjs': `module.exports = { extends: ${JSON.stringify(dependencyCruiserPreset)}, forbidden: ${JSON.stringify(this.#dependencyCruiserRules)} };\n`,
 		};
 
 		for (const [path, text] of Object.entries(files)) {

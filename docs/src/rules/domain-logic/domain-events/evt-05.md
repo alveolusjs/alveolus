@@ -40,7 +40,7 @@ Aucune.
 
 ## Correction
 
-`occurredOn`, des identités typées, les paramètres utiles de la méthode, et un identifiant unique d’event ou de message.
+La date de l’event, l’identité de l’aggregate, et dans le `payload` des identités typées et les paramètres utiles de la méthode. L’identifiant unique du message est donné à l’integration event, quand il est traduit (MSG-04).
 
 ## Voir aussi
 
@@ -49,13 +49,10 @@ AGG-09 met des identités dans les events, pas des objets. ENT-09 traite du tena
 ## Exemple
 
 ```ts
-export interface MoneyWithdrawn extends DomainEvent {
-	readonly type: 'wallets.wallet.MoneyWithdrawn';
-	readonly walletId: WalletId;
-	readonly holderId: HolderId;
-	readonly amount: Money;
-	readonly balance: Money;
-}
+export class MoneyWithdrawn extends DomainEvent<
+	WalletId,
+	{ readonly holderId: HolderId; readonly amount: Money; readonly balance: Money }
+> {}
 ```
 
-`eventId` et `occurredOn` viennent de `DomainEvent`. `holderId` dit au subscriber des notifications qui prévenir, et `balance` lui évite de relire le wallet.
+`aggregateId` et `occurredAt` viennent de `DomainEvent`. `holderId` dit au subscriber des notifications qui prévenir, et `balance` lui évite de relire le wallet.

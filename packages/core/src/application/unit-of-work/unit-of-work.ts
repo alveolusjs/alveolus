@@ -1,27 +1,49 @@
 import { Port } from '../../domain/ports/index.ts';
 import type { Result } from '../../utilities/result/index.ts';
-import type { Transaction } from './transaction.ts';
+import { NestedWorkRefused } from './nested-work-refused.ts';
+import { RolledBack } from './rolled-back.ts';
+import { TransactionScope } from './transaction-scope.ts';
 
 export abstract class UnitOfWork extends Port {
 	public async run<T, E>(work: () => Promise<Result<T, E>>): Promise<Result<T, E>> {
-		const transaction = await this.begin();
-		let result: Result<T, E>;
+		const open = this.current();
+
+		if (open !== undefined) {
+			const result = await work();
+
+			if (!result.ok) {
+				open.refuse();
+			}
+
+			return result;
+		}
+
+		const scope = new TransactionScope();
 
 		try {
-			result = await work();
+			return await this.transaction(scope, async () => {
+				const result = await work();
+
+				if (!result.ok) {
+					throw new RolledBack(result);
+				}
+
+				if (scope.refused) {
+					throw new NestedWorkRefused();
+				}
+
+				return result;
+			});
 		} catch (error) {
-			await transaction.rollback();
+			if (error instanceof RolledBack) {
+				return error.result as Result<T, E>;
+			}
+
 			throw error;
 		}
-
-		if (result.ok) {
-			await transaction.commit();
-		} else {
-			await transaction.rollback();
-		}
-
-		return result;
 	}
 
-	protected abstract begin(): Promise<Transaction>;
+	protected abstract current(): TransactionScope | undefined;
+
+	protected abstract transaction<R>(scope: TransactionScope, work: () => Promise<R>): Promise<R>;
 }

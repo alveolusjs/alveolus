@@ -5,8 +5,8 @@ import { TestApp } from './support/test-app.ts';
 const app = TestApp.reference();
 
 describe('the reference app', () => {
-	it('passes oxlint', () => {
-		expect(app.oxlint()).toEqual([]);
+	it('passes ESLint', () => {
+		expect(app.eslint()).toEqual([]);
 	});
 
 	it('passes dependency-cruiser', () => {

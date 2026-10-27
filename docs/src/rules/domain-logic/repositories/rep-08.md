@@ -41,6 +41,8 @@ En TypeScript, deux options :
 
 **Notre choix** : les deux à la fois. Les modèles Prisma sont les modèles de persistance, et le mapper de `driven` reconstitue l’aggregate par sa méthode `restore`, réservée à cet usage.
 
+Dans l’autre sens, le mapper lit l’aggregate par `toSnapshot()`, que `AggregateRoot` impose. Le snapshot est un objet de valeurs simples (textes, nombres, `bigint`, dates, tableaux et objets de ces valeurs), sans value object ni identité : l’aggregate n’a pas besoin d’un getter par champ. Il couvre tout l’aggregate, ses entities internes comprises, qui n’en ont pas chacune un. Son type est le troisième paramètre de `AggregateRoot`, et le compilateur refuse un snapshot qui contient autre chose. TypeScript ne peut pas imposer une méthode statique : `restore` reste vérifiée par la review.
+
 ## Voir aussi
 
 ENT-10 refuse l’anemic model. ENT-14 réserve à la reconstitution un chemin dédié et caché. FAC-03 cache le constructeur. LAY-01 refuse les decorators de l’ORM dans le domaine.

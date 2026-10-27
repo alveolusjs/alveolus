@@ -18,11 +18,14 @@ export abstract class PriceList extends Port {
 }
 
 export class CatalogPriceList extends PriceList implements AntiCorruptionLayer {
-	public constructor(private readonly products: readonly CatalogProductRepresentation[]) {
+	readonly #products: readonly CatalogProductRepresentation[];
+
+	public constructor(products: readonly CatalogProductRepresentation[]) {
 		super();
+		this.#products = products;
 	}
 
 	public priceOf(productId: string): Promise<number | undefined> {
-		return Promise.resolve(this.products.find((product) => product.id === productId)?.price);
+		return Promise.resolve(this.#products.find((product) => product.id === productId)?.price);
 	}
 }

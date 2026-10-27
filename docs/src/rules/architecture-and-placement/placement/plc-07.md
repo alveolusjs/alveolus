@@ -5,7 +5,7 @@ group: Adapters
 scope: [driving, driven]
 style: [tactical, transaction-script]
 severity: major
-detection: [oxlint]
+detection: [eslint]
 review: approved
 sources: []
 ---

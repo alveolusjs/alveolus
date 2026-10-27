@@ -5,7 +5,7 @@ group: Sens des dépendances
 scope: [domain, application, driven]
 style: [tactical, transaction-script]
 severity: major
-detection: [dependency-cruiser, oxlint]
+detection: [eslint]
 review: approved
 sources:
   - "Layers"
@@ -46,7 +46,7 @@ Les ports purement techniques (Unit of Work, outbox, horloge) ne sont pas des co
 
 En NestJS, le port s’écrit comme une `abstract class`, qui sert aussi d’injection token.
 
-**Notre choix** : dans un bounded context tactique, `@prisma/client` n’est importé que dans `driven`. Un bounded context en transaction scripts n’a pas de `domain` : ses ports vivent dans `application`, et ses scripts y utilisent Prisma (TXS-05, TXS-06). dependency-cruiser vérifie les deux styles, avec les autres règles de dépendances.
+**Notre choix** : dans un bounded context tactique, `@prisma/client` n’est importé que dans `driven`. Un bounded context en transaction scripts n’a pas de `domain` : ses ports vivent dans `application`, et ses scripts y utilisent Prisma (TXS-05, TXS-06). ESLint vérifie les deux styles, avec les autres règles de dépendances, et les montre dans l’éditeur.
 
 ## Voir aussi
 

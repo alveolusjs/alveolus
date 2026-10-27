@@ -21,6 +21,7 @@ import './theme.css';
 import './style.css';
 import './home.css';
 import './layout.css';
+import './getting-started.css';
 
 export default {
 	extends: DefaultTheme,

@@ -69,7 +69,7 @@ async handle(command: OpenWalletCommand): Promise<Result<WalletId, OpenWalletErr
 			return err(new HolderNotFound(holderId.value));
 		}
 
-		const wallet = holder.openWallet(currency.value, this.#clock.now());
+		const wallet = holder.openWallet(await this.#wallets.nextIdentity(), currency.value, this.#clock.now());
 
 		if (!wallet.ok) {
 			return wallet;
@@ -81,7 +81,7 @@ async handle(command: OpenWalletCommand): Promise<Result<WalletId, OpenWalletErr
 			return saved;
 		}
 
-		await this.#outbox.append(wallet.value.pullEvents());
+		await this.#outbox.add(this.#translator.translateAll(wallet.value.pullDomainEvents()));
 
 		return ok(wallet.value.id);
 	});

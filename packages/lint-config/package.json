@@ -1,14 +1,14 @@
 {
 	"name": "@alveolus/lint-config",
 	"version": "0.1.0",
-	"description": "The Alveolus rules for oxlint and dependency-cruiser: the checks a linter decides without false positives",
+	"description": "The Alveolus rules for ESLint and dependency-cruiser: the checks a linter decides without false positives",
 	"keywords": [
 		"ddd",
 		"dependency-cruiser",
 		"domain-driven-design",
+		"eslint",
 		"hexagonal-architecture",
 		"nestjs",
-		"oxlint",
 		"typescript"
 	],
 	"homepage": "https://alveolus.dev/",
@@ -20,7 +20,8 @@
 	},
 	"files": [
 		"dist",
-		"dependency-cruiser.mjs"
+		"dependency-cruiser.mjs",
+		"eslint-formatter.mjs"
 	],
 	"type": "module",
 	"sideEffects": false,
@@ -29,16 +30,26 @@
 			"@alveolus/source": "./src/dependency-cruiser.ts",
 			"default": "./dist/dependency-cruiser.mjs"
 		},
-		"./oxlint": {
-			"@alveolus/source": "./src/oxlint.ts",
-			"default": "./dist/oxlint.mjs"
+		"./dependency-cruiser-reporter": {
+			"@alveolus/source": "./src/dependency-cruiser-reporter.ts",
+			"default": "./dist/dependency-cruiser-reporter.mjs"
+		},
+		"./eslint": {
+			"@alveolus/source": "./src/eslint.ts",
+			"default": "./dist/eslint.mjs"
+		},
+		"./eslint-formatter": {
+			"@alveolus/source": "./src/eslint-formatter.ts",
+			"default": "./dist/eslint-formatter.mjs"
 		},
 		"./package.json": "./package.json"
 	},
 	"publishConfig": {
 		"exports": {
 			"./dependency-cruiser": "./dist/dependency-cruiser.mjs",
-			"./oxlint": "./dist/oxlint.mjs",
+			"./dependency-cruiser-reporter": "./dist/dependency-cruiser-reporter.mjs",
+			"./eslint": "./dist/eslint.mjs",
+			"./eslint-formatter": "./dist/eslint-formatter.mjs",
 			"./package.json": "./package.json"
 		}
 	},
@@ -50,22 +61,31 @@
 	"devDependencies": {
 		"@types/node": "26.6.3",
 		"dependency-cruiser": "18.7.0",
+		"eslint": "10.12.0",
 		"gray-matter": "^4.0.3",
-		"oxlint": "1.89.0",
 		"tsdown": "0.23.0",
 		"typescript": "6.0.3",
+		"typescript-eslint": "8.71.2",
 		"vite": "8.3.1",
 		"vitest": "5.0.2"
 	},
 	"peerDependencies": {
 		"dependency-cruiser": ">=18.7.0",
-		"oxlint": ">=1.89.0"
+		"eslint": ">=10.0.0",
+		"typescript": ">=5.8.0",
+		"typescript-eslint": ">=8.71.0"
 	},
 	"peerDependenciesMeta": {
 		"dependency-cruiser": {
 			"optional": true
 		},
-		"oxlint": {
+		"eslint": {
+			"optional": true
+		},
+		"typescript-eslint": {
+			"optional": true
+		},
+		"typescript": {
 			"optional": true
 		}
 	},

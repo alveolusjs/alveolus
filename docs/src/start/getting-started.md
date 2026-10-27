@@ -1,12 +1,24 @@
+---
+pageClass: getting-started
+---
+
 # Premiers pas
 
-Alveolus s’adopte en trois temps : déclarer ses bounded contexts, écrire le modèle avec les building blocks, puis laisser Claude Code coder avec les règles. Chaque étape sert seule. Ensemble, elles se renforcent.
+<p class="gs-lead">Cette page installe Alveolus dans une application NestJS, en cinq étapes. Chaque étape peut se faire sans les suivantes.</p>
 
-Il faut Node.js 24 ou plus récent et TypeScript. Les packages sont publiés sur npm. Les commandes ci-dessous utilisent pnpm : avec npm, `npm install` remplace `pnpm add`, et `npx` remplace `pnpm exec`.
+<p class="gs-requirements"><span>Node.js 24+</span><span>TypeScript</span><span>NestJS</span></p>
 
-## 1. Déclarer les bounded contexts {#contexts}
+<nav class="gs-overview" aria-label="Étapes">
+	<a href="#contexts"><span class="gs-overview__number">1</span><strong>Déclarer</strong><span>les bounded contexts</span></a>
+	<a href="#core"><span class="gs-overview__number">2</span><strong>Écrire</strong><span>le modèle</span></a>
+	<a href="#claude-code"><span class="gs-overview__number">3</span><strong>Coder</strong><span>avec Claude Code</span></a>
+	<a href="#lint"><span class="gs-overview__number">4</span><strong>Vérifier</strong><span>dans l’éditeur et en CI</span></a>
+	<a href="#artifacts"><span class="gs-overview__number">5</span><strong>Déclarer</strong><span>les artefacts</span></a>
+</nav>
 
-Le projet suit l’[architecture de référence](./reference-architecture) : un dossier par bounded context sous `src/`, découpé en couches. À la racine, `architecture.json` déclare chaque bounded context et son style (CTX-14) :
+## Déclarer les bounded contexts {#contexts}
+
+Le code de chaque bounded context vit dans un dossier de `src/`, découpé en couches ([architecture de référence](./reference-architecture)). Le fichier `architecture.json`, à la racine, déclare chaque bounded context et son style (CTX-14) :
 
 ```json
 {
@@ -18,17 +30,41 @@ Le projet suit l’[architecture de référence](./reference-architecture) : un 
 }
 ```
 
-Un bounded context `tactical` a un dossier `domain`. Un bounded context en transaction scripts n’en a pas (TXS-05). Pour décider, voir [choisir un style](../rules/domain-logic/choosing-a-style). Un ancien code sans frontière claire se déclare `big-ball-of-mud` : on le contient au lieu de le modéliser (MAP-04).
+| Style | Signification |
+| --- | --- |
+| `tactical` | Le bounded context a un modèle dans `domain`, écrit avec les building blocks. |
+| `transaction-script` | Le bounded context n’a pas de `domain` : chaque use case est un script (TXS-05). |
+| `big-ball-of-mud` | Un ancien code sans frontière claire. On l’isole sans le modéliser (MAP-04). |
 
-## 2. Installer les building blocks {#core}
+::: tip Choisir un style
+La page [choisir un style](../rules/domain-logic/choosing-a-style) donne le style selon le type de subdomain : core, supporting ou generic.
+:::
 
-```sh
+## Écrire le modèle {#core}
+
+::: code-group
+
+```sh [pnpm]
 pnpm add @alveolus/core
 ```
 
-`@alveolus/core` fournit les building blocks du Domain-Driven Design : aggregates, entities, value objects, domain events, domain errors, ports, repositories, handlers, Unit of Work, outbox et `Result`. Il n’a aucune dépendance à l’exécution, ni NestJS ni ORM : le domaine reste pur (LAY-01).
+```sh [npm]
+npm install @alveolus/core
+```
 
-Un value object étend `ValueObject`. Il refuse une valeur invalide avec un `Result`, pas avec une exception :
+```sh [yarn]
+yarn add @alveolus/core
+```
+
+```sh [bun]
+bun add @alveolus/core
+```
+
+:::
+
+`@alveolus/core` contient les building blocks : aggregates, entities, value objects, domain events, ports, repositories, handlers, Unit of Work, outbox et `Result`. Il n’a aucune dépendance à l’exécution, donc le domaine n’importe ni NestJS ni ORM (LAY-01).
+
+Exemple : un value object qui renvoie un `Result` quand la valeur est invalide, au lieu de lancer une exception.
 
 ::: code-group
 
@@ -56,60 +92,126 @@ export class InvalidMoney extends DomainError<{ minor: bigint }> {}
 
 :::
 
-Deux `Money` de même montant et de même devise sont égaux : `equals` compare le contenu, pas la référence.
+## Coder avec Claude Code {#claude-code}
 
-## 3. Coder avec Claude Code {#claude-code}
+::: code-group
 
-```sh
+```sh [pnpm]
 pnpm add -D @alveolus/claude-rules
 pnpm exec alveolus-claude install
 ```
 
-La commande lit `architecture.json` et écrit dans `.claude/` :
-
-- les règles, un dossier par style et un fichier par couche, chacun ouvert par son sommaire. Claude Code charge celles de `domain` quand il travaille dans `src/wallets/domain/`, celles de `driven` dans `src/wallets/driven/` ;
-- trois skills, qui mènent une user story de la conception à la revue ;
-- un agent de revue, qui vérifie les règles dans son propre contexte.
-
-Relancer la commande après chaque mise à jour du package ou l’ajout d’un bounded context, et versionner `.claude/` : toute l’équipe code alors avec les mêmes règles.
-
-1. **Concevoir**, avec `/alveolus-design` suivi de la user story. Le skill lit le code et les règles de chaque dossier touché, puis écrit une conception technique : critères d’acceptation, modèle, use cases, adapters, fichiers, tests, incréments, règles appliquées, questions ouvertes. Aucun code.
-2. **Implémenter**, avec `/alveolus-implement` suivi de la conception approuvée. Le skill construit un seul incrément, le suivant, sur sa propre branche : un test d’abord, puis le code, en lisant les règles de chaque dossier avant d’y écrire. Il coche l’incrément et l’enregistre dans Git, sans le pousser. Il s’arrête sur un manque de la story ou de la conception, sur une règle qu’il ne peut pas tenir, ou sur un incrément qui déborde de son plan.
-3. **Relire**, avec `/alveolus-review`. Le skill lance les contrôles du projet, fait vérifier les règles par l’agent de revue, et compare l’incrément à la conception : son test, ses fichiers, ce qui le rend sûr à fusionner. Au dernier incrément, il vérifie aussi chaque critère de la story. Il propose la merge request et ne corrige rien.
-
-La conception découpe la story en incréments, une merge request chacun, assez petite pour être relue d’une traite. Chacun se fusionne seul, garde tous les contrôles au vert et ne casse rien : le premier critère se construit couche par couche, de `domain` vers les adapters, et reste injoignable jusqu’à son wiring ; chaque autre critère tient en un incrément, de bout en bout ; un changement de comportement existant passe par un changement en parallèle, l’ancien chemin restant en place jusqu’au dernier pas. On relit la conception et on la fusionne avant tout code. Puis, pour chaque incrément : implémenter, relire, pousser, fusionner, et passer au suivant.
-
-Chaque skill attend d’être lancé : on relit entre deux étapes, et la conception reste en brouillon tant qu’on ne l’a pas approuvée.
-
-## 4. Vérifier en CI {#lint}
-
-Les règles qu’un lint décide sans faux positif sont livrées pour deux outils : oxlint, que `nest new` installe, et dependency-cruiser, qui suit les imports.
-
-```sh
-pnpm add -D @alveolus/lint-config oxlint dependency-cruiser
+```sh [npm]
+npm install -D @alveolus/claude-rules
+npx alveolus-claude install
 ```
 
-```ts
-// oxlint.config.mts
-import { defineConfig } from 'oxlint';
-import alveolus from '@alveolus/lint-config/oxlint';
-
-export default defineConfig({ extends: [alveolus] });
+```sh [yarn]
+yarn add -D @alveolus/claude-rules
+yarn alveolus-claude install
 ```
 
-```js
-// .dependency-cruiser.cjs
+```sh [bun]
+bun add -d @alveolus/claude-rules
+bunx alveolus-claude install
+```
+
+:::
+
+La commande lit `architecture.json` et écrit dans `.claude/` : les règles, que Claude Code charge selon le dossier où il travaille, trois skills et un agent de revue.
+
+<div class="gs-flow">
+	<div><strong>Concevoir</strong><code>/alveolus-design &lt;story&gt;</code><span>Écrit la conception technique de la story et la découpe en incréments. Le skill ne modifie pas le code.</span></div>
+	<div><strong>Implémenter</strong><code>/alveolus-implement &lt;conception&gt;</code><span>Écrit l’incrément suivant sur une nouvelle branche, en commençant par son test. Le commit n’est pas poussé.</span></div>
+	<div><strong>Relire</strong><code>/alveolus-review</code><span>Lance les contrôles du projet, fait vérifier les règles par l’agent et compare l’incrément à la conception.</span></div>
+</div>
+
+La conception est relue et approuvée avant que le code commence. Chaque incrément fait ensuite l’objet d’une merge request : implémenter, relire, fusionner, puis passer au suivant. Quand la story ou la conception ne suffit pas, le skill s’arrête et pose la question.
+
+::: tip Versionner `.claude/`
+Le dossier `.claude/` est versionné, pour que toute l’équipe utilise les mêmes règles. Relancer la commande après une mise à jour du package ou l’ajout d’un bounded context.
+:::
+
+## Vérifier dans l’éditeur et en CI {#lint}
+
+Installer les outils :
+
+::: code-group
+
+```sh [pnpm]
+pnpm add -D @alveolus/lint-config eslint typescript-eslint dependency-cruiser
+```
+
+```sh [npm]
+npm install -D @alveolus/lint-config eslint typescript-eslint dependency-cruiser
+```
+
+```sh [yarn]
+yarn add -D @alveolus/lint-config eslint typescript-eslint dependency-cruiser
+```
+
+```sh [bun]
+bun add -d @alveolus/lint-config eslint typescript-eslint dependency-cruiser
+```
+
+:::
+
+Ajouter les deux fichiers de configuration :
+
+::: code-group
+
+```js [eslint.config.mjs]
+import alveolus from '@alveolus/lint-config/eslint';
+
+export default [...alveolus];
+```
+
+```js [.dependency-cruiser.cjs]
 module.exports = { extends: '@alveolus/lint-config/dependency-cruiser' };
 ```
 
-Chaque erreur cite le code de sa règle et l’adresse de sa page. Peu de règles sont vérifiées ainsi : les autres restent à la revue, par l’agent de revue et par l’équipe. Le [README du package](https://github.com/alveolusjs/alveolus/tree/main/packages/lint-config) liste ce que chaque outil vérifie, et ce qu’il ne voit pas.
+:::
 
-## 5. Déclarer les artefacts du projet {#artifacts}
+Lancer les deux outils :
 
-Certaines règles lisent ce que le projet a déclaré : context map, glossaire, ADR, propriété du code. [Mettre en place un projet](./prerequisites) les décrit.
+::: code-group
 
-## Et ensuite {#next}
+```sh [pnpm]
+pnpm exec eslint src --format ./node_modules/@alveolus/lint-config/eslint-formatter.mjs
+pnpm exec depcruise src --output-type plugin:@alveolus/lint-config/dependency-cruiser-reporter
+```
 
-- [Lire une règle](./overview#how-to-read) : ses sections, sa sévérité, son périmètre.
-- [Choix par défaut](./default-choices) : ce que les règles supposent quand rien n’est décidé.
-- [Toutes les règles](../rules/), à filtrer par partie, thème ou sévérité.
+```sh [npm]
+npx eslint src --format ./node_modules/@alveolus/lint-config/eslint-formatter.mjs
+npx depcruise src --output-type plugin:@alveolus/lint-config/dependency-cruiser-reporter
+```
+
+```sh [yarn]
+yarn eslint src --format ./node_modules/@alveolus/lint-config/eslint-formatter.mjs
+yarn depcruise src --output-type plugin:@alveolus/lint-config/dependency-cruiser-reporter
+```
+
+```sh [bun]
+bunx eslint src --format ./node_modules/@alveolus/lint-config/eslint-formatter.mjs
+bunx depcruise src --output-type plugin:@alveolus/lint-config/dependency-cruiser-reporter
+```
+
+:::
+
+ESLint affiche les erreurs dans l’éditeur. dependency-cruiser cherche les cycles entre modules et tourne en CI. Chaque erreur donne le code de la règle et l’adresse de sa page. Les règles qu’un lint ne peut pas vérifier sans faux positif restent à la revue. Le [README du package](https://github.com/alveolusjs/alveolus/tree/main/packages/lint-config) liste les règles vérifiées.
+
+::: info oxlint
+`nest new` installe oxlint. Le projet peut le retirer, ou le garder pour ses propres règles. Alveolus ne fixe pas le format du code.
+:::
+
+## Déclarer les artefacts du projet {#artifacts}
+
+Certaines règles lisent des fichiers du projet : context map, glossaire, ADR, propriété du code. La page [mettre en place un projet](./prerequisites) les décrit.
+
+## Et ensuite {#next .gs-plain}
+
+<div class="gs-next">
+	<a href="/start/overview#how-to-read"><strong>Lire une règle</strong><span>Les sections d’une règle, sa sévérité et son périmètre.</span></a>
+	<a href="/start/default-choices"><strong>Choix par défaut</strong><span>Les choix que les règles supposent quand le projet n’a rien décidé.</span></a>
+	<a href="/rules/"><strong>Toutes les règles</strong><span>La liste complète, à filtrer par partie, thème ou sévérité.</span></a>
+</div>

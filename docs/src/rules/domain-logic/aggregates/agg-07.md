@@ -64,11 +64,7 @@ suspend(at: Date): Result<void, HolderIsSuspended> {
 	}
 
 	this.#status = 'suspended';
-	this.record<HolderSuspended>({
-		...eventMetadata(at),
-		type: 'wallets.holder.HolderSuspended',
-		holderId: this.id,
-	});
+	this.record(new HolderSuspended({ aggregateId: this.id, occurredAt: at, payload: null }));
 
 	return ok();
 }
