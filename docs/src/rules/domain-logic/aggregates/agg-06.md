@@ -73,7 +73,7 @@ return this.#unitOfWork.run(async () => {
 		return booked;
 	}
 
-	await this.#outbox.append(entry.value.pullEvents());
+	await this.#outbox.append(entry.value.pullDomainEvents());
 
 	return ok();
 });
@@ -100,7 +100,7 @@ return this.#unitOfWork.run(async () => {
 		return booked;
 	}
 
-	await this.#outbox.append(entry.value.pullEvents());
+	await this.#outbox.append(entry.value.pullDomainEvents());
 
 	return ok();
 });

@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import { Order, OrderId, OrderPlaced } from '../../../test/fixtures/aggregate-root.ts';
+import { Catalog, Order, OrderId, OrderPlaced } from '../../../test/fixtures/aggregate-root.ts';
+import type { AggregateRoot } from './aggregate-root.ts';
 
 const now = new Date('2026-01-01T00:00:00Z');
 
@@ -38,10 +39,24 @@ describe('AggregateRoot', () => {
 		expect(order.pullDomainEvents()).toEqual([]);
 	});
 
-	it('turns into a snapshot without its pending events', () => {
+	it('turns into a snapshot of plain data, without its pending events', () => {
 		const order = new Order(new OrderId('o1'));
 		order.place('evt_1', now);
 
-		expect(order.toSnapshot()).toEqual({ id: 'o1' });
+		expect(order.toSnapshot()).toEqual({ id: 'o1', lines: [{ quantity: 2, sku: 'p1' }], placedAt: now });
+	});
+
+	it('declares its identity, its events and its snapshot', () => {
+		// @ts-expect-error
+		const withoutEvents = (aggregate: AggregateRoot<OrderId>): unknown => aggregate;
+		// @ts-expect-error
+		const withIdentifierInSnapshot = (aggregate: AggregateRoot<OrderId, OrderPlaced, { id: OrderId }>): unknown =>
+			aggregate;
+
+		expect([typeof withoutEvents, typeof withIdentifierInSnapshot]).toEqual(['function', 'function']);
+	});
+
+	it('records no event when it declares none', () => {
+		expect(new Catalog(new OrderId('c1')).pullDomainEvents()).toEqual([]);
 	});
 });

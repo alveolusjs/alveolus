@@ -86,7 +86,7 @@ return this.#unitOfWork.run(async () => {
 		return saved;
 	}
 
-	await this.#outbox.append(wallet.pullEvents());
+	await this.#outbox.append(wallet.pullDomainEvents());
 
 	return ok();
 });

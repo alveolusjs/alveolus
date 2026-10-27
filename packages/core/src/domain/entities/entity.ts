@@ -1,7 +1,6 @@
 import type { AnyIdentifier } from '../value-objects/index.ts';
-import type { AnySnapshot } from './snapshot.ts';
 
-export abstract class Entity<Id extends AnyIdentifier, Snapshot extends AnySnapshot = AnySnapshot> {
+export abstract class Entity<Id extends AnyIdentifier> {
 	public readonly id: Id;
 
 	protected constructor(id: Id) {
@@ -11,8 +10,6 @@ export abstract class Entity<Id extends AnyIdentifier, Snapshot extends AnySnaps
 	public equals(other: AnyEntity): boolean {
 		return other === this || (other.constructor === this.constructor && this.id.equals(other.id));
 	}
-
-	public abstract toSnapshot(): Snapshot;
 }
 
 export type AnyEntity = Entity<AnyIdentifier>;

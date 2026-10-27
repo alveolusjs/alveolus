@@ -6,16 +6,38 @@ export class OrderId extends Identifier<string, 'OrderId'> {}
 
 export class OrderPlaced extends DomainEvent<OrderId, { total: number }> {}
 
-export class Order extends AggregateRoot<OrderId, OrderPlaced> {
+export class OrderShipped extends DomainEvent<OrderId, { carrier: string }> {}
+
+export type OrderSnapshot = { id: string; placedAt: Date | null; lines: readonly { sku: string; quantity: number }[] };
+
+export class Order extends AggregateRoot<OrderId, OrderPlaced, OrderSnapshot> {
+	private placedAt: Date | null = null;
+
+	public constructor(id: OrderId) {
+		super(id);
+	}
+
+	public toSnapshot(): OrderSnapshot {
+		return { id: this.id.value, lines: [{ quantity: 2, sku: 'p1' }], placedAt: this.placedAt };
+	}
+
+	public place(eventId: string, occurredAt: Date): void {
+		this.placedAt = occurredAt;
+		this.record(new OrderPlaced({ aggregateId: this.id, id: eventId, occurredAt, payload: { total: 42 } }));
+	}
+
+	public ship(eventId: string, occurredAt: Date): void {
+		// @ts-expect-error
+		this.record(new OrderShipped({ aggregateId: this.id, id: eventId, occurredAt, payload: { carrier: 'c1' } }));
+	}
+}
+
+export class Catalog extends AggregateRoot<OrderId, never, { id: string }> {
 	public constructor(id: OrderId) {
 		super(id);
 	}
 
 	public toSnapshot(): { id: string } {
 		return { id: this.id.value };
-	}
-
-	public place(eventId: string, occurredAt: Date): void {
-		this.record(new OrderPlaced({ aggregateId: this.id, id: eventId, occurredAt, payload: { total: 42 } }));
 	}
 }

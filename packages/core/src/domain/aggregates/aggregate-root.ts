@@ -1,13 +1,13 @@
 import type { AnyDomainEvent } from '../domain-events/index.ts';
-import type { AnySnapshot } from '../entities/index.ts';
 import { Entity } from '../entities/index.ts';
 import type { AnyIdentifier } from '../value-objects/index.ts';
+import type { AnySnapshot } from './snapshot.ts';
 
 export abstract class AggregateRoot<
 	Id extends AnyIdentifier,
-	Event extends AnyDomainEvent = AnyDomainEvent,
-	Snapshot extends AnySnapshot = AnySnapshot,
-> extends Entity<Id, Snapshot> {
+	Event extends AnyDomainEvent,
+	Snapshot extends AnySnapshot,
+> extends Entity<Id> {
 	private pendingDomainEvents: Event[] = [];
 
 	public get domainEvents(): readonly Event[] {
@@ -20,9 +20,11 @@ export abstract class AggregateRoot<
 		return events;
 	}
 
+	public abstract toSnapshot(): Snapshot;
+
 	protected record(event: Event): void {
 		this.pendingDomainEvents.push(event);
 	}
 }
 
-export type AnyAggregateRoot = AggregateRoot<AnyIdentifier>;
+export type AnyAggregateRoot = AggregateRoot<AnyIdentifier, AnyDomainEvent, AnySnapshot>;

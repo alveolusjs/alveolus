@@ -70,6 +70,7 @@ Alveolus est écrit en français. Les termes techniques et ceux de la littératu
 | factory | f. | Ce qui crée un objet du modèle quand un constructeur ne suffit pas. |
 | factory method | f. | Une méthode qui crée un objet du modèle, sur sa classe ou sur un autre aggregate. |
 | repository | m. | La collection d’aggregates entiers, chargés et enregistrés dans la transaction du use case. |
+| snapshot | m. | L’état d’un aggregate en valeurs simples, que le mapper du repository lit pour l’enregistrer. |
 | transaction script | m. | Une procédure par use case, dans une transaction, pour les bounded contexts supporting et generic. |
 | code smell | m. | Un indice dans le code qui laisse soupçonner un problème de conception, sans le prouver. |
 | anti-pattern | m. | Une solution répandue qui crée plus de problèmes qu’elle n’en résout. |

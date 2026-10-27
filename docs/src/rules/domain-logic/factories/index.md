@@ -60,7 +60,7 @@ async handle(command: OpenWalletCommand): Promise<Result<WalletId, OpenWalletErr
 			return saved;
 		}
 
-		await this.#outbox.append(wallet.value.pullEvents());
+		await this.#outbox.append(wallet.value.pullDomainEvents());
 
 		return ok(wallet.value.id);
 	});
