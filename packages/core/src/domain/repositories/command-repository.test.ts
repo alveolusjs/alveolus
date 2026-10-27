@@ -10,7 +10,7 @@ import { CommandRepository } from './command-repository.ts';
 describe('CommandRepository', () => {
 	it('is a port implemented by an adapter', async () => {
 		const order = new Order(new OrderId('o1'));
-		order.place(42, 'evt_1', new Date('2026-01-01T00:00:00Z'));
+		order.place(42, new Date('2026-01-01T00:00:00Z'));
 		const orders = new InMemoryOrders();
 
 		expect(await orders.save(order)).toEqual(ok());

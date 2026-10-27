@@ -55,11 +55,7 @@ reinstate(at: Date): Result<void, HolderIsNotSuspended> {
 	}
 
 	this.#status = 'active';
-	this.record<HolderReinstated>({
-		...eventMetadata(at),
-		type: 'wallets.holder.HolderReinstated',
-		holderId: this.id,
-	});
+	this.record(new HolderReinstated({ aggregateId: this.id, occurredAt: at, payload: null }));
 
 	return ok();
 }

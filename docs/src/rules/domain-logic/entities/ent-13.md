@@ -63,11 +63,7 @@ confirm(submitted: CodeDigest, at: Date): Result<void, WithdrawalNotPending | Wr
 	}
 
 	this.#status = 'confirmed';
-	this.record<WithdrawalConfirmed>({
-		...eventMetadata(at),
-		type: 'wallets.withdrawal.WithdrawalConfirmed',
-		withdrawalId: this.id,
-	});
+	this.record(new WithdrawalConfirmed({ aggregateId: this.id, occurredAt: at, payload: null }));
 
 	return ok();
 }

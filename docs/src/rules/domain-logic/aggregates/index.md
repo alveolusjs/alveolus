@@ -75,13 +75,7 @@ export class Wallet extends AggregateRoot<WalletId, WalletEvent, WalletSnapshot>
 		}
 
 		this.#blocks.set(reference.value, block);
-		this.record<WalletBlocked>({
-			...eventMetadata(at),
-			type: 'wallets.wallet.WalletBlocked',
-			walletId: this.id,
-			reference,
-			directions,
-		});
+		this.record(new WalletBlocked({ aggregateId: this.id, occurredAt: at, payload: { reference, directions } }));
 
 		return ok();
 	}
@@ -120,7 +114,7 @@ async handle(command: DebitWalletCommand): Promise<Result<void, DebitWalletError
 			return booked;
 		}
 
-		await this.#outbox.append(entry.value.pullDomainEvents());
+		await this.#outbox.add(this.#translator.translateAll(entry.value.pullDomainEvents()));
 
 		return ok();
 	});

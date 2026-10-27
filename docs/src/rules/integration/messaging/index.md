@@ -19,7 +19,7 @@ if (!booked.ok) {
 	return booked;
 }
 
-await this.#outbox.append(entry.value.pullDomainEvents());
+await this.#outbox.add(this.#translator.translateAll(entry.value.pullDomainEvents()));
 ```
 
 Un forwarder publie ensuite l’outbox dans l’ordre (MSG-03). Dans le bounded context `notifications`, un consumer lit le contrat publié et met la notification en file une seule fois, même quand le message arrive deux fois :

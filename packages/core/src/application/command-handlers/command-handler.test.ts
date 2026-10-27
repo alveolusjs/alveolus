@@ -28,9 +28,8 @@ describe('CommandHandler', () => {
 		handler = new PlaceOrderHandler(
 			orders,
 			outbox,
-			new OrderEventsTranslator(),
+			new OrderEventsTranslator(new SequentialIdGenerator()),
 			new FixedClock(new Date()),
-			new SequentialIdGenerator(),
 		);
 	});
 

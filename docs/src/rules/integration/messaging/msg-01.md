@@ -45,7 +45,7 @@ Un broker qui partage le stockage du modèle, ou une transaction distribuée cho
 
 Cette table d’events sert de file d’attente : c’est l’outbox transactionnelle.
 
-**Notre choix** : l’outbox est une table de la base du modèle. Le command handler y ajoute les events juste après avoir enregistré le modèle, dans la transaction qu’il a ouverte (REP-13). Les repositories ne font que persister l’état : la publication reste visible dans le handler. Pas de broker par défaut : le forwarder livre les events aux handlers de l’application (MSG-03).
+**Notre choix** : l’outbox est une table de la base du modèle. Le command handler y ajoute les events juste après avoir enregistré le modèle, dans la transaction qu’il a ouverte (REP-13). Il les traduit d’abord en integration events, par l’`EventTranslator` du bounded context : l’outbox ne garde que des messages du published language, chacun avec son identifiant. Les repositories ne font que persister l’état : la publication reste visible dans le handler. Pas de broker par défaut : le forwarder livre les events aux handlers de l’application (MSG-03).
 
 Un bounded context en transaction scripts n’a ni aggregate ni domain events : le script construit le message de son contrat publié (`public`), et l’ajoute à l’outbox, dans la transaction du Unit of Work (TXS-02).
 
@@ -86,7 +86,7 @@ return this.#unitOfWork.run(async () => {
 		return saved;
 	}
 
-	await this.#outbox.append(wallet.pullDomainEvents());
+	await this.#outbox.add(this.#translator.translateAll(wallet.pullDomainEvents()));
 
 	return ok();
 });

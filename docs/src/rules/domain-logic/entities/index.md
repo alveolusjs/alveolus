@@ -41,7 +41,7 @@ export class Holder extends AggregateRoot<HolderId, HolderClosed, HolderSnapshot
 		}
 
 		this.#status = 'closed';
-		this.record<HolderClosed>({ ...eventMetadata(at), type: 'wallets.holder.HolderClosed', holderId: this.id });
+		this.record(new HolderClosed({ aggregateId: this.id, occurredAt: at, payload: null }));
 
 		return ok();
 	}

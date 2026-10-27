@@ -50,12 +50,12 @@ export class Order extends AggregateRoot<OrderId, OrderPlaced, OrderSnapshot> {
 		return this.#placedTotal;
 	}
 
-	public place(total: number, eventId: string, occurredAt: Date): Result<void, InvalidTotal> {
+	public place(total: number, occurredAt: Date): Result<void, InvalidTotal> {
 		if (total <= 0) {
 			return err(new InvalidTotal({ total }));
 		}
 		this.#placedTotal = total;
-		this.record(new OrderPlaced({ aggregateId: this.id, id: eventId, occurredAt, payload: { total } }));
+		this.record(new OrderPlaced({ aggregateId: this.id, occurredAt, payload: { total } }));
 		return ok();
 	}
 }
@@ -162,21 +162,13 @@ export class PlaceOrderHandler extends CommandHandler<PlaceOrder, void, OrderNot
 	readonly #outbox: Outbox;
 	readonly #translator: OrderEventsTranslator;
 	readonly #clock: Clock;
-	readonly #ids: IdGenerator;
 
-	public constructor(
-		orders: Orders,
-		outbox: Outbox,
-		translator: OrderEventsTranslator,
-		clock: Clock,
-		ids: IdGenerator,
-	) {
+	public constructor(orders: Orders, outbox: Outbox, translator: OrderEventsTranslator, clock: Clock) {
 		super();
 		this.#orders = orders;
 		this.#outbox = outbox;
 		this.#translator = translator;
 		this.#clock = clock;
-		this.#ids = ids;
 	}
 
 	public async handle({ orderId, total }: PlaceOrder): Promise<Result<void, OrderNotFound | InvalidTotal>> {
@@ -184,7 +176,7 @@ export class PlaceOrderHandler extends CommandHandler<PlaceOrder, void, OrderNot
 		if (order === undefined) {
 			return err(new OrderNotFound({ id: orderId }));
 		}
-		const placed = order.place(total, this.#ids.next(), this.#clock.now());
+		const placed = order.place(total, this.#clock.now());
 		if (!placed.ok) {
 			return placed;
 		}
@@ -192,9 +184,7 @@ export class PlaceOrderHandler extends CommandHandler<PlaceOrder, void, OrderNot
 		if (!saved.ok) {
 			return saved;
 		}
-		await this.#outbox.add(
-			order.pullDomainEvents().map((event) => this.#translator.translate(event, { correlationId: orderId })),
-		);
+		await this.#outbox.add(this.#translator.translateAll(order.pullDomainEvents(), { correlationId: orderId }));
 		return ok();
 	}
 }

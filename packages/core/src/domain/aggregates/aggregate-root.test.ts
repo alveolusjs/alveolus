@@ -12,7 +12,7 @@ describe('AggregateRoot', () => {
 
 	it('exposes recorded events without clearing them', () => {
 		const order = new Order(new OrderId('o1'));
-		order.place('evt_1', now);
+		order.place(now);
 
 		expect(order.domainEvents).toHaveLength(1);
 		expect(order.domainEvents).toHaveLength(1);
@@ -20,7 +20,7 @@ describe('AggregateRoot', () => {
 
 	it('does not let callers mutate its events through domainEvents', () => {
 		const order = new Order(new OrderId('o1'));
-		order.place('evt_2', now);
+		order.place(now);
 
 		(order.domainEvents as OrderPlaced[]).length = 0;
 
@@ -29,8 +29,8 @@ describe('AggregateRoot', () => {
 
 	it('returns recorded events in order and clears them when pulled', () => {
 		const order = new Order(new OrderId('o1'));
-		order.place('evt_3', now);
-		order.place('evt_4', now);
+		order.place(now);
+		order.place(now);
 
 		const events = order.pullDomainEvents();
 
@@ -41,7 +41,7 @@ describe('AggregateRoot', () => {
 
 	it('turns into a snapshot of plain data, without its pending events', () => {
 		const order = new Order(new OrderId('o1'));
-		order.place('evt_1', now);
+		order.place(now);
 
 		expect(order.toSnapshot()).toEqual({ id: 'o1', lines: [{ quantity: 2, sku: 'p1' }], placedAt: now });
 	});

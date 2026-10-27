@@ -21,14 +21,14 @@ export class Order extends AggregateRoot<OrderId, OrderPlaced, OrderSnapshot> {
 		return { id: this.id.value, lines: [{ quantity: 2, sku: 'p1' }], placedAt: this.#placedAt };
 	}
 
-	public place(eventId: string, occurredAt: Date): void {
+	public place(occurredAt: Date): void {
 		this.#placedAt = occurredAt;
-		this.record(new OrderPlaced({ aggregateId: this.id, id: eventId, occurredAt, payload: { total: 42 } }));
+		this.record(new OrderPlaced({ aggregateId: this.id, occurredAt, payload: { total: 42 } }));
 	}
 
-	public ship(eventId: string, occurredAt: Date): void {
+	public ship(occurredAt: Date): void {
 		// @ts-expect-error
-		this.record(new OrderShipped({ aggregateId: this.id, id: eventId, occurredAt, payload: { carrier: 'c1' } }));
+		this.record(new OrderShipped({ aggregateId: this.id, occurredAt, payload: { carrier: 'c1' } }));
 	}
 }
 

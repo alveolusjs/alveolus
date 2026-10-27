@@ -63,12 +63,7 @@ unblock(reference: BlockReference, at: Date): Result<void, BlockNotFound> {
 		return err(new BlockNotFound(this.id, reference));
 	}
 
-	this.record<WalletUnblocked>({
-		...eventMetadata(at),
-		type: 'wallets.wallet.WalletUnblocked',
-		walletId: this.id,
-		reference,
-	});
+	this.record(new WalletUnblocked({ aggregateId: this.id, occurredAt: at, payload: { reference } }));
 
 	return ok();
 }

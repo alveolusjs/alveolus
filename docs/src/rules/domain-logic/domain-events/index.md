@@ -13,32 +13,21 @@ La façon dont un event est conservé, transmis et consommé relève de [messagi
 Ce qui est arrivé à un wallet, nommé au passé :
 
 ```ts
-export interface WalletOpened extends DomainEvent {
-	readonly type: 'wallets.wallet.WalletOpened';
-	readonly walletId: WalletId;
-	readonly holderId: HolderId;
-	readonly currency: Currency;
-}
+export class WalletOpened extends DomainEvent<WalletId, { readonly holderId: HolderId; readonly currency: Currency }> {}
 
-export interface MoneyDeposited extends DomainEvent {
-	readonly type: 'wallets.wallet.MoneyDeposited';
-	readonly walletId: WalletId;
-	readonly amount: Money;
-}
+export class MoneyDeposited extends DomainEvent<WalletId, { readonly amount: Money }> {}
 
-export interface MoneyWithdrawn extends DomainEvent {
-	readonly type: 'wallets.wallet.MoneyWithdrawn';
-	readonly walletId: WalletId;
-	readonly holderId: HolderId;
-	readonly amount: Money;
-	readonly balance: Money;
-}
+export class MoneyWithdrawn extends DomainEvent<
+	WalletId,
+	{ readonly holderId: HolderId; readonly amount: Money; readonly balance: Money }
+> {}
 ```
 
 - Des faits qui comptent pour le métier, nommés au passé (EVT-01, EVT-04).
 - Nés dans le modèle : le wallet enregistre `WalletOpened`, et l’écriture que créent `wallet.credit()` et `wallet.debit()` enregistre `MoneyDeposited` et `MoneyWithdrawn`. Rien d’autre ne les enregistre (EVT-03).
 - `MoneyWithdrawn` porte le titulaire et le solde après le retrait, pour qu’un subscriber agisse sans relire le wallet (EVT-05). Le wallet calcule ce solde au moment du débit : le solde qu’il vient de vérifier, moins le montant. Un débit concurrent échoue sur la version, donc ce solde est juste (AGG-15).
 - Toutes les propriétés sont en lecture seule (EVT-06).
+- Un event est une classe de `@alveolus/core` : l’identité de l’aggregate, la date, et les faits dans `payload`. Son type est le nom de sa classe. Il n’a pas d’identifiant : l’integration event en reçoit un quand l’`EventTranslator` le traduit, avec le type qualifié du published language (`wallets.wallet.MoneyWithdrawn`, PUB-03).
 
 ## Règles {#rules}
 
