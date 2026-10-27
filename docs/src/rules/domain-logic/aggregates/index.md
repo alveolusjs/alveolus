@@ -28,7 +28,7 @@ export class Wallet extends AggregateRoot<WalletId> {
 	readonly #blocks: Map<string, WalletBlock>;
 	#status: WalletStatus;
 
-	// constructor, openFor(holder, currency, at), restore(snapshot) and snapshot() for the repository
+	// constructor, openFor(id, holder, currency, at), restore(snapshot) and snapshot() for the repository
 
 	debit(
 		reference: OperationReference,

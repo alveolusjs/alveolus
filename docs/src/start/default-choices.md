@@ -10,7 +10,7 @@ Plusieurs décisions appartiennent à l’équipe. Alveolus en prend une par dé
 | Un refus devient un statut HTTP par son `type`, sans importer le domaine | UC-02, UC-07, API-01 |
 | Le Unit of Work dans `application`, la transaction portée par `AsyncLocalStorage` | REP-13, REP-14 |
 | Outbox et forwarder interne, pas de broker au départ | AGG-08, MSG-01, MSG-03, MSG-07 |
-| Des identités UUIDv7 générées par l’application, une classe par identité | ENT-03, ENT-05, ENT-08 |
+| Une classe par identité (`UuidIdentifier`), l’identité suivante donnée par le repository, des UUIDv7 générés dans `driven` | ENT-03, ENT-05, ENT-08 |
 | PostgreSQL et Prisma, les modèles Prisma séparés du domaine | LAY-01, AGG-15, REP-02, REP-05, REP-07, REP-08, VO-11 |
 | Aucune suppression en cascade dans la base : le repository supprime les parties, puis l’aggregate root, dans la transaction | REP-02 |
 | Pas de test double in-memory : les tests d’application et d’adapter sur un PostgreSQL jetable (Testcontainers) | TST-01, REP-16 |

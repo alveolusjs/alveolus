@@ -20,7 +20,7 @@ sources:
 
 ## Signal
 
-- Un use case qui instancie lui-même un aggregate, en lui passant l’identité du tenant ou du parent (`new Wallet(WalletId.generate(), holder.id, currency)`).
+- Un use case qui instancie lui-même un aggregate, en lui passant l’identité du tenant ou du parent (`new Wallet(walletId, holder.id, currency)`).
 - Une règle de création qui appartient à un autre aggregate, mais vérifiée dans l’application (« un titulaire suspendu n’ouvre pas de wallet »).
 
 ## Pourquoi
@@ -53,12 +53,12 @@ if (holder.status === 'suspended') {
 	return err(new HolderIsSuspended(holder.id));
 }
 
-const wallet = new Wallet(WalletId.generate(), holder.id, currency.value);
+const wallet = new Wallet(await this.#wallets.nextIdentity(), holder.id, currency.value);
 ```
 
 ```ts
 // Preferred: the holder controls the creation
-const wallet = holder.openWallet(currency.value, this.#clock.now());
+const wallet = holder.openWallet(await this.#wallets.nextIdentity(), currency.value, this.#clock.now());
 
 if (!wallet.ok) {
 	return wallet;
