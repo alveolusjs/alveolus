@@ -30,7 +30,7 @@ export class OrderNotFound extends DomainError<{ id: string }> {}
 export type OrderSnapshot = { id: string; total: number };
 
 export class Order extends AggregateRoot<OrderId, OrderPlaced, OrderSnapshot> {
-	private placedTotal = 0;
+	#placedTotal = 0;
 
 	public constructor(id: OrderId) {
 		super(id);
@@ -38,23 +38,23 @@ export class Order extends AggregateRoot<OrderId, OrderPlaced, OrderSnapshot> {
 
 	public static fromSnapshot(snapshot: OrderSnapshot): Order {
 		const order = new Order(new OrderId(snapshot.id));
-		order.placedTotal = snapshot.total;
+		order.#placedTotal = snapshot.total;
 		return order;
 	}
 
 	public toSnapshot(): OrderSnapshot {
-		return { id: this.id.value, total: this.placedTotal };
+		return { id: this.id.value, total: this.#placedTotal };
 	}
 
 	public get total(): number {
-		return this.placedTotal;
+		return this.#placedTotal;
 	}
 
 	public place(total: number, eventId: string, occurredAt: Date): Result<void, InvalidTotal> {
 		if (total <= 0) {
 			return err(new InvalidTotal({ total }));
 		}
-		this.placedTotal = total;
+		this.#placedTotal = total;
 		this.record(new OrderPlaced({ aggregateId: this.id, id: eventId, occurredAt, payload: { total } }));
 		return ok();
 	}
@@ -72,21 +72,24 @@ export interface GetOrderSummary {
 }
 
 export class FixedClock extends Clock {
-	public constructor(private readonly date: Date) {
+	readonly #date: Date;
+
+	public constructor(date: Date) {
 		super();
+		this.#date = date;
 	}
 
 	public now(): Date {
-		return this.date;
+		return this.#date;
 	}
 }
 
 export class SequentialIdGenerator extends IdGenerator {
-	private count = 0;
+	#count = 0;
 
 	public next(): string {
-		this.count += 1;
-		return `evt_${this.count}`;
+		this.#count += 1;
+		return `evt_${this.#count}`;
 	}
 }
 
@@ -95,20 +98,20 @@ export abstract class Orders extends CommandRepository<Order> {
 }
 
 export class InMemoryOrders extends Orders {
-	private readonly snapshots = new Map<string, OrderSnapshot>();
+	readonly #snapshots = new Map<string, OrderSnapshot>();
 
 	public findById(id: OrderId): Promise<Order | undefined> {
-		const snapshot = this.snapshots.get(id.value);
+		const snapshot = this.#snapshots.get(id.value);
 		return Promise.resolve(snapshot === undefined ? undefined : Order.fromSnapshot(snapshot));
 	}
 
 	public save(order: Order): Promise<Result<void, never>> {
-		this.snapshots.set(order.id.value, order.toSnapshot());
+		this.#snapshots.set(order.id.value, order.toSnapshot());
 		return Promise.resolve(ok());
 	}
 
 	public countPlaced(): Promise<number> {
-		return Promise.resolve([...this.snapshots.values()].filter((snapshot) => snapshot.total > 0).length);
+		return Promise.resolve([...this.#snapshots.values()].filter((snapshot) => snapshot.total > 0).length);
 	}
 }
 
@@ -117,12 +120,15 @@ export abstract class OrderSummaries extends QueryRepository<OrderSummary> {
 }
 
 export class InMemoryOrderSummaries extends OrderSummaries {
-	public constructor(private readonly summaries: readonly OrderSummary[]) {
+	readonly #summaries: readonly OrderSummary[];
+
+	public constructor(summaries: readonly OrderSummary[]) {
 		super();
+		this.#summaries = summaries;
 	}
 
 	public summaryOf(id: string): Promise<OrderSummary | undefined> {
-		return Promise.resolve(this.summaries.find((summary) => summary.id === id));
+		return Promise.resolve(this.#summaries.find((summary) => summary.id === id));
 	}
 }
 
@@ -152,31 +158,42 @@ export class RecordingEventPublisher extends EventPublisher {
 }
 
 export class PlaceOrderHandler extends CommandHandler<PlaceOrder, void, OrderNotFound | InvalidTotal> {
+	readonly #orders: Orders;
+	readonly #outbox: Outbox;
+	readonly #translator: OrderEventsTranslator;
+	readonly #clock: Clock;
+	readonly #ids: IdGenerator;
+
 	public constructor(
-		private readonly orders: Orders,
-		private readonly outbox: Outbox,
-		private readonly translator: OrderEventsTranslator,
-		private readonly clock: Clock,
-		private readonly ids: IdGenerator,
+		orders: Orders,
+		outbox: Outbox,
+		translator: OrderEventsTranslator,
+		clock: Clock,
+		ids: IdGenerator,
 	) {
 		super();
+		this.#orders = orders;
+		this.#outbox = outbox;
+		this.#translator = translator;
+		this.#clock = clock;
+		this.#ids = ids;
 	}
 
 	public async handle({ orderId, total }: PlaceOrder): Promise<Result<void, OrderNotFound | InvalidTotal>> {
-		const order = await this.orders.findById(new OrderId(orderId));
+		const order = await this.#orders.findById(new OrderId(orderId));
 		if (order === undefined) {
 			return err(new OrderNotFound({ id: orderId }));
 		}
-		const placed = order.place(total, this.ids.next(), this.clock.now());
+		const placed = order.place(total, this.#ids.next(), this.#clock.now());
 		if (!placed.ok) {
 			return placed;
 		}
-		const saved = await this.orders.save(order);
+		const saved = await this.#orders.save(order);
 		if (!saved.ok) {
 			return saved;
 		}
-		await this.outbox.add(
-			order.pullDomainEvents().map((event) => this.translator.translate(event, { correlationId: orderId })),
+		await this.#outbox.add(
+			order.pullDomainEvents().map((event) => this.#translator.translate(event, { correlationId: orderId })),
 		);
 		return ok();
 	}
@@ -189,12 +206,15 @@ export class CreateOrderHandler extends CommandHandler<{ orderId: string }, Orde
 }
 
 export class GetOrderSummaryHandler extends QueryHandler<GetOrderSummary, OrderSummary, OrderNotFound> {
-	public constructor(private readonly summaries: OrderSummaries) {
+	readonly #summaries: OrderSummaries;
+
+	public constructor(summaries: OrderSummaries) {
 		super();
+		this.#summaries = summaries;
 	}
 
 	public async handle({ orderId }: GetOrderSummary): Promise<Result<OrderSummary, OrderNotFound>> {
-		const summary = await this.summaries.summaryOf(orderId);
+		const summary = await this.#summaries.summaryOf(orderId);
 		return summary === undefined ? err(new OrderNotFound({ id: orderId })) : ok(summary);
 	}
 }

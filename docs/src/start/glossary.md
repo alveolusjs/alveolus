@@ -141,6 +141,7 @@ Alveolus est écrit en français. Les termes techniques et ceux de la littératu
 | deployment unit | f. | Ce que l’on déploie d’un bloc : un service, une fonction, un job. |
 | getter, setter | m. | Une méthode ou une propriété qui lit, ou écrit, un champ de l’objet depuis l’extérieur. |
 | decorator | m. | Une fonction appliquée avec `@` à une classe, une méthode ou une propriété (`@Injectable`). |
+| parameter property | f. | Un paramètre du constructeur marqué `private`, `protected`, `public` ou `readonly`, que TypeScript transforme en champ. |
 | double dispatch | m. | Un objet qui reçoit en paramètre celui à qui il confie une partie du travail. |
 | mediator | m. | Un objet que le client passe à l’aggregate pour qu’il y publie son état, sans montrer sa structure. |
 | presenter, assembler | m. | La classe d’un adapter driving qui met en forme ce qu’un écran ou une réponse affiche. |

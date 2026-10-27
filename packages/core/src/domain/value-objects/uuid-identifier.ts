@@ -4,7 +4,7 @@ import { InvalidIdentifier } from '../domain-errors/index.ts';
 import { Identifier } from './identifier.ts';
 
 export abstract class UuidIdentifier<Tag extends string = string> extends Identifier<string, Tag> {
-	private static readonly format = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
+	static readonly #format = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
 
 	protected static parse<I extends UuidIdentifier>(
 		value: string,
@@ -12,7 +12,7 @@ export abstract class UuidIdentifier<Tag extends string = string> extends Identi
 	): Result<I, InvalidIdentifier> {
 		const normalized = value.toLowerCase();
 
-		if (!UuidIdentifier.format.test(normalized)) {
+		if (!UuidIdentifier.#format.test(normalized)) {
 			return err(new InvalidIdentifier({ identifier: this.name, value }));
 		}
 

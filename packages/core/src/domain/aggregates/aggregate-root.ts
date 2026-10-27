@@ -8,22 +8,22 @@ export abstract class AggregateRoot<
 	Event extends AnyDomainEvent,
 	Snapshot extends AnySnapshot,
 > extends Entity<Id> {
-	private pendingDomainEvents: Event[] = [];
+	#pendingDomainEvents: Event[] = [];
 
 	public get domainEvents(): readonly Event[] {
-		return [...this.pendingDomainEvents];
+		return [...this.#pendingDomainEvents];
 	}
 
 	public pullDomainEvents(): Event[] {
-		const events = this.pendingDomainEvents;
-		this.pendingDomainEvents = [];
+		const events = this.#pendingDomainEvents;
+		this.#pendingDomainEvents = [];
 		return events;
 	}
 
 	public abstract toSnapshot(): Snapshot;
 
 	protected record(event: Event): void {
-		this.pendingDomainEvents.push(event);
+		this.#pendingDomainEvents.push(event);
 	}
 }
 

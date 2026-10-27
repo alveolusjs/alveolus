@@ -11,6 +11,7 @@ export default defineConfig({
 		'no-lonely-if': 'error',
 		'typescript/no-non-null-assertion': 'error',
 		'typescript/no-unsafe-type-assertion': 'error',
+		'typescript/parameter-properties': 'error',
 	},
 	overrides: [
 		{

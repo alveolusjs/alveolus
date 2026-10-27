@@ -11,18 +11,18 @@ export class OrderShipped extends DomainEvent<OrderId, { carrier: string }> {}
 export type OrderSnapshot = { id: string; placedAt: Date | null; lines: readonly { sku: string; quantity: number }[] };
 
 export class Order extends AggregateRoot<OrderId, OrderPlaced, OrderSnapshot> {
-	private placedAt: Date | null = null;
+	#placedAt: Date | null = null;
 
 	public constructor(id: OrderId) {
 		super(id);
 	}
 
 	public toSnapshot(): OrderSnapshot {
-		return { id: this.id.value, lines: [{ quantity: 2, sku: 'p1' }], placedAt: this.placedAt };
+		return { id: this.id.value, lines: [{ quantity: 2, sku: 'p1' }], placedAt: this.#placedAt };
 	}
 
 	public place(eventId: string, occurredAt: Date): void {
-		this.placedAt = occurredAt;
+		this.#placedAt = occurredAt;
 		this.record(new OrderPlaced({ aggregateId: this.id, id: eventId, occurredAt, payload: { total: 42 } }));
 	}
 
