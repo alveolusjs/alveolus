@@ -20,7 +20,8 @@
 	},
 	"files": [
 		"dist",
-		"dependency-cruiser.mjs"
+		"dependency-cruiser.mjs",
+		"eslint-formatter.mjs"
 	],
 	"type": "module",
 	"sideEffects": false,
@@ -37,6 +38,10 @@
 			"@alveolus/source": "./src/eslint.ts",
 			"default": "./dist/eslint.mjs"
 		},
+		"./eslint-formatter": {
+			"@alveolus/source": "./src/eslint-formatter.ts",
+			"default": "./dist/eslint-formatter.mjs"
+		},
 		"./package.json": "./package.json"
 	},
 	"publishConfig": {
@@ -44,6 +49,7 @@
 			"./dependency-cruiser": "./dist/dependency-cruiser.mjs",
 			"./dependency-cruiser-reporter": "./dist/dependency-cruiser-reporter.mjs",
 			"./eslint": "./dist/eslint.mjs",
+			"./eslint-formatter": "./dist/eslint-formatter.mjs",
 			"./package.json": "./package.json"
 		}
 	},

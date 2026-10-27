@@ -29,7 +29,14 @@ export class CodeFrame {
 		return undefined;
 	}
 
-	public render(span: Span, label: string): string[] {
+	public span(line: number, column: number, endLine?: number, endColumn?: number): Span {
+		const text = this.#lines[line - 1] ?? '';
+		const end = endLine === line && endColumn !== undefined ? endColumn : text.length + 1;
+
+		return { line, column, length: Math.max(end - column, 1) };
+	}
+
+	public render(span: Span, label?: string): string[] {
 		const first = Math.max(span.line - 1, 1);
 		const last = Math.min(span.line + 1, this.#lines.length);
 		const width = String(last).length;
@@ -49,8 +56,13 @@ export class CodeFrame {
 		return rows;
 	}
 
-	#underline(span: Span, label: string, margin: string): string[] {
+	#underline(span: Span, label: string | undefined, margin: string): string[] {
 		const start = this.#expand((this.#lines[span.line - 1] ?? '').slice(0, span.column - 1)).length;
+
+		if (label === undefined) {
+			return [`${margin}· ${' '.repeat(start)}${'─'.repeat(span.length)}`];
+		}
+
 		const middle = Math.floor(span.length / 2);
 		const line = `${'─'.repeat(middle)}┬${'─'.repeat(span.length - middle - 1)}`;
 

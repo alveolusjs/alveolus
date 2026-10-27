@@ -10,6 +10,7 @@ const packageRoot = fileURLToPath(new URL('../../../', import.meta.url));
 const eslintBin = join(packageRoot, 'node_modules/eslint/bin/eslint.js');
 const depcruiseBin = join(packageRoot, 'node_modules/dependency-cruiser/bin/dependency-cruiser.mjs');
 const eslintPreset = pathToFileURL(join(packageRoot, 'src/eslint.ts')).href;
+const eslintFormatter = join(packageRoot, 'src/eslint-formatter.ts');
 const dependencyCruiserPreset = join(packageRoot, 'src/dependency-cruiser.ts');
 const dependencyCruiserReporter = pathToFileURL(join(packageRoot, 'src/dependency-cruiser-reporter.ts')).href;
 
@@ -67,6 +68,16 @@ export class TestApp {
 		});
 
 		return findings.sort();
+	}
+
+	public eslintReport(): Run {
+		let run: Run = { output: '', status: null };
+
+		this.#inDirectory((directory) => {
+			run = this.#spawn(directory, eslintBin, ['src', '--format', eslintFormatter]);
+		});
+
+		return run;
 	}
 
 	public dependencyCruiser(): string[] {

@@ -5,6 +5,7 @@ import type { ICruiseResult, IReporterOutput, IViolation } from 'dependency-crui
 
 import { rules } from '../rules.ts';
 import { CodeFrame } from './code-frame.ts';
+import { Summary } from './summary.ts';
 
 export class ViolationReport {
 	readonly #result: ICruiseResult;
@@ -45,7 +46,7 @@ export class ViolationReport {
 			blocks.push(this.#block(violation).join('\n'));
 		}
 
-		blocks.push(`Found ${this.#count(warnings, 'warning')} and ${this.#count(errors, 'error')}.`);
+		blocks.push(new Summary(errors, warnings).toString());
 
 		return { output: `${blocks.join('\n\n')}\n`, exitCode: errors };
 	}
@@ -85,9 +86,5 @@ export class ViolationReport {
 		} catch {
 			return undefined;
 		}
-	}
-
-	#count(total: number, noun: string): string {
-		return `${total} ${noun}${total === 1 ? '' : 's'}`;
 	}
 }

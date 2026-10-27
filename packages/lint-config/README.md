@@ -18,8 +18,12 @@ export default [...alveolus];
 ```
 
 ```sh
-eslint src
+eslint src --format ./node_modules/@alveolus/lint-config/eslint-formatter.mjs
 ```
+
+The formatter prints each message in the frame of the dependency-cruiser reporter below: the code and the title of an
+Alveolus rule, the code framed in its file, and the url of the rule. A message of another rule keeps its id and its
+text. ESLint loads a formatter of a scoped package only by its path.
 
 ESLint 10 and typescript-eslint 8.71 or later. `nest new` installs oxlint since NestJS 12: an app removes it, or keeps it
 for its own rules next to these ones.
