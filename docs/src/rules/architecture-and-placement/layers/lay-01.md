@@ -5,7 +5,7 @@ group: Sens des dépendances
 scope: [domain, application, driven]
 style: [tactical, transaction-script]
 severity: major
-detection: [dependency-cruiser, oxlint]
+detection: [dependency-cruiser, eslint]
 review: approved
 sources:
   - "Layers"

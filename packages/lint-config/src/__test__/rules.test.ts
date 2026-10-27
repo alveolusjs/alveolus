@@ -5,14 +5,14 @@ import matter from 'gray-matter';
 import { describe, expect, it } from 'vitest';
 
 import dependencyCruiser from '../dependency-cruiser.ts';
-import oxlint from '../oxlint.ts';
+import eslint from '../eslint.ts';
 import type { Rule } from '../rule.ts';
 import { rules } from '../rules.ts';
 
 const site = fileURLToPath(new URL('../../../../docs/src/rules/', import.meta.url));
-const oxlintMessages = JSON.stringify(oxlint);
+const eslintRules = JSON.stringify(eslint.map((config) => config.rules ?? {}));
 const dependencyCruiserRules = (dependencyCruiser.forbidden ?? []).map((forbidden) => forbidden.name);
-const linters = ['dependency-cruiser', 'oxlint'];
+const linters = ['dependency-cruiser', 'eslint'];
 const pages = new Map<string, { readonly review: string; readonly detection: string[]; readonly path: string }>();
 
 for (const path of globSync('*/*/*-*.md', { cwd: site })) {
@@ -34,8 +34,11 @@ class Detection {
 			tools.push('dependency-cruiser');
 		}
 
-		if (oxlintMessages.includes(`${this.#rule.code} · `)) {
-			tools.push('oxlint');
+		if (
+			eslintRules.includes(`${this.#rule.code} · `) ||
+			eslintRules.includes(`"alveolus/${this.#rule.code.toLowerCase()}`)
+		) {
+			tools.push('eslint');
 		}
 
 		return tools;

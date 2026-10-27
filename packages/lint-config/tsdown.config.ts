@@ -5,7 +5,7 @@ export default defineConfig({
 	entry: {
 		'dependency-cruiser': 'src/dependency-cruiser.ts',
 		'dependency-cruiser-reporter': 'src/dependency-cruiser-reporter.ts',
-		oxlint: 'src/oxlint.ts',
+		eslint: 'src/eslint.ts',
 	},
 	exports: { devExports: '@alveolus/source' },
 	format: 'esm',

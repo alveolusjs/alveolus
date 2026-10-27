@@ -1,31 +1,28 @@
 # @alveolus/lint-config
 
-The Alveolus rules that a linter decides without false positives, for [oxlint](https://oxc.rs/docs/guide/usage/linter)
-and [dependency-cruiser](https://github.com/sverweij/dependency-cruiser). Few rules, each one exact: the rest stays
+The Alveolus rules that a linter decides without false positives, for [ESLint](https://eslint.org/) and
+[dependency-cruiser](https://github.com/sverweij/dependency-cruiser). Few rules, each one exact: the rest stays
 for review. Each message gives the code of its rule, its title in English and the url of its page.
 
 ```sh
-pnpm add -D @alveolus/lint-config oxlint dependency-cruiser
+pnpm add -D @alveolus/lint-config eslint typescript-eslint dependency-cruiser
 ```
 
-## oxlint
+## ESLint
 
-`nest new` installs oxlint since NestJS 12. Replace its `.oxlintrc.json` with an `oxlint.config.mts` (or
-`oxlint.config.ts` when the app is an ES module):
+```js
+// eslint.config.mjs
+import alveolus from '@alveolus/lint-config/eslint';
 
-```ts
-import { defineConfig } from 'oxlint';
-import alveolus from '@alveolus/lint-config/oxlint';
-
-export default defineConfig({
-	extends: [alveolus],
-	rules: {
-		'typescript/no-floating-promises': 'error',
-	},
-});
+export default [...alveolus];
 ```
 
-oxlint 1.89 or later: older versions ignore `oxlint.config.mts` without a word, and check nothing.
+```sh
+eslint src
+```
+
+ESLint 10 and typescript-eslint 8.71 or later. `nest new` installs oxlint since NestJS 12: an app removes it, or keeps it
+for its own rules next to these ones.
 
 ## dependency-cruiser
 
@@ -68,9 +65,9 @@ TypeScript 7 yet.
 | [LAY-02](https://alveolus.dev/rules/architecture-and-placement/layers/lay-02) | dependency-cruiser | A cycle between sibling modules of a layer, even when no file imports itself back. A module and its own sub-module are not siblings. |
 | [LAY-01](https://alveolus.dev/rules/architecture-and-placement/layers/lay-01) | dependency-cruiser | `domain` or `application` importing `driving` or `driven`. |
 | [PUB-01](https://alveolus.dev/rules/integration/contracts/pub-01) | dependency-cruiser | `public` importing `domain`, `application`, `driving` or `driven` of its bounded context. |
-| [LAY-01](https://alveolus.dev/rules/architecture-and-placement/layers/lay-01), [CTX-06](https://alveolus.dev/rules/strategic-design/bounded-contexts/ctx-06) | oxlint | `domain` importing any package but `@alveolus/core` and the `node:` modules. |
-| [WIR-05](https://alveolus.dev/rules/architecture-and-placement/wiring/wir-05) | oxlint | `Injectable`, `Inject` or `Optional` of `@nestjs/common` imported outside `driving/http` and wiring files, under another name or through a namespace included. |
-| [PLC-07](https://alveolus.dev/rules/architecture-and-placement/placement/plc-07) | oxlint | `@prisma/client` imported outside `driven/prisma` and `application`, and `@nestjs/swagger` outside `driving/http`. |
+| [LAY-01](https://alveolus.dev/rules/architecture-and-placement/layers/lay-01), [CTX-06](https://alveolus.dev/rules/strategic-design/bounded-contexts/ctx-06) | ESLint | `domain` importing any package but `@alveolus/core` and the `node:` modules. |
+| [WIR-05](https://alveolus.dev/rules/architecture-and-placement/wiring/wir-05) | ESLint | `Injectable`, `Inject` or `Optional` of `@nestjs/common` imported outside `driving/http` and wiring files, under another name or through a namespace included. |
+| [PLC-07](https://alveolus.dev/rules/architecture-and-placement/placement/plc-07) | ESLint | `@prisma/client` imported outside `driven/prisma` and `application`, and `@nestjs/swagger` outside `driving/http`. |
 
 Wiring files (`.module`, `.wiring`, `.bootstrap`, `.config`) and tests (`__test__`, `.spec.ts`) are left out.
 
@@ -80,7 +77,7 @@ Wiring files (`.module`, `.wiring`, `.bootstrap`, `.config`) and tests (`__test_
   context declared elsewhere in `architecture.json` is not checked.
 - `@prisma/client` stays allowed in every `application`, because a transaction script uses it there: in a tactical
   bounded context, it is left to review. A Prisma client generated to another path is not seen.
-- oxlint gives each file one set of options per rule: an app that configures `no-restricted-imports` itself replaces
+- ESLint gives each file one set of options per rule: an app that configures `no-restricted-imports` itself replaces
   these restrictions for the files it covers.
 
 ## Waivers
@@ -89,7 +86,7 @@ A waiver gives the code of the rule and its reason, as [the site](https://alveol
 it.
 
 ```ts
-// oxlint-disable-next-line no-restricted-imports -- waiver WIR-05: <reason>, see ADR-NNNN
+// eslint-disable-next-line no-restricted-imports -- waiver WIR-05: <reason>, see ADR-NNNN
 import { Injectable } from '@nestjs/common';
 ```
 
