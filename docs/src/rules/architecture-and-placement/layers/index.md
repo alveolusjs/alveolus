@@ -4,7 +4,7 @@ menu: Vue d’ensemble
 
 # Couches et dépendances
 
-Quel que soit le style d’un bounded context, son domaine reste isolé : il déclare ses interfaces, et les couches extérieures les implémentent. Les dépendances pointent vers l’intérieur, ne forment aucun cycle, et un autre bounded context n’entre que par `public`. dependency-cruiser vérifie la plupart de ces règles.
+Quel que soit le style d’un bounded context, son domaine reste isolé : il déclare ses interfaces, et les couches extérieures les implémentent. Les dépendances pointent vers l’intérieur, ne forment aucun cycle, et un autre bounded context n’entre que par `public`. ESLint vérifie la plupart de ces règles dans l’éditeur, et dependency-cruiser les cycles.
 
 L’organisation attendue est décrite dans l’[architecture de référence](../../../start/reference-architecture). La place de chaque fichier relève de [Ce qui va où](../placement/) (PLC). Le choix d’un pattern d’architecture, CQRS ou broker, relève de CTX-16.
 

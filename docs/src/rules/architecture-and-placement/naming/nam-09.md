@@ -38,7 +38,7 @@ Déclarer chaque champ privé `readonly #name` en tête du corps de la classe, e
 
 ## Adaptation
 
-**Notre choix** : tout membre privé est `#`, et aucune parameter property. La règle `typescript/parameter-properties` d’oxlint trouve les parameter properties. Aucune règle d’oxlint ne refuse un membre `private` : ce signal reste à la review.
+**Notre choix** : tout membre privé est `#`, et aucune parameter property. La règle `alveolus/nam-09-parameter-properties` de `@alveolus/lint-config` trouve les parameter properties. Un membre `private` reste à la review.
 
 ## Voir aussi
 

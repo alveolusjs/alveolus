@@ -81,26 +81,32 @@ La conception découpe la story en incréments, une merge request chacun, assez 
 
 Chaque skill attend d’être lancé : on relit entre deux étapes, et la conception reste en brouillon tant qu’on ne l’a pas approuvée.
 
-## 4. Vérifier en CI {#lint}
+## 4. Vérifier dans l’éditeur et en CI {#lint}
 
-Les règles qu’un lint décide sans faux positif sont livrées pour deux outils : oxlint, que `nest new` installe, et dependency-cruiser, qui suit les imports.
+Les règles qu’un lint décide sans faux positif sont livrées pour deux outils : ESLint, qui les montre dans l’éditeur, et dependency-cruiser, qui suit le graphe des imports pour trouver les cycles.
 
 ```sh
-pnpm add -D @alveolus/lint-config oxlint dependency-cruiser
+pnpm add -D @alveolus/lint-config eslint typescript-eslint dependency-cruiser
 ```
 
-```ts
-// oxlint.config.mts
-import { defineConfig } from 'oxlint';
-import alveolus from '@alveolus/lint-config/oxlint';
+```js
+// eslint.config.mjs
+import alveolus from '@alveolus/lint-config/eslint';
 
-export default defineConfig({ extends: [alveolus] });
+export default [...alveolus];
 ```
 
 ```js
 // .dependency-cruiser.cjs
 module.exports = { extends: '@alveolus/lint-config/dependency-cruiser' };
 ```
+
+```sh
+eslint src --format ./node_modules/@alveolus/lint-config/eslint-formatter.mjs
+depcruise src --output-type plugin:@alveolus/lint-config/dependency-cruiser-reporter
+```
+
+`nest new` installe oxlint depuis NestJS 12. Le projet le retire, ou le garde pour ses propres règles, à côté de celles-ci. Le format du code reste au choix du projet.
 
 Chaque erreur cite le code de sa règle et l’adresse de sa page. Peu de règles sont vérifiées ainsi : les autres restent à la revue, par l’agent de revue et par l’équipe. Le [README du package](https://github.com/alveolusjs/alveolus/tree/main/packages/lint-config) liste ce que chaque outil vérifie, et ce qu’il ne voit pas.
 
