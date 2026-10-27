@@ -27,7 +27,7 @@ describe('LAY-04 with ESLint', () => {
 				`export { Wallet } from '../../../wallets/domain/wallet/wallet.aggregate.ts';`,
 			);
 
-		expect(project.eslint()).toEqual([
+		expect(project.eslint(lay04)).toEqual([
 			`src/notifications/application/notification/alias.ts:1 ${lay04.describe()}`,
 			`src/notifications/application/notification/notify.ts:1 ${lay04.describe()}`,
 			`src/notifications/application/notification/type-only.ts:1 ${lay04.describe()}`,
@@ -42,7 +42,7 @@ describe('LAY-04 with ESLint', () => {
 			`import { Wallet } from '../../../wallets/domain/wallet/wallet.aggregate.js';`,
 		);
 
-		expect(project.eslintMessages()).toEqual([
+		expect(project.eslintMessages().filter((message) => message.includes('LAY-04'))).toEqual([
 			`${notify}:1 reaches src/wallets/domain/wallet/wallet.aggregate.ts. ${lay04.describe()}`,
 		]);
 	});
@@ -53,7 +53,7 @@ describe('LAY-04 with ESLint', () => {
 			`import { WalletsModule } from '../wallets/wallets.module.ts';\n\nexport const modules = [WalletsModule];`,
 		);
 
-		expect(project.eslint()).toEqual([`src/notifications/notifications.module.ts:1 ${lay04.describe()}`]);
+		expect(project.eslint(lay04)).toEqual([`src/notifications/notifications.module.ts:1 ${lay04.describe()}`]);
 	});
 
 	it('leaves public, shared, packages, tests and the files of src that sit in no bounded context', () => {
@@ -69,7 +69,7 @@ describe('LAY-04 with ESLint', () => {
 			)
 			.with('src/notifications/application/notification/clock.ts', `import { Clock } from '@alveolus/core';`);
 
-		expect(project.eslint()).toEqual([]);
+		expect(project.eslint(lay04)).toEqual([]);
 	});
 });
 
@@ -85,7 +85,7 @@ describe('LAY-01 with ESLint', () => {
 				`import type { WalletController } from '../../driving/http/wallet.controller.ts';`,
 			);
 
-		expect(project.eslint()).toEqual([
+		expect(project.eslint(lay01)).toEqual([
 			`src/wallets/application/wallet/withdraw.command.ts:1 ${lay01.describe()}`,
 			`src/wallets/domain/wallet/wallet.events.ts:1 ${lay01.describe()}`,
 		]);
@@ -104,7 +104,7 @@ describe('PUB-01 with ESLint', () => {
 				`import type { DepositHandler } from '../application/wallet/deposit.command.ts';`,
 			);
 
-		expect(project.eslint()).toEqual([
+		expect(project.eslint(pub01)).toEqual([
 			`src/wallets/public/deposit.contract.ts:1 ${pub01.describe()}`,
 			`src/wallets/public/wallet.dto.ts:1 ${pub01.describe()}`,
 		]);

@@ -4,6 +4,7 @@ import { tmpdir } from 'node:os';
 import { dirname, join, relative } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
+import type { Rule } from '../../rule.ts';
 import { referenceApp } from './reference-app.ts';
 
 const packageRoot = fileURLToPath(new URL('../../../', import.meta.url));
@@ -61,12 +62,20 @@ export class TestApp {
 		return new TestApp(this.#files, [...this.#dependencyCruiserRules, rule], this.#eslintRules);
 	}
 
-	public withEslintRule(name: string): TestApp {
-		return new TestApp(this.#files, this.#dependencyCruiserRules, { ...this.#eslintRules, [name]: 'error' });
+	public withEslintRule(name: string, level: 'error' | 'off'): TestApp {
+		return new TestApp(this.#files, this.#dependencyCruiserRules, { ...this.#eslintRules, [name]: level });
 	}
 
-	public eslint(): string[] {
-		return this.eslintMessages().map((finding) => finding.replace(/^(\S+) .*?([A-Z]{2,3}-\d{2} · )/s, '$1 $2'));
+	public eslint(...checked: readonly Rule[]): string[] {
+		const findings = this.eslintMessages().map((finding) =>
+			finding.replace(/^(\S+) .*?([A-Z]{2,3}-\d{2} · )/s, '$1 $2'),
+		);
+
+		if (checked.length === 0) {
+			return findings;
+		}
+
+		return findings.filter((finding) => checked.some((rule) => finding.includes(`${rule.code} · `)));
 	}
 
 	public eslintMessages(): string[] {

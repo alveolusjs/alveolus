@@ -37,7 +37,11 @@ const config: Linter.Config[] = defineConfig(
 		rules: {
 			'alveolus/lay-01': 'error',
 			'alveolus/lay-04': 'error',
+			'alveolus/nam-09-parameter-properties': 'error',
 			'alveolus/pub-01': 'error',
+			'alveolus/uc-11-must-use-result': 'error',
+			'alveolus/uc-11-no-floating-promises': 'error',
+			'alveolus/uc-11-no-unused-vars': 'error',
 			'no-restricted-imports': ['error', { paths: [containerDecorators, prisma, swagger] }],
 		},
 	},
@@ -62,7 +66,11 @@ const config: Linter.Config[] = defineConfig(
 		rules: {
 			'alveolus/lay-01': 'off',
 			'alveolus/lay-04': 'off',
+			'alveolus/nam-09-parameter-properties': 'off',
 			'alveolus/pub-01': 'off',
+			'alveolus/uc-11-must-use-result': 'off',
+			'alveolus/uc-11-no-floating-promises': 'off',
+			'alveolus/uc-11-no-unused-vars': 'off',
 			'no-restricted-imports': 'off',
 		},
 	},

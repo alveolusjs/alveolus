@@ -72,25 +72,15 @@ TypeScript 7 yet.
 | [LAY-01](https://alveolus.dev/rules/architecture-and-placement/layers/lay-01), [CTX-06](https://alveolus.dev/rules/strategic-design/bounded-contexts/ctx-06) | ESLint | `domain` importing any package but `@alveolus/core` and the `node:` modules. |
 | [WIR-05](https://alveolus.dev/rules/architecture-and-placement/wiring/wir-05) | ESLint | `Injectable`, `Inject` or `Optional` of `@nestjs/common` imported outside `driving/http` and wiring files, under another name or through a namespace included. |
 | [PLC-07](https://alveolus.dev/rules/architecture-and-placement/placement/plc-07) | ESLint | `@prisma/client` imported outside `driven/prisma` and `application`, and `@nestjs/swagger` outside `driving/http`. |
+| [UC-11](https://alveolus.dev/rules/architecture-and-placement/use-cases/uc-11) | ESLint | A `Result` dropped as a statement, awaited or voided (`alveolus/uc-11-must-use-result`, which reads the type of the expression), a variable that nothing reads (`alveolus/uc-11-no-unused-vars`), and a promise that is never awaited (`alveolus/uc-11-no-floating-promises`). |
+| [NAM-09](https://alveolus.dev/rules/architecture-and-placement/naming/nam-09) | ESLint | A parameter property: `constructor(private readonly clock: Clock)` (`alveolus/nam-09-parameter-properties`). |
 
+The rules of typescript-eslint behind UC-11 and NAM-09 come under the name and with the url of the Alveolus rule.
 Wiring files (`.module`, `.wiring`, `.bootstrap`, `.config`) may import packages, and tests (`__test__`, `.spec.ts`)
 are left out. The rules on imports between folders ask the TypeScript program where each import leads, as the
 compiler resolves it: they need the type information of typescript-eslint, which the preset turns on
 (`projectService`) for `src/**/*.ts`. ESLint shows them in the editor; only the cycles of LAY-02 wait for
 dependency-cruiser, which sees the whole graph.
-
-## Rules waiting for review
-
-The preset turns these on once their rule is approved. An app can turn them on already.
-
-| Rule | ESLint rule | What it reports |
-| --- | --- | --- |
-| [UC-11](https://alveolus.dev/rules/architecture-and-placement/use-cases/uc-11) | `alveolus/uc-11-must-use-result` | A `Result` dropped as a statement, awaited or voided. It reads the type of the expression. |
-| [UC-11](https://alveolus.dev/rules/architecture-and-placement/use-cases/uc-11) | `alveolus/uc-11-no-unused-vars` | A variable that nothing reads, such as a `Result` kept and forgotten. |
-| [UC-11](https://alveolus.dev/rules/architecture-and-placement/use-cases/uc-11) | `alveolus/uc-11-no-floating-promises` | A promise that is never awaited. |
-| [NAM-09](https://alveolus.dev/rules/architecture-and-placement/naming/nam-09) | `alveolus/nam-09-parameter-properties` | A parameter property: `constructor(private readonly clock: Clock)`. |
-
-The last three are the rules of typescript-eslint, under the name and with the url of the Alveolus rule.
 
 ## What it does not see
 

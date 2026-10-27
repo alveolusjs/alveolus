@@ -13,7 +13,7 @@ describe('WIR-05 with ESLint', () => {
 			.with('src/wallets/driven/http/rates.client.ts', `import { Inject } from '@nestjs/common';`)
 			.with('src/wallets/driving/messaging/deposit.consumer.ts', `import { Optional } from '@nestjs/common';`);
 
-		expect(project.eslint()).toEqual([
+		expect(project.eslint(wir05)).toEqual([
 			`src/wallets/application/wallet/withdraw.command.ts:1 ${wir05.describe()}`,
 			`src/wallets/driven/http/rates.client.ts:1 ${wir05.describe()}`,
 			`src/wallets/driving/messaging/deposit.consumer.ts:1 ${wir05.describe()}`,
@@ -28,7 +28,7 @@ describe('WIR-05 with ESLint', () => {
 			)
 			.with('src/wallets/application/wallet/close.command.ts', `import * as common from '@nestjs/common';`);
 
-		expect(project.eslint()).toEqual([
+		expect(project.eslint(wir05)).toEqual([
 			`src/wallets/application/wallet/close.command.ts:1 ${wir05.describe()}`,
 			`src/wallets/application/wallet/withdraw.command.ts:1 ${wir05.describe()}`,
 		]);
@@ -45,7 +45,7 @@ describe('WIR-05 with ESLint', () => {
 			)
 			.with('src/wallets/application/wallet/withdraw.command.ts', `import { Logger } from '@nestjs/common';`);
 
-		expect(project.eslint()).toEqual([]);
+		expect(project.eslint(wir05)).toEqual([]);
 	});
 });
 
@@ -57,7 +57,7 @@ describe('PLC-07 with ESLint', () => {
 			.with('src/wallets/driving/http/wallet.controller.ts', `import { PrismaClient } from '@prisma/client';`)
 			.with('src/wallets/public/wallet.dto.ts', `import type { Wallet } from '@prisma/client';`);
 
-		expect(project.eslint()).toEqual([
+		expect(project.eslint(plc07)).toEqual([
 			`src/wallets/driven/http/rates.translator.ts:1 ${plc07.describe()}`,
 			`src/wallets/driving/http/wallet.controller.ts:1 ${plc07.describe()}`,
 			`src/wallets/driving/messaging/deposit.consumer.ts:1 ${plc07.describe()}`,
@@ -71,7 +71,7 @@ describe('PLC-07 with ESLint', () => {
 			.with('src/wallets/driving/messaging/deposit.consumer.ts', `import { ApiTags } from '@nestjs/swagger';`)
 			.with('src/wallets/public/wallet.dto.ts', `import { ApiProperty } from '@nestjs/swagger';`);
 
-		expect(project.eslint()).toEqual([
+		expect(project.eslint(plc07)).toEqual([
 			`src/wallets/application/wallet/wallet.view.ts:1 ${plc07.describe()}`,
 			`src/wallets/driving/messaging/deposit.consumer.ts:1 ${plc07.describe()}`,
 			`src/wallets/public/wallet.dto.ts:1 ${plc07.describe()}`,
@@ -90,7 +90,7 @@ describe('LAY-01 and CTX-06 with ESLint', () => {
 			.with('src/wallets/domain/wallet/wallet.events.ts', `import { Injectable } from '@nestjs/common';`)
 			.with('src/wallets/domain/wallet/wallet.entity.ts', `import { createHash } from 'crypto';`);
 
-		expect(project.eslint()).toEqual([
+		expect(project.eslint(lay01)).toEqual([
 			`src/wallets/domain/wallet/rates.port.ts:1 ${packagesInDomain}`,
 			`src/wallets/domain/wallet/wallet.entity.ts:1 ${packagesInDomain}`,
 			`src/wallets/domain/wallet/wallet.errors.ts:1 ${packagesInDomain}`,
@@ -107,6 +107,6 @@ describe('LAY-01 and CTX-06 with ESLint', () => {
 			.with('src/wallets/domain/wallet/wallet.id.ts', `import { randomUUID } from 'node:crypto';`)
 			.with('src/wallets/domain/wallet/wallet.errors.ts', `import { HolderId } from '../holder/holder.id.ts';`);
 
-		expect(project.eslint()).toEqual([]);
+		expect(project.eslint(lay01)).toEqual([]);
 	});
 });

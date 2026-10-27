@@ -5,8 +5,8 @@ group: Membres de classe
 scope: [domain, application, driving, driven]
 style: [tactical, transaction-script]
 severity: minor
-detection: []
-review: to-review
+detection: [eslint]
+review: approved
 sources: []
 ---
 

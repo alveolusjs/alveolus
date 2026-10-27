@@ -56,6 +56,4 @@ export const uc11: Rule = new Rule(
 	`${site}/architecture-and-placement/use-cases/uc-11`,
 );
 
-export const rules: readonly Rule[] = [ctx06, lay01, lay02, lay04, plc07, pub01, wir05];
-
-export const rulesUnderReview: readonly Rule[] = [nam09, uc11];
+export const rules: readonly Rule[] = [ctx06, lay01, lay02, lay04, nam09, plc07, pub01, uc11, wir05];
