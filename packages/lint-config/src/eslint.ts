@@ -41,7 +41,7 @@ const config: Linter.Config[] = defineConfig(
 			'alveolus/pub-01': 'error',
 			'alveolus/uc-11-must-use-result': 'error',
 			'alveolus/uc-11-no-floating-promises': 'error',
-			'alveolus/uc-11-no-unused-vars': 'error',
+			'alveolus/uc-11-no-unused-vars': ['error', { args: 'none' }],
 			'no-restricted-imports': ['error', { paths: [containerDecorators, prisma, swagger] }],
 		},
 	},

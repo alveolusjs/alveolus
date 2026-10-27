@@ -9,6 +9,7 @@ export abstract class Ledger {
 	public abstract post(amount: number): Promise<Result<void, string>>;
 	public abstract block(): Result<void, string>;
 	public abstract close(): void;
+	public abstract notify(): Promise<void>;
 }
 `;
 
@@ -80,6 +81,71 @@ describe('UC-11 with ESLint', () => {
 		);
 
 		expect(project.eslint(uc11)).toEqual([`${command}:11 ${uc11.describe()}`]);
+	});
+
+	it('leaves a Result assigned to a field or a variable', () => {
+		const refusal = 'src/wallets/application/wallet/refusal.ts';
+		const project = app
+			.with(
+				refusal,
+				`import type { Result } from '../../domain/wallet/ledger.port.ts';
+
+export class Refusal {
+	readonly #result: Result<void, string>;
+
+	public constructor(result: Result<void, string>) {
+		this.#result = result;
+	}
+
+	public result(): Result<void, string> {
+		return this.#result;
+	}
+}
+`,
+			)
+			.with(
+				command,
+				useCase(['\t\tlet latest;', '\t\tlatest = this.#ledger.block();', '', '\t\treturn latest;'].join('\n')),
+			);
+
+		expect(project.eslint(uc11)).toEqual([]);
+	});
+
+	it('reports a Result or its promise kept in a typed variable that nothing reads', () => {
+		const project = app.with(
+			command,
+			useCase(
+				[
+					"\t\tconst blocked: ReturnType<Ledger['block']> = this.#ledger.block();",
+					'\t\tconst pending = this.#ledger.post(1);',
+					'\t\treturn 0;',
+				].join('\n'),
+			),
+		);
+
+		expect(project.eslint(uc11)).toEqual([`${command}:11 ${uc11.describe()}`, `${command}:12 ${uc11.describe()}`]);
+	});
+
+	it('leaves a variable, a parameter and a promise that hold no Result', () => {
+		const consumer = 'src/wallets/application/wallet/consumer.ts';
+		const project = app
+			.with(
+				consumer,
+				`import type { Result } from '../../domain/wallet/ledger.port.ts';
+
+export abstract class Consumer {
+	protected async handle(_event: string): Promise<void> {}
+
+	protected async afterCommit(_outcome: Result<void, string>): Promise<void> {}
+}
+`,
+			)
+			.with(
+				command,
+				useCase(['\t\tconst amount = 1;', '\t\tthis.#ledger.notify();', '\t\treturn 0;'].join('\n')),
+			);
+
+		expect(project.eslint(uc11)).toEqual([]);
 	});
 
 	it('reports a promise of a Result that is never awaited', () => {
