@@ -1,5 +1,11 @@
 # @alveolus/claude-rules
 
+## 0.3.1
+
+### Patch Changes
+
+- c54007e: UC-11 says that its ESLint checks look only at a `Result`, and let an assignment through.
+
 ## 0.3.0
 
 ### Minor Changes
