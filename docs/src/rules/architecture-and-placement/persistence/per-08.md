@@ -5,6 +5,7 @@ group: Transactions
 scope: [application, driven]
 style: [tactical, transaction-script]
 severity: major
+severityNote: Bloquante pour un effet qui ne s’annule pas, comme un e-mail ou un message, envoyé dans la transaction.
 detection: []
 review: approved
 sources:

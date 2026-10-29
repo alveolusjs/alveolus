@@ -4,7 +4,7 @@ title: La forme stockée d’un aggregate évolue avec un chemin de migration
 group: Stockage et reconstitution
 scope: [driven, schema]
 style: [tactical]
-severity: major
+severity: blocking
 detection: []
 review: approved
 sources:

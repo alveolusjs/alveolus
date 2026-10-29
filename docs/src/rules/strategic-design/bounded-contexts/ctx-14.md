@@ -4,7 +4,8 @@ title: Chaque bounded context déclare son style d’implémentation
 group: Style d’implémentation
 scope: [structure]
 style: [tactical, transaction-script]
-severity: major
+severity: minor
+severityNote: Majeure pour un bounded context qui mélange les deux styles. Question pour un style qui s’écarte du défaut sans raison consignée.
 detection: []
 review: approved
 sources: []

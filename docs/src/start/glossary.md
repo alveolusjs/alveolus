@@ -225,6 +225,17 @@ Alveolus est écrit en français. Les termes techniques et ceux de la littératu
 | dead letter | f. | Un message mis de côté quand tous ses retries ont échoué, pour qu’on l’examine. |
 | saga | f. | Un long-running process qui compense ses étapes en cas d’échec. |
 
+### Exploitation
+
+| Terme | Genre | Sens |
+| --- | --- | --- |
+| logger | m. | L’objet qui écrit les logs de l’application, à un niveau donné (`log`, `warn`, `error`). |
+| stack trace | f. | La liste des appels en cours au moment où une erreur a été levée. |
+| health check | m. | Un endpoint qui dit à l’orchestrateur l’état d’une instance. |
+| liveness check, readiness check | m. | Le health check qui dit si le processus tourne ; celui qui dit s’il peut recevoir du trafic. |
+| proxy | m. | Un serveur placé entre le client et l’application, qui relaie les requêtes. |
+| offset | m. | Le nombre de lignes qu’une requête saute avant de lire une page. |
+
 ## Termes traduits
 
 Ces mots ont un équivalent français exact, d’usage courant : on écrit le français.
@@ -254,6 +265,11 @@ Ces mots ont un équivalent français exact, d’usage courant : on écrit le fr
 | contract test | test de contrat |
 | code review | revue de code |
 | continuous integration (CI) | intégration continue (CI) |
+| correlation id | identifiant de corrélation |
+| personal data | donnée personnelle |
+| cursor | curseur |
+| metric | métrique |
+| alert | alerte |
 
 ## Noms du code
 

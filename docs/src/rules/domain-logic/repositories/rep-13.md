@@ -5,6 +5,7 @@ group: Transactions
 scope: [application, driven]
 style: [tactical]
 severity: major
+severityNote: Bloquante quand des écritures qui vont ensemble, comme l’aggregate et son outbox, peuvent être validées séparément.
 detection: []
 review: approved
 sources:

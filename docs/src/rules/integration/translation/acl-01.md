@@ -5,6 +5,7 @@ group: Anticorruption layer
 scope: [driven, domain]
 style: [tactical, transaction-script]
 severity: major
+severityNote: Mineure pour un même concept traduit dans plusieurs handlers.
 detection: []
 review: approved
 sources:

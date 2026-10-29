@@ -4,7 +4,8 @@ title: Une liste est bornée et ordonnée par une clé stable
 group: Lectures
 scope: [driven, application]
 style: [tactical, transaction-script]
-severity: major
+severity: minor
+severityNote: Majeure pour une liste sans limite derrière la requête d’un titulaire, sur une table qui grossit sans limite.
 detection: []
 review: approved
 sources: []

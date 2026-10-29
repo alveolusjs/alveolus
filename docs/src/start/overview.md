@@ -6,17 +6,18 @@ Des règles courtes et vérifiables pour un backend TypeScript / NestJS, appliqu
 - Chaque règle a un **code stable** (`AGG-06`) à citer dans une revue, un commit ou un waiver.
 - Les règles sont regroupées par **thème**, chacun avec son préfixe, et les thèmes par **partie**.
 
-## Cinq parties
+## Six parties
 
 | Partie | Ce qu’elle protège |
 | --- | --- |
-| [Conception stratégique](../rules/strategic-design/) | Les frontières : un langage par contexte, des relations déclarées entre contextes. |
-| [Logique du domaine](../rules/domain-logic/) | Les règles métier à l’intérieur d’un contexte : un modèle tactique pour le core, des transaction scripts pour les contextes supporting et generic. |
+| [Conception stratégique](../rules/strategic-design/) | Les frontières : un langage par bounded context, des relations déclarées entre bounded contexts. |
+| [Logique du domaine](../rules/domain-logic/) | Les règles métier à l’intérieur d’un bounded context : un modèle tactique pour le core, des transaction scripts pour les bounded contexts supporting et generic. |
 | [Architecture et placement](../rules/architecture-and-placement/) | L’organisation du code : couches, dépendances, rôles de fichiers, wiring, et ce qui va où. |
-| [Intégration](../rules/integration/) | Les échanges entre contextes : des appels, des messages et des contrats qui résistent au changement. |
+| [Intégration](../rules/integration/) | Les échanges entre bounded contexts : des appels, des messages et des contrats qui résistent au changement. |
 | [Tests](../rules/testing/) | La preuve que le code marche : un domaine couvert en entier, sur une vraie base, par des tests stables. |
+| [Exploitation](../rules/operations/) | Le code en production : des logs utiles, une opération suivie de bout en bout, des entrées validées, des secrets et des données qui ne fuient pas. |
 
-Les parties s’appuient les unes sur les autres : un modèle vit dans un contexte, l’architecture découpe le code de chaque contexte, l’intégration relie des contextes dont les frontières sont déjà claires, et les tests prouvent le tout.
+Les parties s’appuient les unes sur les autres : un modèle vit dans un bounded context, l’architecture découpe le code de chaque bounded context, l’intégration relie des bounded contexts dont les frontières sont déjà claires, les tests prouvent le tout, et l’exploitation le fait tourner.
 
 ## Lire une règle {#how-to-read}
 
@@ -44,9 +45,9 @@ En haut de la page, une fiche résume le **style**, la **sévérité** et le **p
 
 | Sévérité | Sens | Attendu en revue |
 | --- | --- | --- |
-| <span class="rule-badge rule-badge--blocking">bloquante</span> | Le code peut corrompre l’état ou casser un invariant en production. | Corriger avant de merger. |
-| <span class="rule-badge rule-badge--major">majeure</span> | Le modèle ne garantit plus ses règles, ou le couplage coûtera cher. | Corriger avant de merger, sauf waiver documenté. |
-| <span class="rule-badge rule-badge--minor">mineure</span> | Un écart de conception, à faible risque immédiat. | Corriger la prochaine fois que le code est touché. |
+| <span class="rule-badge rule-badge--blocking">bloquante</span> | Le code peut perdre ou corrompre des données, ouvrir une faille de sécurité, ou perdre un message. | Corriger avant de merger. |
+| <span class="rule-badge rule-badge--major">majeure</span> | Le code casse une frontière (couche, bounded context, aggregate) ou un invariant, ou crée un couplage cher à défaire. | Corriger avant de merger, sauf waiver documenté. |
+| <span class="rule-badge rule-badge--minor">mineure</span> | Un écart local, à faible risque immédiat, qui se corrige sans toucher au reste. | Corriger la prochaine fois que le code est touché. |
 | <span class="rule-badge rule-badge--question">question</span> | Pas un défaut en soi : une décision à rendre explicite avec le métier ou l’auteur. | Poser la question et consigner la réponse. |
 
 Certaines règles nuancent leur sévérité selon le contexte (par exemple « bloquante si deux écritures concurrentes peuvent casser un invariant, majeure sinon »). La nuance apparaît sous le badge.
@@ -94,3 +95,7 @@ La présentation de chaque thème le montre sur un court exemple, avec des notio
 ### [Tests](../rules/testing/)
 
 <ThemeTable part="testing" />
+
+### [Exploitation](../rules/operations/)
+
+<ThemeTable part="operations" />

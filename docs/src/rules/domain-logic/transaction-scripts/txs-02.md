@@ -4,7 +4,8 @@ title: Un script s’exécute dans une transaction et n’appelle aucun autre sc
 group: Forme d’un script
 scope: [application]
 style: [transaction-script]
-severity: major
+severity: blocking
+severityNote: Bloquante si une écriture échappe à la transaction, ou si le use case en ouvre deux. Mineure pour un script qui en appelle un autre.
 detection: []
 review: approved
 sources: []

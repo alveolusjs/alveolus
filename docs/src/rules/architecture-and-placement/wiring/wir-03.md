@@ -46,4 +46,4 @@ export class WalletsModule {}
 
 ## Voir aussi
 
-CTX-01 et MAP-01 : un autre bounded context ne passe que par `public`. PUB-01 documente ce que la facade publie.
+LAY-04 : un autre bounded context ne passe que par `public`. PUB-01 documente ce que la facade publie.

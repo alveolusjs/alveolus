@@ -4,7 +4,8 @@ title: Un traitement planifié ou ponctuel est un adapter driving qui appelle un
 group: Dans la durée
 scope: [structure, driving]
 style: [tactical, transaction-script]
-severity: major
+severity: blocking
+severityNote: Majeure pour un job qui passe par un use case mais porte lui-même des règles métier.
 detection: []
 review: approved
 sources: []

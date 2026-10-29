@@ -5,6 +5,7 @@ group: Identité
 scope: [domain, driven, schema]
 style: [tactical]
 severity: minor
+severityNote: Majeure si l’id technique sort dans une API ou un event.
 detection: []
 review: approved
 sources:

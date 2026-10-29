@@ -5,7 +5,7 @@ group: REST
 scope: [driving]
 style: [tactical, transaction-script]
 severity: major
-severityNote: Major for a GET that changes state or a non-idempotent PUT/DELETE. Minor otherwise.
+severityNote: Bloquante pour un `GET` qui change l’état, ou un `PUT` ou un `DELETE` qui n’est pas idempotent, puisqu’un rejeu refait l’opération. Mineure pour des verbes calqués sur le CRUD des tables.
 detection: []
 review: approved
 sources:

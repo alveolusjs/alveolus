@@ -40,7 +40,7 @@ One chapter at a time. For each: read the chapter in `ebooks/`, draft the rules,
 | 14 | Application | **drafted** |
 | A | Aggregates and Event Sourcing: A+ES | **dropped**: event sourcing is out of the rules |
 
-The rules were then regrouped by theme and renumbered so that each prefix belongs to one theme (`themes.ts`): 196 rules, including CTX-14 and the Transaction scripts theme (TXS-01 to TXS-08), which go beyond the book. The architecture and placement part was then regrouped in two axes: structure (LAY, PLC, NAM, WIR) and flow (UC, API, PER). Testing became a part of its own: writing a test (TST), the test infrastructure (INF) and coverage and proofs (COV), which go beyond the book. Every rule has been reviewed. Under way: the translation into French, theme by theme. Left to do: a cross-cutting review (consistency of cross-references, severities).
+The rules were then regrouped by theme and renumbered so that each prefix belongs to one theme (`themes.ts`): 196 rules, including CTX-14 and the Transaction scripts theme (TXS-01 to TXS-08), which go beyond the book. The architecture and placement part was then regrouped in two axes: structure (LAY, PLC, NAM, WIR) and flow (UC, API, PER). Testing became a part of its own: writing a test (TST), the test infrastructure (INF) and coverage and proofs (COV), which go beyond the book. Operations became a sixth part, beyond the book too: observability (OBS) and security (SEC), with no tool imposed. Every rule has been reviewed. Under way: the translation into French, theme by theme. A cross-cutting review recalibrated the severities on a grid by consequence (`start/overview.md`).
 
 ### Build apps with these rules
 
@@ -48,7 +48,7 @@ Apps live in their own repositories. They opt in to the `alveolus` plugin with a
 
 ## Writing a rule
 
-The site's content lives in `docs/src/` (VitePress `srcDir`): `index.md` (home), `start/` (overview and how to read a rule, reference architecture, default choices, project setup with its prerequisites and tooling, glossary, about) and `rules/` (the index of all rules, and the five parts). One rule = one file `docs/src/rules/<part>/<theme>/<lowercase-code>.md`, for example `docs/src/rules/domain-logic/aggregates/agg-06.md`.
+The site's content lives in `docs/src/` (VitePress `srcDir`): `index.md` (home), `start/` (overview and how to read a rule, reference architecture, default choices, project setup with its prerequisites and tooling, glossary, about) and `rules/` (the index of all rules, and the six parts). One rule = one file `docs/src/rules/<part>/<theme>/<lowercase-code>.md`, for example `docs/src/rules/domain-logic/aggregates/agg-06.md`.
 
 ```md
 ---
@@ -82,7 +82,7 @@ sources:                      # book section titles, behind the scenes: never sh
 ```
 
 - Each theme has an `index.md` with a short introduction and `<RuleTable />`. Themes, their order, their prefix, their summary and their part are declared in `docs/.vitepress/themes.ts`.
-- Themes are grouped in five **parts**, declared in `docs/.vitepress/parts.ts`. Each part is a folder of `src/rules/` holding its page (`index.md`) and the folders of its themes: `strategic-design/`, `domain-logic/`, `architecture-and-placement/`, `integration/`, `testing/`. Rule URLs follow the folders: `/rules/<part>/<theme>/<code>`. A theme's `part` in `themes.ts` must match the folder it lives in.
+- Themes are grouped in six **parts**, declared in `docs/.vitepress/parts.ts`. Each part is a folder of `src/rules/` holding its page (`index.md`) and the folders of its themes: `strategic-design/`, `domain-logic/`, `architecture-and-placement/`, `integration/`, `testing/`, `operations/`. Rule URLs follow the folders: `/rules/<part>/<theme>/<code>`. A theme's `part` in `themes.ts` must match the folder it lives in.
 - A theme is `written` or `coming`. A `coming` theme reserves its prefix and shows, greyed, on the part pages, but not in the sidebar. It becomes `written` with its folder under its part, its `index.md` and its first rule. The site build fails when two themes share a prefix, a theme names an unknown part, or a status does not match the folder.
 - Each theme overview has an **In practice** section, between its introduction and its rule table: a short example written in the page, and the rules it shows. There is no example project: code examples live in the Markdown. The context map of the strategic design part is `docs/src/rules/strategic-design/context-map/payment-services.cml`, drawn by `pnpm context-map`.
 - Sidebar, tables and the global index are **generated** from the frontmatter: maintain nothing by hand.

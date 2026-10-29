@@ -4,7 +4,7 @@ title: Une méthode par use case, dans un application service par concept
 group: Forme d’un script
 scope: [application]
 style: [transaction-script]
-severity: major
+severity: minor
 detection: []
 review: approved
 sources: []

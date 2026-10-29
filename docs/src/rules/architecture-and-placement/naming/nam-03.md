@@ -4,7 +4,7 @@ title: Le rôle correspond au contenu
 group: Noms de fichiers
 scope: [structure]
 style: [tactical, transaction-script]
-severity: major
+severity: minor
 detection: []
 review: approved
 sources: []

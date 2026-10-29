@@ -4,8 +4,8 @@ title: Les champs d’un handler ou d’un adapter ne changent plus après le co
 group: Durée de vie
 scope: [application, driving, driven]
 style: [tactical, transaction-script]
-severity: major
-severityNote: Bloquante quand le champ garde les données d’un titulaire ou la transaction en cours.
+severity: blocking
+severityNote: 'Majeure pour `scope: Scope.REQUEST`, ou pour un champ qui ne garde rien d’une requête, comme un cache.'
 detection: []
 review: approved
 sources: []

@@ -4,7 +4,7 @@ title: Chaque fichier va dans la couche de son rôle
 group: Les couches
 scope: [structure]
 style: [tactical, transaction-script]
-severity: major
+severity: minor
 detection: []
 review: approved
 sources: []
