@@ -5,6 +5,7 @@ group: Systèmes tiers
 scope: [driven, tests]
 style: [tactical, transaction-script]
 severity: minor
+severityNote: Majeure pour des identifiants de la sandbox commités.
 detection: []
 review: approved
 sources: []

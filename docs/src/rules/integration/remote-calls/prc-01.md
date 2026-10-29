@@ -5,6 +5,7 @@ group: Appels distants
 scope: [driven]
 style: [tactical, transaction-script]
 severity: major
+severityNote: Bloquante pour un appel sans authentification ni chiffrement.
 detection: []
 review: approved
 sources:

@@ -4,7 +4,8 @@ title: Le travail au démarrage passe par des use cases, et un échec arrête le
 group: Durée de vie
 scope: [structure, application]
 style: [tactical, transaction-script]
-severity: minor
+severity: major
+severityNote: Bloquante quand l’étape écrit directement en base et saute l’event qu’un autre bounded context attend.
 detection: []
 review: approved
 sources: []

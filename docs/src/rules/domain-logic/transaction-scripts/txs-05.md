@@ -5,6 +5,7 @@ group: Organisation et accès aux données
 scope: [structure]
 style: [transaction-script]
 severity: major
+severityNote: Majeure si un script importe un adapter, ou si un adapter driving écrit en base. Mineure pour un dossier `domain` superflu.
 detection: []
 review: approved
 sources: []

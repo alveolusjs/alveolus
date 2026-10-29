@@ -4,7 +4,7 @@ title: Les adapters se découpent par technologie, et une technologie n’est im
 group: Adapters
 scope: [driving, driven]
 style: [tactical, transaction-script]
-severity: major
+severity: minor
 detection: [eslint]
 review: approved
 sources: []

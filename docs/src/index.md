@@ -39,6 +39,10 @@ features:
     details: Des tests qui ne mentent pas. Un domaine couvert en entier, une vraie base jetable, aucun test instable.
     link: /rules/testing/
     linkText: Voir les règles
+  - title: Exploitation
+    details: Du code qu’on sait faire tourner. Des logs utiles, une opération suivie de bout en bout, rien qui fuit.
+    link: /rules/operations/
+    linkText: Voir les règles
 ---
 
 <div class="home-content">

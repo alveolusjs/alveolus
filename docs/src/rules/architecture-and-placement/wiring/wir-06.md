@@ -4,7 +4,7 @@ title: Chaque injection nomme son injection token
 group: Dépendances
 scope: [driving, structure]
 style: [tactical, transaction-script]
-severity: major
+severity: minor
 detection: []
 review: approved
 sources: []

@@ -4,7 +4,8 @@ title: Le consumer ignore les doublons et suit ses messages dans la même transa
 group: Consommation
 scope: [driving]
 style: [tactical, transaction-script]
-severity: major
+severity: blocking
+severityNote: Bloquante si le suivi s’écrit hors de la transaction du traitement, ou si un doublon déplace de l’argent ou engage un tiers. Majeure sinon.
 detection: []
 review: approved
 sources:

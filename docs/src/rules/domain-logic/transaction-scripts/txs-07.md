@@ -5,6 +5,7 @@ group: Organisation et accès aux données
 scope: [application, public]
 style: [transaction-script]
 severity: major
+severityNote: Majeure si un type Prisma sort du bounded context. Mineure pour une pseudo-entity interne.
 detection: []
 review: approved
 sources: []

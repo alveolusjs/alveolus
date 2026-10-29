@@ -5,6 +5,7 @@ group: Langage et frontière
 scope: [application, domain]
 style: [tactical, transaction-script]
 severity: major
+severityNote: Majeure pour un objet d’un autre bounded context. Mineure pour des attributs détachés passés sans concept local.
 detection: []
 review: approved
 sources:
@@ -34,4 +35,4 @@ Une identité partagée entre bounded contexts pour les relier.
 
 ## Correction
 
-Un value object local (`AccountHolder`, `Approver`, `Payee`), construit à la frontière par le use case ou par un service dédié, puis passé au domaine. ACL-01 et PUB-02 détaillent comment traduire.
+Un value object local (`AccountHolder`, `Approver`, `Payee`), construit à la frontière par le use case ou par un service dédié, puis passé au domaine. ACL-01 et ACL-02 détaillent comment traduire.
