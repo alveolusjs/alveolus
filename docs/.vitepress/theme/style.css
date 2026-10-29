@@ -341,6 +341,17 @@
 	order: 1;
 }
 
+@media (min-width: 768px) {
+	.VPNavBarSearch #local-search {
+		flex: 1;
+		max-width: 267px;
+	}
+
+	.VPNavBarSearch .DocSearch-Button-Keys {
+		margin-left: auto;
+	}
+}
+
 .style-filter__legend {
 	position: absolute;
 	width: 1px;
