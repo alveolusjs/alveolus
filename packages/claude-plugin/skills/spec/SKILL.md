@@ -57,7 +57,7 @@ One subsection per entry. Each scenario is Given / When / Then and cites its sou
 
 ## Rules proven
 
-One line per business rule: the test file, what its `holds` block checks, and the ways to break it that its `resists` block checks, only those that apply.
+One line per business rule: the test file, at the lowest level that holds the rule (COV-02), what its `holds` block checks, and the ways to break it that its `resists` block checks, only those that apply.
 
 ## Out of scope
 

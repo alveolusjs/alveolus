@@ -6,7 +6,7 @@ Des règles courtes et vérifiables pour un backend TypeScript / NestJS, appliqu
 - Chaque règle a un **code stable** (`AGG-06`) à citer dans une revue, un commit ou un waiver.
 - Les règles sont regroupées par **thème**, chacun avec son préfixe, et les thèmes par **partie**.
 
-## Quatre parties
+## Cinq parties
 
 | Partie | Ce qu’elle protège |
 | --- | --- |
@@ -14,8 +14,9 @@ Des règles courtes et vérifiables pour un backend TypeScript / NestJS, appliqu
 | [Logique du domaine](../rules/domain-logic/) | Les règles métier à l’intérieur d’un contexte : un modèle tactique pour le core, des transaction scripts pour les contextes supporting et generic. |
 | [Architecture et placement](../rules/architecture-and-placement/) | L’organisation du code : couches, dépendances, rôles de fichiers, wiring, et ce qui va où. |
 | [Intégration](../rules/integration/) | Les échanges entre contextes : des appels, des messages et des contrats qui résistent au changement. |
+| [Tests](../rules/testing/) | La preuve que le code marche : un domaine couvert en entier, sur une vraie base, par des tests stables. |
 
-Les parties s’appuient les unes sur les autres : un modèle vit dans un contexte, l’architecture découpe le code de chaque contexte, et l’intégration relie des contextes dont les frontières sont déjà claires.
+Les parties s’appuient les unes sur les autres : un modèle vit dans un contexte, l’architecture découpe le code de chaque contexte, l’intégration relie des contextes dont les frontières sont déjà claires, et les tests prouvent le tout.
 
 ## Lire une règle {#how-to-read}
 
@@ -89,3 +90,7 @@ La présentation de chaque thème le montre sur un court exemple, avec des notio
 ### [Intégration](../rules/integration/)
 
 <ThemeTable part="integration" />
+
+### [Tests](../rules/testing/)
+
+<ThemeTable part="testing" />

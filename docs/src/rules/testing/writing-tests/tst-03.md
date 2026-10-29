@@ -1,7 +1,7 @@
 ---
 code: TST-03
 title: Les tests démarrent l’application depuis ses vrais modules
-group: Ce qu’un test prouve
+group: Principes
 scope: [tests]
 style: [tactical, transaction-script]
 severity: minor
@@ -31,6 +31,8 @@ Un test qui a son propre wiring prouve un graphe qui ne tourne pas en production
 
 Un test d’intégration (`*.integration-spec.ts`) construit l’adapter testé avec `new`, sur la vraie base : l’adapter est son sujet (REP-16).
 
+Un test de panne, dans `__test__/failures/`, remplace un seul port par un double qui échoue, quand la vraie infrastructure ne sait pas produire la panne (TST-01). Le reste du graphe est celui d’`AppModule`.
+
 ## Correction
 
 Les tests boîte noire compilent `AppModule`, et ne changent que la configuration : l’adresse de la base jetable. Les tests du domaine construisent leurs objets avec `new` ou par une factory.
@@ -44,7 +46,7 @@ await app.init();
 
 ## Adaptation
 
-**Notre choix** : pas de test double in-memory (TST-01). Les tests tournent sur le wiring de production et sur un PostgreSQL jetable : aucun port n’est jamais remplacé.
+**Notre choix** : pas de test double in-memory (TST-01). Les tests tournent sur le wiring de production et sur un PostgreSQL jetable : aucun port n’est remplacé, sauf dans un test de panne.
 
 ## Voir aussi
 

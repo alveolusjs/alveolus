@@ -1,7 +1,7 @@
 ---
 code: TST-02
 title: Les tests du domaine se lisent dans le langage du métier
-group: Ce qu’un test prouve
+group: Principes
 scope: [tests]
 style: [tactical, transaction-script]
 severity: minor

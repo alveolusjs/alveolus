@@ -2,9 +2,11 @@
 menu: Vue d’ensemble
 ---
 
-# Tests
+# Écrire un test
 
-Les tests prouvent ce que le code promet, dans le langage du métier, sur une vraie infrastructure et depuis les vrais modules de l’application. Ils vivent à côté de ce qu’ils prouvent, et le nom de leur fichier dit s’ils sont unitaires, d’intégration ou end-to-end. Les tests propres aux value objects, aux domain services ou aux repositories restent dans leurs thèmes.
+Un test prouve ce que le code promet, dans le langage du métier, sur une vraie infrastructure et depuis les vrais modules de l’application. Il vit à côté de ce qu’il prouve, et le nom de son fichier dit s’il est unitaire, d’intégration ou end-to-end. Il donne le même résultat à chaque run, et n’est jamais désactivé. Les tests propres aux value objects, aux domain services ou aux repositories restent dans leurs thèmes.
+
+Ce sur quoi il tourne relève de l’[Infrastructure de test](../test-infrastructure/) (INF), et ce qu’il doit prouver de [Couverture et preuves](../coverage/) (COV).
 
 ## En pratique {#in-practice}
 
@@ -51,9 +53,10 @@ describe('Wallet', () => {
 });
 ```
 
-- Le domaine n’a besoin d’aucune infrastructure : le test construit des valeurs et appelle le modèle, sans mock ni module (TST-01, TST-03).
+- Le domaine n’a besoin d’aucune infrastructure : le test construit des valeurs et appelle le modèle, sans mock ni module (TST-01, TST-03). L’instant `at` est fourni par le test, jamais lu sur l’horloge (TST-07).
 - Chaque test se lit comme une phrase du métier (TST-02), et suit Arrange, Act, Assert : une seule action, dont Assert lit le résultat (TST-04).
-- Le solde ne bouge que par le journal, en base : un débit accepté se teste au niveau de l’application, sur la vraie base (TST-01).
+- Chaque refus a son test unitaire : le domaine est couvert en entier par ses `.spec.ts` (COV-01).
+- Le solde ne bouge que par le journal, en base : un débit accepté se teste au niveau de l’application, sur la vraie base (TST-01, INF-01).
 - Le fichier est `domain/wallet/__test__/wallet.aggregate.spec.ts` : à côté du wallet, nommé d’après ce qu’il teste, et `.spec.ts` pour un test unitaire (TST-05, TST-06).
 
 ## Règles {#rules}

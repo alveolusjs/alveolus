@@ -45,6 +45,6 @@ Cette organisation est celle du style tactique, pour les contextes core. Un cont
 | Comment nommer un fichier et un type | [Nommage et rôles de fichiers](../rules/architecture-and-placement/naming/) (NAM) |
 | Ce que fait une command, une query, ce qu’un écran lit | [Use cases](../rules/architecture-and-placement/use-cases/) (UC-01, UC-08 à UC-10) |
 | Comment assembler un contexte avec NestJS | [Wiring](../rules/architecture-and-placement/wiring/) (WIR) |
-| Où placer les tests | [Tests](../rules/architecture-and-placement/tests/) (TST) |
+| Où placer les tests | [Écrire un test](../rules/testing/writing-tests/) (TST), et la partie [Tests](../rules/testing/) |
 | Les choix qu’Alveolus fait par défaut | [Choix par défaut](./default-choices) |
 | Les building blocks | [Outillage](./prerequisites#tooling) |

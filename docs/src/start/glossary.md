@@ -181,8 +181,12 @@ Alveolus est écrit en français. Les termes techniques et ceux de la littératu
 | mock, stub | m. | Des test doubles écrits d’avance : un stub renvoie des réponses fixées, un mock vérifie aussi comment on l’a appelé. |
 | fixture | f. | Les données ou objets préparés pour un test. |
 | test driver | m. | Un helper qui pilote l’application dans un test boîte noire, sans rien vérifier lui-même. |
+| sandbox | f. | L’environnement de test qu’un provider ouvre à ses intégrateurs. |
 | runner | m. | L’outil qui trouve les tests et les lance, comme Vitest. |
 | end-to-end | adj. | Se dit d’un test qui traverse toute l’application démarrée, de son entrée à la base. |
+| run | m. | Une exécution de la suite de tests, du démarrage du runner à son dernier test. |
+| worker | m. | Un des processus entre lesquels le runner répartit les fichiers de test, qui tournent en parallèle. |
+| hint | m. | Un commentaire que lit un outil, comme `v8 ignore`, qui retire une ligne de la mesure de couverture. |
 | lint | m. | L’analyse statique du code, qui signale ce qui enfreint une règle sans l’exécuter. |
 | fitness function | f. | Un contrôle automatique d’une règle d’architecture, en CI. |
 | diff | m. | Les lignes qu’un changement ajoute, modifie ou retire, telles qu’on les relit. |
@@ -247,6 +251,7 @@ Ces mots ont un équivalent français exact, d’usage courant : on écrit le fr
 | idempotent | idempotent |
 | black-box test | test boîte noire |
 | integration test | test d’intégration |
+| contract test | test de contrat |
 | code review | revue de code |
 | continuous integration (CI) | intégration continue (CI) |
 

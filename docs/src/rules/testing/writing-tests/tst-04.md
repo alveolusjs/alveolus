@@ -1,7 +1,7 @@
 ---
 code: TST-04
 title: Un test suit Arrange, Act, Assert
-group: Forme d’un test
+group: Forme, place et nom
 scope: [tests]
 style: [tactical, transaction-script]
 severity: minor

@@ -8,7 +8,7 @@ Chaque morceau de code a une place évidente. Ces règles donnent l’arborescen
 
 En DDD, un module est un dossier qui regroupe des classes du modèle étroitement liées. Ce n’est pas un `@Module` NestJS, qui est une unité d’injection de dépendances (WIR).
 
-Le nom des fichiers et leurs rôles relèvent de [Nommage et rôles de fichiers](../naming/) (NAM), le sens des dépendances de [Couches et dépendances](../layers/) (LAY), et la place des tests de [Tests](../tests/) (TST-05).
+Le nom des fichiers et leurs rôles relèvent de [Nommage et rôles de fichiers](../naming/) (NAM), le sens des dépendances de [Couches et dépendances](../layers/) (LAY), et la place des tests d’[Écrire un test](../../testing/writing-tests/) (TST-05).
 
 ## En pratique {#in-practice}
 
