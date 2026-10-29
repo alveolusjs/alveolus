@@ -6,7 +6,7 @@ menu: Vue d’ensemble
 
 Il faut bien choisir quelle implémentation sert chaque port, et construire les objets dans le bon ordre. Ces règles placent ce choix à un seul endroit par bounded context, son module, et le tiennent hors de tout le reste : les classes reçoivent ce dont elles ont besoin par leur constructeur, nomment ce qu’elles injectent, ne gardent aucun état d’une requête, et ne demandent jamais rien au container. La configuration se lit une fois, dans son propre fichier, et passe en valeurs. Le modèle ne connaît pas le framework, et la plupart du code qui l’entoure non plus.
 
-La place du module relève de [Ce qui va où](../placement/) (PLC-01). La façon dont le domaine déclare ses ports relève de LAY-01. Le démarrage de l’application dans les tests relève de [Tests](../tests/) (TST-03).
+La place du module relève de [Ce qui va où](../placement/) (PLC-01). La façon dont le domaine déclare ses ports relève de LAY-01. Le démarrage de l’application dans les tests relève de [Écrire un test](../../testing/writing-tests/) (TST-03).
 
 ## En pratique {#in-practice}
 

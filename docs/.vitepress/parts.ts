@@ -24,12 +24,19 @@ export const parts: Part[] = [
 		slug: 'architecture-and-placement',
 		title: 'Architecture et placement',
 		icon: 'Layers',
-		summary: 'Placer le code, suivre une opération, la prouver : la structure, le flux d’un use case, les tests.',
+		summary: 'Placer le code et suivre une opération : la structure, puis le flux d’un use case.',
 	},
 	{
 		slug: 'integration',
 		title: 'Intégration',
 		icon: 'ArrowLeftRight',
 		summary: 'Relier les bounded contexts : des appels, des messages et des contrats qui résistent au changement.',
+	},
+	{
+		slug: 'testing',
+		title: 'Tests',
+		icon: 'FlaskConical',
+		summary:
+			'Prouver le code : un domaine couvert en entier, sur une vraie base, par des tests qui ne mentent pas.',
 	},
 ];

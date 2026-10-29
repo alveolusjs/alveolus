@@ -35,6 +35,10 @@ features:
     details: Des bounded contexts qui se parlent sans se casser. Appels, messages et contrats qui survivent au changement.
     link: /rules/integration/
     linkText: Voir les règles
+  - title: Tests
+    details: Des tests qui ne mentent pas. Un domaine couvert en entier, une vraie base jetable, aucun test instable.
+    link: /rules/testing/
+    linkText: Voir les règles
 ---
 
 <div class="home-content">

@@ -6,7 +6,7 @@ menu: Vue d’ensemble
 
 Un fichier dit son rôle dans son nom, un dossier son concept. Un lecteur qui voit `debit-wallet.command.ts` dans `application/wallet/` sait ce qu’il contient avant de l’ouvrir, et l’outillage peut vérifier qu’un rôle est dans la bonne couche. Les types gardent les noms du métier : le rôle appartient au fichier, pas à la classe.
 
-La place de chaque dossier, et les rôles que chaque couche accepte, relèvent de [Ce qui va où](../placement/) (PLC, PLC-03). Les membres privés d’une classe s’écrivent `#` (NAM-09). Le nom des méthodes, des events et des modules relève de leurs propres thèmes (ENT-11, EVT-04, PLC-05), et le nom des fichiers de test de [Tests](../tests/) (TST-06).
+La place de chaque dossier, et les rôles que chaque couche accepte, relèvent de [Ce qui va où](../placement/) (PLC, PLC-03). Les membres privés d’une classe s’écrivent `#` (NAM-09). Le nom des méthodes, des events et des modules relève de leurs propres thèmes (ENT-11, EVT-04, PLC-05), et le nom des fichiers de test d’[Écrire un test](../../testing/writing-tests/) (TST-06).
 
 ## En pratique {#in-practice}
 

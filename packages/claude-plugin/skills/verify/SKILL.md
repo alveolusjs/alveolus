@@ -11,7 +11,7 @@ Read the app's `harness.md` first (see the `spec` skill for how to find it). Eve
 
 1. Run the full checks of `harness.md` and report each failure with its output.
 2. Run the `alveolus:reviewer` agent on the changes of the slice: the diff against the commit before the slice, plus untracked files. It checks the change against the rules.
-3. Check the spec: each scenario of "Behaviour" has a test, each rule of "Rules proven" has its test file with `holds` and `resists` blocks.
+3. Check the spec: each scenario of "Behaviour" has a test, each rule of "Rules proven" has its test, at the lowest level that holds the rule, with `holds` and `resists` blocks (COV-02).
 4. If anything is red, or the reviewer reports a `blocking` or `major` finding, stop and report. Do not ship.
 5. Otherwise ship the slice's entries in the product documentation, as `harness.md` says, and change nothing else there. Run the conformance check again: it must pass with the entries shipped. Set the spec `status` to `done`, and its line in the slice plan.
 6. Report what shipped, the reviewer's `minor` findings and `question`s, and the open questions of the spec still standing.

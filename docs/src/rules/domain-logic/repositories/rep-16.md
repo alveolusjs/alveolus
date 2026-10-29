@@ -38,10 +38,10 @@ Enregistrer, relire par identité, comparer. Couvrir chaque finder, le filtre su
 
 ## Adaptation
 
-En Node, une vraie base Postgres dans un conteneur (Testcontainers, ou celle de la CI) joue ce rôle. Nettoyer avec un `TRUNCATE`, ou par une transaction annulée à la fin du test, à condition que le repository écrive dans cette transaction (REP-14).
+En Node, une vraie base PostgreSQL dans un conteneur joue ce rôle.
 
-**Notre choix** : Testcontainers, qui démarre un PostgreSQL jetable depuis le code du test, le même en local et en CI. Docker est nécessaire.
+**Notre choix** : Testcontainers, qui démarre un PostgreSQL jetable depuis le code du test, le même en local et en CI, construit par les migrations (INF-01). Chaque worker a sa base, vidée par un `TRUNCATE` avant chaque test (INF-02). Docker est nécessaire.
 
 ## Voir aussi
 
-LAY-01 fait dépendre l’application de ports, et TST-01 la teste sur les vrais adapters. TST-03 fait démarrer les tests depuis les vrais modules de l’application.
+LAY-01 fait dépendre l’application de ports, et TST-01 la teste sur les vrais adapters. TST-03 fait démarrer les tests depuis les vrais modules de l’application. INF-02 dit pourquoi on ne nettoie pas par une transaction annulée.

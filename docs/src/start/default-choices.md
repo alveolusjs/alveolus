@@ -14,7 +14,10 @@ Plusieurs décisions appartiennent à l’équipe. Alveolus en prend une par dé
 | Une classe par identité (`UuidIdentifier`), l’identité suivante donnée par le repository, des UUIDv7 générés dans `driven` | ENT-03, ENT-05, ENT-08 |
 | PostgreSQL et Prisma, les modèles Prisma séparés du domaine | LAY-01, AGG-15, REP-02, REP-05, REP-07, REP-08, VO-11 |
 | Aucune suppression en cascade dans la base : le repository supprime les parties, puis l’aggregate root, dans la transaction | REP-02 |
-| Pas de test double in-memory : les tests d’application et d’adapter sur un PostgreSQL jetable (Testcontainers) | TST-01, REP-16 |
+| Pas de test double in-memory : les tests d’application et d’adapter sur un PostgreSQL jetable (Testcontainers), construit par les migrations, une base par worker copiée d’une base modèle | TST-01, REP-16, INF-01, INF-02 |
+| Un système tiers simulé par MSW, ses stubs générés depuis son contrat OpenAPI figé et commité, ses tests de contrat contre sa sandbox chaque nuit et sur la MR de montée de version | TST-01, INF-03, INF-05 |
+| Vitest : le domaine couvert à 100 % par ses seuls tests unitaires, mesuré en CI | COV-01 |
+| L’heure d’un test end-to-end fixée par `vi.setSystemTime`, l’ordre des tests mélangé en CI | TST-07 |
 | Les command handlers sur les aggregates, les query handlers sur les views, mêmes tables | UC-01, UC-08 |
 | `domain` et `application` par concept, `driving` et `driven` par technologie ; le suffixe du fichier nomme le rôle, le type garde son nom métier | PLC-04, NAM-01, NAM-05, ACL-01 |
 | Pas de CQRS ni d’event sourcing au départ | CTX-16 |
