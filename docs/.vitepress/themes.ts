@@ -203,4 +203,21 @@ export const themes: Theme[] = [
 		status: 'written',
 		summary: 'Un domaine couvert en entier, des règles métier mises à l’épreuve, des events vérifiés.',
 	},
+	{
+		slug: 'observability',
+		title: 'Observabilité',
+		prefix: 'OBS',
+		part: 'operations',
+		status: 'written',
+		summary: 'Des logs qui disent ce qui s’est passé, une opération suivie de bout en bout, une santé mesurée.',
+	},
+	{
+		slug: 'security',
+		title: 'Sécurité',
+		prefix: 'SEC',
+		part: 'operations',
+		status: 'written',
+		summary:
+			'Des entrées validées, une identité qui ne vient pas du client, des secrets et des données qui ne fuient pas.',
+	},
 ];

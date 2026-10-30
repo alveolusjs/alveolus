@@ -4,7 +4,8 @@ title: Aucun test désactivé ni relancé
 group: Fiabilité
 scope: [tests]
 style: [tactical, transaction-script]
-severity: major
+severity: minor
+severityNote: "Majeure pour un `.only` ou un `retry` dans la configuration : ils touchent toute la suite."
 detection: []
 review: approved
 sources: []

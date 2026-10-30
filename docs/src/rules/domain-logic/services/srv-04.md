@@ -5,7 +5,7 @@ group: Forme du service
 scope: [domain]
 style: [tactical]
 severity: major
-severityNote: Majeure pour un état gardé entre deux appels. Mineure pour le nommage.
+severityNote: 'Bloquante pour un état de requête gardé dans un champ : un provider NestJS est un singleton, partagé par les requêtes concurrentes. Mineure pour le nommage.'
 detection: []
 review: approved
 sources:

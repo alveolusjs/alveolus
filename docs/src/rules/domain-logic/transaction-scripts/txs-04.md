@@ -4,7 +4,7 @@ title: Un script vérifie avant d’écrire, et refuse avec un résultat
 group: Forme d’un script
 scope: [application]
 style: [transaction-script]
-severity: major
+severity: minor
 detection: []
 review: approved
 sources: []

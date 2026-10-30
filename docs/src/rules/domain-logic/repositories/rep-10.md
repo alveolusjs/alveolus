@@ -4,7 +4,8 @@ title: "Pas de finder sur les parties : une lecture partielle est une query"
 group: Requêtes
 scope: [driven]
 style: [tactical]
-severity: major
+severity: minor
+severityNote: Majeure quand le finder sert à décider sans passer par l’aggregate root.
 detection: []
 review: approved
 sources:

@@ -11,7 +11,8 @@ export default defineConfig({
 	lang: 'fr-FR',
 	title: 'Alveolus',
 	titleTemplate: ':title | Alveolus',
-	description: 'Des règles de Domain-Driven Design et d’architecture pour relire du code TypeScript / NestJS',
+	description:
+		'Des règles pour construire en TypeScript / NestJS : Domain-Driven Design, architecture, tests et exploitation',
 	srcDir: 'src',
 	cleanUrls: true,
 	lastUpdated: true,

@@ -39,4 +39,10 @@ export const parts: Part[] = [
 		summary:
 			'Prouver le code : un domaine couvert en entier, sur une vraie base, par des tests qui ne mentent pas.',
 	},
+	{
+		slug: 'operations',
+		title: 'Exploitation',
+		icon: 'Activity',
+		summary: 'Faire tourner le code : savoir ce qui se passe, et ne rien laisser fuir.',
+	},
 ];

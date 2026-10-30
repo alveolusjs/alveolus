@@ -4,7 +4,8 @@ title: La reconstitution n’impose ni setters ni constructeur vide au modèle
 group: Stockage et reconstitution
 scope: [domain, driven]
 style: [tactical]
-severity: major
+severity: minor
+severityNote: Majeure quand du code hors du mapper se sert de ces setters.
 detection: []
 review: approved
 sources:

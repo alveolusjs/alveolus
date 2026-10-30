@@ -5,6 +5,7 @@ group: Règles
 scope: [domain, application]
 style: [tactical]
 severity: major
+severityNote: 'Bloquante quand un use case oublie d’ajouter le nouvel aggregate au repository : la création est perdue.'
 detection: []
 review: approved
 sources:

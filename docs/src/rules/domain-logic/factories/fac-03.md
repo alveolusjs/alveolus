@@ -4,7 +4,8 @@ title: Le constructeur reste caché quand une factory contrôle la création
 group: Règles
 scope: [domain]
 style: [tactical]
-severity: major
+severity: minor
+severityNote: Majeure quand un appel direct au constructeur contourne une règle que la factory fait respecter.
 detection: []
 review: approved
 sources:

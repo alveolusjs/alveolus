@@ -4,7 +4,8 @@ title: Le repository se comporte comme un ensemble indexé par identité
 group: Contrat
 scope: [driven, schema]
 style: [tactical]
-severity: major
+severity: blocking
+severityNote: 'Mineure quand seul le contrat commun manque : un repository qui n’étend pas `CommandRepository`.'
 detection: []
 review: approved
 sources:

@@ -4,7 +4,7 @@ title: L’identité est générée tôt quand elle sert avant la persistance
 group: Identité
 scope: [domain, driven]
 style: [tactical]
-severity: major
+severity: blocking
 detection: []
 review: approved
 sources:

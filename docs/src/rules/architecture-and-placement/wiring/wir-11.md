@@ -4,7 +4,7 @@ title: "La configuration se lit dans un fichier `*.config.ts`, puis passe en val
 group: Configuration
 scope: [structure, domain, application, driving, driven]
 style: [tactical, transaction-script]
-severity: major
+severity: minor
 detection: []
 review: approved
 sources: []
@@ -58,4 +58,4 @@ export const walletsConfig = {
 
 ## Voir aussi
 
-SRV-05 tient le domaine à l’écart des questions techniques. WIR-04 fait passer une valeur de la configuration par le constructeur, comme une dépendance.
+LAY-01 tient le domaine à l’écart de l’infrastructure. WIR-04 fait passer une valeur de la configuration par le constructeur, comme une dépendance.

@@ -4,7 +4,7 @@ title: Ne traduire que le nécessaire
 group: Anticorruption layer
 scope: [driven]
 style: [tactical, transaction-script]
-severity: major
+severity: minor
 detection: []
 review: approved
 sources:

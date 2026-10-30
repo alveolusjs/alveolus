@@ -1,12 +1,12 @@
 ---
 layout: home
-title: "Alveolus : le Domain-Driven Design, règle par règle"
+title: "Alveolus : des règles pour construire en NestJS"
 titleTemplate: false
 
 hero:
   name: Alveolus
-  text: Le Domain-Driven Design, règle par règle.
-  tagline: Des règles de Domain-Driven Design et d’architecture pour écrire et relire du code TypeScript / NestJS.
+  text: Des règles pour construire en NestJS.
+  tagline: Domain-Driven Design, architecture, tests et exploitation. Une règle, un signal, une correction.
   image:
     src: /logo.svg
     alt: Logo Alveolus
@@ -39,28 +39,8 @@ features:
     details: Des tests qui ne mentent pas. Un domaine couvert en entier, une vraie base jetable, aucun test instable.
     link: /rules/testing/
     linkText: Voir les règles
+  - title: Exploitation
+    details: Du code qu’on sait faire tourner. Des logs utiles, une opération suivie de bout en bout, rien qui fuit.
+    link: /rules/operations/
+    linkText: Voir les règles
 ---
-
-<div class="home-content">
-
-<HomeSearch />
-
-## Trois façons de s’en servir
-
-Chaque brique sert seule. Ensemble, elles se renforcent : les règles disent quoi faire, `@alveolus/core` donne les classes pour le faire, et Claude Code les applique en codant.
-
-<HomeUses />
-
-## Une règle, une fiche
-
-Toutes les règles suivent le même format, pensé pour la revue de code : ce qu’on voit dans le diff, ce que cela coûte, et comment corriger. Ici, un extrait d’AGG-15.
-
-<HomeAnatomy />
-
-## Deux styles, un filtre
-
-Un bounded context ne mérite pas toujours un modèle tactique. Chaque règle dit à quel style elle s’applique, et le filtre en haut de page adapte tout le site, chiffres compris.
-
-<HomeStyles />
-
-</div>

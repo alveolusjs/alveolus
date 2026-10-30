@@ -5,6 +5,7 @@ group: Le schéma
 scope: [schema, driven]
 style: [tactical, transaction-script]
 severity: blocking
+severityNote: Majeure pour une colonne toujours remplie mais déclarée optionnelle.
 detection: []
 review: approved
 sources: []

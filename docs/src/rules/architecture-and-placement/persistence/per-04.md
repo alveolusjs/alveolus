@@ -4,7 +4,7 @@ title: Une ligne stockée se relit par les vérifications du modèle, et une lig
 group: Mappers
 scope: [driven]
 style: [tactical]
-severity: major
+severity: blocking
 detection: []
 review: approved
 sources: []
