@@ -7,7 +7,7 @@ style: [tactical]
 kind: safeguard
 severity: blocking
 detection: []
-review: to-review
+review: approved
 sources: []
 ---
 
