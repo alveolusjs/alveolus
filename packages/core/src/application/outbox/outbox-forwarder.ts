@@ -4,7 +4,7 @@ import type { Outbox } from './outbox.ts';
 const defaultChannel = 'default';
 const defaultBatchSize = 100;
 
-export class OutboxRelay {
+export class OutboxForwarder {
 	readonly #outbox: Outbox;
 	readonly #publisher: EventPublisher;
 	readonly #channel: string;
@@ -22,7 +22,7 @@ export class OutboxRelay {
 		this.#batchSize = batchSize;
 	}
 
-	public async relay(): Promise<number> {
+	public async forward(): Promise<number> {
 		const lastPublished = await this.#outbox.lastPublished(this.#channel);
 		const stored = await this.#outbox.pending(lastPublished, this.#batchSize);
 		const last = stored.at(-1);

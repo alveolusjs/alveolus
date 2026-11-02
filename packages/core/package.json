@@ -47,9 +47,21 @@
 			"@alveolus/source": "./src/application/command-handlers/index.ts",
 			"default": "./dist/command-handlers/index.mjs"
 		},
+		"./correlation-contexts": {
+			"@alveolus/source": "./src/application/correlation-contexts/index.ts",
+			"default": "./dist/correlation-contexts/index.mjs"
+		},
 		"./domain-errors": {
 			"@alveolus/source": "./src/domain/domain-errors/index.ts",
 			"default": "./dist/domain-errors/index.mjs"
+		},
+		"./domain-event-dispatchers": {
+			"@alveolus/source": "./src/application/domain-event-dispatchers/index.ts",
+			"default": "./dist/domain-event-dispatchers/index.mjs"
+		},
+		"./domain-event-handlers": {
+			"@alveolus/source": "./src/application/domain-event-handlers/index.ts",
+			"default": "./dist/domain-event-handlers/index.mjs"
 		},
 		"./domain-events": {
 			"@alveolus/source": "./src/domain/domain-events/index.ts",
@@ -123,7 +135,10 @@
 			"./aggregates": "./dist/aggregates/index.mjs",
 			"./anti-corruption-layers": "./dist/anti-corruption-layers/index.mjs",
 			"./command-handlers": "./dist/command-handlers/index.mjs",
+			"./correlation-contexts": "./dist/correlation-contexts/index.mjs",
 			"./domain-errors": "./dist/domain-errors/index.mjs",
+			"./domain-event-dispatchers": "./dist/domain-event-dispatchers/index.mjs",
+			"./domain-event-handlers": "./dist/domain-event-handlers/index.mjs",
 			"./domain-events": "./dist/domain-events/index.mjs",
 			"./domain-services": "./dist/domain-services/index.mjs",
 			"./entities": "./dist/entities/index.mjs",

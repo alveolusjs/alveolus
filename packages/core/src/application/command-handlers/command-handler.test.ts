@@ -7,14 +7,19 @@ import {
 	InMemoryOrders,
 	InvalidTotal,
 	Order,
+	type OrderEvent,
 	OrderEventsTranslator,
 	OrderId,
 	OrderNotFound,
+	OrderPlaced,
 	PlaceOrderHandler,
 	SequentialIdGenerator,
 } from '../../../test/fixtures/application.ts';
-import { InMemoryOutbox } from '../../../test/fixtures/utilities.ts';
+import { Instances } from '../../../test/fixtures/domain-event-handlers.ts';
+import { InMemoryOutbox, ScopedCorrelationContext } from '../../../test/fixtures/utilities.ts';
 import { err, ok } from '../../utilities/result/index.ts';
+import { DomainEventDispatcher } from '../domain-event-dispatchers/index.ts';
+import { DomainEventHandlers } from '../domain-event-handlers/index.ts';
 import { CommandHandler } from './command-handler.ts';
 
 describe('CommandHandler', () => {
@@ -25,15 +30,20 @@ describe('CommandHandler', () => {
 		const orders = new InMemoryOrders();
 		await orders.save(new Order(new OrderId('o1')));
 		outbox = new InMemoryOutbox();
-		handler = new PlaceOrderHandler(
-			orders,
+		const correlation = new ScopedCorrelationContext(new SequentialIdGenerator());
+		const translator = new OrderEventsTranslator(new SequentialIdGenerator(), outbox, correlation);
+		const handlers = new DomainEventHandlers<OrderEvent>([[OrderPlaced, OrderEventsTranslator, 'sync']]);
+		const events = new DomainEventDispatcher(
+			'ordering',
+			handlers,
+			new Instances([translator]).resolve,
 			outbox,
-			new OrderEventsTranslator(new SequentialIdGenerator()),
-			new FixedClock(new Date()),
+			correlation,
 		);
+		handler = new PlaceOrderHandler(orders, events, new FixedClock(new Date()));
 	});
 
-	it('returns ok and adds the translated events to the outbox after saving', async () => {
+	it('returns ok and dispatches the events of the aggregate after saving', async () => {
 		expect(await handler.handle({ orderId: 'o1', total: 42 })).toEqual(ok());
 		expect(await outbox.pending(0, 10)).toHaveLength(1);
 		expect(handler).toBeInstanceOf(CommandHandler);
