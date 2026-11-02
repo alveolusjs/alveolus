@@ -1,5 +1,20 @@
 # @alveolus/claude-rules
 
+## 0.5.0
+
+### Minor Changes
+
+- 1fd8162: Two rules are approved and ship. EVT-08: a domain event is read only in its bounded context, through a registry typed by its domain events and a dispatcher that is never exported, with no global event bus; another bounded context reacts to the integration event. EVT-09: an event handler does not trigger a chain of event handlers; a sequence the business needs becomes an explicit process.
+- 7c61bcb: A bounded context holds three folders: `composition/` (its module, its config, and the `*.composition.ts` pieces of a module that grows), `internal/` (its layers: `domain`, `application`, `driving`, `driven`) and `public/`. `shared` keeps its layers and moves its module and config into `composition/`. The ESLint and dependency-cruiser configs and the path scopes of the installed rules only match this layout: move each layer folder under `internal/` and the module and config under `composition/` when upgrading. The pieces of a module are named `*.composition.ts`, no longer `*.wiring.ts`.
+- 4b007ea: The rules tell a domain event from an integration event. A domain event stays in its bounded context; the use case calls `dispatch` once, after `save`, and each event handler declares whether it runs in the transaction of the use case or after the commit. EVT-07 now says what a synchronous event handler may do: translate into an integration event, update a read projection, or write an audit trail. AGG-08, EVT-03, MSG-01, MSG-03, MSG-04, PLC-08, UC-04 and PUB-04 follow this model; PLC-03 adds the `.event-handler` role and drops `.listener`; AGG-09 and EVT-05 let other bounded contexts read the integration event only; ENT-17 keeps the history through a synchronous audit event handler. Two new rules, EVT-08 (a domain event is read only in its bounded context) and EVT-09 (no chain of event handlers), ship once they are approved.
+
+### Patch Changes
+
+- 2873e4f: MSG-03 asks the forwarder never to read past an event whose transaction is still open. A sequence number is given when the row is written, not when it commits: a forwarder that publishes number 11 and records it would never read number 10 if its transaction commits later. With PostgreSQL, each outbox row keeps the transaction that wrote it, and the forwarder reads only the rows written before the oldest transaction still open.
+- 7be9215: The integration event examples use the envelope of `@alveolus/core`: `id` instead of `eventId`, `occurredAt` instead of `occurredOn`, and the `source`, `correlationId` and optional `causationId` fields. A consumer that followed PUB-05 or MSG-04 validated an `eventId` the core never sends. ACL-04 names the date of the fact `occurredAt` too.
+- 623bf4d: ESLint checks EVT-08 with `alveolus/evt-08`: an event handler of `driving` (`*.event-handler.ts`) that imports the `public` folder of its own bounded context reacts to its own published language instead of the domain event. EVT-08 lists ESLint in its detection.
+- 53ce554: The examples call `dispatch` once, after `save`, instead of adding translated events to the outbox, and the command handlers of the wiring rules take the dispatcher of their bounded context. Where a rule meant one kind of event, it now says domain event or integration event, and an event handler or a consumer instead of a handler or a subscriber.
+
 ## 0.4.0
 
 ### Minor Changes
