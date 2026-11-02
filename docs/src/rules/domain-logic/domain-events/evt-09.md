@@ -7,7 +7,7 @@ style: [tactical]
 kind: structure
 severity: major
 detection: []
-review: to-review
+review: approved
 sources: []
 ---
 
