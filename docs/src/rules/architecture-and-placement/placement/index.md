@@ -42,6 +42,7 @@ Un bounded context tactique :
 ```txt
 src/wallets/
 ├── wallets.module.ts                wiring : port → implémentation
+├── event-handlers.wiring.ts         wiring : les event handlers des domain events, et leur mode
 ├── wallets.config.ts                configuration, passée en valeurs
 ├── domain/                          par concept
 │   ├── wallet/                      titulaire et wallet : aggregates, identités, events, erreurs, ports
@@ -51,11 +52,11 @@ src/wallets/
 │   └── wallet/                      commands, queries, views, view ports
 ├── driving/                         par technologie
 │   ├── http/                        controllers, schémas des requêtes et des représentations
-│   └── in-process/                  adapter de la facade, consumers des autres bounded contexts
+│   └── in-process/                  adapter de la facade, consumers, event handlers asynchrones
 ├── driven/                          par technologie
 │   ├── prisma/                      repositories, adapters des views, mappers
 │   │   └── __test__/                tests d’intégration
-│   ├── outbox/                      events → integration events
+│   ├── outbox/                      translator : domain events → integration events
 │   └── http/rates-provider/         anticorruption layer
 ├── public/                          facade, DTO, integration events
 └── __test__/                        tests end-to-end : règles, scénarios, contrat, support
@@ -64,7 +65,7 @@ src/wallets/
 - Un dossier par bounded context, avec son module, sa configuration et ses couches. En haut de `src`, rien d’autre que `shared` (PLC-01).
 - `shared` ne contient que du code technique : pas de `Money`, pas de client (PLC-02).
 - Chaque fichier va dans la couche de son rôle : un aggregate dans `domain`, une command dans `application`, un controller dans `driving`, un mapper dans `driven` (PLC-03).
-- `driving` et `driven` se découpent par technologie : Prisma uniquement dans `driven/prisma` (PLC-13, PLC-07). Un message d’un autre bounded context se consomme dans `driving/in-process`, un event du bounded context se publie depuis `driven/outbox` (PLC-08). Chaque mapping vit avec son adapter (PLC-09).
+- `driving` et `driven` se découpent par technologie : Prisma uniquement dans `driven/prisma` (PLC-13, PLC-07). Un message d’un autre bounded context se consomme dans `driving/in-process`, comme un domain event du bounded context qu’un event handler asynchrone traite après le commit. Un domain event se traduit en integration event dans `driven/outbox` (PLC-08). Chaque mapping vit avec son adapter (PLC-09).
 
 Dans le domaine, les modules suivent les concepts, et le nom des fichiers dit leur rôle :
 

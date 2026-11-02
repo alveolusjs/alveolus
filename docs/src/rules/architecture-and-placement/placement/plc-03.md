@@ -37,8 +37,8 @@ Déplacer le fichier dans la couche de son rôle, ou le renommer d’après le r
 | --- | --- |
 | `domain` | `.aggregate`, `.entity`, `.value-object`, `.id`, `.events`, `.errors`, `.repository`, `.port`, `.service`, `.factory`, `.policy`, `.specification` |
 | `application` | `.command`, `.query`, `.view`, `.port` ; dans un bounded context en transaction scripts, `.service`, `.errors` et `.value-object` |
-| `driven` | `.repository`, `.adapter`, `.mapper`, `.translator`, `.client` |
-| `driving` | `.controller`, `.listener`, `.consumer`, `.relay`, `.scheduler`, `.cli`, `.adapter`, `.request`, `.representation`, `.parser`, `.http`, `.filter`, `.pipe`, `.guard` |
+| `driven` | `.repository`, `.adapter`, `.mapper`, `.translator`, `.event-handler`, `.client` |
+| `driving` | `.controller`, `.event-handler`, `.consumer`, `.relay`, `.scheduler`, `.cli`, `.adapter`, `.request`, `.representation`, `.parser`, `.http`, `.filter`, `.pipe`, `.guard` |
 | `public` | `.facade`, `.dto`, `.integration-events`, `.contract` |
 | toutes | `.module`, `.wiring`, `.bootstrap`, `.config` |
 

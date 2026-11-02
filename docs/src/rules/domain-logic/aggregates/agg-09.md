@@ -23,11 +23,11 @@ Une propriété de domain event typée par un aggregate, une entity ou un objet 
 
 ## Pourquoi
 
-Les events portent les identités des aggregates concernés. Les subscribers, y compris ceux d’autres bounded contexts, s’en servent pour agir sur leurs propres modèles. Embarquer l’objet entier lie les consumers à la structure interne du producer.
+Les domain events portent les identités des aggregates concernés. Les event handlers du bounded context s’en servent pour agir sur d’autres aggregates, et le translator les recopie dans les integration events que lisent les autres bounded contexts. Embarquer l’objet entier lie ces lecteurs à la structure interne de l’aggregate.
 
 ## Exceptions
 
-Les valeurs dont le subscriber a besoin (un montant, un compteur, un statut) voyagent à côté des identités.
+Les valeurs dont l’event handler a besoin (un montant, un compteur, un statut) voyagent à côté des identités.
 
 ## Correction
 

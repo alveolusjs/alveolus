@@ -47,7 +47,14 @@ Un broker qui partage le stockage du modèle, ou une transaction distribuée cho
 
 Cette table d’events sert de file d’attente : c’est l’outbox transactionnelle.
 
-**Notre choix** : l’outbox est une table de la base du modèle. Le command handler y ajoute les events juste après avoir enregistré le modèle, dans la transaction qu’il a ouverte (REP-13). Il les traduit d’abord en integration events, par l’`EventTranslator` du bounded context : l’outbox ne garde que des messages du published language, chacun avec son identifiant. Les repositories ne font que persister l’état : la publication reste visible dans le handler. Pas de broker par défaut : le forwarder livre les events aux handlers de l’application (MSG-03).
+**Notre choix** : l’outbox est une table de la base du modèle. Elle reçoit deux sortes d’entrées, toujours dans la transaction du use case :
+
+- un **integration event**, écrit par le translator, event handler synchrone du bounded context. C’est un message du published language, avec son identifiant. Le forwarder le livre aux consumers des autres bounded contexts.
+- un **domain event**, écrit par le dispatcher quand l’event a au moins un event handler asynchrone. Il ne quitte jamais le bounded context : le forwarder le livre aux seuls event handlers asynchrones de son bounded context.
+
+Une colonne `kind` (`domain` ou `integration`) les distingue. Les repositories ne font que persister l’état. Pas de broker par défaut : le forwarder livre dans le même déploiement (MSG-03).
+
+Un domain event enregistré dans l’outbox a un schéma persisté. Pendant un déploiement, la nouvelle version lit des entrées écrites par l’ancienne. Renommer un champ demande de lire les deux formats le temps du déploiement, ou d’attendre que l’outbox soit vide.
 
 Un bounded context en transaction scripts n’a ni aggregate ni domain events : le script construit le message de son contrat publié (`public`), et l’ajoute à l’outbox, dans la transaction du Unit of Work (TXS-02).
 
@@ -90,10 +97,10 @@ return this.#unitOfWork.run(async () => {
 		return saved;
 	}
 
-	await this.#outbox.add(this.#translator.translateAll(wallet.pullDomainEvents()));
+	await this.#events.dispatch(wallet.pullDomainEvents());
 
 	return ok();
 });
 ```
 
-Préféré : le wallet et son event s’enregistrent dans la même transaction, et l’event part plus tard par le forwarder.
+Préféré : le wallet et son event s’enregistrent dans la même transaction. Le translator, event handler synchrone, écrit l’integration event dans l’outbox, et le forwarder le publie après le commit.

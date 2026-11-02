@@ -26,7 +26,7 @@ other context → public only
 - `domain` n’importe ni NestJS, ni ORM, ni client HTTP, ni broker (LAY-01, AGG-04, CTX-06).
 - `application` ne sait rien du transport : pas de `Request`, pas d’exception HTTP, pas de message brut (UC-02).
 - `driving` traduit l’entrée en command et délègue. Il ne décide rien (CTX-10, UC-04). Il traduit un refus en réponse par le `type` de l’erreur, sans importer `domain` (UC-02).
-- `driven` implémente les ports de `domain` et d’`application`. Il traduit les domain events en integration events de `public` (PUB-01).
+- `driven` implémente les ports de `domain` et d’`application`. Ses event handlers synchrones écrivent hors du modèle : le translator traduit les domain events en integration events de `public` et les ajoute à l’outbox (PUB-01), une projection ou une trace d’audit écrit dans son stockage (EVT-07).
 - `public` ne contient que des types : un contrat stable qui ne laisse pas fuir le modèle interne.
 - Un autre contexte importe **uniquement** depuis `public` (CTX-01, MAP-01).
 - Une technologie n’est importée que dans son dossier d’adapter : Prisma dans `driven/prisma`, les adapters NestJS dans `driving/http` (PLC-07).

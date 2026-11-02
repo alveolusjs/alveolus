@@ -8,6 +8,8 @@ Les events sortent d’un bounded context par des messages. Ces règles enregist
 
 Dans un monolithe, elles valent aussi entre bounded contexts qui échangent des messages dans le même processus.
 
+L’outbox garde deux sortes d’entrées : les integration events à publier aux autres bounded contexts, et les domain events qu’un event handler asynchrone du bounded context traitera après le commit. La section [Domain event ou integration event](../#domain-or-integration) les distingue.
+
 ## En pratique {#in-practice}
 
 Quand de l’argent sort d’un wallet, le titulaire reçoit une notification. Le bounded context `wallets` enregistre l’event dans l’outbox, dans la transaction qui comptabilise l’écriture :

@@ -145,6 +145,12 @@ export const conventionGroups: ConventionGroup[] = [
 		label: 'Outbox et forwarder interne, pas de broker au départ',
 	},
 	{
+		id: 'messaging.event-handler-registry',
+		carriedBy: ['EVT-07', 'EVT-08'],
+		pack: 'persistence-and-messaging',
+		label: 'Un registre des event handlers par bounded context, chacun déclaré synchrone ou asynchrone',
+	},
+	{
 		id: 'contracts.message-versioning',
 		carriedBy: ['PUB-04'],
 		pack: 'persistence-and-messaging',

@@ -1,8 +1,8 @@
 ---
 code: EVT-07
-title: Un subscriber synchrone ne modifie pas un autre aggregate
-group: Les subscribers du bounded context
-scope: [driving]
+title: Un event handler synchrone n’écrit que dans la transaction de son use case
+group: Les event handlers du bounded context
+scope: [driving, driven, structure]
 style: [tactical]
 kind: structure
 severity: major
@@ -13,32 +13,38 @@ sources:
   - "Publishing Events from the Domain Model › Subscribers (sidebar 'Be Careful about What the Event Handler Does')"
 ---
 
-# EVT-07 · Un subscriber synchrone ne modifie pas un autre aggregate
+# EVT-07 · Un event handler synchrone n’écrit que dans la transaction de son use case
 
 <RuleMeta />
 
 ## Signal
 
-Un subscriber in-process qui charge et modifie un autre aggregate, alors qu’il est appelé de façon synchrone pendant la command. Par exemple, un `@OnEvent` branché sur l’event emitter local, ou un subscriber du publisher du domaine.
+- Un event handler synchrone qui charge et modifie un autre aggregate.
+- Un event handler synchrone qui appelle un service distant, envoie un e-mail ou publie vers un broker.
+- Un event handler synchrone qui fait autre chose que les trois actions de la Correction.
 
 ## Pourquoi
 
-Un subscriber synchrone s’exécute dans la même call stack que l’aggregate qui publie. Il tourne donc dans la même transaction que le use case qui a appelé le modèle. Modifier un second aggregate depuis là enfreint la règle d’une seule instance par transaction.
-
-Mettre à jour les autres aggregates de façon asynchrone. Le messaging livre l’event, et chaque subscriber asynchrone modifie son aggregate dans sa propre transaction.
+Un event handler synchrone s’exécute dans la transaction du use case. Modifier un second aggregate enfreint la règle d’une seule instance par transaction (AGG-06). Un appel distant garde la connexion et les verrous aussi longtemps que le partenaire met à répondre, et ne s’annule pas si la transaction échoue (PER-08).
 
 ## Exceptions
 
-Un subscriber synchrone peut enregistrer l’event dans l’outbox. Ce qui sort du processus, comme un e-mail, part de l’outbox, après le commit (PER-08).
+Aucune.
 
 ## Correction
 
-Le subscriber synchrone ne fait qu’enregistrer l’event (MSG-01). Un consumer asynchrone modifie l’autre aggregate.
+Un event handler synchrone fait seulement l’une de ces trois choses :
+
+- traduire le domain event en integration event et l’écrire dans l’outbox ;
+- mettre à jour une projection de lecture dans la même base ;
+- écrire une trace d’audit.
+
+Tout autre event handler est déclaré asynchrone (AGG-08).
 
 ## Adaptation
 
-Avec `@nestjs/event-emitter`, `emit` appelle les listeners de façon synchrone par défaut, dans la call stack de l’appelant. Vérifier dans quelle transaction ils écrivent.
+**Notre choix** : le mode se déclare à l’enregistrement de l’event handler, dans le registre du bounded context (EVT-08). Le registre ne montre que `'sync'` ou `'async'` : la revue vérifie qu’un event handler `'sync'` reste dans la liste.
 
 ## Voir aussi
 
-AGG-06 et AGG-08. AGG-08 désigne les handlers ; cette règle est celle qui les vérifie.
+AGG-06, AGG-08, PER-08. La section [Domain event ou integration event](../../integration/#domain-or-integration) explique le choix du mode.

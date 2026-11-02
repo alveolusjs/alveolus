@@ -33,10 +33,10 @@ Aucune.
 ```txt
 driving/
 ├── http/              controllers, schémas des requêtes et des représentations (NestJS)
-└── in-process/        adapter de la facade, consumers des autres bounded contexts
+└── in-process/        adapter de la facade, consumers des autres bounded contexts, event handlers asynchrones
 driven/
 ├── prisma/            repositories, adapters des views, mappers
-├── outbox/            traduction des events en integration events
+├── outbox/            translator : domain events → integration events
 └── http/<upstream>/   client d’un autre système, derrière une anticorruption layer (ACL-01)
 ```
 
