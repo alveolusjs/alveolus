@@ -35,6 +35,7 @@ const config: Linter.Config[] = defineConfig(
 		},
 		plugins: { alveolus: plugin },
 		rules: {
+			'alveolus/evt-08': 'error',
 			'alveolus/lay-01': 'error',
 			'alveolus/lay-04': 'error',
 			'alveolus/nam-09-parameter-properties': 'error',
@@ -64,6 +65,7 @@ const config: Linter.Config[] = defineConfig(
 	{
 		files: ['src/**/__test__/**', 'src/**/*.spec.ts'],
 		rules: {
+			'alveolus/evt-08': 'off',
 			'alveolus/lay-01': 'off',
 			'alveolus/lay-04': 'off',
 			'alveolus/nam-09-parameter-properties': 'off',

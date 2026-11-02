@@ -8,6 +8,12 @@ export const ctx06: Rule = new Rule(
 	`${site}/strategic-design/bounded-contexts/ctx-06`,
 );
 
+export const evt08: Rule = new Rule(
+	'EVT-08',
+	'A domain event is read only in its bounded context',
+	`${site}/domain-logic/domain-events/evt-08`,
+);
+
 export const lay01: Rule = new Rule(
 	'LAY-01',
 	'The domain declares its interfaces, `driven` implements them',
@@ -56,4 +62,4 @@ export const uc11: Rule = new Rule(
 	`${site}/architecture-and-placement/use-cases/uc-11`,
 );
 
-export const rules: readonly Rule[] = [ctx06, lay01, lay02, lay04, nam09, plc07, pub01, uc11, wir05];
+export const rules: readonly Rule[] = [ctx06, evt08, lay01, lay02, lay04, nam09, plc07, pub01, uc11, wir05];

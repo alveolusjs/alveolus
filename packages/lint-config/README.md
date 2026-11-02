@@ -69,6 +69,7 @@ TypeScript 7 yet.
 | [LAY-02](https://alveolus.dev/rules/architecture-and-placement/layers/lay-02) | dependency-cruiser | A cycle between sibling modules of a layer, even when no file imports itself back. A module and its own sub-module are not siblings. |
 | [LAY-01](https://alveolus.dev/rules/architecture-and-placement/layers/lay-01) | ESLint | `domain` or `application` importing `driving` or `driven`. |
 | [PUB-01](https://alveolus.dev/rules/integration/contracts/pub-01) | ESLint | `public` importing `domain`, `application`, `driving` or `driven` of its bounded context. |
+| [EVT-08](https://alveolus.dev/rules/domain-logic/domain-events/evt-08) | ESLint | An event handler of `driving` (`*.event-handler.ts`) importing the `public` folder of its own bounded context: it reacts to its own published language instead of the domain event. |
 | [LAY-01](https://alveolus.dev/rules/architecture-and-placement/layers/lay-01), [CTX-06](https://alveolus.dev/rules/strategic-design/bounded-contexts/ctx-06) | ESLint | `domain` importing any package but `@alveolus/core` and the `node:` modules. |
 | [WIR-05](https://alveolus.dev/rules/architecture-and-placement/wiring/wir-05) | ESLint | `Injectable`, `Inject` or `Optional` of `@nestjs/common` imported outside `driving/http` and wiring files, under another name or through a namespace included. |
 | [PLC-07](https://alveolus.dev/rules/architecture-and-placement/placement/plc-07) | ESLint | `@prisma/client` imported outside `driven/prisma` and `application`, and `@nestjs/swagger` outside `driving/http`. |

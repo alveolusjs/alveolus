@@ -120,6 +120,16 @@ export class WalletsFacadeAdapter extends WalletsFacade {
 	}
 }
 `,
+	'src/wallets/driving/in-process/money-deposited.event-handler.ts': `import type { DepositHandler } from '../../application/wallet/deposit.command.ts';
+
+export class MoneyDepositedEventHandler {
+	readonly #deposit: DepositHandler;
+
+	public constructor(deposit: DepositHandler) {
+		this.#deposit = deposit;
+	}
+}
+`,
 	'src/wallets/public/wallets.facade.ts': `import type { WalletDto } from './wallet.dto.ts';
 
 export abstract class WalletsFacade {
