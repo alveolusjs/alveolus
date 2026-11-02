@@ -22,6 +22,42 @@ La [context map](../strategic-design/context-maps/) dit quels bounded contexts s
 | Message | Un fait auquel d’autres peuvent réagir | Doublons, ordre, messages perdus | [Messagerie](./messaging/), [Contrats](./contracts/) |
 | Copie de données | Les lectures ne doivent pas dépendre de l’autre côté | Données périmées, responsabilité de la synchronisation | [Traduction](./translation/) |
 
+## Domain event ou integration event {#domain-or-integration}
+
+Un bounded context parle de ce qui lui arrive de deux façons. Le domain event le dit à lui-même. L’integration event le dit aux autres.
+
+| | Domain event | Integration event |
+| --- | --- | --- |
+| Ce que c’est | Un fait passé, enregistré par un aggregate | Un contrat du published language |
+| Qui le lit | Les event handlers du bounded context qui l’enregistre | Les consumers des autres bounded contexts |
+| Où il vit | `domain/`, avec son aggregate | `public/` |
+| Versionné | Non : il change avec le modèle | Oui : une nouvelle version quand il casse (PUB-04) |
+| Comment il part | Par le dispatcher du bounded context | Par l’outbox, après le commit (MSG-01) |
+
+Un domain event n’est pas publié par défaut. Le translator, dans `driven/outbox/`, choisit ceux qui deviennent des integration events. Un bounded context en transaction scripts n’a pas de domain events : ses scripts écrivent directement leurs integration events dans l’outbox.
+
+### Le mode de dispatch {#dispatch-mode}
+
+Un integration event part toujours de façon asynchrone, par l’outbox.
+
+Un domain event part par le dispatcher de son bounded context. Le use case appelle `dispatch` une seule fois, après `save`. Chaque event handler déclare son mode à l’enregistrement : ni l’aggregate ni le use case ne le choisissent.
+
+- **Synchrone** : l’event handler s’exécute dans la transaction du use case. S’il échoue, tout est annulé.
+- **Asynchrone** : le dispatcher écrit l’event dans l’outbox. Le forwarder le livre après le commit, et l’event handler agit dans sa propre transaction.
+
+Une question tranche : si cet event handler échoue, l’opération d’origine doit-elle échouer aussi ? Oui : synchrone. Non : asynchrone.
+
+Un event handler synchrone ne fait que trois choses : traduire en integration event et l’écrire dans l’outbox, mettre à jour une projection de lecture dans la même base, écrire une trace d’audit. Il ne modifie jamais un autre aggregate (AGG-06) et ne fait aucun appel distant (PER-08). Tout le reste est asynchrone.
+
+```ts
+export const walletsEventHandlers = new DomainEventHandlers<WalletEvent>([
+	[MoneyWithdrawn, WalletEventsTranslator, 'sync'],
+	[MoneyWithdrawn, WarnLowBalance, 'async'],
+]);
+```
+
+`MoneyWithdrawn` est traduit dans la transaction du retrait : pas de retrait sans son message publié. `WarnLowBalance` agit après le commit : une alerte qui échoue n’annule pas le retrait.
+
 ## L’exemple, vu de haut {#the-example-from-above}
 
 Sur la context map de la partie [conception stratégique](../strategic-design/) :

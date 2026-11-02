@@ -29,7 +29,7 @@ sources:
 
 ## Pourquoi
 
-Le forwarder lit tous les events non publiés d’un canal, triés par numéro de séquence croissant. Il les envoie un par un. Il n’enregistre le dernier publié qu’après la confirmation du broker. Il n’attend pas la confirmation des subscribers : garantir la livraison est le travail du broker.
+Le forwarder lit tous les events non publiés d’un canal, triés par numéro de séquence croissant. Il les envoie un par un. Il n’enregistre le dernier publié qu’après la confirmation du broker. Pour un integration event, il n’attend pas la confirmation des consumers : garantir la livraison est le travail du broker.
 
 Une séquence est donnée à l’écriture, pas au commit. La transaction qui a reçu le numéro 10 peut commiter après celle qui a reçu le 11. Si le forwarder publie le 11 et l’enregistre, il ne relira jamais le 10 : l’event est perdu.
 
@@ -46,6 +46,8 @@ Un forwarder dans `application`, déclenché périodiquement, qui garde l’iden
 ## Adaptation
 
 **Notre choix** : le forwarder est un use case, déclenché périodiquement par un scheduler (PLC-10). Il publie par un port d’`application`, implémenté dans `driven`. Par défaut, cette implémentation livre aux handlers du même déploiement. Un broker la remplace quand une intégration en a besoin.
+
+Une entrée `domain` ne passe par aucun broker. Le forwarder la livre lui-même à chaque event handler asynchrone de son bounded context, qui a son propre canal. Il ouvre une transaction par entrée, y appelle l’event handler et y enregistre sa position : un event handler qui échoue est rejoué seul, sans doublon.
 
 Avec PostgreSQL, chaque ligne de l’outbox garde la transaction qui l’a écrite (`pg_current_xact_id()`). Le forwarder ne lit que les lignes écrites avant la plus ancienne transaction encore ouverte (`pg_snapshot_xmin(pg_current_snapshot())`).
 

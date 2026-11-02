@@ -65,7 +65,9 @@ Alveolus est écrit en français. Les termes techniques et ceux de la littératu
 | value object | m. | Une valeur immuable, comparée par son contenu, qui porte sa propre logique. |
 | aggregate | m. | Un groupe d’objets modifié d’un bloc, dans une transaction, autour de vrais invariants. |
 | aggregate root | m. | L’entity par laquelle on accède à l’aggregate et qui garde ses invariants. |
-| domain event | m. | Un fait métier passé, né dans le modèle et nommé dans le langage. |
+| domain event | m. | Un fait métier passé, enregistré par un aggregate, et lu seulement dans son bounded context. |
+| event handler | m. | Le code d’un bounded context qui réagit à l’un de ses domain events, en mode synchrone ou asynchrone. |
+| dispatcher | m. | L’objet d’un bounded context qui transmet ses domain events à ses event handlers : tout de suite pour un synchrone, par l’outbox pour un asynchrone. |
 | domain service | m. | Une opération métier sans état, qui n’appartient à aucun objet. |
 | factory | f. | Ce qui crée un objet du modèle quand un constructeur ne suffit pas. |
 | factory method | f. | Une méthode qui crée un objet du modèle, sur sa classe ou sur un autre aggregate. |
@@ -119,16 +121,16 @@ Alveolus est écrit en français. Les termes techniques et ceux de la littératu
 | Unit of Work | m. | La transaction d’un use case, que les repositories et l’outbox partagent. |
 | optimistic concurrency | f. | Une écriture qui échoue si la version de l’aggregate a changé depuis sa lecture, sans verrou posé à l’avance. |
 | versioning | m. | Le numéro de version qu’un aggregate porte en base, et qui avance à chaque écriture. |
-| outbox | m. | La table où les events sont enregistrés dans la transaction, avant d’être publiés. |
+| outbox | m. | La table où le use case enregistre, dans sa transaction, les domain events à traiter après le commit et les integration events à publier. |
 | at least once | adj. | Se dit d’une livraison qui garantit qu’un message arrive, quitte à l’envoyer deux fois. |
-| forwarder | m. | La classe de l’application qui lit l’outbox et publie ses messages, dans l’ordre. |
+| forwarder | m. | La classe de l’application qui lit l’outbox dans l’ordre et livre chaque entrée : un domain event aux event handlers de son bounded context, un integration event aux consumers des autres. |
 | relay | m. | L’adapter driving qui déclenche le forwarder à intervalle régulier. |
 | mapping | m. | La correspondance entre deux représentations d’une même donnée, par exemple une ligne et un objet. |
 | wrapper | m. | Une classe qui en enveloppe une autre, ou une ligne, sans rien y ajouter d’essentiel. |
 | breaking change | m. | Un changement d’un contrat qui casse ceux qui l’utilisent. |
 | finder | m. | Une méthode de repository qui cherche des objets selon un critère. |
 | mapper | m. | La classe qui traduit une ligne de base en objet du modèle, et l’inverse. |
-| translator | m. | La classe d’une anticorruption layer qui traduit un modèle étranger. |
+| translator | m. | La classe qui traduit d’un modèle à un autre. Dans une anticorruption layer, un modèle étranger vers le modèle local. Dans `driven/outbox/`, un domain event vers les integration events qu’il publie. |
 | endpoint | m. | Une route d’une API, qu’un adapter driving expose. |
 | media type | m. | Le format déclaré d’un contenu échangé en HTTP, comme `application/json`. |
 | facade | f. | Le point d’entrée qu’un bounded context publie aux autres dans le même processus. |
@@ -205,7 +207,7 @@ Alveolus est écrit en français. Les termes techniques et ceux de la littératu
 
 | Terme | Genre | Sens |
 | --- | --- | --- |
-| integration event | m. | Un event publié à d’autres bounded contexts, dans le published language. |
+| integration event | m. | Un contrat du published language, publié aux autres bounded contexts par l’outbox. |
 | producer, publisher | m. | Le bounded context qui émet un message. |
 | consumer, subscriber | m. | Le code qui reçoit les messages d’un autre bounded context. |
 | queue | f. | Une file de messages, lus dans l’ordre par un consumer. |

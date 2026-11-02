@@ -30,8 +30,8 @@ Aucune.
 
 ## Correction
 
-La méthode du modèle enregistre l’event (`this.record(...)`). L’outbox, un adapter `driven`, le fait partir après le commit.
+La méthode du modèle enregistre l’event (`this.record(...)`). Le use case le transmet au dispatcher après `save`, sans savoir qui le lit.
 
 ## Adaptation
 
-Même choix qu’AGG-08 : l’aggregate enregistre l’event, puis l’event part par l’outbox (MSG-01). Traduire les domain events en integration events pour d’autres bounded contexts est un autre sujet (PUB-02, PUB-03).
+L’aggregate enregistre, le use case appelle `dispatch` une seule fois, les event handlers du bounded context réagissent selon leur mode (EVT-07, AGG-08). Le translator est l’un d’eux : il décide si l’event devient un integration event (PUB-01).

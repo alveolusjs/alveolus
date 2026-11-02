@@ -38,7 +38,17 @@ Une nouvelle version de l’event, ou un nouvel event. Il est publié à côté 
 
 ## Adaptation
 
-**Notre choix** : le message porte sa version dans un champ `version`, et chaque version a son fichier dans `public`. Le type ne change pas (PUB-03). Pendant la migration, le translator de `driven` publie les deux versions de chaque domain event, et chaque consumer lit celle qu’il connaît. Quand le dernier consumer est passé à la nouvelle version, l’ancienne n’est plus publiée, et son fichier disparaît.
+**Notre choix** : le message porte sa version dans un champ `version`, et chaque version a son fichier dans `public`. Le type ne change pas (PUB-03). Pendant la migration, le translator renvoie les deux versions pour chaque domain event concerné, et chaque consumer lit celle qu’il connaît. Quand le dernier consumer est passé à la nouvelle version, le translator ne renvoie plus que la nouvelle, et le fichier de l’ancienne disparaît.
+
+```ts
+protected translate(event: WalletEvent): AnyIntegrationEvent[] {
+	if (event instanceof MoneyWithdrawn) {
+		return [this.#moneyWithdrawnV1(event), this.#moneyWithdrawnV2(event)];
+	}
+
+	return [];
+}
+```
 
 ## Voir aussi
 

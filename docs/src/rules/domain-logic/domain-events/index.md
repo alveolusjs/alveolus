@@ -4,9 +4,9 @@ menu: Vue d’ensemble
 
 # Domain events
 
-Un domain event enregistre un fait qui compte pour le métier. Ces règles disent comment le modéliser : né dans le modèle, nommé dans le langage, immuable, et porteur de ce dont ses subscribers ont besoin.
+Un domain event enregistre un fait qui compte pour le métier. Ces règles disent comment le modéliser : né dans le modèle, nommé dans le langage, immuable, et porteur de ce dont ses event handlers ont besoin.
 
-La façon dont un event est conservé, transmis et consommé relève de [messaging](../../integration/messaging/), et son contrat publié de [contracts](../../integration/contracts/).
+Un domain event ne quitte pas son bounded context : ce qui le distingue d’un integration event, et le mode de ses event handlers, sont expliqués dans [Domain event ou integration event](../../integration/#domain-or-integration). La façon dont un event est conservé, transmis et consommé relève de [messaging](../../integration/messaging/), et son contrat publié de [contracts](../../integration/contracts/).
 
 ## En pratique {#in-practice}
 
@@ -25,9 +25,9 @@ export class MoneyWithdrawn extends DomainEvent<
 
 - Des faits qui comptent pour le métier, nommés au passé (EVT-01, EVT-04).
 - Nés dans le modèle : le wallet enregistre `WalletOpened`, et l’écriture que créent `wallet.credit()` et `wallet.debit()` enregistre `MoneyDeposited` et `MoneyWithdrawn`. Rien d’autre ne les enregistre (EVT-03).
-- `MoneyWithdrawn` porte le titulaire et le solde après le retrait, pour qu’un subscriber agisse sans relire le wallet (EVT-05). Le wallet calcule ce solde au moment du débit : le solde qu’il vient de vérifier, moins le montant. Un débit concurrent échoue sur la version, donc ce solde est juste (AGG-15).
+- `MoneyWithdrawn` porte le titulaire et le solde après le retrait, pour qu’un event handler ou un consumer agisse sans relire le wallet (EVT-05). Le wallet calcule ce solde au moment du débit : le solde qu’il vient de vérifier, moins le montant. Un débit concurrent échoue sur la version, donc ce solde est juste (AGG-15).
 - Toutes les propriétés sont en lecture seule (EVT-06).
-- Un event est une classe de `@alveolus/core` : l’identité de l’aggregate, la date, et les faits dans `payload`. Son type est le nom de sa classe. Il n’a pas d’identifiant : l’integration event en reçoit un quand l’`EventTranslator` le traduit, avec le type qualifié du published language (`wallets.wallet.MoneyWithdrawn`, PUB-03).
+- Un event est une classe de `@alveolus/core` : l’identité de l’aggregate, la date, et les faits dans `payload`. Son type est le nom de sa classe. Il n’a pas d’identifiant. Le use case le transmet au dispatcher, et ses event handlers réagissent dans la transaction ou après le commit, selon leur mode (EVT-07). Le translator est l’un d’eux : s’il fait de l’event un integration event, celui-ci reçoit un identifiant et le type qualifié du published language (`wallets.wallet.MoneyWithdrawn`, PUB-03).
 
 ## Règles {#rules}
 

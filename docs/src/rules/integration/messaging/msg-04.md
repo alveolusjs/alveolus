@@ -48,6 +48,8 @@ Une table des messages traités (consumer, identifiant du message), écrite dans
 
 **Notre choix** : `IntegrationConsumer` enregistre chaque consumer sous un nom stable, comme `notifications.notify-withdrawal`. Il ouvre la transaction, ignore un `id` déjà traité par ce consumer, appelle le traitement, puis marque le message comme traité, dans la même transaction.
 
+Un event handler asynchrone n’a pas besoin de cette table : le forwarder enregistre sa position dans la transaction de son traitement (MSG-03).
+
 **Avec une transaction explicite** : la ligne du message traité s’écrit avec le client qui écrit ses effets, et le message n’est acquitté qu’après le commit.
 
 ## Voir aussi
