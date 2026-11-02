@@ -55,6 +55,50 @@ export class InMemoryOutbox extends Outbox {
 	}
 }
 
+export class LateCommitOutbox extends Outbox {
+	readonly #stored: StoredEvent[] = [];
+	readonly #uncommitted = new Set<number>();
+	readonly #positions = new Map<string, number>();
+
+	public add(events: readonly AnyIntegrationEvent[]): Promise<void> {
+		this.#append(events);
+		return Promise.resolve();
+	}
+
+	public addUncommitted(events: readonly AnyIntegrationEvent[]): void {
+		for (const sequence of this.#append(events)) {
+			this.#uncommitted.add(sequence);
+		}
+	}
+
+	public commitPending(): void {
+		this.#uncommitted.clear();
+	}
+
+	public pending(after: number, limit: number): Promise<readonly StoredEvent[]> {
+		const firstUncommitted = Math.min(...this.#uncommitted);
+		const visible = this.#stored.filter((entry) => entry.sequence > after && entry.sequence < firstUncommitted);
+		return Promise.resolve(visible.slice(0, limit));
+	}
+
+	public lastPublished(channel: string): Promise<number> {
+		return Promise.resolve(this.#positions.get(channel) ?? 0);
+	}
+
+	public recordPublished(channel: string, sequence: number): Promise<void> {
+		this.#positions.set(channel, sequence);
+		return Promise.resolve();
+	}
+
+	#append(events: readonly AnyIntegrationEvent[]): number[] {
+		return events.map((event) => {
+			const sequence = this.#stored.length + 1;
+			this.#stored.push({ sequence, event });
+			return sequence;
+		});
+	}
+}
+
 export class FailingEventPublisher extends EventPublisher {
 	public publish(): Promise<void> {
 		return Promise.reject(new Error('broker unavailable'));
