@@ -1,5 +1,16 @@
 # @alveolus/claude-rules
 
+## 0.4.0
+
+### Minor Changes
+
+- decda8a: Every rule has a kind: a safeguard (a defect can lose or corrupt money, data or a message, open a security hole, or hide such a loss), a structure rule (a defect makes the code diverge from the model, breaks a boundary or creates costly coupling), or a convention (one valid form among several). Each packaged rule carries `kind`, the generated rule files print it under the severity, and the reviewer agent explains it. Severities now follow the kind: every safeguard is blocking, every structure rule major, every convention minor, so 64 rules change severity or note; a note keeps a lower level only for a signal that belongs to another concern.
+
+### Patch Changes
+
+- decda8a: Twenty rules give, in their Adaptation, the form or the signal to check under the other choice of their pack: business refusals thrown as named exceptions instead of `Result`, or a transaction opened by the use case and passed explicitly instead of the Unit of Work. Five safeguard notes (AGG-15, ENT-09, MSG-04, MSG-05, REP-06) that lowered the same defect to major are removed, so these rules are blocking throughout; MSG-03 stays major only for a forwarder placed in the domain.
+- decda8a: Five rules are narrowed so that each one holds a single concern. TXS-02 keeps one transaction per script, and the ban on calling another script moves to TXS-09. SEC-02 keeps the caller's identity from authentication, and the caller carried by the command moves to UC-13. PLC-07 keeps a technology imported only in its folder, and the split of adapters by technology moves to PLC-13. PER-06 keeps bounded lists, and reading by pages without skipping a row moves to PER-13. TXS-06 hands raw SQL to SEC-05. The new rules ship once they are approved. The ESLint message of PLC-07 follows its new title.
+
 ## 0.3.2
 
 ### Patch Changes
