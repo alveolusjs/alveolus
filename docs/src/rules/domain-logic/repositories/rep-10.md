@@ -57,20 +57,20 @@ export abstract class StandingOrderRepository {
 
 ```ts
 // Preferred: a view and its port, on the query side
-// application/standing-order/next-due-date.view.ts
+// internal/application/standing-order/next-due-date.view.ts
 export interface NextDueDateView {
 	readonly dueOn: Date;
 	readonly amount: Money;
 }
 
-// application/standing-order/standing-order-views.port.ts
+// internal/application/standing-order/standing-order-views.port.ts
 export abstract class StandingOrderViews {
 	abstract nextDueDate(id: StandingOrderId, after: Date): Promise<NextDueDateView | undefined>;
 }
 ```
 
 ```ts
-// application/standing-order/get-next-due-date.query.ts
+// internal/application/standing-order/get-next-due-date.query.ts
 async handle(query: GetNextDueDateQuery): Promise<Result<NextDueDateView, GetNextDueDateError>> {
 	const id = StandingOrderId.of(query.standingOrderId);
 

@@ -9,7 +9,7 @@ describe('the ESLint formatter', () => {
 	it('frames what breaks a rule of Alveolus, with the title and the url of the rule', () => {
 		const { output, status } = app
 			.with(
-				'src/wallets/application/wallet/withdraw.command.ts',
+				'src/wallets/internal/application/wallet/withdraw.command.ts',
 				[
 					`import type { Clock } from '@alveolus/core';`,
 					`import { Injectable } from '@nestjs/common';`,
@@ -21,7 +21,7 @@ describe('the ESLint formatter', () => {
 		expect(output).toBe(
 			[
 				`  × WIR-05: ${wir05.title}`,
-				'   ╭─[src/wallets/application/wallet/withdraw.command.ts:2:10]',
+				'   ╭─[src/wallets/internal/application/wallet/withdraw.command.ts:2:10]',
 				` 1 │ import type { Clock } from '@alveolus/core';`,
 				` 2 │ import { Injectable } from '@nestjs/common';`,
 				'   ·          ─────┬────',
@@ -38,10 +38,10 @@ describe('the ESLint formatter', () => {
 	});
 
 	it('frames any other message with the id of its rule', () => {
-		const { output } = app.with('src/wallets/application/wallet/broken.ts', 'const = ;\n').eslintReport();
+		const { output } = app.with('src/wallets/internal/application/wallet/broken.ts', 'const = ;\n').eslintReport();
 
 		expect(output).toContain('  × eslint: Parsing error');
-		expect(output).toContain('src/wallets/application/wallet/broken.ts:1:6');
+		expect(output).toContain('src/wallets/internal/application/wallet/broken.ts:1:6');
 	});
 
 	it('says nothing is wrong, and exits with 0, when no rule is broken', () => {

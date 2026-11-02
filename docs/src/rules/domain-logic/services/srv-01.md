@@ -55,7 +55,7 @@ Un module TypeScript accepte les fonctions libres, et elles ont l’air inoffens
 2. une méthode d’un value object : une règle sur une valeur est une méthode de cette valeur, la lecture d’une entrée brute est une factory method statique (`of`, `read`) qui renvoie un `Result`, et un calcul sur une collection est un value object qui porte cette collection ;
 3. une classe de domain service, quand l’opération n’appartient à aucun objet ou a besoin d’un port : ses dépendances arrivent par son constructeur, et elle est injectée.
 
-Hors du domaine, chaque artefact est une classe qui a un rôle (mapper, adapter, translator, controller), et un petit helper est une méthode privée `#` de la classe qui s’en sert. Un mapper sans état reste une instance, tenue par la classe qui l’utilise : pas de classe faite seulement de membres statiques. Les fonctions libres restent dans les fichiers de wiring (`*.wiring.ts`, `*.module.ts`, `*.bootstrap.ts`, `*.config.ts`).
+Hors du domaine, chaque artefact est une classe qui a un rôle (mapper, adapter, translator, controller), et un petit helper est une méthode privée `#` de la classe qui s’en sert. Un mapper sans état reste une instance, tenue par la classe qui l’utilise : pas de classe faite seulement de membres statiques. Les fonctions libres restent dans les fichiers de wiring (`*.composition.ts`, `*.module.ts`, `*.bootstrap.ts`, `*.config.ts`).
 
 ## Voir aussi
 

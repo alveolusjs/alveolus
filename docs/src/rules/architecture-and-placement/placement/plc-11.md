@@ -36,7 +36,7 @@ Aucune.
 ## Correction
 
 ```txt
-src/wallets/driven/http/rates-provider/
+src/wallets/internal/driven/http/rates-provider/
 ├── generated/                          les types générés à partir de l’API du provider
 ├── http-exchange-rates.adapter.ts
 └── rates-provider.translator.ts        traduit les types générés en concepts du modèle

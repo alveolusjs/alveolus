@@ -45,11 +45,11 @@ number of errors, so a CI step fails on any of them.
 
 ```txt
   × LAY-04: Another bounded context comes in only through `public`, which holds only the contract
-   ╭─[src/notifications/application/notification/notify.ts:2:24]
+   ╭─[src/notifications/internal/application/notification/notify.ts:2:24]
  1 │ import type { Clock } from '@alveolus/core';
- 2 │ import { Wallet } from '../../../wallets/domain/wallet/wallet.aggregate.ts';
-   ·                        ──────────────────────────┬─────────────────────────
-   ·                                                  ╰── src/wallets/domain/wallet/wallet.aggregate.ts
+ 2 │ import { Wallet } from '../../../../wallets/internal/domain/wallet/wallet.aggregate.ts';
+   ·                        ────────────────────────────────┬───────────────────────────────
+   ·                                                        ╰── src/wallets/internal/domain/wallet/wallet.aggregate.ts
  3 │
    ╰────
   help: https://alveolus.dev/rules/architecture-and-placement/layers/lay-04
@@ -79,7 +79,7 @@ TypeScript 7 yet.
 The rules of typescript-eslint behind UC-11 and NAM-09 come under the name and with the url of the Alveolus rule.
 Behind UC-11, they report only what holds a `Result`: an unused parameter, or a promise of nothing, is left to the
 linter of the app.
-Wiring files (`.module`, `.wiring`, `.bootstrap`, `.config`) may import packages, and tests (`__test__`, `.spec.ts`)
+Wiring files (`.module`, `.composition`, `.bootstrap`, `.config`) may import packages, and tests (`__test__`, `.spec.ts`)
 are left out. The rules on imports between folders ask the TypeScript program where each import leads, as the
 compiler resolves it: they need the type information of typescript-eslint, which the preset turns on
 (`projectService`) for `src/**/*.ts`. ESLint shows them in the editor; only the cycles of LAY-02 wait for
@@ -104,7 +104,7 @@ it.
 import { Injectable } from '@nestjs/common';
 
 // eslint-disable-next-line alveolus/lay-04 -- waiver LAY-04: <reason>, see ADR-NNNN
-import { Wallet } from '../../../wallets/domain/wallet/wallet.aggregate.ts';
+import { Wallet } from '../../../../wallets/internal/domain/wallet/wallet.aggregate.ts';
 ```
 
 dependency-cruiser has no comment for it. `depcruise-baseline src` records the violations that remain, and
@@ -119,8 +119,8 @@ module.exports = {
 			name: 'LAY-02',
 			comment: 'waiver LAY-02: <reason>, see ADR-NNNN',
 			from: {
-				path: '^src/([^/]+)/(domain|application|driving|driven|public)/',
-				pathNot: '^src/wallets/domain/holder$',
+				path: '^src/(shared/(?:driving|driven)|[^/]+/(?:internal/(?:domain|application|driving|driven)|public))/',
+				pathNot: '^src/wallets/internal/domain/holder$',
 			},
 		},
 	],

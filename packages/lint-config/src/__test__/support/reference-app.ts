@@ -22,15 +22,15 @@ import { AppModule } from './app.module.ts';
 export const app = NestFactory.create(AppModule);
 `,
 	'src/app.module.ts': `import { Module } from '@nestjs/common';
-import { NotificationsModule } from './notifications/notifications.module.ts';
-import { SharedModule } from './shared/shared.module.ts';
-import { WalletsModule } from './wallets/wallets.module.ts';
+import { NotificationsModule } from './notifications/composition/notifications.module.ts';
+import { SharedModule } from './shared/composition/shared.module.ts';
+import { WalletsModule } from './wallets/composition/wallets.module.ts';
 
 @Module({ imports: [SharedModule, WalletsModule, NotificationsModule] })
 export class AppModule {}
 `,
-	'src/shared/shared.module.ts': `import { Module } from '@nestjs/common';
-import { PrismaUnitOfWork } from './driven/prisma/prisma.unit-of-work.ts';
+	'src/shared/composition/shared.module.ts': `import { Module } from '@nestjs/common';
+import { PrismaUnitOfWork } from '../driven/prisma/prisma.unit-of-work.ts';
 
 @Module({ providers: [PrismaUnitOfWork], exports: [PrismaUnitOfWork] })
 export class SharedModule {}
@@ -41,38 +41,38 @@ export class PrismaUnitOfWork {
 	public readonly client = new PrismaClient();
 }
 `,
-	'src/wallets/wallets.module.ts': `import { Module } from '@nestjs/common';
-import { DepositHandler } from './application/wallet/deposit.command.ts';
-import { PrismaWalletRepository } from './driven/prisma/prisma-wallet.repository.ts';
+	'src/wallets/composition/wallets.module.ts': `import { Module } from '@nestjs/common';
+import { DepositHandler } from '../internal/application/wallet/deposit.command.ts';
+import { PrismaWalletRepository } from '../internal/driven/prisma/prisma-wallet.repository.ts';
 
 @Module({ providers: [DepositHandler, PrismaWalletRepository] })
 export class WalletsModule {}
 `,
-	'src/wallets/domain/holder/holder.id.ts': `import { Identifier } from '@alveolus/core';
+	'src/wallets/internal/domain/holder/holder.id.ts': `import { Identifier } from '@alveolus/core';
 
 export class HolderId extends Identifier {}
 `,
-	'src/wallets/domain/wallet/wallet.aggregate.ts': `import { AggregateRoot } from '@alveolus/core';
+	'src/wallets/internal/domain/wallet/wallet.aggregate.ts': `import { AggregateRoot } from '@alveolus/core';
 import type { HolderId } from '../holder/holder.id.ts';
 
 export class Wallet extends AggregateRoot {
 	public readonly holder?: HolderId;
 }
 `,
-	'src/wallets/domain/wallet/wallet.repository.ts': `import type { Wallet } from './wallet.aggregate.ts';
+	'src/wallets/internal/domain/wallet/wallet.repository.ts': `import type { Wallet } from './wallet.aggregate.ts';
 
 export abstract class WalletRepository {
 	public abstract save(wallet: Wallet): Promise<void>;
 }
 `,
-	'src/wallets/domain/wallet/__test__/wallet.aggregate.spec.ts': `import { expect, it } from 'vitest';
+	'src/wallets/internal/domain/wallet/__test__/wallet.aggregate.spec.ts': `import { expect, it } from 'vitest';
 import { PrismaWalletRepository } from '../../../driven/prisma/prisma-wallet.repository.ts';
 
 it('opens a wallet', () => {
 	expect(PrismaWalletRepository).toBeDefined();
 });
 `,
-	'src/wallets/application/wallet/deposit.command.ts': `import type { WalletRepository } from '../../domain/wallet/wallet.repository.ts';
+	'src/wallets/internal/application/wallet/deposit.command.ts': `import type { WalletRepository } from '../../domain/wallet/wallet.repository.ts';
 
 export class DepositHandler {
 	readonly #wallets: WalletRepository;
@@ -82,7 +82,7 @@ export class DepositHandler {
 	}
 }
 `,
-	'src/wallets/driven/prisma/prisma-wallet.repository.ts': `import { PrismaClient } from '@prisma/client';
+	'src/wallets/internal/driven/prisma/prisma-wallet.repository.ts': `import { PrismaClient } from '@prisma/client';
 import type { Wallet } from '../../domain/wallet/wallet.aggregate.ts';
 import { WalletRepository } from '../../domain/wallet/wallet.repository.ts';
 
@@ -94,7 +94,7 @@ export class PrismaWalletRepository extends WalletRepository {
 	}
 }
 `,
-	'src/wallets/driving/http/wallet.controller.ts': `import { Controller, Inject } from '@nestjs/common';
+	'src/wallets/internal/driving/http/wallet.controller.ts': `import { Controller, Inject } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { DepositHandler } from '../../application/wallet/deposit.command.ts';
 
@@ -108,8 +108,8 @@ export class WalletController {
 	}
 }
 `,
-	'src/wallets/driving/in-process/wallets-facade.adapter.ts': `import type { DepositHandler } from '../../application/wallet/deposit.command.ts';
-import { WalletsFacade } from '../../public/wallets.facade.ts';
+	'src/wallets/internal/driving/in-process/wallets-facade.adapter.ts': `import type { DepositHandler } from '../../application/wallet/deposit.command.ts';
+import { WalletsFacade } from '../../../public/wallets.facade.ts';
 
 export class WalletsFacadeAdapter extends WalletsFacade {
 	readonly #deposit: DepositHandler;
@@ -120,7 +120,7 @@ export class WalletsFacadeAdapter extends WalletsFacade {
 	}
 }
 `,
-	'src/wallets/driving/in-process/money-deposited.event-handler.ts': `import type { DepositHandler } from '../../application/wallet/deposit.command.ts';
+	'src/wallets/internal/driving/in-process/money-deposited.event-handler.ts': `import type { DepositHandler } from '../../application/wallet/deposit.command.ts';
 
 export class MoneyDepositedEventHandler {
 	readonly #deposit: DepositHandler;
@@ -141,13 +141,13 @@ export abstract class WalletsFacade {
 	readonly balance: number;
 };
 `,
-	'src/notifications/notifications.module.ts': `import { Module } from '@nestjs/common';
-import { NotificationService } from './application/notification/notification.service.ts';
+	'src/notifications/composition/notifications.module.ts': `import { Module } from '@nestjs/common';
+import { NotificationService } from '../internal/application/notification/notification.service.ts';
 
 @Module({ providers: [NotificationService] })
 export class NotificationsModule {}
 `,
-	'src/notifications/application/notification/notification.service.ts': `import { PrismaClient } from '@prisma/client';
+	'src/notifications/internal/application/notification/notification.service.ts': `import { PrismaClient } from '@prisma/client';
 import type { WalletsFacade } from '@wallets/public/wallets.facade.ts';
 
 export class NotificationService {

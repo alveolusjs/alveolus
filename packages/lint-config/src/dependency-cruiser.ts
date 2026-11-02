@@ -9,8 +9,10 @@ const config: IConfiguration = {
 			comment: lay02.describe(),
 			severity: 'error',
 			scope: 'folder',
-			from: { path: '^src/([^/]+)/(domain|application|driving|driven|public)/' },
-			to: { path: '^src/$1/$2/', circular: true },
+			from: {
+				path: '^src/(shared/(?:driving|driven)|[^/]+/(?:internal/(?:domain|application|driving|driven)|public))/',
+			},
+			to: { path: '^src/$1/', circular: true },
 		},
 	],
 	options: {

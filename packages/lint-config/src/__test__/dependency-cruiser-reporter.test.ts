@@ -12,13 +12,13 @@ describe('the dependency-cruiser reporter', () => {
 				name: 'no-notifications-to-wallets',
 				severity: 'error',
 				from: { path: '^src/notifications/' },
-				to: { path: '^src/wallets/domain/' },
+				to: { path: '^src/wallets/internal/domain/' },
 			})
 			.with(
-				'src/notifications/application/notification/notify.ts',
+				'src/notifications/internal/application/notification/notify.ts',
 				[
 					`import type { Clock } from '@alveolus/core';`,
-					`\timport { Wallet } from '../../../wallets/domain/wallet/wallet.aggregate.ts';`,
+					`\timport { Wallet } from '../../../../wallets/internal/domain/wallet/wallet.aggregate.ts';`,
 					'',
 				].join('\n'),
 			)
@@ -27,11 +27,11 @@ describe('the dependency-cruiser reporter', () => {
 		expect(output).toBe(
 			[
 				'  × no-notifications-to-wallets',
-				'   ╭─[src/notifications/application/notification/notify.ts:2:25]',
+				'   ╭─[src/notifications/internal/application/notification/notify.ts:2:25]',
 				` 1 │ import type { Clock } from '@alveolus/core';`,
-				` 2 │     import { Wallet } from '../../../wallets/domain/wallet/wallet.aggregate.ts';`,
-				'   ·                            ──────────────────────────┬─────────────────────────',
-				'   ·                                                      ╰── src/wallets/domain/wallet/wallet.aggregate.ts',
+				` 2 │     import { Wallet } from '../../../../wallets/internal/domain/wallet/wallet.aggregate.ts';`,
+				'   ·                            ────────────────────────────────┬───────────────────────────────',
+				'   ·                                                            ╰── src/wallets/internal/domain/wallet/wallet.aggregate.ts',
 				' 3 │',
 				'   ╰────',
 				'',
@@ -45,19 +45,19 @@ describe('the dependency-cruiser reporter', () => {
 	it('shows a cycle once, through each of its modules', () => {
 		const { output, status } = app
 			.with(
-				'src/wallets/domain/holder/holder.entity.ts',
+				'src/wallets/internal/domain/holder/holder.entity.ts',
 				`import type { Limit } from '../limit/limit.value-object.ts';`,
 			)
 			.with(
-				'src/wallets/domain/limit/limit.value-object.ts',
+				'src/wallets/internal/domain/limit/limit.value-object.ts',
 				`import type { Wallet } from '../wallet/wallet.aggregate.ts';`,
 			)
 			.dependencyCruiserReport();
 
 		expect(output.match(/LAY-02/g)).toHaveLength(1);
-		expect(output).toContain(`  × LAY-02: ${lay02.title}\n  │ src/wallets/domain/`);
-		expect(output).toContain('src/wallets/domain/holder');
-		expect(output).toContain('src/wallets/domain/limit');
+		expect(output).toContain(`  × LAY-02: ${lay02.title}\n  │ src/wallets/internal/domain/`);
+		expect(output).toContain('src/wallets/internal/domain/holder');
+		expect(output).toContain('src/wallets/internal/domain/limit');
 		expect(output).toContain('Found 0 warnings and 1 error.');
 		expect(status).toBe(1);
 	});

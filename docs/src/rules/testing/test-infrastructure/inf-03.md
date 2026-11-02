@@ -67,7 +67,7 @@ Le contrat commité porte l’exemple de chaque réponse :
 Les stubs sont générés depuis lui :
 
 ```ts
-// src/wallets/driven/http/rates-provider/__test__/rates-provider.stubs.ts
+// src/wallets/internal/driven/http/rates-provider/__test__/rates-provider.stubs.ts
 import { fromOpenApi } from '@msw/source/open-api';
 
 import contract from '../rates-provider.openapi.json' with { type: 'json' };
@@ -78,7 +78,7 @@ export const ratesProviderStubs = await fromOpenApi(contract);
 Si le contrat ne donne pas d’exemple pour `GET /quotes`, l’enregistrement passe avant les stubs générés :
 
 ```ts
-// src/wallets/driven/http/rates-provider/__test__/rates-provider.stubs.ts
+// src/wallets/internal/driven/http/rates-provider/__test__/rates-provider.stubs.ts
 import getQuotes from './recordings/get-quotes.200.json' with { type: 'json' };
 
 export const ratesProviderStubs = [
@@ -121,7 +121,7 @@ afterAll(() => {
 Le test construit le vrai adapter, sur l’adresse de production : MSW répond l’exemple du contrat, et toute autre requête fait échouer le test.
 
 ```ts
-// src/wallets/driven/http/rates-provider/__test__/http-exchange-rates.integration-spec.ts
+// src/wallets/internal/driven/http/rates-provider/__test__/http-exchange-rates.integration-spec.ts
 describe('HttpExchangeRates', () => {
 	it('finds the rate of a pair that the provider quotes', async () => {
 		// Arrange

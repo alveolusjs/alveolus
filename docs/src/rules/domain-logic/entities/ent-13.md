@@ -54,7 +54,7 @@ if (!confirmed.ok) {
 ```
 
 ```ts
-// domain/withdrawal/withdrawal.aggregate.ts
+// internal/domain/withdrawal/withdrawal.aggregate.ts
 confirm(submitted: CodeDigest, at: Date): Result<void, WithdrawalNotPending | WrongConfirmationCode> {
 	if (this.#status !== 'pending') {
 		return err(new WithdrawalNotPending(this.id));

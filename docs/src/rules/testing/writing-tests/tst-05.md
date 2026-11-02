@@ -34,21 +34,22 @@ Ce dont tous les bounded contexts ont besoin, comme la base ou le serveur de stu
 
 ```txt
 src/shared/__test__/
-├── database.global-setup.ts                                              la base jetable, une fois par run (INF-01)
-├── database.setup.ts                                                     la base du worker, vidée avant chaque test (INF-02)
-└── http.setup.ts                                                         les stubs des systèmes tiers, remis à zéro après chaque test (INF-04)
+├── database.global-setup.ts                                                  la base jetable, une fois par run (INF-01)
+├── database.setup.ts                                                         la base du worker, vidée avant chaque test (INF-02)
+└── http.setup.ts                                                             les stubs des systèmes tiers, remis à zéro après chaque test (INF-04)
 
 src/wallets/
-├── domain/wallet/__test__/wallet.aggregate.spec.ts                       test unitaire
-├── driven/prisma/__test__/prisma-wallet.repository.integration-spec.ts   test d’intégration
-├── driven/http/rates-provider/
-│   ├── rates-provider.openapi.json                                       le contrat du provider, figé et commité (INF-03)
-│   └── __test__/
-│       ├── recordings/                                                   les réponses enregistrées de la sandbox, sans exemple dans le contrat (INF-03)
-│       ├── rates-provider.stubs.ts                                       stubs générés, parcours écrits à la main (INF-03, INF-04)
-│       ├── http-exchange-rates.integration-spec.ts                       l’adapter face aux stubs
-│       └── http-exchange-rates.contract-spec.ts                          test de contrat, contre la sandbox (INF-05)
-└── __test__/                                                             tests end-to-end du bounded context
+├── internal/
+│   ├── domain/wallet/__test__/wallet.aggregate.spec.ts                       test unitaire
+│   ├── driven/prisma/__test__/prisma-wallet.repository.integration-spec.ts   test d’intégration
+│   └── driven/http/rates-provider/
+│       ├── rates-provider.openapi.json                                       le contrat du provider, figé et commité (INF-03)
+│       └── __test__/
+│           ├── recordings/                                                   les réponses enregistrées de la sandbox, sans exemple dans le contrat (INF-03)
+│           ├── rates-provider.stubs.ts                                       stubs générés, parcours écrits à la main (INF-03, INF-04)
+│           ├── http-exchange-rates.integration-spec.ts                       l’adapter face aux stubs
+│           └── http-exchange-rates.contract-spec.ts                          test de contrat, contre la sandbox (INF-05)
+└── __test__/                                                                 tests end-to-end du bounded context
     ├── rules/        les règles que le domaine ne tient pas seul : unicité, concurrence, idempotence (COV-02)
     ├── scenarios/    un fichier par use case : son cas nominal, ses enchaînements
     ├── contract/     facade, erreurs HTTP, OpenAPI

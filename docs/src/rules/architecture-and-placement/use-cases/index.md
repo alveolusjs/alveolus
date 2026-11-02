@@ -11,7 +11,7 @@ Un use case est le point d’entrée de l’application pour une opération : il
 Débiter un wallet : charger, laisser le modèle décider, enregistrer.
 
 ```ts
-// application/wallet/debit-wallet.command.ts
+// internal/application/wallet/debit-wallet.command.ts
 async handle(command: DebitWalletCommand): Promise<Result<void, DebitWalletError>> {
 	// walletId, reference, amount and to: the command parsed into value objects
 
@@ -58,7 +58,7 @@ async handle(command: DebitWalletCommand): Promise<Result<void, DebitWalletError
 Afficher un wallet : la query lit une view, le controller en tire ce dont l’écran a besoin.
 
 ```ts
-// application/wallet/wallet.view.ts
+// internal/application/wallet/wallet.view.ts
 export type WalletView = View<{
 	id: string;
 	status: 'active' | 'closed';
@@ -68,7 +68,7 @@ export type WalletView = View<{
 ```
 
 ```ts
-// application/wallet/get-wallet.query.ts
+// internal/application/wallet/get-wallet.query.ts
 export class GetWalletHandler extends QueryHandler<GetWalletQuery, WalletView, WalletNotFound> {
 	readonly #views: WalletViews;
 
@@ -88,7 +88,7 @@ export class GetWalletHandler extends QueryHandler<GetWalletQuery, WalletView, W
 ```
 
 ```ts
-// driving/http/wallet.representation.ts
+// internal/driving/http/wallet.representation.ts
 export function walletRepresentation(view: WalletView): WalletRepresentation {
 	return { ...view, showTopUpBanner: view.balance.minor === '0' };
 }

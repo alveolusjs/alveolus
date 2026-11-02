@@ -1,7 +1,7 @@
 import { evt08 } from '../../rules.ts';
 import { ImportBoundary } from '../import-boundary.ts';
 
-const eventHandler = /^src\/([^/]+)\/driving\/.+\.event-handler\.ts$/;
+const eventHandler = /^src\/([^/]+)\/internal\/driving\/.+\.event-handler\.ts$/;
 
 export class Evt08Boundary extends ImportBoundary {
 	public constructor() {

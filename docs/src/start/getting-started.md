@@ -18,7 +18,7 @@ pageClass: getting-started
 
 ## Déclarer les bounded contexts {#contexts}
 
-Le code de chaque bounded context vit dans un dossier de `src/`, découpé en couches ([architecture de référence](./reference-architecture)). Le fichier `architecture.json`, à la racine, déclare chaque bounded context et son style (CTX-14) :
+Le code de chaque bounded context vit dans un dossier de `src/` : ses couches dans `internal/`, son contrat dans `public/` ([architecture de référence](./reference-architecture)). Le fichier `architecture.json`, à la racine, déclare chaque bounded context et son style (CTX-14) :
 
 ```json
 {

@@ -34,7 +34,7 @@ Un remplacement qui demande un autre port n’est plus un simple remplacement d�
 ## Correction
 
 ```txt
-src/wallets/driven/http/
+src/wallets/internal/driven/http/
 ├── <current-provider>/     l’adapter en place
 └── <next-provider>/        son remplaçant, derrière le même port ExchangeRates
 ```

@@ -35,13 +35,13 @@ Les injection tokens de NestJS lui-même : `APP_PIPE`, `APP_GUARD`, `APP_FILTER`
 ## Correction
 
 ```ts
-// domain/wallet/wallet.repository.ts
+// internal/domain/wallet/wallet.repository.ts
 export abstract class WalletRepository {
 	abstract get(id: WalletId): Promise<Wallet | undefined>;
 	abstract save(wallet: Wallet): Promise<Result<void, WalletAlreadyOpen>>;
 }
 
-// wallets.module.ts
+// composition/wallets.module.ts
 { ...construct(PrismaWalletRepository, [PrismaUnitOfWork]), provide: WalletRepository },
 ```
 
