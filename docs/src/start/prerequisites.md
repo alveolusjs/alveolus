@@ -103,7 +103,7 @@ Les building blocks, les règles pour Claude Code et les règles vérifiées par
 
 | Package | Contenu |
 | --- | --- |
-| [`@alveolus/core`](https://www.npmjs.com/package/@alveolus/core) | `AggregateRoot`, `Entity`, `ValueObject`, `Identifier` et `UuidIdentifier`, `DomainEvent`, `DomainError` et `InvalidIdentifier`, les ports (`Clock`, `IdGenerator`), les repositories, `CommandHandler` et `QueryHandler`, `UnitOfWork` et `NestedWorkRefused`, `Outbox` et `OutboxRelay`, `Result`. Aucune dépendance à l’exécution. |
+| [`@alveolus/core`](https://www.npmjs.com/package/@alveolus/core) | `AggregateRoot`, `Entity`, `ValueObject`, `Identifier` et `UuidIdentifier`, `DomainEvent`, `DomainError` et `InvalidIdentifier`, les ports (`Clock`, `IdGenerator`), les repositories, `CommandHandler` et `QueryHandler`, `UnitOfWork` et `NestedWorkRefused`, `DomainEventHandler`, `DomainEventHandlers` et `DomainEventDispatcher`, `EventTranslator`, `CorrelationContext`, `Outbox`, `OutboxForwarder` et `DomainEventForwarder`, `Result`. Aucune dépendance à l’exécution. |
 | [`@alveolus/claude-rules`](https://www.npmjs.com/package/@alveolus/claude-rules) | Les règles, en règles de Claude Code chargées par dossier, trois skills pour mener une user story de la conception à la revue, et un agent de revue. S’installe en dépendance de développement. |
 | [`@alveolus/lint-config`](https://www.npmjs.com/package/@alveolus/lint-config) | Les règles qu’un lint décide sans faux positif, pour ESLint et dependency-cruiser : dépendances entre couches et entre bounded contexts, packages interdits par dossier, visibles dans l’éditeur, et cycles entre modules en CI. S’installe en dépendance de développement. |
 

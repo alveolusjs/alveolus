@@ -1,12 +1,8 @@
 import { CommandHandler } from '../../src/application/command-handlers/index.ts';
+import type { DomainEventDispatcher } from '../../src/application/domain-event-dispatchers/index.ts';
 import { EventPublisher } from '../../src/application/event-publishers/index.ts';
 import { EventTranslator } from '../../src/application/event-translators/index.ts';
-import type {
-	AnyIntegrationEvent,
-	IntegrationEvent,
-	IntegrationEventContext,
-} from '../../src/application/integration-events/index.ts';
-import type { Outbox } from '../../src/application/outbox/index.ts';
+import type { AnyIntegrationEvent, IntegrationEvent } from '../../src/application/integration-events/index.ts';
 import { QueryHandler } from '../../src/application/query-handlers/index.ts';
 import { AggregateRoot } from '../../src/domain/aggregates/index.ts';
 import { DomainError } from '../../src/domain/domain-errors/index.ts';
@@ -21,7 +17,31 @@ import { err, ok } from '../../src/utilities/result/index.ts';
 
 export class OrderId extends Identifier<string, 'OrderId'> {}
 
-export class OrderPlaced extends DomainEvent<OrderId, { total: number }> {}
+export type OrderPlacedSnapshot = { orderId: string; occurredAt: string; total: number };
+
+export class OrderPlaced extends DomainEvent<OrderId, { total: number }> {
+	public static fromSnapshot(snapshot: OrderPlacedSnapshot): OrderPlaced {
+		return new OrderPlaced({
+			aggregateId: new OrderId(snapshot.orderId),
+			occurredAt: new Date(snapshot.occurredAt),
+			payload: { total: snapshot.total },
+		});
+	}
+
+	public toSnapshot(): OrderPlacedSnapshot {
+		return {
+			orderId: this.aggregateId.value,
+			occurredAt: this.occurredAt.toISOString(),
+			total: this.payload.total,
+		};
+	}
+}
+
+export class OrderPaid extends DomainEvent<OrderId, { total: number; reference: string }> {}
+
+export class OrderShipped extends DomainEvent<OrderId, { carrier: string }> {}
+
+export type OrderEvent = OrderPlaced | OrderPaid | OrderShipped;
 
 export class InvalidTotal extends DomainError<{ total: number }> {}
 
@@ -132,18 +152,50 @@ export class InMemoryOrderSummaries extends OrderSummaries {
 	}
 }
 
+export const ORDER_PLACED = 'ordering.order.OrderPlaced';
+
 export type OrderPlacedRepresentation = PublishedLanguage<
-	IntegrationEvent<'OrderPlaced', { orderId: string; total: number }>
+	IntegrationEvent<typeof ORDER_PLACED, { orderId: string; total: number }>
 >;
 
-export class OrderEventsTranslator extends EventTranslator<OrderPlaced, OrderPlacedRepresentation> {
+export type OrderPlacedRepresentationV2 = PublishedLanguage<
+	IntegrationEvent<typeof ORDER_PLACED, { orderId: string; amount: number }>
+>;
+
+export class OrderEventsTranslator extends EventTranslator<OrderEvent> {
 	protected readonly source = 'ordering';
 
-	public translate(event: OrderPlaced, context: IntegrationEventContext): OrderPlacedRepresentation {
-		return this.wrap(event, context, {
+	protected translate(event: OrderEvent): AnyIntegrationEvent[] {
+		if (event instanceof OrderPlaced) {
+			return [this.orderPlacedV1(event)];
+		}
+
+		return [];
+	}
+
+	protected orderPlacedV1(event: OrderPlaced): OrderPlacedRepresentation {
+		return this.wrap(event, {
 			payload: { orderId: event.aggregateId.value, total: event.payload.total },
-			type: 'OrderPlaced',
+			type: ORDER_PLACED,
 			version: 1,
+		});
+	}
+}
+
+export class MigratingOrderEventsTranslator extends OrderEventsTranslator {
+	protected override translate(event: OrderEvent): AnyIntegrationEvent[] {
+		if (event instanceof OrderPlaced) {
+			return [this.orderPlacedV1(event), this.#orderPlacedV2(event)];
+		}
+
+		return [];
+	}
+
+	#orderPlacedV2(event: OrderPlaced): OrderPlacedRepresentationV2 {
+		return this.wrap(event, {
+			payload: { amount: event.payload.total, orderId: event.aggregateId.value },
+			type: ORDER_PLACED,
+			version: 2,
 		});
 	}
 }
@@ -159,15 +211,13 @@ export class RecordingEventPublisher extends EventPublisher {
 
 export class PlaceOrderHandler extends CommandHandler<PlaceOrder, void, OrderNotFound | InvalidTotal> {
 	readonly #orders: Orders;
-	readonly #outbox: Outbox;
-	readonly #translator: OrderEventsTranslator;
+	readonly #events: DomainEventDispatcher<OrderEvent>;
 	readonly #clock: Clock;
 
-	public constructor(orders: Orders, outbox: Outbox, translator: OrderEventsTranslator, clock: Clock) {
+	public constructor(orders: Orders, events: DomainEventDispatcher<OrderEvent>, clock: Clock) {
 		super();
 		this.#orders = orders;
-		this.#outbox = outbox;
-		this.#translator = translator;
+		this.#events = events;
 		this.#clock = clock;
 	}
 
@@ -184,7 +234,7 @@ export class PlaceOrderHandler extends CommandHandler<PlaceOrder, void, OrderNot
 		if (!saved.ok) {
 			return saved;
 		}
-		await this.#outbox.add(this.#translator.translateAll(order.pullDomainEvents(), { correlationId: orderId }));
+		await this.#events.dispatch(order.pullDomainEvents());
 		return ok();
 	}
 }

@@ -1,6 +1,6 @@
 import type { AnyIntegrationEvent } from '../integration-events/index.ts';
 
-export type StoredEvent = {
+export type StoredIntegrationEvent = {
 	readonly sequence: number;
 	readonly event: AnyIntegrationEvent;
 };

@@ -1,63 +1,78 @@
-import { describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 
 import type { OrderPlacedRepresentation } from '../../../test/fixtures/application.ts';
 import {
+	MigratingOrderEventsTranslator,
 	OrderEventsTranslator,
 	OrderId,
 	OrderPlaced,
+	OrderShipped,
 	SequentialIdGenerator,
 } from '../../../test/fixtures/application.ts';
+import { InMemoryOutbox, ScopedCorrelationContext } from '../../../test/fixtures/utilities.ts';
+import { DomainEventHandler } from '../domain-event-handlers/index.ts';
 import { EventTranslator } from './event-translator.ts';
 
 describe('EventTranslator', () => {
-	const placed = new OrderPlaced({
-		aggregateId: new OrderId('o1'),
-		occurredAt: new Date('2026-01-01T00:00:00Z'),
-		payload: { total: 42 },
+	const occurredAt = new Date('2026-01-01T00:00:00Z');
+	const placed = new OrderPlaced({ aggregateId: new OrderId('o1'), occurredAt, payload: { total: 42 } });
+	const shipped = new OrderShipped({ aggregateId: new OrderId('o1'), occurredAt, payload: { carrier: 'post' } });
+
+	let outbox: InMemoryOutbox;
+	let correlation: ScopedCorrelationContext;
+	let translator: OrderEventsTranslator;
+
+	beforeEach(() => {
+		outbox = new InMemoryOutbox();
+		correlation = new ScopedCorrelationContext(new SequentialIdGenerator());
+		translator = new OrderEventsTranslator(new SequentialIdGenerator(), outbox, correlation);
 	});
 
-	it('turns a domain event into an integration event of the published language, with an id of its own', () => {
-		const translator = new OrderEventsTranslator(new SequentialIdGenerator());
+	it('adds to the outbox the integration event of the published language, with an id of its own', async () => {
+		await correlation.run({ correlationId: 'c1' }, () => translator.handle(placed));
 
-		expect(translator.translate(placed, { correlationId: 'c1' })).toEqual({
-			correlationId: 'c1',
-			id: 'evt_1',
-			occurredAt: '2026-01-01T00:00:00.000Z',
-			payload: { orderId: 'o1', total: 42 },
-			source: 'ordering',
-			type: 'OrderPlaced',
-			version: 1,
-		});
+		expect((await outbox.pending(0, 10)).map((entry) => entry.event)).toEqual([
+			{
+				correlationId: 'c1',
+				id: 'evt_1',
+				occurredAt: '2026-01-01T00:00:00.000Z',
+				payload: { orderId: 'o1', total: 42 },
+				source: 'ordering',
+				type: 'ordering.order.OrderPlaced',
+				version: 1,
+			},
+		]);
 		expect(translator).toBeInstanceOf(EventTranslator);
+		expect(translator).toBeInstanceOf(DomainEventHandler);
 	});
 
-	it('gives each integration event a new id, so a consumer can ignore a copy', () => {
-		const translator = new OrderEventsTranslator(new SequentialIdGenerator());
-		const events = translator.translateAll([placed, placed], { correlationId: 'c1' });
+	it('adds nothing for a domain event that stays inside its bounded context', async () => {
+		await translator.handle(shipped);
 
-		expect(events.map((event) => event.id)).toEqual(['evt_1', 'evt_2']);
+		expect((await outbox.pending(0, 10)).map((entry) => entry.event)).toEqual([]);
 	});
 
-	it('starts a new correlation shared by all the events of a call when none is given', () => {
-		const events = new OrderEventsTranslator(new SequentialIdGenerator()).translateAll([placed, placed]);
+	it('adds both versions of a message during a migration', async () => {
+		await new MigratingOrderEventsTranslator(new SequentialIdGenerator(), outbox, correlation).handle(placed);
 
-		expect(events.map((event) => event.correlationId)).toEqual(['evt_1', 'evt_1']);
-		expect(events.map((event) => event.id)).toEqual(['evt_2', 'evt_3']);
+		const versions = (await outbox.pending(0, 10)).map(({ event }) => [event.type, event.version, event.payload]);
+		expect(versions).toEqual([
+			['ordering.order.OrderPlaced', 1, { orderId: 'o1', total: 42 }],
+			['ordering.order.OrderPlaced', 2, { amount: 42, orderId: 'o1' }],
+		]);
 	});
 
-	it('keeps the causation id when given', () => {
-		const event = new OrderEventsTranslator(new SequentialIdGenerator()).translate(placed, {
-			causationId: 'cmd_1',
-			correlationId: 'c1',
-		});
+	it('keeps the causation of the running operation', async () => {
+		await correlation.run({ causationId: 'cmd_1', correlationId: 'c1' }, () => translator.handle(placed));
 
-		expect(event.causationId).toBe('cmd_1');
+		expect((await outbox.pending(0, 10)).map((entry) => entry.event.causationId)).toEqual(['cmd_1']);
 	});
 
-	it('survives a JSON round trip', () => {
-		const event = new OrderEventsTranslator(new SequentialIdGenerator()).translate(placed, { correlationId: 'c1' });
+	it('survives a JSON round trip', async () => {
+		await translator.handle(placed);
+
+		const [event] = (await outbox.pending(0, 10)).map((entry) => entry.event);
 		const parsed: OrderPlacedRepresentation = JSON.parse(JSON.stringify(event));
-
 		expect(parsed).toEqual(event);
 	});
 });

@@ -1,8 +1,8 @@
 # @alveolus/core
 
 The building blocks of Domain-Driven Design for TypeScript: aggregates, entities, value objects,
-identifiers, domain events, domain errors, ports, repositories, command and query handlers, the
-unit of work, the outbox, and `Result`. No runtime dependency.
+identifiers, domain events and their event handlers, domain errors, ports, repositories, command and
+query handlers, the unit of work, the outbox, and `Result`. No runtime dependency.
 
 ```sh
 pnpm add @alveolus/core
@@ -53,6 +53,17 @@ Each outcome has one channel. A business refusal is a `Result` with a named erro
 failure is an exception. A repository's `save` returns a `Result`, even when nothing can refuse (`never`), and its
 finders return the aggregate or `undefined`: the use case decides which refusal an absence becomes.
 `findByIds` returns the aggregates it found and the identities it did not (`{ found, missing }`).
+
+A bounded context declares its event handlers in one registry, typed by the union of its domain events. A
+synchronous event handler runs in the transaction of the use case; an asynchronous one receives the event from the
+outbox after the commit, in its own transaction. The use case only calls `dispatch`, once, after `save`.
+
+```ts
+export const walletsEventHandlers = new DomainEventHandlers<WalletEvent>([
+	[MoneyWithdrawn, WalletEventsTranslator, 'sync'],
+	[MoneyWithdrawn, WarnLowBalance, 'async'],
+]);
+```
 
 - [Documentation](https://alveolus.dev/)
 - [Getting started](https://alveolus.dev/start/getting-started)

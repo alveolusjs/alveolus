@@ -1,4 +1,7 @@
 export * from './application/command-handlers/index.ts';
+export * from './application/correlation-contexts/index.ts';
+export * from './application/domain-event-dispatchers/index.ts';
+export * from './application/domain-event-handlers/index.ts';
 export * from './application/event-publishers/index.ts';
 export * from './application/event-translators/index.ts';
 export * from './application/integration-events/index.ts';
