@@ -21,7 +21,7 @@ sources:
 - Un handler qui suspend ou rétablit un objet local d’après l’event reçu, sans comparer la date du fait à celle du dernier changement appliqué.
 - Une seule date de mise à jour pour tout l’objet : un event en retard sur un attribut est rejeté à cause d’un autre attribut.
 - Une date de changement enregistrée alors que la valeur reçue n’a pas changé.
-- Une command tirée d’un event qui ne porte pas `occurredOn`.
+- Une command tirée d’un event qui ne porte pas `occurredAt`.
 
 ## Pourquoi
 
@@ -37,7 +37,7 @@ Un flux dont l’ordre est garanti de bout en bout, de l’outbox du producer ju
 
 ## Correction
 
-- `occurredOn` dans chaque command tirée d’un event.
+- `occurredAt` dans chaque command tirée d’un event.
 - Une date de dernier changement par groupe d’attributs, mise à jour seulement si la valeur change.
 
 ## Voir aussi

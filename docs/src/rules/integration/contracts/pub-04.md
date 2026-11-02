@@ -56,10 +56,13 @@ public/
 
 ```ts
 export interface MoneyWithdrawnMessageV2 {
-	readonly eventId: string;
+	readonly id: string;
 	readonly type: typeof MONEY_WITHDRAWN;
 	readonly version: 2;
-	readonly occurredOn: string;
+	readonly source: string;
+	readonly occurredAt: string;
+	readonly correlationId: string;
+	readonly causationId?: string;
 	readonly payload: MoneyWithdrawnPayloadV2;
 }
 

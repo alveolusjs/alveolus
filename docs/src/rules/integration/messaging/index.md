@@ -26,7 +26,7 @@ Un forwarder publie ensuite l’outbox dans l’ordre (MSG-03). Dans le bounded 
 
 ```ts
 export const IncomingMoneyWithdrawn = z.object({
-	eventId: z.uuid(),
+	id: z.uuid(),
 	type: z.literal(MONEY_WITHDRAWN),
 	version: z.literal(1),
 	payload: z.object({
@@ -56,7 +56,7 @@ export class MoneyWithdrawnConsumer {
 ```
 
 - L’écriture et ses events s’enregistrent ensemble : pas d’event sans son état, pas d’état sans son event (MSG-01).
-- `IntegrationConsumer` reçoit le type du message, le nom du consumer, la lecture et le traitement. Il marque le message comme traité dans la transaction du traitement, et ignore un `eventId` déjà traité par ce consumer (MSG-04).
+- `IntegrationConsumer` reçoit le type du message, le nom du consumer, la lecture et le traitement. Il marque le message comme traité dans la transaction du traitement, et ignore un `id` déjà traité par ce consumer (MSG-04).
 - `notifications` est un bounded context en transaction scripts : le consumer appelle une méthode de son service (TXS-01).
 - Le consumer ne dépend que du contrat publié, et ne lit que les champs dont il a besoin (PUB-01, PUB-05).
 
