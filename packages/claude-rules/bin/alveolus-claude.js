@@ -99,6 +99,7 @@ function renderContents(rules) {
 function renderRule(rule) {
 	const facts = [
 		`Severity: ${rule.severity}${rule.severityNote ? `. ${rule.severityNote}` : '.'}`,
+		`Kind: ${rule.kind}.`,
 		...(rule.context ? [`Applies only when: ${rule.context}`] : []),
 	];
 

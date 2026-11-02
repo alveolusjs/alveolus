@@ -4,6 +4,8 @@ title: Le nom d’un fichier de test dit son niveau
 group: Forme, place et nom
 scope: [tests]
 style: [tactical, transaction-script]
+kind: convention
+convention: testing.layout
 severity: minor
 detection: []
 review: approved

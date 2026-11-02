@@ -221,3 +221,11 @@ export const themes: Theme[] = [
 			'Des entrées validées, une identité qui ne vient pas du client, des secrets et des données qui ne fuient pas.',
 	},
 ];
+
+export function groupAnchor(group: string): string {
+	return group
+		.normalize('NFD')
+		.replace(/\p{Diacritic}/gu, '')
+		.toLowerCase()
+		.replace(/[^a-z0-9]+/g, '-');
+}

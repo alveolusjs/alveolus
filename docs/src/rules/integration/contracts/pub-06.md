@@ -4,6 +4,7 @@ title: Un open host service sert tous ses consumers
 group: Open host service
 scope: [public]
 style: [tactical, transaction-script]
+kind: structure
 severity: question
 detection: []
 review: approved

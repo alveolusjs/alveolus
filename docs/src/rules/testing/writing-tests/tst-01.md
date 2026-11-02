@@ -4,7 +4,9 @@ title: Un test passe par le vrai adapter
 group: Principes
 scope: [application, driven, tests]
 style: [tactical, transaction-script]
-severity: minor
+kind: safeguard
+requires: [testing.testcontainers, testing.msw-contracts]
+severity: blocking
 detection: []
 review: approved
 sources:

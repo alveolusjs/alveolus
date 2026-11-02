@@ -4,8 +4,8 @@ title: Une opération déclenchée par un message est idempotente, par clé mét
 group: Consommation
 scope: [application, driving]
 style: [tactical, transaction-script]
+kind: safeguard
 severity: blocking
-severityNote: Bloquante si l’opération déplace de l’argent ou engage un tiers. Majeure sinon.
 detection: []
 review: approved
 sources:

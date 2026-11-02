@@ -4,6 +4,8 @@ title: Le module de l’application assemble les bounded contexts, le bootstrap 
 group: La composition root
 scope: [structure]
 style: [tactical, transaction-script]
+kind: convention
+convention: wiring.composition-root
 severity: minor
 detection: []
 review: approved

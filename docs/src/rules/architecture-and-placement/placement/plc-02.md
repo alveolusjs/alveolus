@@ -4,6 +4,7 @@ title: "`shared` ne contient que du code technique"
 group: L’application
 scope: [structure]
 style: [tactical, transaction-script]
+kind: structure
 severity: major
 detection: []
 review: approved

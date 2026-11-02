@@ -4,6 +4,7 @@ title: "Le domaine déclare ses interfaces, `driven` les implémente"
 group: Sens des dépendances
 scope: [domain, application, driven]
 style: [tactical, transaction-script]
+kind: structure
 severity: major
 detection: [eslint]
 review: approved

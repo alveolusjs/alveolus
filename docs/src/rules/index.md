@@ -2,6 +2,6 @@
 aside: false
 ---
 
-# All rules
+# Toutes les règles
 
 <RuleIndex />

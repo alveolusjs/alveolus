@@ -4,8 +4,8 @@ title: L’interface du repository ne laisse rien fuir du stockage
 group: Contrat
 scope: [domain, driven]
 style: [tactical]
-severity: minor
-severityNote: Majeure si l’erreur brute du stockage atteint la réponse de l’API.
+kind: structure
+severity: major
 detection: []
 review: approved
 sources:
@@ -58,6 +58,8 @@ La même répartition vaut pour tous les ports, pas seulement les repositories :
 | L’opération échoue | une exception nommée | une panne, un conflit de version |
 
 Un port qui ne refuse jamais, comme `Clock`, ne renvoie pas de `Result`.
+
+**Avec des exceptions** : `save` renvoie `Promise<void>` et lève le refus d’unicité nommé (`WalletAlreadyOpen`), traduit de `P2002`. Les échecs du stockage lèvent d’autres exceptions nommées.
 
 ## Voir aussi
 

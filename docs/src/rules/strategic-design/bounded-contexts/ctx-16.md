@@ -4,6 +4,8 @@ title: Chaque choix d’architecture répond à un risque réel
 group: Style d’implémentation
 scope: [structure]
 style: [tactical, transaction-script]
+kind: structure
+checkedBy: decision
 severity: major
 detection: []
 review: approved

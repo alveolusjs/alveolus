@@ -5,7 +5,9 @@ import { fileURLToPath } from 'node:url';
 import matter from 'gray-matter';
 import type { DefaultTheme, MarkdownRenderer } from 'vitepress';
 
+import { isConventionGroup } from './conventions';
 import { iconSvg } from './icons';
+import { isKind, type Kind } from './kinds';
 import { parts } from './parts';
 import { isReview, type Review } from './reviews';
 import { isStyleList, type Style } from './styles';
@@ -34,7 +36,41 @@ export interface Rule {
 	context?: string;
 	scope: string[];
 	style: Style[];
+	kind: Kind;
+	convention?: string;
+	requires: string[];
+	checkedBy?: 'decision';
 	link: string;
+}
+
+export function kindProblemOf(data: Record<string, unknown>): string | undefined {
+	if (!isKind(data.kind)) {
+		return 'kind must be safeguard, structure or convention';
+	}
+
+	if (data.kind === 'convention' && !isConventionGroup(data.convention)) {
+		return 'a convention names its group in convention, from conventions.ts';
+	}
+
+	if (data.kind !== 'convention' && data.convention !== undefined) {
+		return 'only a convention has a convention group';
+	}
+
+	const requires = data.requires ?? [];
+
+	if (!Array.isArray(requires) || !requires.every(isConventionGroup)) {
+		return 'requires must list convention groups from conventions.ts';
+	}
+
+	if (requires.length > 0 && data.kind !== 'safeguard') {
+		return 'only a safeguard requires convention groups';
+	}
+
+	if (data.checkedBy !== undefined && data.checkedBy !== 'decision') {
+		return 'checkedBy can only be decision';
+	}
+
+	return undefined;
 }
 
 function loadThemeRules(theme: Theme): Rule[] {
@@ -51,6 +87,12 @@ function loadThemeRules(theme: Theme): Rule[] {
 
 			if (!isReview(data.review)) {
 				throw new Error(`${themePath(theme)}/${file}: review must be to-review, approved or rejected`);
+			}
+
+			const kindProblem = kindProblemOf(data);
+
+			if (kindProblem) {
+				throw new Error(`${themePath(theme)}/${file}: ${kindProblem}`);
 			}
 
 			if (!Array.isArray(data.detection)) {
@@ -70,6 +112,10 @@ function loadThemeRules(theme: Theme): Rule[] {
 				context: data.context,
 				scope: data.scope ?? [],
 				style: data.style,
+				kind: data.kind,
+				convention: data.convention,
+				requires: data.requires ?? [],
+				checkedBy: data.checkedBy,
 				link: `/${themePath(theme)}/${file.replace(/\.md$/, '')}`,
 			};
 		})
@@ -112,7 +158,7 @@ function ruleItemText(rule: Rule): string {
 	return [
 		'<span class="rb-rule-item">',
 		`<span class="rb-rule-item__code">${rule.code}</span>`,
-		`<span class="rb-rule-item__label">${escapeHtml(rule.title)}</span>`,
+		`<span class="rb-rule-item__label" title="${escapeHtml(rule.title)}">${escapeHtml(rule.title)}</span>`,
 		'</span>',
 	].join('');
 }
@@ -136,13 +182,14 @@ export function rulesSidebar(): DefaultTheme.SidebarItem[] {
 				{ text: 'Présentation', link: '/start/overview' },
 				{ text: 'Premiers pas', link: '/start/getting-started' },
 				{ text: 'Architecture de référence', link: '/start/reference-architecture' },
-				{ text: 'Choix par défaut', link: '/start/default-choices' },
+				{ text: 'Packs et choix par défaut', link: '/start/default-choices' },
 				{ text: 'Mettre en place un projet', link: '/start/prerequisites' },
 				{ text: 'Glossaire', link: '/start/glossary' },
 			],
 		},
 		...parts.map((part) => ({
 			text: `<span class="rb-part-icon">${iconSvg(part.icon)}</span>${part.title}`,
+			collapsed: true,
 			items: [
 				overviewItem(`rules/${part.slug}`),
 				...(part.slug === 'domain-logic'
@@ -161,7 +208,7 @@ const RULE_CODE = /\b[A-Z]{2,4}-\d{2}\b/g;
  * Skips headings, text already inside a link, inline code and mentions of the current page.
  */
 export function ruleLinks(md: MarkdownRenderer): void {
-	const links = new Map(writtenThemes.flatMap(({ rules }) => rules.map((rule) => [rule.code, rule.link] as const)));
+	const links = new Map(writtenThemes.flatMap(({ rules }) => rules.map((rule) => [rule.code, rule] as const)));
 
 	md.core.ruler.push('rule-links', (state) => {
 		const currentPage = `/${(state.env?.relativePath ?? '').replace(/\.md$/, '')}`;
@@ -192,15 +239,18 @@ export function ruleLinks(md: MarkdownRenderer): void {
 				const result = [];
 				let last = 0;
 				for (const match of token.content.matchAll(RULE_CODE)) {
-					const href = links.get(match[0]);
-					if (!href || href === currentPage) {
+					const rule = links.get(match[0]);
+					if (!rule || rule.link === currentPage) {
 						continue;
 					}
 
 					const before = new state.Token('text', '', 0);
 					before.content = token.content.slice(last, match.index);
 					const open = new state.Token('link_open', 'a', 1);
-					open.attrs = [['href', href]];
+					open.attrs = [
+						['href', rule.link],
+						['title', `${rule.code} · ${rule.title}`],
+					];
 					const label = new state.Token('text', '', 0);
 					label.content = match[0];
 					const close = new state.Token('link_close', 'a', -1);

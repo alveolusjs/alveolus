@@ -4,6 +4,8 @@ title: L’identité est générée tôt quand elle sert avant la persistance
 group: Identité
 scope: [domain, driven]
 style: [tactical]
+kind: safeguard
+requires: [identity.uuid-class]
 severity: blocking
 detection: []
 review: approved

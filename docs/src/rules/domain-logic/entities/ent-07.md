@@ -4,6 +4,8 @@ title: Deux entities sont égales si leurs identités le sont
 group: Identité
 scope: [domain]
 style: [tactical]
+kind: convention
+convention: identity.uuid-class
 severity: minor
 detection: []
 review: approved

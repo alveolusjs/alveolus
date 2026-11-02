@@ -4,6 +4,7 @@ title: Un big ball of mud reste contenu
 group: Relations particulières
 scope: [structure]
 style: [tactical, transaction-script]
+kind: structure
 severity: major
 severityNote: Majeure pour une fuite. Question pour de la modélisation à l’intérieur.
 detection: []

@@ -4,7 +4,8 @@ title: Les noms des modules viennent du langage
 group: Modules
 scope: [structure]
 style: [tactical, transaction-script]
-severity: minor
+kind: structure
+severity: major
 detection: []
 review: approved
 sources:

@@ -4,6 +4,7 @@ title: Un shared kernel reste petit et change avec les deux équipes
 group: Relations particulières
 scope: [structure]
 style: [tactical, transaction-script]
+kind: structure
 severity: major
 severityNote: Majeure pour un changement fait sans l’autre équipe. Question quand le shared kernel grossit.
 detection: []

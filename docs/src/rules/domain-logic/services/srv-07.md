@@ -4,7 +4,8 @@ title: Un domain service renvoie le minimum utile
 group: Forme du service
 scope: [domain]
 style: [tactical]
-severity: minor
+kind: structure
+severity: major
 detection: []
 review: approved
 sources:

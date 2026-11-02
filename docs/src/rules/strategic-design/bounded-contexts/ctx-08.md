@@ -4,7 +4,8 @@ title: Pas de préfixe juste pour éviter un conflit avec un autre bounded conte
 group: Homonymes entre bounded contexts
 scope: [domain]
 style: [tactical]
-severity: minor
+kind: structure
+severity: major
 detection: []
 review: approved
 sources:

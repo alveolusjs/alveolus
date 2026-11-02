@@ -195,6 +195,7 @@ Alveolus est écrit en français. Les termes techniques et ceux de la littératu
 | merge request (MR) | f. | Une demande d’intégration de code, relue avant d’être fusionnée (pull request ailleurs). |
 | waiver | m. | La dérogation documentée à une règle, signalée par un commentaire dans le code. |
 | ADR | f. | Une décision d’architecture, numérotée, jamais réécrite. |
+| pack | m. | Un ensemble de conventions qu’une équipe adopte ou remplace d’un bloc, avec les garde-fous qui en dépendent. |
 | building block | m. | Une classe de base fournie par un package (`AggregateRoot`, `ValueObject`), que le code du modèle étend. |
 | package | m. | Une bibliothèque publiée sur npm, qu’un projet installe en dépendance. |
 | user story | f. | Un besoin décrit du point de vue de celui qui l’exprime, avec ses critères d’acceptation. |
@@ -247,6 +248,7 @@ Ces mots ont un équivalent français exact, d’usage courant : on écrit le fr
 | strategic design | conception stratégique |
 | tactical | tactique |
 | invariant | invariant |
+| safeguard | garde-fou |
 | transaction | transaction |
 | transactional consistency | cohérence transactionnelle |
 | identity | identité |

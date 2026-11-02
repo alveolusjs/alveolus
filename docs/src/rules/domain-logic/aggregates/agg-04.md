@@ -4,6 +4,7 @@ title: Aucun repository ni service injecté dans un aggregate
 group: Références et dépendances
 scope: [domain]
 style: [tactical]
+kind: structure
 severity: major
 detection: []
 review: approved

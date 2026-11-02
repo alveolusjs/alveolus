@@ -4,7 +4,9 @@ title: Le repository charge, écrit et supprime des aggregates entiers
 group: Contrat
 scope: [driven]
 style: [tactical]
-severity: major
+kind: safeguard
+requires: [persistence.no-cascade, persistence.unit-of-work]
+severity: blocking
 detection: []
 review: approved
 sources:
@@ -40,6 +42,8 @@ Charger l’aggregate, appeler sa méthode métier, enregistrer le tout. Pour un
 ## Adaptation
 
 **Notre choix** : aucune suppression en cascade dans la base. Le repository supprime les lignes des parties (`deleteMany`), puis celle de l’aggregate root (`delete`), dans la même transaction. La suppression reste visible dans le code, et une clé étrangère sans cascade refuse la suppression si une partie a été oubliée, au lieu de l’emporter en silence.
+
+**Avec une transaction explicite** : la suppression des parties et celle de l’aggregate root reçoivent toutes le même client de transaction.
 
 ## Voir aussi
 

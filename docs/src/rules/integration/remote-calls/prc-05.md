@@ -4,7 +4,8 @@ title: Un long-running process a une identité, un suivi et un chemin d’échec
 group: Processus entre bounded contexts
 scope: [application, domain]
 style: [tactical, transaction-script]
-severity: major
+kind: safeguard
+severity: blocking
 detection: []
 review: approved
 sources:

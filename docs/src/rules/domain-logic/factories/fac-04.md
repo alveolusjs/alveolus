@@ -4,6 +4,7 @@ title: La factory method crée l’objet et son event, l’appelant l’enregist
 group: Règles
 scope: [domain, application]
 style: [tactical]
+kind: structure
 severity: major
 severityNote: 'Bloquante quand un use case oublie d’ajouter le nouvel aggregate au repository : la création est perdue.'
 detection: []

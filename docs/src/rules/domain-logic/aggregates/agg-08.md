@@ -4,6 +4,8 @@ title: Hors de la frontière, eventual consistency avec un handler strict
 group: Transactions et cohérence
 scope: [driving, driven]
 style: [tactical]
+kind: safeguard
+requires: [messaging.outbox-forwarder]
 severity: blocking
 severityNote: Bloquante si un handler avale l’erreur, ou si rien n’est prévu quand les retries sont épuisés. Majeure pour un handler qui modifie plus d’un aggregate.
 detection: []

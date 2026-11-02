@@ -4,8 +4,9 @@ title: Un test de contrat vérifie les champs consommés
 group: Systèmes tiers
 scope: [driven, tests]
 style: [tactical, transaction-script]
-severity: minor
-severityNote: Majeure pour des identifiants de la sandbox commités.
+kind: safeguard
+requires: [testing.msw-contracts]
+severity: blocking
 detection: []
 review: approved
 sources: []

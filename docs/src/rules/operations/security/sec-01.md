@@ -4,8 +4,8 @@ title: Une entrée externe se valide à la frontière
 group: Entrées
 scope: [driving]
 style: [tactical, transaction-script]
-severity: major
-severityNote: Bloquante si la valeur non validée est écrite en base ou décide d’un droit.
+kind: safeguard
+severity: blocking
 detection: []
 review: approved
 sources: []

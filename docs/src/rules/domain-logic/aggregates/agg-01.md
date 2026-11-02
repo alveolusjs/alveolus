@@ -4,6 +4,7 @@ title: Les invariants vivent dans l’aggregate
 group: Encapsulation
 scope: [domain, application]
 style: [tactical]
+kind: structure
 severity: major
 detection: []
 review: approved
@@ -40,6 +41,8 @@ Une méthode métier, nommée dans l’ubiquitous language. Elle vérifie l’in
 ## Adaptation
 
 **Notre choix** : le refus est une valeur, pas une exception. La méthode renvoie `Result<void, E>`, où `E` est une erreur métier nommée dans l’ubiquitous language (`TransferAlreadyExecuted`).
+
+**Avec des exceptions** : la méthode métier lève le refus nommé (`TransferAlreadyExecuted`) au lieu de renvoyer un `Result`. Sa signature ne liste plus les refus : son test unitaire prouve chacun d’eux (COV-02).
 
 ## Exemple
 

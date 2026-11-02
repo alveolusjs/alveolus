@@ -4,6 +4,8 @@ title: Ne pas sacrifier le typage pour découpler
 group: Sens des dépendances
 scope: [domain]
 style: [tactical]
+kind: convention
+convention: identity.uuid-class
 severity: minor
 detection: []
 review: approved

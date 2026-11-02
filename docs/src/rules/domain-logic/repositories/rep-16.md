@@ -4,7 +4,9 @@ title: Le repository est testé contre le vrai stockage
 group: Tests
 scope: [tests]
 style: [tactical]
-severity: minor
+kind: safeguard
+requires: [testing.testcontainers]
+severity: blocking
 detection: []
 review: approved
 sources:

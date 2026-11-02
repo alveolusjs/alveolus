@@ -4,6 +4,7 @@ title: Une transaction ne modifie qu’une instance d’aggregate
 group: Transactions et cohérence
 scope: [application, driving]
 style: [tactical]
+kind: structure
 severity: major
 detection: []
 review: approved

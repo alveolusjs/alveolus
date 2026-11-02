@@ -4,6 +4,7 @@ title: Un secret ne sort jamais de la configuration
 group: Secrets et données personnelles
 scope: [structure, driving, driven]
 style: [tactical, transaction-script]
+kind: safeguard
 severity: blocking
 detection: []
 review: approved

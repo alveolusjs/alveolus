@@ -4,8 +4,9 @@ title: Une lecture sur plusieurs aggregates est une query sur une view
 group: Requêtes
 scope: [application, driven]
 style: [tactical]
-severity: minor
-severityNote: Mineure pour une view assemblée à la main. Question quand ces finders se multiplient.
+kind: structure
+severity: major
+severityNote: Question quand ces finders se multiplient.
 detection: []
 review: approved
 sources:

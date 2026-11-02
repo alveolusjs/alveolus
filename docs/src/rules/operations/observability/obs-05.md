@@ -4,7 +4,9 @@ title: L’outbox et les dead letters se mesurent, et alertent
 group: Santé
 scope: [application, driven]
 style: [tactical, transaction-script]
-severity: major
+kind: safeguard
+requires: [messaging.outbox-forwarder]
+severity: blocking
 detection: []
 review: approved
 sources: []

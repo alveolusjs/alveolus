@@ -4,8 +4,8 @@ title: Le consumer ne lit que les champs dont il a besoin
 group: Côté consumer
 scope: [driving]
 style: [tactical, transaction-script]
-severity: minor
-severityNote: Majeure si un champ ajouté par le producer peut bloquer la consommation.
+kind: structure
+severity: major
 detection: []
 review: approved
 sources:

@@ -4,6 +4,8 @@ title: Un adapter nomme sa technologie et ce qu’il adapte
 group: Noms de types
 scope: [driving, driven]
 style: [tactical, transaction-script]
+kind: convention
+convention: naming.types
 severity: minor
 detection: []
 review: approved

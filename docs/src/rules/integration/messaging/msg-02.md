@@ -4,7 +4,8 @@ title: Un event enregistré ne change jamais
 group: Publication
 scope: [driven, schema]
 style: [tactical, transaction-script]
-severity: major
+kind: safeguard
+severity: blocking
 detection: []
 review: approved
 sources:

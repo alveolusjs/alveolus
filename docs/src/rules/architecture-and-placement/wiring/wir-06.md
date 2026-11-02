@@ -4,6 +4,8 @@ title: Chaque injection nomme son injection token
 group: Dépendances
 scope: [driving, structure]
 style: [tactical, transaction-script]
+kind: convention
+convention: wiring.explicit-tokens
 severity: minor
 detection: []
 review: approved

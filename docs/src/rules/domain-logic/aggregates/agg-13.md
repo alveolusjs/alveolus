@@ -4,6 +4,7 @@ title: Ne pas découper un vrai invariant
 group: Frontière et taille
 scope: [domain]
 style: [tactical]
+kind: structure
 severity: major
 detection: []
 review: approved

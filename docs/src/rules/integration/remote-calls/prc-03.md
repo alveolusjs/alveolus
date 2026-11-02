@@ -4,7 +4,8 @@ title: Une ressource distante pas encore disponible est un état du modèle
 group: Appels distants
 scope: [domain]
 style: [tactical]
-severity: minor
+kind: structure
+severity: major
 detection: []
 review: approved
 sources:

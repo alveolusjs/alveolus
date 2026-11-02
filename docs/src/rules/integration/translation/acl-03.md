@@ -4,6 +4,7 @@ title: Copier des données étrangères, c’est prendre en charge toute leur sy
 group: Données copiées
 scope: [domain, driving]
 style: [tactical, transaction-script]
+kind: structure
 severity: major
 detection: []
 review: approved

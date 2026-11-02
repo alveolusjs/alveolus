@@ -4,6 +4,8 @@ title: Les tests démarrent l’application depuis ses vrais modules
 group: Principes
 scope: [tests]
 style: [tactical, transaction-script]
+kind: convention
+convention: testing.real-modules
 severity: minor
 detection: []
 review: approved

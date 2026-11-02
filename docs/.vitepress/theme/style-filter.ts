@@ -39,7 +39,3 @@ export function setStyleFilter(value: Style | ''): void {
 
 	apply();
 }
-
-export function matchesStyleFilter(style: readonly string[]): boolean {
-	return !styleFilter.value || style.includes(styleFilter.value);
-}

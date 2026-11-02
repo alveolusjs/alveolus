@@ -4,6 +4,8 @@ title: Chaque fichier finit par son rôle
 group: Noms de fichiers
 scope: [structure]
 style: [tactical, transaction-script]
+kind: convention
+convention: layout.by-concept-and-technology
 severity: minor
 detection: []
 review: approved

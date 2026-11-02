@@ -4,6 +4,7 @@ title: La persistance passe par le repository, pas par l’aggregate ni par l’
 group: Écritures
 scope: [domain, driven]
 style: [tactical]
+kind: structure
 severity: major
 detection: []
 review: approved

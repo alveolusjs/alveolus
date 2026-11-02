@@ -4,6 +4,7 @@ title: Une intention, une méthode, un event
 group: Comportement
 scope: [domain]
 style: [tactical]
+kind: structure
 severity: major
 severityNote: Majeure pour plusieurs setters par intention. Mineure pour un seul setter que le langage ne justifie pas.
 detection: []

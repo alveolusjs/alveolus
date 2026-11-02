@@ -4,8 +4,8 @@ import { computed } from 'vue';
 
 import { parts } from '../../parts';
 import { themes } from '../../themes';
+import { filtering, matchesRuleFilters } from '../rule-filters';
 import { data as rules } from '../rules.data';
-import { matchesStyleFilter, styleFilter } from '../style-filter';
 import FilterNote from './FilterNote.vue';
 
 const props = defineProps<{ part?: string; withStyle?: string }>();
@@ -18,7 +18,7 @@ function hasStyle(slug: string): boolean {
 }
 
 function ruleCount(slug: string): number {
-	return rules.filter((rule) => rule.theme === slug && matchesStyleFilter(rule.style)).length;
+	return rules.filter((rule) => rule.theme === slug && matchesRuleFilters(rule)).length;
 }
 
 function countLabel(slug: string): string {
@@ -28,7 +28,7 @@ function countLabel(slug: string): string {
 }
 
 function visible(slug: string, status: string): boolean {
-	return status === 'coming' || !styleFilter.value || ruleCount(slug) > 0;
+	return status === 'coming' || !filtering.value || ruleCount(slug) > 0;
 }
 
 const candidates = computed(() =>
@@ -48,7 +48,7 @@ const hiddenRules = computed(() =>
 		.flatMap((section) => section.themes)
 		.reduce(
 			(total, theme) =>
-				total + rules.filter((rule) => rule.theme === theme.slug && !matchesStyleFilter(rule.style)).length,
+				total + rules.filter((rule) => rule.theme === theme.slug && !matchesRuleFilters(rule)).length,
 			0,
 		),
 );

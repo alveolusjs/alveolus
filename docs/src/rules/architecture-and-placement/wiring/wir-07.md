@@ -4,6 +4,8 @@ title: Un port est une abstract class, et son propre injection token
 group: Dépendances
 scope: [domain, application, structure]
 style: [tactical, transaction-script]
+kind: convention
+convention: wiring.explicit-tokens
 severity: minor
 detection: []
 review: approved

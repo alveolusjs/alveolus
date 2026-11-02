@@ -4,7 +4,8 @@ title: Pas de méthode statique sur un aggregate root pour une opération qui ne
 group: Quand créer un domain service
 scope: [domain]
 style: [tactical]
-severity: minor
+kind: structure
+severity: major
 detection: []
 review: approved
 sources:

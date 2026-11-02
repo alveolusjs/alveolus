@@ -4,6 +4,7 @@ title: Les composants autour du modèle délèguent
 group: Ce que contient un bounded context
 scope: [driving]
 style: [tactical, transaction-script]
+kind: structure
 severity: major
 severityNote: Majeure pour une règle métier hors du modèle. Mineure pour un endpoint qui contourne le use case.
 detection: []

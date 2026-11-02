@@ -4,6 +4,8 @@ title: "Le code généré vit dans un dossier `generated/` et ne se modifie jama
 group: Dans la durée
 scope: [structure]
 style: [tactical, transaction-script]
+kind: convention
+convention: layout.generated-code
 severity: minor
 detection: []
 review: approved

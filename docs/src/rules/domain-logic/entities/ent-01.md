@@ -4,7 +4,8 @@ title: Une entity seulement quand l’identité et le changement comptent
 group: Nature d’une entity
 scope: [domain]
 style: [tactical]
-severity: minor
+kind: structure
+severity: major
 detection: []
 review: approved
 sources:

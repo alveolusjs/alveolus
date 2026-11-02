@@ -4,6 +4,7 @@ title: "Un bounded context est un dossier de `src`, avec son module, sa configur
 group: L’application
 scope: [structure]
 style: [tactical, transaction-script]
+kind: structure
 severity: major
 detection: []
 review: approved

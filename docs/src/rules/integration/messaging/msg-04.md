@@ -4,8 +4,9 @@ title: Le consumer ignore les doublons et suit ses messages dans la même transa
 group: Consommation
 scope: [driving]
 style: [tactical, transaction-script]
+kind: safeguard
+requires: [persistence.unit-of-work]
 severity: blocking
-severityNote: Bloquante si le suivi s’écrit hors de la transaction du traitement, ou si un doublon déplace de l’argent ou engage un tiers. Majeure sinon.
 detection: []
 review: approved
 sources:
@@ -46,6 +47,8 @@ Une table des messages traités (consumer, identifiant du message), écrite dans
 ## Adaptation
 
 **Notre choix** : `IntegrationConsumer` enregistre chaque consumer sous un nom stable, comme `notifications.notify-withdrawal`. Il ouvre la transaction, ignore un `eventId` déjà traité par ce consumer, appelle le traitement, puis marque le message comme traité, dans la même transaction.
+
+**Avec une transaction explicite** : la ligne du message traité s’écrit avec le client qui écrit ses effets, et le message n’est acquitté qu’après le commit.
 
 ## Voir aussi
 

@@ -4,6 +4,7 @@ title: L’identité ne change jamais
 group: Identité
 scope: [domain]
 style: [tactical]
+kind: structure
 severity: major
 detection: []
 review: approved

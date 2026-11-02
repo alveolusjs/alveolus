@@ -4,6 +4,8 @@ title: Seuls les fichiers de wiring et les adapters du framework connaissent le 
 group: Dépendances
 scope: [domain, application, driven]
 style: [tactical, transaction-script]
+kind: convention
+convention: wiring.no-nest-decorators
 severity: minor
 detection: [eslint]
 review: approved

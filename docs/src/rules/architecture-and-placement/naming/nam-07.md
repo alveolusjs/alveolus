@@ -4,6 +4,8 @@ title: "Une interface n’a pas de préfixe `I`"
 group: Noms de types
 scope: [domain, application, public]
 style: [tactical, transaction-script]
+kind: convention
+convention: naming.types
 severity: minor
 detection: []
 review: approved

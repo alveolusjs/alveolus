@@ -4,6 +4,7 @@ title: Un bounded context ne transforme pas un event étranger en command implic
 group: Processus entre bounded contexts
 scope: [driving, structure]
 style: [tactical, transaction-script]
+kind: structure
 severity: question
 detection: []
 review: approved

@@ -4,8 +4,9 @@ title: L’ordre des events est respecté ou toléré
 group: Consommation
 scope: [driving]
 style: [tactical, transaction-script]
-severity: major
-severityNote: Majeure quand l’ordre change le résultat. Question sinon.
+kind: safeguard
+severity: blocking
+severityNote: Bloquante quand l’ordre change le résultat. Question sinon.
 detection: []
 review: approved
 sources:

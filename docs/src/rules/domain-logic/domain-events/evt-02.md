@@ -4,6 +4,7 @@ title: Un domain event n’est pas une notification technique
 group: Modéliser l’event
 scope: [domain, driving]
 style: [tactical, transaction-script]
+kind: structure
 severity: major
 detection: []
 review: approved

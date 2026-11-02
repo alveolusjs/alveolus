@@ -4,6 +4,7 @@ title: L’identité de l’appelant vient de l’authentification, jamais de la
 group: Identité
 scope: [driving, application]
 style: [tactical, transaction-script]
+kind: safeguard
 severity: blocking
 detection: []
 review: approved
@@ -16,13 +17,11 @@ sources: []
 
 ## Signal
 
-- `body.customerId`, ou un en-tête `X-Customer-Id`, pris pour l’identité de l’appelant.
-- Le token, ou son contenu brut, passé au use case.
-- Un use case qui lit l’utilisateur courant dans un état global.
+`body.customerId`, un paramètre de l’URL ou un en-tête `X-Customer-Id`, pris pour l’identité de l’appelant.
 
 ## Pourquoi
 
-Tout ce que porte la requête, le client le choisit : seule l’authentification dit qui appelle. Passé dans la command, l’appelant se teste, et vaut pour chaque point d’entrée : HTTP, consumer ou job (UC-06).
+Tout ce que porte la requête, le client le choisit : seule l’authentification dit qui appelle. Un client qui change un identifiant dans sa requête agit alors au nom d’un autre.
 
 ## Exceptions
 
@@ -30,10 +29,8 @@ Aucune.
 
 ## Correction
 
-- Un guard vérifie le token. L’adapter driving en tire un concept local, `Caller` : son identité et ses rôles.
-- La command porte l’appelant, et le use case vérifie ses droits (UC-06).
-- Un consumer ou un job passe un appelant système, nommé.
+Un guard vérifie le token. L’adapter driving en tire un concept local, `Caller` : son identité et ses rôles. Aucun identifiant de la requête ne le remplace.
 
 ## Voir aussi
 
-UC-06 vérifie l’autorisation dans chaque use case. CTX-05 construit un concept local à partir d’un autre bounded context.
+UC-13 fait porter l’appelant par la command. UC-06 vérifie l’autorisation dans chaque use case. CTX-05 construit un concept local à partir d’un autre bounded context.

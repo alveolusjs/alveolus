@@ -4,8 +4,8 @@ title: Un domain service seulement quand l’opération n’appartient à aucun 
 group: Quand créer un domain service
 scope: [domain]
 style: [tactical]
-severity: minor
-severityNote: Majeure quand une couche de services porte la logique et laisse les entities anémiques.
+kind: structure
+severity: major
 detection: []
 review: approved
 sources:

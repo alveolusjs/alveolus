@@ -4,7 +4,9 @@ title: Un test de commande vérifie ses events
 group: Preuves
 scope: [tests]
 style: [tactical, transaction-script]
-severity: minor
+kind: safeguard
+requires: [messaging.outbox-forwarder]
+severity: blocking
 detection: []
 review: approved
 sources: []

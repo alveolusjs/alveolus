@@ -4,6 +4,7 @@ title: Garder hors du use case les processus métier qui portent sur plusieurs o
 group: Quand créer un domain service
 scope: [application]
 style: [tactical]
+kind: structure
 severity: major
 detection: []
 review: approved

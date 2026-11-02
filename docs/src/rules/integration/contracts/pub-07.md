@@ -4,6 +4,7 @@ title: Un open host service répond aux use cases de ses intégrateurs
 group: Open host service
 scope: [driving, public]
 style: [tactical, transaction-script]
+kind: structure
 severity: major
 detection: []
 review: approved

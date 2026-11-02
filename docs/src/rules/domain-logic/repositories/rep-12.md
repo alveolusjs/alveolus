@@ -4,6 +4,7 @@ title: La logique métier ne descend dans la base que pour une exigence non fonc
 group: Requêtes
 scope: [driven, schema]
 style: [tactical]
+kind: structure
 severity: major
 detection: []
 review: approved

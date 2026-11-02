@@ -64,7 +64,7 @@ src/wallets/
 - Un dossier par bounded context, avec son module, sa configuration et ses couches. En haut de `src`, rien d’autre que `shared` (PLC-01).
 - `shared` ne contient que du code technique : pas de `Money`, pas de client (PLC-02).
 - Chaque fichier va dans la couche de son rôle : un aggregate dans `domain`, une command dans `application`, un controller dans `driving`, un mapper dans `driven` (PLC-03).
-- `driving` et `driven` se découpent par technologie : Prisma uniquement dans `driven/prisma` (PLC-07). Un message d’un autre bounded context se consomme dans `driving/in-process`, un event du bounded context se publie depuis `driven/outbox` (PLC-08). Chaque mapping vit avec son adapter (PLC-09).
+- `driving` et `driven` se découpent par technologie : Prisma uniquement dans `driven/prisma` (PLC-13, PLC-07). Un message d’un autre bounded context se consomme dans `driving/in-process`, un event du bounded context se publie depuis `driven/outbox` (PLC-08). Chaque mapping vit avec son adapter (PLC-09).
 
 Dans le domaine, les modules suivent les concepts, et le nom des fichiers dit leur rôle :
 

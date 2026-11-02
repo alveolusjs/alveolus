@@ -1,3 +1,7 @@
+:root {
+	--vp-sidebar-width: 292px;
+}
+
 .rb-rule-item {
 	display: grid;
 	grid-template-columns: auto minmax(0, 1fr);
@@ -8,7 +12,14 @@
 .rb-rule-item__code {
 	font-family: var(--vp-font-family-mono);
 	font-size: 11.5px;
-	color: var(--vp-c-text-3);
+	color: var(--vp-c-text-2);
+}
+
+.rb-rule-item__label {
+	display: -webkit-box;
+	overflow: hidden;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 2;
 }
 
 .VPSidebarItem.is-active > .item .link .rb-rule-item__code {

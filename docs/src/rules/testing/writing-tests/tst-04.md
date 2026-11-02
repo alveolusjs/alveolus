@@ -4,6 +4,8 @@ title: Un test suit Arrange, Act, Assert
 group: Forme, place et nom
 scope: [tests]
 style: [tactical, transaction-script]
+kind: convention
+convention: testing.test-style
 severity: minor
 detection: []
 review: approved

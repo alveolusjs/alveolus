@@ -4,6 +4,8 @@ title: Préférer des value objects comme parties
 group: Frontière et taille
 scope: [domain]
 style: [tactical]
+kind: convention
+convention: modeling.value-objects
 severity: minor
 detection: []
 review: approved

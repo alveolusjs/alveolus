@@ -4,6 +4,7 @@ title: Référencer les autres aggregates par leur identité
 group: Références et dépendances
 scope: [domain]
 style: [tactical]
+kind: structure
 severity: major
 detection: []
 review: approved

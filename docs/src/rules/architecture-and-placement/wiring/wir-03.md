@@ -4,6 +4,7 @@ title: Le module d’un bounded context n’exporte que son contrat publié
 group: La composition root
 scope: [structure, public]
 style: [tactical, transaction-script]
+kind: structure
 severity: major
 detection: []
 review: approved

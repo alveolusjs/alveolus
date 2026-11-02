@@ -4,8 +4,9 @@ title: Respecter la sémantique HTTP
 group: REST
 scope: [driving]
 style: [tactical, transaction-script]
-severity: major
-severityNote: Bloquante pour un `GET` qui change l’état, ou un `PUT` ou un `DELETE` qui n’est pas idempotent, puisqu’un rejeu refait l’opération. Mineure pour des verbes calqués sur le CRUD des tables.
+kind: safeguard
+severity: blocking
+severityNote: Mineure pour des verbes calqués sur le CRUD des tables.
 detection: []
 review: approved
 sources:

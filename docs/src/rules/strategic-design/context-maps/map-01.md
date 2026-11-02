@@ -4,6 +4,7 @@ title: Le code met en œuvre la relation déclarée dans la context map
 group: La context map et le code
 scope: [structure, driven]
 style: [tactical, transaction-script]
+kind: structure
 severity: major
 severityNote: Majeure si le code contredit la relation déclarée. Question pour une intégration absente de la context map.
 detection: []

@@ -4,6 +4,7 @@ title: Pas d’anemic model
 group: Comportement
 scope: [domain, application]
 style: [tactical]
+kind: structure
 severity: major
 detection: []
 review: approved

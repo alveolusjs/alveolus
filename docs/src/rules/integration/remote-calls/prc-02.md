@@ -4,6 +4,7 @@ title: Limiter les dépendances en temps réel
 group: Appels distants
 scope: [application, driven]
 style: [tactical, transaction-script]
+kind: structure
 severity: question
 severityNote: Majeure si l’échec de l’appel distant n’est pas traité du tout.
 detection: []

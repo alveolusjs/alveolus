@@ -4,9 +4,9 @@ title: En multi-tenant, chaque entity et chaque requête portent l’identité d
 group: Identité
 scope: [domain, driven]
 style: [tactical]
+kind: safeguard
 context: Seulement si le système est multi-tenant.
 severity: blocking
-severityNote: Bloquante pour une requête sans filtre sur le tenant. Majeure sinon.
 detection: []
 review: approved
 sources:

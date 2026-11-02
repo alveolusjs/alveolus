@@ -4,8 +4,9 @@ title: Le use case décide de la transaction
 group: Transactions
 scope: [application, driven]
 style: [tactical]
-severity: major
-severityNote: Bloquante quand des écritures qui vont ensemble, comme l’aggregate et son outbox, peuvent être validées séparément.
+kind: safeguard
+requires: [persistence.unit-of-work, errors.result]
+severity: blocking
 detection: []
 review: approved
 sources:
@@ -44,6 +45,10 @@ Un Unit of Work, ou un decorator transactionnel sur le use case. Les repositorie
 Un `run` imbriqué, celui d’un autre use case appelé dans la même transaction, rejoint la transaction ouverte. S’il renvoie un refus, la transaction ne peut plus être validée : si le `run` qui l’englobe renvoie quand même `ok`, core lance `NestedWorkRefused` et annule tout. Un refus ne se perd pas quand l’appelant oublie de le tester.
 
 L’implémentation, dans `driven`, fournit deux méthodes. `transaction(scope, work)` ouvre une transaction interactive Prisma, y exécute `work`, et range le `scope` avec le client de transaction dans un `AsyncLocalStorage` (REP-14). `current()` y lit le `scope` ouvert. Core ne dépend ainsi d’aucun runtime.
+
+**Avec des exceptions** : un refus levé dans la transaction l’annule, tant que rien ne l’attrape avant : un `catch` dans le callback de la transaction valide les écritures faites avant lui.
+
+**Avec une transaction explicite** : le use case ouvre `prisma.$transaction` et passe son client à chaque repository. Le signal devient un use case qui écrit sans transaction, ou un repository qui ouvre la sienne au lieu de recevoir celle du use case.
 
 ## Voir aussi
 

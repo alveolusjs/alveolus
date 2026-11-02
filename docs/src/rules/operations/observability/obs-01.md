@@ -4,6 +4,8 @@ title: Un log est structuré, et nomme ce qui s’est passé
 group: Logs
 scope: [application, driving, driven]
 style: [tactical, transaction-script]
+kind: convention
+convention: operations.logging
 severity: minor
 detection: []
 review: approved

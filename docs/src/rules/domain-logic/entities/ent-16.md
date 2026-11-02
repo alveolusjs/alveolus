@@ -4,6 +4,8 @@ title: La validation de l’objet entier est à part et collecte toutes les erre
 group: Construction et validation
 scope: [domain]
 style: [tactical]
+kind: convention
+convention: validation.in-model
 severity: minor
 detection: []
 review: approved
@@ -41,3 +43,5 @@ Un validateur par entity, appelé par `validate()`, et un domain service pour le
 ## Adaptation
 
 **Notre choix** : le validateur renvoie un `Result`, comme tout refus métier. Il vérifie toutes les règles avant de répondre, et son erreur porte la liste complète des problèmes. L’appelant reçoit tout d’un coup, sans objet de notification à passer en paramètre.
+
+**Avec des exceptions** : le validateur lève un seul refus, qui porte la liste complète des problèmes.

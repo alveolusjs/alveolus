@@ -4,7 +4,8 @@ title: Un mapper traduit, il ne décide rien
 group: Mappers
 scope: [driven]
 style: [tactical]
-severity: minor
+kind: structure
+severity: major
 detection: []
 review: approved
 sources: []

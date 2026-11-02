@@ -4,7 +4,8 @@ title: Une factory method est nommée dans le langage du métier
 group: Règles
 scope: [domain]
 style: [tactical]
-severity: minor
+kind: structure
+severity: major
 detection: []
 review: approved
 sources:

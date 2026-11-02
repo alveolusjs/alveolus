@@ -4,7 +4,8 @@ title: Un event est nommé au passé, dans le langage du métier
 group: Modéliser l’event
 scope: [domain]
 style: [tactical]
-severity: minor
+kind: structure
+severity: major
 detection: []
 review: approved
 sources:

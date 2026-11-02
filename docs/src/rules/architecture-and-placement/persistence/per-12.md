@@ -4,6 +4,7 @@ title: Une migration change la forme des données, jamais leurs faits métier
 group: Migrations
 scope: [schema]
 style: [tactical, transaction-script]
+kind: safeguard
 severity: blocking
 detection: []
 review: approved

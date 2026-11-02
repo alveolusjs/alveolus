@@ -4,7 +4,11 @@ title: L’historique qui compte pour le métier passe par des domain events
 group: Historique
 scope: [domain]
 style: [tactical]
-severity: question
+kind: safeguard
+requires: [messaging.outbox-forwarder]
+checkedBy: decision
+severity: blocking
+severityNote: Question tant que le métier n’a pas dit quel historique compte.
 detection: []
 review: approved
 sources:

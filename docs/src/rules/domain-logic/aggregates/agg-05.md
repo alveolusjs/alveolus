@@ -4,6 +4,8 @@ title: L’aggregate root a une identité globale et typée
 group: Références et dépendances
 scope: [domain]
 style: [tactical]
+kind: convention
+convention: identity.uuid-class
 severity: minor
 detection: []
 review: approved

@@ -4,6 +4,7 @@ title: La frontière suit un vrai invariant, pas la composition des objets
 group: Frontière et taille
 scope: [domain]
 style: [tactical]
+kind: structure
 severity: major
 severityNote: À poser comme une question si l’invariant peut exister hors du code.
 detection: []

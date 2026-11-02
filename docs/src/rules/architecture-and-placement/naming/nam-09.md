@@ -4,6 +4,8 @@ title: "Un champ privé s’écrit `#`, déclaré dans le corps de la classe"
 group: Membres de classe
 scope: [domain, application, driving, driven]
 style: [tactical, transaction-script]
+kind: convention
+convention: naming.private-fields
 severity: minor
 detection: [eslint]
 review: approved

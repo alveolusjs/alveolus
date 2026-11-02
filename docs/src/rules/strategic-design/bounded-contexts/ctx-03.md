@@ -4,8 +4,9 @@ title: Le code suit le glossaire du bounded context
 group: Langage et frontière
 scope: [domain, application, driving]
 style: [tactical, transaction-script]
-severity: minor
-severityNote: "Mineure pour un terme rejeté ou un double nom. Question pour un terme absent. Sans glossaire (voir Mettre en place un projet), la règle est inactive, et la revue le signale dans son résumé."
+kind: structure
+severity: major
+severityNote: Question pour un terme absent. Sans glossaire (voir Mettre en place un projet), la règle est inactive, et la revue le signale dans son résumé.
 detection: []
 review: approved
 sources:

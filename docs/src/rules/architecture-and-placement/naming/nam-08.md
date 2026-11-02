@@ -4,6 +4,8 @@ title: "Une identité s’appelle `<Concept>Id`, une erreur porte le nom du refu
 group: Noms de types
 scope: [domain, application]
 style: [tactical, transaction-script]
+kind: convention
+convention: naming.types
 severity: minor
 detection: []
 review: approved

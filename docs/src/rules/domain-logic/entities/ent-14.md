@@ -4,6 +4,7 @@ title: Une entity naît complète
 group: Construction et validation
 scope: [domain]
 style: [tactical]
+kind: structure
 severity: major
 detection: []
 review: approved

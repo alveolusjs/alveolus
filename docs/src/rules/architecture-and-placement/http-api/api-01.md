@@ -4,6 +4,7 @@ title: Le modèle du domaine ne s’expose pas tel quel en REST
 group: REST
 scope: [driving]
 style: [tactical, transaction-script]
+kind: structure
 severity: major
 detection: []
 review: approved

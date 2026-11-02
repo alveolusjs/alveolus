@@ -4,8 +4,9 @@ title: Le travail au démarrage passe par des use cases, et un échec arrête le
 group: Durée de vie
 scope: [structure, application]
 style: [tactical, transaction-script]
-severity: major
-severityNote: Bloquante quand l’étape écrit directement en base et saute l’event qu’un autre bounded context attend.
+kind: safeguard
+requires: [errors.result]
+severity: blocking
 detection: []
 review: approved
 sources: []
@@ -56,6 +57,10 @@ export class WalletsModule implements OnModuleInit {
 	}
 }
 ```
+
+## Adaptation
+
+**Avec des exceptions** : le hook de démarrage laisse remonter l’exception de la command. Le signal devient un `catch` qui la logue et laisse l’application démarrer.
 
 ## Voir aussi
 

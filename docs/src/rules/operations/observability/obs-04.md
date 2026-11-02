@@ -4,6 +4,8 @@ title: L’application dit si elle est vivante, et si elle est prête
 group: Santé
 scope: [driving]
 style: [tactical, transaction-script]
+kind: convention
+convention: operations.health-probes
 severity: minor
 detection: []
 review: approved

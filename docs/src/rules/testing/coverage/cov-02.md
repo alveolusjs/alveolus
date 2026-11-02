@@ -4,6 +4,8 @@ title: Une règle métier se prouve là où elle vit
 group: Preuves
 scope: [tests]
 style: [tactical, transaction-script]
+kind: convention
+convention: testing.test-style
 severity: minor
 detection: []
 review: approved

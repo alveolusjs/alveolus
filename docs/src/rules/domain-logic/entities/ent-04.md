@@ -4,6 +4,7 @@ title: Une identité saisie par l’utilisateur doit être stable
 group: Identité
 scope: [domain]
 style: [tactical]
+kind: structure
 severity: major
 severityNote: Majeure si le modèle permet de changer la valeur qui sert d’identité. Question sinon.
 detection: []

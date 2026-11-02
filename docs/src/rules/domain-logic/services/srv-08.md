@@ -4,6 +4,8 @@ title: Les tests couvrent les échecs du domaine et la justesse des calculs
 group: Tests
 scope: [tests]
 style: [tactical]
+kind: convention
+convention: testing.test-style
 severity: minor
 detection: []
 review: approved

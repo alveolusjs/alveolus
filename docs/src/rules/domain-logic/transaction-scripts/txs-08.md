@@ -4,6 +4,8 @@ title: Quand les règles se répètent, passer le bounded context au style tacti
 group: Quand changer de style
 scope: [structure, application]
 style: [transaction-script]
+kind: structure
+checkedBy: decision
 severity: question
 detection: []
 review: approved
@@ -27,7 +29,7 @@ Les transaction scripts ne restent bon marché que tant que chaque use case tien
 
 ## Exceptions
 
-Une lecture partagée par deux scripts du même application service est une méthode privée `#` de cet application service (TXS-02). La question se pose quand la répétition devient la norme, ou passe d’un application service à l’autre.
+Une lecture partagée par deux scripts du même application service est une méthode privée `#` de cet application service (TXS-09). La question se pose quand la répétition devient la norme, ou passe d’un application service à l’autre.
 
 ## Correction
 

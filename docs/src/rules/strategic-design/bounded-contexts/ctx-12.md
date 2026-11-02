@@ -4,8 +4,10 @@ title: Une équipe par bounded context
 group: Taille et organisation
 scope: [structure]
 style: [tactical, transaction-script]
-severity: minor
-severityNote: Mineure pour CODEOWNERS. Question pour une merge request.
+kind: structure
+checkedBy: decision
+severity: major
+severityNote: Question pour une merge request.
 detection: []
 review: approved
 sources:
