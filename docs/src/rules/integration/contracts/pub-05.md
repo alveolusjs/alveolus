@@ -48,7 +48,7 @@ Le consumer des notifications prévient le titulaire d’un retrait. Il lit le t
 
 ```ts
 export const IncomingMoneyWithdrawn = z.object({
-	eventId: z.uuid(),
+	id: z.uuid(),
 	type: z.literal(MONEY_WITHDRAWN),
 	version: z.literal(1),
 	payload: z.object({
