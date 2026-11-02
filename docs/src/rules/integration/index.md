@@ -30,7 +30,7 @@ Un bounded context parle de ce qui lui arrive de deux façons. Le domain event l
 | --- | --- | --- |
 | Ce que c’est | Un fait passé, enregistré par un aggregate | Un contrat du published language |
 | Qui le lit | Les event handlers du bounded context qui l’enregistre | Les consumers des autres bounded contexts |
-| Où il vit | `domain/events/` | `public/` |
+| Où il vit | `domain/`, avec son aggregate | `public/` |
 | Versionné | Non : il change avec le modèle | Oui : une nouvelle version quand il casse (PUB-04) |
 | Comment il part | Par le dispatcher du bounded context | Par l’outbox, après le commit (MSG-01) |
 
