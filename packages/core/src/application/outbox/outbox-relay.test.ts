@@ -4,10 +4,11 @@ import {
 	Order,
 	OrderEventsTranslator,
 	OrderId,
+	OrderPlaced,
 	RecordingEventPublisher,
 	SequentialIdGenerator,
 } from '../../../test/fixtures/application.ts';
-import { FailingEventPublisher, InMemoryOutbox } from '../../../test/fixtures/utilities.ts';
+import { FailingEventPublisher, InMemoryOutbox, LateCommitOutbox } from '../../../test/fixtures/utilities.ts';
 import { Port } from '../../domain/ports/index.ts';
 import { OutboxRelay } from './outbox-relay.ts';
 
@@ -59,6 +60,25 @@ describe('OutboxRelay', () => {
 
 		expect(await new OutboxRelay(outbox, webhooks, 'webhooks').relay()).toBe(2);
 		expect(webhooks.published.map((event) => event.id)).toEqual(['evt_1', 'evt_2']);
+	});
+
+	it('waits for an event whose transaction is still open, then publishes in order', async () => {
+		const lateOutbox = new LateCommitOutbox();
+		const translator = new OrderEventsTranslator(new SequentialIdGenerator());
+		const placed = new OrderPlaced({
+			aggregateId: new OrderId('o1'),
+			occurredAt: new Date('2026-01-01T00:00:00Z'),
+			payload: { total: 42 },
+		});
+		const publisher = new RecordingEventPublisher();
+		const relay = new OutboxRelay(lateOutbox, publisher);
+
+		lateOutbox.addUncommitted(translator.translateAll([placed], { correlationId: 'slow' }));
+		await lateOutbox.add(translator.translateAll([placed], { correlationId: 'fast' }));
+		expect(await relay.relay()).toBe(0);
+		lateOutbox.commitPending();
+		expect(await relay.relay()).toBe(2);
+		expect(publisher.published.map((event) => event.id)).toEqual(['evt_1', 'evt_2']);
 	});
 
 	it('records nothing when publishing fails', async () => {
