@@ -6,7 +6,7 @@ scope: [driving, structure]
 style: [tactical]
 kind: safeguard
 severity: blocking
-detection: []
+detection: [eslint]
 review: approved
 sources: []
 ---

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { lay01, lay04, pub01 } from '../rules.ts';
+import { evt08, lay01, lay04, pub01 } from '../rules.ts';
 import { TestApp } from './support/test-app.ts';
 
 const app = TestApp.reference();
@@ -108,5 +108,37 @@ describe('PUB-01 with ESLint', () => {
 			`src/wallets/public/deposit.contract.ts:1 ${pub01.describe()}`,
 			`src/wallets/public/wallet.dto.ts:1 ${pub01.describe()}`,
 		]);
+	});
+});
+
+describe('EVT-08 with ESLint', () => {
+	const handler = 'src/wallets/driving/in-process/money-deposited.event-handler.ts';
+
+	it('reports an event handler that reads the published language of its own bounded context', () => {
+		const project = app
+			.with(handler, `import type { WalletDto } from '../../public/wallet.dto.ts';`)
+			.with(
+				'src/wallets/driving/in-process/holder/holder-suspended.event-handler.ts',
+				`import type { WalletDto } from '@wallets/public/wallet.dto.ts';`,
+			);
+
+		expect(project.eslint(evt08)).toEqual([
+			`src/wallets/driving/in-process/holder/holder-suspended.event-handler.ts:1 ${evt08.describe()}`,
+			`${handler}:1 ${evt08.describe()}`,
+		]);
+	});
+
+	it('leaves the other adapters of driving, and the public of another bounded context', () => {
+		const project = app
+			.with(
+				'src/wallets/driving/in-process/wallet.consumer.ts',
+				`import type { WalletDto } from '../../public/wallet.dto.ts';`,
+			)
+			.with(
+				'src/notifications/driving/in-process/money-deposited.event-handler.ts',
+				`import type { WalletDto } from '../../../wallets/public/wallet.dto.ts';`,
+			);
+
+		expect(project.eslint(evt08)).toEqual([]);
 	});
 });
