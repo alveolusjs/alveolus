@@ -74,7 +74,7 @@ return this.#unitOfWork.run(async () => {
 		return booked;
 	}
 
-	await this.#outbox.add(this.#translator.translateAll(entry.value.pullDomainEvents()));
+	await this.#events.dispatch(entry.value.pullDomainEvents());
 
 	return ok();
 });
@@ -101,7 +101,7 @@ return this.#unitOfWork.run(async () => {
 		return booked;
 	}
 
-	await this.#outbox.add(this.#translator.translateAll(entry.value.pullDomainEvents()));
+	await this.#events.dispatch(entry.value.pullDomainEvents());
 
 	return ok();
 });

@@ -114,7 +114,7 @@ async handle(command: DebitWalletCommand): Promise<Result<void, DebitWalletError
 			return booked;
 		}
 
-		await this.#outbox.add(this.#translator.translateAll(entry.value.pullDomainEvents()));
+		await this.#events.dispatch(entry.value.pullDomainEvents());
 
 		return ok();
 	});
@@ -128,7 +128,7 @@ async handle(command: DebitWalletCommand): Promise<Result<void, DebitWalletError
 - Les blocages, eux, restent peu nombreux : le wallet les garde tous et ne laisse les lever qu’un par un, par leur référence (AGG-02).
 - Le titulaire est référencé par son identité, jamais chargé (AGG-03). C’est lui qui ouvre le wallet (`holder.openWallet()`, FAC-01), et `openFor` n’est appelé que depuis le module `wallet`, qui contient les deux aggregates (FAC-03, PLC-04).
 - Le montant, le solde et le blocage sont des value objects, et l’aggregate root a une identité typée (AGG-14, AGG-05).
-- Le blocage enregistre un event dans le wallet, l’écriture dans le journal ; le use case les écrit dans l’outbox (EVT-03, MSG-01).
+- Le blocage enregistre un event dans le wallet, l’écriture dans le journal ; le use case les transmet au dispatcher (EVT-03).
 
 ## Règles {#rules}
 

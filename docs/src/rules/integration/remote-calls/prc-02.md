@@ -32,7 +32,7 @@ Un appel distant ressemble à un appel local, mais il peut être lent ou échoue
 
 Mieux vaut un traitement asynchrone : un état local minimal, posé par quelques appels bien placés, puis tenu à jour par les notifications de l’upstream.
 
-Pour créer une ressource distante, un domain event local déclenche un handler. Le handler réessaie jusqu’à réussir, puis rattache la nouvelle identité à l’aggregate.
+Pour créer une ressource distante, un domain event local déclenche un event handler asynchrone. L’event handler réessaie jusqu’à réussir, puis rattache la nouvelle identité à l’aggregate.
 
 ## Exceptions
 
@@ -47,4 +47,4 @@ Par ordre de préférence :
 
 ## Voir aussi
 
-PRC-01 pour faire l’appel quand il reste nécessaire. AGG-08 pour la discipline des handlers : retry, échec.
+PRC-01 pour faire l’appel quand il reste nécessaire. AGG-08 pour la discipline des event handlers : retry, échec.

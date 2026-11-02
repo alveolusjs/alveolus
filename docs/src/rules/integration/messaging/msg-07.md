@@ -49,4 +49,4 @@ Vérifier comment la librairie gère la reconnexion, sans supposer qu’elle le 
 
 ## Voir aussi
 
-MSG-01 et MSG-03 pour l’outbox et le forwarder. AGG-08 pour les effets d’un event hors de l’aggregate.
+MSG-01 et MSG-03 pour l’outbox et le forwarder. AGG-08 pour les effets d’un domain event hors de l’aggregate.

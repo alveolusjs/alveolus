@@ -19,8 +19,8 @@ sources:
 
 ## Signal
 
-- Un event publié hors du bounded context dont un champ est renommé, retiré, ou change de sens, sans nouvelle version.
-- Un subscriber qui rappelle le bounded context source pour compléter un event auquel il manque une information.
+- Un integration event dont un champ est renommé, retiré, ou change de sens, sans nouvelle version.
+- Un subscriber qui rappelle le bounded context source pour compléter un integration event auquel il manque une information.
 
 ## Pourquoi
 
@@ -30,11 +30,11 @@ Un champ ajouté ne casse personne, puisque les consumers ignorent ce qu’ils n
 
 ## Exceptions
 
-Un event qui ne sort pas du bounded context.
+Un domain event, qui ne sort pas du bounded context.
 
 ## Correction
 
-Une nouvelle version de l’event, ou un nouvel event. Il est publié à côté de l’ancien, jusqu’à ce que plus aucun consumer ne lise l’ancien.
+Une nouvelle version de l’integration event, ou un nouvel integration event. Il est publié à côté de l’ancien, jusqu’à ce que plus aucun consumer ne lise l’ancien.
 
 ## Adaptation
 

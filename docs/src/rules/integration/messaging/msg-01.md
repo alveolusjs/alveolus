@@ -62,7 +62,7 @@ Un bounded context en transaction scripts n’a ni aggregate ni domain events : 
 
 ## Voir aussi
 
-MSG-03 pour la livraison. AGG-08 pour les effets d’un event hors de l’aggregate.
+MSG-03 pour la livraison. AGG-08 pour les effets d’un domain event hors de l’aggregate.
 
 ## Exemple
 

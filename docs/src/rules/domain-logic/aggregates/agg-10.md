@@ -20,7 +20,7 @@ sources:
 
 ## Signal
 
-Le diff choisit entre cohérence transactionnelle et eventual consistency entre deux aggregates sans raison métier, ou pour une raison purement technique. Par exemple : un nouveau handler synchrone, une transaction élargie, des aggregates fusionnés ou découpés.
+Le diff choisit entre cohérence transactionnelle et eventual consistency entre deux aggregates sans raison métier, ou pour une raison purement technique. Par exemple : un nouvel event handler synchrone, une transaction élargie, des aggregates fusionnés ou découpés.
 
 ## Pourquoi
 

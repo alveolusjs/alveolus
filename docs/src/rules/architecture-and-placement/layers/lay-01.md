@@ -31,7 +31,7 @@ Avec l’inversion des dépendances (DIP), le domaine et l’infrastructure dép
 
 Le domaine et l’application s’écrivent et se lisent alors sans leur infrastructure, et l’infrastructure peut changer derrière eux.
 
-Le code qui publie les domain events reste petit lui aussi, sans dépendance au messaging. C’est l’application qui enregistre les subscribers qui stockent ou transmettent les events.
+Le code qui publie les domain events reste petit lui aussi, sans dépendance au messaging. C’est l’application qui enregistre les event handlers qui stockent ou transmettent les domain events.
 
 ## Exceptions
 

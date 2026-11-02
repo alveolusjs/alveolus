@@ -33,7 +33,7 @@ Le forwarder lit tous les events non publiés d’un canal, triés par numéro d
 
 Une séquence est donnée à l’écriture, pas au commit. La transaction qui a reçu le numéro 10 peut commiter après celle qui a reçu le 11. Si le forwarder publie le 11 et l’enregistre, il ne relira jamais le 10 : l’event est perdu.
 
-Livrer les events est une affaire d’application, pas de domaine, même si les events naissent dans le modèle. Le forwarder est un use case, et le suivi des publications appartient à la couche application.
+Livrer les events est une affaire d’application, pas de domaine, même si les domain events naissent dans le modèle. Le forwarder est un use case, et le suivi des publications appartient à la couche application.
 
 ## Exceptions
 
@@ -45,7 +45,7 @@ Un forwarder dans `application`, déclenché périodiquement, qui garde l’iden
 
 ## Adaptation
 
-**Notre choix** : le forwarder est un use case, déclenché périodiquement par un scheduler (PLC-10). Il publie par un port d’`application`, implémenté dans `driven`. Par défaut, cette implémentation livre aux handlers du même déploiement. Un broker la remplace quand une intégration en a besoin.
+**Notre choix** : le forwarder est un use case, déclenché périodiquement par un scheduler (PLC-10). Il publie par un port d’`application`, implémenté dans `driven`. Par défaut, cette implémentation livre aux consumers du même déploiement. Un broker la remplace quand une intégration en a besoin.
 
 Une entrée `domain` ne passe par aucun broker. Le forwarder la livre lui-même à chaque event handler asynchrone de son bounded context, qui a son propre canal. Il ouvre une transaction par entrée, y appelle l’event handler et y enregistre sa position : un event handler qui échoue est rejoué seul, sans doublon.
 
