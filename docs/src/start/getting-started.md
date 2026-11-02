@@ -212,6 +212,6 @@ Certaines règles lisent des fichiers du projet : context map, glossaire, ADR, p
 
 <div class="gs-next">
 	<a href="/start/overview#how-to-read"><strong>Lire une règle</strong><span>Les sections d’une règle, sa sévérité et son périmètre.</span></a>
-	<a href="/start/default-choices"><strong>Choix par défaut</strong><span>Les choix que les règles supposent quand le projet n’a rien décidé.</span></a>
+	<a href="/start/default-choices"><strong>Packs et choix par défaut</strong><span>Les conventions que les règles supposent quand le projet n’a rien décidé, en six packs à adopter ou remplacer d’un bloc.</span></a>
 	<a href="/rules/"><strong>Toutes les règles</strong><span>La liste complète, à filtrer par partie, thème ou sévérité.</span></a>
 </div>

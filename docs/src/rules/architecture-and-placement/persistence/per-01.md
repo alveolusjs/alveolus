@@ -4,6 +4,7 @@ title: Chaque bounded context possède un schéma de base et son fichier de sch�
 group: Le schéma
 scope: [schema]
 style: [tactical, transaction-script]
+kind: structure
 severity: major
 detection: []
 review: approved

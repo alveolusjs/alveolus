@@ -4,6 +4,7 @@ title: Les domain events naissent dans le modèle
 group: Modéliser l’event
 scope: [domain, application]
 style: [tactical]
+kind: structure
 severity: major
 detection: []
 review: approved

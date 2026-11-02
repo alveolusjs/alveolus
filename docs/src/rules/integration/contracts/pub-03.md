@@ -4,6 +4,8 @@ title: Le type d’un message publié nomme son bounded context
 group: Published language
 scope: [public]
 style: [tactical, transaction-script]
+kind: convention
+convention: contracts.message-naming
 severity: minor
 detection: []
 review: approved

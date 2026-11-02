@@ -4,6 +4,7 @@ title: Une création contrôlée passe par une factory method de l’aggregate q
 group: Règles
 scope: [domain, application]
 style: [tactical]
+kind: structure
 severity: major
 severityNote: Bloquante dans un système multi-tenant si le tenant du nouvel aggregate peut être faux.
 detection: []

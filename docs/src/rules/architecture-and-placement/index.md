@@ -16,7 +16,7 @@ L’[architecture de référence](../../start/reference-architecture) donne l’
 ## En revue de code {#reviewing-a-change}
 
 1. Le domaine n’importe-t-il aucune technologie, et chaque import va-t-il vers l’intérieur ? (LAY-01, LAY-02)
-2. Chaque fichier est-il dans le dossier de son concept et de sa technologie, et son nom dit-il son rôle ? (PLC-04, PLC-07, NAM-01)
+2. Chaque fichier est-il dans le dossier de son concept et de sa technologie, et son nom dit-il son rôle ? (PLC-04, PLC-13, NAM-01)
 3. Le module du bounded context est-il le seul à lier un port à son implémentation ? (WIR-01)
 4. Le use case reste-t-il mince, et une query lit-elle une view sans charger d’aggregate ? (UC-04, UC-08)
 

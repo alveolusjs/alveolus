@@ -4,6 +4,7 @@ title: Chaque bounded context a son propre modèle d’un concept partagé
 group: Homonymes entre bounded contexts
 scope: [domain, structure]
 style: [tactical, transaction-script]
+kind: structure
 severity: major
 severityNote: Majeure pour un modèle central. Question pour une copie identique, qui signale une erreur probable mais pas certaine.
 detection: []

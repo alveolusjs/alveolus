@@ -4,6 +4,7 @@ title: Pas de pseudo-entities, et les types Prisma restent dans le bounded conte
 group: Organisation et accès aux données
 scope: [application, public]
 style: [transaction-script]
+kind: structure
 severity: major
 severityNote: Majeure si un type Prisma sort du bounded context. Mineure pour une pseudo-entity interne.
 detection: []

@@ -4,6 +4,7 @@ title: "Un message entre par `driving` et sort par `driven`"
 group: Adapters
 scope: [driving, driven]
 style: [tactical, transaction-script]
+kind: structure
 severity: major
 detection: []
 review: approved

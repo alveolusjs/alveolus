@@ -4,7 +4,9 @@ title: Un contrat d’event publié évolue par versions
 group: Published language
 scope: [public]
 style: [tactical, transaction-script]
-severity: major
+kind: safeguard
+requires: [contracts.message-versioning]
+severity: blocking
 detection: []
 review: approved
 sources:

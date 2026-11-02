@@ -4,8 +4,8 @@ title: Un event est immuable
 group: Modéliser l’event
 scope: [domain]
 style: [tactical]
-severity: minor
-severityNote: 'Majeure quand un handler modifie l’event qu’il reçoit : les autres subscribers lisent un fait altéré.'
+kind: structure
+severity: major
 detection: []
 review: approved
 sources:

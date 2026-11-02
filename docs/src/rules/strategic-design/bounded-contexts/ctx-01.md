@@ -4,6 +4,7 @@ title: Un langage par bounded context, pas de modèle universel
 group: Langage et frontière
 scope: [structure, domain]
 style: [tactical, transaction-script]
+kind: structure
 severity: major
 severityNote: Majeure si la context map existe et ne déclare pas ce partage. Question sinon.
 detection: []

@@ -4,6 +4,8 @@ title: Les secrets ne sortent pas de l’entity
 group: Comportement
 scope: [domain, driving]
 style: [tactical]
+kind: safeguard
+requires: [naming.private-fields]
 severity: blocking
 severityNote: Bloquante si le secret sort dans une API, un event ou un log. Majeure pour un getter.
 detection: []

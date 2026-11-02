@@ -4,6 +4,8 @@ title: "La configuration se lit dans un fichier `*.config.ts`, puis passe en val
 group: Configuration
 scope: [structure, domain, application, driving, driven]
 style: [tactical, transaction-script]
+kind: convention
+convention: wiring.config-files
 severity: minor
 detection: []
 review: approved

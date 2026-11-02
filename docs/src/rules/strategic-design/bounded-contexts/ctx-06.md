@@ -4,6 +4,7 @@ title: Un système externe est un autre bounded context
 group: Langage et frontière
 scope: [domain]
 style: [tactical]
+kind: structure
 severity: major
 detection: [eslint]
 review: approved

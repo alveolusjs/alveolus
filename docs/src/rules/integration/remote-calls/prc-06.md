@@ -4,6 +4,7 @@ title: Une couche de composition ne devient pas un modèle caché
 group: Composer plusieurs bounded contexts
 scope: [application, structure]
 style: [tactical, transaction-script]
+kind: structure
 severity: question
 severityNote: Majeure si la composition porte des règles du core domain.
 detection: []

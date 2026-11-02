@@ -4,6 +4,7 @@ title: Les parties internes ne changent qu’à travers l’aggregate root
 group: Encapsulation
 scope: [domain]
 style: [tactical]
+kind: structure
 severity: major
 detection: []
 review: approved

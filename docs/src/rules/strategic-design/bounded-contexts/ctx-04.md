@@ -4,6 +4,7 @@ title: Aucun concept d’un autre subdomain dans le modèle
 group: Langage et frontière
 scope: [domain]
 style: [tactical]
+kind: structure
 severity: major
 detection: []
 review: approved

@@ -4,6 +4,7 @@ title: Un published language documenté, distinct du modèle interne
 group: Published language
 scope: [public]
 style: [tactical, transaction-script]
+kind: structure
 severity: major
 detection: [eslint]
 review: approved

@@ -4,7 +4,9 @@ title: Un parcours critique a ses stubs écrits à la main
 group: Systèmes tiers
 scope: [driven, tests]
 style: [tactical, transaction-script]
-severity: minor
+kind: safeguard
+requires: [testing.msw-contracts]
+severity: blocking
 detection: []
 review: approved
 sources: []

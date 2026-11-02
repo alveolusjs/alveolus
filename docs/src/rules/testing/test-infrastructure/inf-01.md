@@ -4,6 +4,8 @@ title: Les tests tournent sur une base jetable
 group: Base jetable
 scope: [tests]
 style: [tactical, transaction-script]
+kind: convention
+convention: testing.testcontainers
 severity: minor
 detection: []
 review: approved

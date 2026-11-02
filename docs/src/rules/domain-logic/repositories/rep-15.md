@@ -4,8 +4,8 @@ title: Un repository partagé seulement pour des types interchangeables
 group: Hiérarchies de types
 scope: [domain, driven]
 style: [tactical]
-severity: minor
-severityNote: Mineure pour un cas isolé. Majeure quand l’aiguillage sur le type devient la norme chez les appelants.
+kind: structure
+severity: major
 detection: []
 review: approved
 sources:

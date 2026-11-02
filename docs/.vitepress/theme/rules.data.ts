@@ -1,5 +1,6 @@
 import { createContentLoader } from 'vitepress';
 
+import type { Kind } from '../kinds';
 import type { Review } from '../reviews';
 import type { Style } from '../styles';
 
@@ -15,6 +16,9 @@ interface RuleSummary {
 	url: string;
 	review: Review;
 	style: Style[];
+	kind: Kind;
+	convention?: string;
+	requires: string[];
 }
 
 declare const data: RuleSummary[];
@@ -36,6 +40,9 @@ export default createContentLoader('rules/*/*/*.md', {
 				url: page.url,
 				review: page.frontmatter.review,
 				style: page.frontmatter.style ?? [],
+				kind: page.frontmatter.kind,
+				convention: page.frontmatter.convention,
+				requires: page.frontmatter.requires ?? [],
 			}))
 			.sort((a, b) => a.code.localeCompare(b.code, 'en', { numeric: true })),
 });

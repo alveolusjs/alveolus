@@ -4,6 +4,7 @@ title: Le module du bounded context est le seul endroit qui lie un port à son i
 group: La composition root
 scope: [structure, application, driving, driven]
 style: [tactical, transaction-script]
+kind: structure
 severity: major
 detection: []
 review: approved

@@ -4,6 +4,7 @@ title: Pas de base de données partagée entre bounded contexts
 group: La context map et le code
 scope: [driven, schema]
 style: [tactical, transaction-script]
+kind: structure
 severity: major
 detection: []
 review: approved

@@ -4,6 +4,8 @@ title: Un test vit à côté de ce qu’il prouve
 group: Forme, place et nom
 scope: [tests]
 style: [tactical, transaction-script]
+kind: convention
+convention: testing.layout
 severity: minor
 detection: []
 review: approved

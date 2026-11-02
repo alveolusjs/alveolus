@@ -39,18 +39,32 @@ Chaque règle déclare aussi son **périmètre** : les parties du code qu’elle
 
 Une règle peut aussi porter un **contexte** : elle ne s’applique alors que si le bounded context a adopté le style correspondant (multi-tenant…), par une décision enregistrée. Sinon, on l’ignore.
 
-En haut de la page, une fiche résume le **style**, la **sévérité** et le **périmètre**. Les termes gardés en anglais sont dans le [glossaire](./glossary).
+En haut de la page, une fiche résume la **nature**, le **style**, la **sévérité** et le **périmètre**. Les termes gardés en anglais sont dans le [glossaire](./glossary).
+
+### Nature {#kind}
+
+Chaque règle a une nature. Elle dit ce que coûte un écart, et ce qu’une équipe peut choisir autrement.
+
+| Nature | Un défaut… | Sévérité |
+| --- | --- | --- |
+| <span class="kind-badge kind-badge--safeguard">Garde-fou</span> | peut perdre ou corrompre de l’argent, des données ou un message, ouvrir une faille, ou empêcher de détecter ou de réparer une telle perte. | bloquante |
+| <span class="kind-badge kind-badge--structure">Structure</span> | fait diverger le code du modèle, casse une frontière (couche, bounded context, aggregate) ou crée un couplage cher à défaire. | majeure |
+| <span class="kind-badge kind-badge--convention">Convention</span> | s’écarte d’une forme choisie parmi plusieurs valables. Une autre forme protégerait aussi bien. | mineure |
+
+Un garde-fou ne se négocie pas : son moyen peut changer, ce qu’il protège reste. Une règle de structure s’écarte par un waiver documenté. Une convention appartient à un [pack](./default-choices) : une équipe peut le remplacer en entier par une ADR, à condition de tenir les garde-fous qui en dépendent.
+
+Quelques règles se tranchent par une décision, avec le métier ou l’équipe, plutôt qu’en lisant un diff. La fiche le signale sous la nature.
 
 ### Sévérité {#severity}
 
 | Sévérité | Sens | Attendu en revue |
 | --- | --- | --- |
-| <span class="rule-badge rule-badge--blocking">bloquante</span> | Le code peut perdre ou corrompre des données, ouvrir une faille de sécurité, ou perdre un message. | Corriger avant de merger. |
-| <span class="rule-badge rule-badge--major">majeure</span> | Le code casse une frontière (couche, bounded context, aggregate) ou un invariant, ou crée un couplage cher à défaire. | Corriger avant de merger, sauf waiver documenté. |
-| <span class="rule-badge rule-badge--minor">mineure</span> | Un écart local, à faible risque immédiat, qui se corrige sans toucher au reste. | Corriger la prochaine fois que le code est touché. |
+| <span class="rule-badge rule-badge--blocking">bloquante</span> | Le défaut d’un garde-fou. | Corriger avant de merger. |
+| <span class="rule-badge rule-badge--major">majeure</span> | Le défaut d’une règle de structure. | Corriger avant de merger, sauf waiver documenté. |
+| <span class="rule-badge rule-badge--minor">mineure</span> | L’écart à une convention. | Corriger la prochaine fois que le code est touché. |
 | <span class="rule-badge rule-badge--question">question</span> | Pas un défaut en soi : une décision à rendre explicite avec le métier ou l’auteur. | Poser la question et consigner la réponse. |
 
-Certaines règles nuancent leur sévérité selon le contexte (par exemple « bloquante si deux écritures concurrentes peuvent casser un invariant, majeure sinon »). La nuance apparaît sous le badge.
+Certaines règles nuancent leur sévérité selon le signal (par exemple « mineure pour le nommage » sur un garde-fou). La nuance apparaît sous le badge.
 
 ### Waivers {#waivers}
 

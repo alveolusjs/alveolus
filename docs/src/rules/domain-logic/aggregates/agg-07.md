@@ -4,6 +4,7 @@ title: Un aggregate reçu en paramètre est en lecture seule
 group: Transactions et cohérence
 scope: [domain]
 style: [tactical]
+kind: structure
 severity: major
 detection: []
 review: approved

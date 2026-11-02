@@ -4,6 +4,8 @@ title: Un fichier exporte ce que son nom annonce
 group: Noms de fichiers
 scope: [structure]
 style: [tactical, transaction-script]
+kind: convention
+convention: naming.files
 severity: minor
 detection: []
 review: approved

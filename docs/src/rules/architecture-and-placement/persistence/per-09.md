@@ -4,6 +4,7 @@ title: Un nombre calculé à partir d’autres lignes se prend sous verrou
 group: Transactions
 scope: [driven, application]
 style: [tactical, transaction-script]
+kind: safeguard
 severity: blocking
 detection: []
 review: approved

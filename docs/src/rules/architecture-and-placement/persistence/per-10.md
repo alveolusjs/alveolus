@@ -4,7 +4,8 @@ title: Le schéma change par des migrations commitées
 group: Migrations
 scope: [schema, tests, structure]
 style: [tactical, transaction-script]
-severity: major
+kind: safeguard
+severity: blocking
 detection: []
 review: approved
 sources: []

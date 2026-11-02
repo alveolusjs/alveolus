@@ -4,6 +4,7 @@ title: La base garantit ce qu’aucun aggregate ne voit seul
 group: Le schéma
 scope: [schema, driven]
 style: [tactical, transaction-script]
+kind: safeguard
 severity: blocking
 severityNote: Majeure pour une colonne toujours remplie mais déclarée optionnelle.
 detection: []

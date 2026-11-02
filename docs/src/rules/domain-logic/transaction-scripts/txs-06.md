@@ -4,6 +4,8 @@ title: Un script accède à la base à travers la transaction du Unit of Work
 group: Organisation et accès aux données
 scope: [application]
 style: [transaction-script]
+kind: safeguard
+requires: [persistence.unit-of-work, persistence.prisma, scripts.prisma-direct]
 severity: blocking
 detection: []
 review: approved
@@ -18,7 +20,6 @@ sources: []
 
 - Un script qui injecte `PrismaClient` et l’appelle directement : ses écritures s’exécutent hors de la transaction.
 - Un script qui ouvre son propre `prisma.$transaction(...)`.
-- Du SQL brut construit par concaténation de chaînes, dans un script.
 
 ## Pourquoi
 
@@ -30,15 +31,17 @@ Une méthode de lecture hors de toute transaction peut lire avec le client par d
 
 ## Correction
 
-Injecter le Unit of Work Prisma (`PrismaUnitOfWork`) et utiliser son client : `this.#unitOfWork.client()`. Pour ce que Prisma ne sait pas exprimer, écrire le SQL dans un tagged template, avec `$queryRaw`.
+Injecter le Unit of Work Prisma (`PrismaUnitOfWork`) et utiliser son client : `this.#unitOfWork.client()`. Le SQL brut, pour ce que Prisma ne sait pas exprimer, passe aussi par ce client (SEC-05).
 
 ## Adaptation
 
 **Notre choix** : le Unit of Work Prisma de `shared/driven/prisma` est le même dans les deux styles. Son `client()` renvoie le client de la transaction ouverte par `run`, ou le client par défaut en dehors.
 
+**Avec une transaction explicite** : le script écrit avec le client de son `prisma.$transaction`, jamais avec le client global.
+
 ## Voir aussi
 
-REP-13 et REP-14 posent la même règle de transaction pour les repositories, en style tactique.
+REP-13 et REP-14 posent la même règle de transaction pour les repositories, en style tactique. SEC-05 garde les valeurs hors du texte du SQL.
 
 ## Exemple
 

@@ -4,8 +4,9 @@ title: Un domain service est sans état et nommé dans le langage du métier
 group: Forme du service
 scope: [domain]
 style: [tactical]
-severity: major
-severityNote: 'Bloquante pour un état de requête gardé dans un champ : un provider NestJS est un singleton, partagé par les requêtes concurrentes. Mineure pour le nommage.'
+kind: safeguard
+severity: blocking
+severityNote: Mineure pour le nommage.
 detection: []
 review: approved
 sources:

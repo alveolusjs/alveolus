@@ -4,8 +4,8 @@ title: Une classe reçoit ses dépendances par son constructeur
 group: Dépendances
 scope: [domain, application, driving, driven]
 style: [tactical, transaction-script]
-severity: minor
-severityNote: Majeure pour une instance partagée par un import, comme `export const prisma`, dont tout le code finit par dépendre.
+kind: structure
+severity: major
 detection: []
 review: approved
 sources:

@@ -4,7 +4,8 @@ title: Pendant un remplacement, l’ancien et le nouvel adapter implémentent le
 group: Dans la durée
 scope: [structure, driven, driving]
 style: [tactical, transaction-script]
-severity: minor
+kind: structure
+severity: major
 detection: []
 review: approved
 sources: []
@@ -44,4 +45,4 @@ src/wallets/driven/http/
 
 ## Voir aussi
 
-WIR-01 réserve au module le choix de l’implémentation. PLC-07 découpe les adapters par technologie. NAM-06 nomme l’adapter d’après sa technologie et ce qu’il adapte.
+WIR-01 réserve au module le choix de l’implémentation. PLC-13 découpe les adapters par technologie. NAM-06 nomme l’adapter d’après sa technologie et ce qu’il adapte.

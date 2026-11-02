@@ -4,6 +4,8 @@ title: Ce que le wiring ouvre, il le ferme
 group: Durée de vie
 scope: [structure, driving, driven]
 style: [tactical, transaction-script]
+kind: convention
+convention: operations.graceful-shutdown
 severity: minor
 detection: []
 review: approved

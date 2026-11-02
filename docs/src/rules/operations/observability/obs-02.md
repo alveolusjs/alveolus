@@ -4,6 +4,8 @@ title: Une panne se logue une fois, là où elle est traitée
 group: Logs
 scope: [application, driving, driven]
 style: [tactical, transaction-script]
+kind: convention
+convention: operations.logging
 severity: minor
 detection: []
 review: approved

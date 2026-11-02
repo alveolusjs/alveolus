@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 
 import matter from 'gray-matter';
 
+import { isKind, type Kind } from '../../../docs/.vitepress/kinds.ts';
 import { isReview, type Review } from '../../../docs/.vitepress/reviews.ts';
 import { scopes } from '../../../docs/.vitepress/scopes.ts';
 import { isStyleList, type Style } from '../../../docs/.vitepress/styles.ts';
@@ -15,6 +16,7 @@ interface PackagedRule {
 	theme: string;
 	scope: string[];
 	style: Style[];
+	kind: Kind;
 	severity: string;
 	severityNote?: string;
 	context?: string;
@@ -87,6 +89,10 @@ function loadRule(theme: Theme, path: string): PackagedRule {
 		throw new Error(`${path}: review must be to-review, approved or rejected`);
 	}
 
+	if (!isKind(data.kind)) {
+		throw new Error(`${path}: kind must be safeguard, structure or convention`);
+	}
+
 	const scope: unknown = data.scope;
 
 	if (!Array.isArray(scope) || scope.length === 0 || !scope.every((id) => scopeIds.has(id))) {
@@ -99,6 +105,7 @@ function loadRule(theme: Theme, path: string): PackagedRule {
 		theme: theme.title,
 		scope,
 		style: data.style,
+		kind: data.kind,
 		severity: data.severity,
 		severityNote: data.severityNote,
 		context: data.context,

@@ -2,8 +2,8 @@
 import { useData, withBase } from 'vitepress';
 import { computed } from 'vue';
 
+import { matchesRuleFilters } from '../rule-filters';
 import { data as rules } from '../rules.data';
-import { matchesStyleFilter } from '../style-filter';
 import FilterNote from './FilterNote.vue';
 import RuleBadge from './RuleBadge.vue';
 
@@ -18,7 +18,7 @@ function anchor(group: string): string {
 }
 
 const themeRules = computed(() => rules.filter((rule) => rule.theme === page.value.relativePath.split('/')[2]));
-const shown = computed(() => themeRules.value.filter((rule) => matchesStyleFilter(rule.style)));
+const shown = computed(() => themeRules.value.filter(matchesRuleFilters));
 const groups = computed(() => Map.groupBy(shown.value, (rule) => rule.group));
 </script>
 

@@ -4,6 +4,7 @@ title: Le consumer reçoit des données, pas le comportement du producer
 group: Published language
 scope: [driving, public]
 style: [tactical, transaction-script]
+kind: structure
 severity: major
 detection: []
 review: approved

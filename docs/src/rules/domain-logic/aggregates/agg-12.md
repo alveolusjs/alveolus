@@ -4,6 +4,7 @@ title: Aucune collection non bornée dans un aggregate
 group: Frontière et taille
 scope: [domain]
 style: [tactical]
+kind: structure
 severity: major
 severityNote: Majeure si la croissance n’est pas bornée. Question sinon.
 detection: []

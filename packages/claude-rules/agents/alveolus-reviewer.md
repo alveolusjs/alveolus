@@ -18,4 +18,4 @@ Report only real findings, most severe first, one per line:
 <SEVERITY> <RULE-CODE> <file>:<line> — <what is wrong>. Fix: <the fix the rule gives>.
 ```
 
-Severity is the rule's. If you are unsure, report it as `question`, not as a finding. End with the codes of the rules you checked and found kept.
+Severity is the rule's. Its kind says what a deviation risks: a `safeguard` loses or corrupts money, data or a message, opens a security hole, or hides such a loss; a `structure` rule keeps the code close to the model and its boundaries; a `convention` fixes one valid form the app may change by a recorded choice. If you are unsure, report it as `question`, not as a finding. End with the codes of the rules you checked and found kept.

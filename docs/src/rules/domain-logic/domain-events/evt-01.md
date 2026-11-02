@@ -4,6 +4,8 @@ title: Un event capture un fait qui compte pour le métier
 group: Modéliser l’event
 scope: [domain]
 style: [tactical]
+kind: structure
+checkedBy: decision
 severity: question
 detection: []
 review: approved

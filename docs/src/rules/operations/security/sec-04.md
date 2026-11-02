@@ -4,8 +4,8 @@ title: Une donnée personnelle ne va que là où elle sert
 group: Secrets et données personnelles
 scope: [application, driving, driven, public]
 style: [tactical, transaction-script]
-severity: major
-severityNote: Bloquante quand elle sort de l’application, dans un event publié ou vers un système tiers.
+kind: safeguard
+severity: blocking
 detection: []
 review: approved
 sources: []

@@ -4,6 +4,7 @@ title: Les domain events portent des identités, pas des aggregates
 group: Transactions et cohérence
 scope: [domain, public]
 style: [tactical]
+kind: structure
 severity: major
 detection: []
 review: approved

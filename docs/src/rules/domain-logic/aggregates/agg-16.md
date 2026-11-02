@@ -4,7 +4,8 @@ title: Le versioning reste hors du code métier
 group: Concurrence
 scope: [domain, driven]
 style: [tactical]
-severity: minor
+kind: structure
+severity: major
 detection: []
 review: approved
 sources:

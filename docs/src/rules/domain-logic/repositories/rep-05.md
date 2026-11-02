@@ -4,6 +4,8 @@ title: Aucun changement ne se perd entre l’aggregate et le stockage
 group: Écritures
 scope: [application, driven]
 style: [tactical]
+kind: safeguard
+requires: [persistence.prisma]
 severity: blocking
 severityNote: Majeure pour un repository qui mélange les deux styles sans perdre de changement.
 detection: []

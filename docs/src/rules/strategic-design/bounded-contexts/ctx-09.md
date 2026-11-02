@@ -4,7 +4,8 @@ title: Le schéma de la base parle le langage du modèle
 group: Ce que contient un bounded context
 scope: [schema]
 style: [tactical, transaction-script]
-severity: minor
+kind: structure
+severity: major
 detection: []
 review: approved
 sources:

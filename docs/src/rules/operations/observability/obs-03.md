@@ -4,6 +4,7 @@ title: Une opération garde son identifiant de corrélation jusqu’au consumer
 group: Corrélation
 scope: [application, driving, driven]
 style: [tactical, transaction-script]
+kind: structure
 severity: major
 detection: []
 review: approved

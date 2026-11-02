@@ -308,6 +308,33 @@
 	color: var(--vp-c-brand-1);
 }
 
+.kind-badge {
+	display: inline-block;
+	padding: 0 9px;
+	border: 1px solid var(--vp-c-divider);
+	border-radius: 999px;
+	font-size: 12.5px;
+	font-weight: 600;
+	line-height: 20px;
+	white-space: nowrap;
+	color: var(--vp-c-text-2);
+}
+
+.kind-badge--safeguard {
+	border-color: color-mix(in srgb, var(--vp-c-danger-1) 45%, transparent);
+	color: var(--vp-c-danger-1);
+}
+
+.kind-badge--structure {
+	border-color: color-mix(in srgb, var(--vp-c-brand-1) 40%, transparent);
+	color: var(--vp-c-brand-1);
+}
+
+.kind-badge--convention {
+	font-weight: 500;
+	color: var(--vp-c-text-3);
+}
+
 .vp-doc .style-legend {
 	list-style: none;
 	padding-left: 0;
@@ -318,7 +345,7 @@
 }
 
 @media (min-width: 1280px) {
-	.vp-doc .rule-meta--inline .rule-meta__style dt {
+	.vp-doc .rule-meta--inline :is(.rule-meta__style, .rule-meta__kind) dt {
 		display: none;
 	}
 }
@@ -363,6 +390,14 @@
 
 .VPNavScreen .style-filter {
 	margin: 24px 0 0;
+}
+
+.style-filter + .kind-filter {
+	margin-left: 8px;
+}
+
+.VPNavScreen .style-filter + .kind-filter {
+	margin: 12px 0 0;
 }
 
 .style-filter button {
@@ -565,4 +600,20 @@
 .rb-part-icon svg {
 	width: 14px;
 	height: 14px;
+}
+
+.vp-doc .pack-table td {
+	padding-top: 9px;
+	padding-bottom: 9px;
+	vertical-align: top;
+}
+
+.vp-doc .pack-table__alternative td {
+	border-top-style: dashed;
+	color: var(--vp-c-text-2);
+}
+
+.pack-table__or {
+	font-style: italic;
+	color: var(--vp-c-text-3);
 }

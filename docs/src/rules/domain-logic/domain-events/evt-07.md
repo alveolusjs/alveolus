@@ -4,6 +4,7 @@ title: Un subscriber synchrone ne modifie pas un autre aggregate
 group: Les subscribers du bounded context
 scope: [driving]
 style: [tactical]
+kind: structure
 severity: major
 detection: []
 review: approved

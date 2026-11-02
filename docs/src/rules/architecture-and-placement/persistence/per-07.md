@@ -4,6 +4,8 @@ title: Chaque lecture courante s’appuie sur un index, déclaré dans le schém
 group: Lectures
 scope: [schema, driven, tests]
 style: [tactical, transaction-script]
+kind: convention
+convention: persistence.read-performance
 severity: minor
 severityNote: Majeure pour une lecture derrière la requête d’un titulaire, sur une table qui grossit sans limite.
 detection: []

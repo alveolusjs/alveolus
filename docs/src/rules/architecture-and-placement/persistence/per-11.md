@@ -4,7 +4,8 @@ title: Une migration reste compatible avec la version qui tourne
 group: Migrations
 scope: [schema]
 style: [tactical, transaction-script]
-severity: major
+kind: safeguard
+severity: blocking
 detection: []
 review: approved
 sources: []

@@ -4,6 +4,7 @@ title: À la frontière, traduire en un concept local
 group: Langage et frontière
 scope: [application, domain]
 style: [tactical, transaction-script]
+kind: structure
 severity: major
 severityNote: Majeure pour un objet d’un autre bounded context. Mineure pour des attributs détachés passés sans concept local.
 detection: []

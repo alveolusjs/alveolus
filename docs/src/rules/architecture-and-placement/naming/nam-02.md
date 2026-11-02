@@ -4,6 +4,8 @@ title: "Un fichier s’appelle `<concept>.<role>.ts`, en kebab-case"
 group: Noms de fichiers
 scope: [structure]
 style: [tactical, transaction-script]
+kind: convention
+convention: naming.files
 severity: minor
 detection: []
 review: approved

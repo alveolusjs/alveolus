@@ -4,6 +4,7 @@ title: Un repository par aggregate root, pas par entity ni par table
 group: Contrat
 scope: [domain, driven]
 style: [tactical]
+kind: structure
 severity: major
 detection: []
 review: approved

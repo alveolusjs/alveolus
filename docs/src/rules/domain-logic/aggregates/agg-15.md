@@ -4,8 +4,8 @@ title: Chaque aggregate est protégé par l’optimistic concurrency
 group: Concurrence
 scope: [driven, schema]
 style: [tactical]
+kind: safeguard
 severity: blocking
-severityNote: Bloquante si deux écritures concurrentes peuvent casser un invariant. Majeure sinon.
 detection: []
 review: approved
 sources:

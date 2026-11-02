@@ -4,6 +4,8 @@ title: L’état du modèle et ses events s’enregistrent ensemble
 group: Publication
 scope: [application, driven]
 style: [tactical, transaction-script]
+kind: safeguard
+requires: [messaging.outbox-forwarder, persistence.unit-of-work]
 severity: blocking
 detection: []
 review: approved
@@ -48,6 +50,8 @@ Cette table d’events sert de file d’attente : c’est l’outbox transaction
 **Notre choix** : l’outbox est une table de la base du modèle. Le command handler y ajoute les events juste après avoir enregistré le modèle, dans la transaction qu’il a ouverte (REP-13). Il les traduit d’abord en integration events, par l’`EventTranslator` du bounded context : l’outbox ne garde que des messages du published language, chacun avec son identifiant. Les repositories ne font que persister l’état : la publication reste visible dans le handler. Pas de broker par défaut : le forwarder livre les events aux handlers de l’application (MSG-03).
 
 Un bounded context en transaction scripts n’a ni aggregate ni domain events : le script construit le message de son contrat publié (`public`), et l’ajoute à l’outbox, dans la transaction du Unit of Work (TXS-02).
+
+**Avec une transaction explicite** : la ligne d’outbox s’écrit avec le client de la transaction qui enregistre le modèle.
 
 ## Voir aussi
 

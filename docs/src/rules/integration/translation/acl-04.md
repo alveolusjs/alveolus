@@ -4,7 +4,8 @@ title: Une command tirée d’un event étranger compare les dates des faits
 group: Données copiées
 scope: [domain, driving]
 style: [tactical, transaction-script]
-severity: major
+kind: safeguard
+severity: blocking
 detection: []
 review: approved
 sources:

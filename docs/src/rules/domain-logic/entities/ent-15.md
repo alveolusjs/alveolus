@@ -4,7 +4,8 @@ title: Chaque attribut est protégé par une précondition
 group: Construction et validation
 scope: [domain]
 style: [tactical]
-severity: minor
+kind: structure
+severity: major
 detection: []
 review: approved
 sources:
@@ -37,6 +38,8 @@ Les préconditions vivent dans les value objects et dans les méthodes de l’en
 ## Adaptation
 
 **Notre choix** : une précondition qui refuse une valeur venue de l’extérieur renvoie un `Result`. Une précondition qui ne peut échouer que sur un bug, comme un invariant interne violé, lance une exception.
+
+**Avec des exceptions** : une précondition qui refuse une valeur venue de l’extérieur lève un refus nommé. Celle qui ne peut échouer que sur un bug lève une autre classe, à laquelle l’exception filter répond 500.
 
 ## Voir aussi
 

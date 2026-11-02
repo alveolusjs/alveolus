@@ -28,7 +28,7 @@ export const lay04: Rule = new Rule(
 
 export const plc07: Rule = new Rule(
 	'PLC-07',
-	'Adapters are split by technology, and a technology is imported only in its folder',
+	'A technology is imported only in its folder',
 	`${site}/architecture-and-placement/placement/plc-07`,
 );
 

@@ -4,7 +4,8 @@ title: Un mapping vit avec son adapter
 group: Adapters
 scope: [driving, driven]
 style: [tactical, transaction-script]
-severity: minor
+kind: structure
+severity: major
 detection: []
 review: approved
 sources: []

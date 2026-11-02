@@ -4,6 +4,8 @@ title: Les repositories écrivent dans la transaction ouverte par l’applicatio
 group: Transactions
 scope: [driven]
 style: [tactical]
+kind: safeguard
+requires: [persistence.unit-of-work]
 severity: blocking
 detection: []
 review: approved
@@ -45,6 +47,8 @@ En Node, deux façons de partager ce contexte :
 Avec un pool `pg`, deux appels `pool.query` peuvent passer par deux connexions différentes, donc hors de toute transaction partagée.
 
 **Notre choix** : `AsyncLocalStorage`. L’implémentation du Unit of Work range le client de transaction Prisma dans le contexte asynchrone, et chaque repository l’y lit. Avec Prisma, le piège équivalent au pool consiste à écrire avec le `PrismaClient` injecté au lieu du client de transaction.
+
+**Avec une transaction explicite** : chaque méthode du repository qui écrit reçoit le client de la transaction en paramètre, et s’en sert pour chacune de ses écritures.
 
 ## Voir aussi
 

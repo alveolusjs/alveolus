@@ -4,6 +4,8 @@ title: Une interface séparée seulement quand elle sert à quelque chose
 group: Forme du service
 scope: [domain, driven]
 style: [tactical]
+kind: convention
+convention: design.interface-when-needed
 severity: minor
 detection: []
 review: approved

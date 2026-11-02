@@ -4,6 +4,8 @@ title: Le domaine est couvert à 100 %
 group: Preuves
 scope: [domain, tests]
 style: [tactical]
+kind: convention
+convention: testing.vitest-coverage
 severity: minor
 severityNote: Majeure pour un seuil abaissé, un fichier exclu de la mesure ou un hint `v8 ignore`.
 detection: []

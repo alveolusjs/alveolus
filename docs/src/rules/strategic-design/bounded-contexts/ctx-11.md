@@ -4,6 +4,7 @@ title: La taille d’un bounded context suit le langage
 group: Taille et organisation
 scope: [structure]
 style: [tactical, transaction-script]
+kind: structure
 severity: question
 detection: []
 review: approved

@@ -4,8 +4,8 @@ title: Un appel distant n’est pas un appel local
 group: Appels distants
 scope: [driven]
 style: [tactical, transaction-script]
-severity: major
-severityNote: Bloquante pour un appel sans authentification ni chiffrement.
+kind: safeguard
+severity: blocking
 detection: []
 review: approved
 sources:

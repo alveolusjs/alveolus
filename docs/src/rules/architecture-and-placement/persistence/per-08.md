@@ -4,8 +4,9 @@ title: Une transaction ne fait aucun appel distant et reste courte
 group: Transactions
 scope: [application, driven]
 style: [tactical, transaction-script]
-severity: major
-severityNote: Bloquante pour un effet qui ne s’annule pas, comme un e-mail ou un message, envoyé dans la transaction.
+kind: safeguard
+requires: [messaging.outbox-forwarder, persistence.unit-of-work]
+severity: blocking
 detection: []
 review: approved
 sources:
@@ -47,6 +48,10 @@ return this.#unitOfWork.run(async () => {
 	// convert with the rate fetched above, then let the wallet decide
 });
 ```
+
+## Adaptation
+
+**Avec une transaction explicite** : le même signal vaut dans le callback de `prisma.$transaction` : aucun e-mail, message ni appel distant, seulement une ligne d’outbox.
 
 ## Voir aussi
 

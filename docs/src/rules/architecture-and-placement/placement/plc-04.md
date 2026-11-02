@@ -4,6 +4,8 @@ title: Le domaine et l’application se découpent par concept, pas par type de 
 group: Modules
 scope: [structure, domain, application]
 style: [tactical, transaction-script]
+kind: convention
+convention: layout.by-concept-and-technology
 severity: minor
 detection: []
 review: approved
@@ -67,7 +69,7 @@ application/wallet/
 
 ## Adaptation
 
-**Notre choix** : le dossier nomme le concept, le suffixe du fichier nomme le rôle (NAM-01). L’outillage lit les suffixes, pas les dossiers. `driving` et `driven` se découpent par technologie (PLC-07).
+**Notre choix** : le dossier nomme le concept, le suffixe du fichier nomme le rôle (NAM-01). L’outillage lit les suffixes, pas les dossiers. `driving` et `driven` se découpent par technologie (PLC-13).
 
 Un bounded context en transaction scripts n’a pas de `domain` : son `application` contient un service par concept (TXS-01, TXS-05).
 

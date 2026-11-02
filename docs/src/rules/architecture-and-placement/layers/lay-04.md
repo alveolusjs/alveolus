@@ -4,6 +4,7 @@ title: "Un autre bounded context n’entre que par `public`, qui ne contient que
 group: Frontière du bounded context
 scope: [public, driving]
 style: [tactical, transaction-script]
+kind: structure
 severity: major
 detection: [eslint]
 review: approved
@@ -40,4 +41,4 @@ driving/in-process/
 
 ## Voir aussi
 
-PUB-01 documente le published language. MAP-01 fait respecter les relations de la context map. PLC-07 place l’implémentation de la facade dans `driving/in-process`.
+PUB-01 documente le published language. MAP-01 fait respecter les relations de la context map. PLC-13 place l’implémentation de la facade dans `driving/in-process`.

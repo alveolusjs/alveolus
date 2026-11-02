@@ -4,6 +4,7 @@ title: Les règles métier vivent dans le script, pas dans les adapters
 group: Forme d’un script
 scope: [application, driving, driven]
 style: [transaction-script]
+kind: structure
 severity: major
 detection: []
 review: approved

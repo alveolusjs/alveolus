@@ -4,6 +4,7 @@ title: Ni transaction ni contrôle d’accès dans un domain service
 group: Forme du service
 scope: [domain]
 style: [tactical]
+kind: structure
 severity: major
 detection: []
 review: approved

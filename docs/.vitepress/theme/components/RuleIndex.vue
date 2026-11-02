@@ -4,11 +4,10 @@ import { computed, ref, watch } from 'vue';
 
 import { parts } from '../../parts';
 import { scopes } from '../../scopes';
-import { styles } from '../../styles';
 import { themes } from '../../themes';
 import { badgeLabel, severities } from '../badges';
+import { filterScope, filtering, matchesRuleFilters } from '../rule-filters';
 import { data as rules } from '../rules.data';
-import { matchesStyleFilter, styleFilter } from '../style-filter';
 import RuleBadge from './RuleBadge.vue';
 
 const search = ref('');
@@ -33,7 +32,7 @@ const filtered = computed(() => {
 	return rules.filter(
 		(rule) =>
 			(!part.value || partOf.get(rule.theme) === part.value) &&
-			matchesStyleFilter(rule.style) &&
+			matchesRuleFilters(rule) &&
 			(!theme.value || rule.theme === theme.value) &&
 			(!severity.value || rule.severity === severity.value) &&
 			(!scope.value || rule.scope.includes(scope.value)) &&
@@ -64,7 +63,7 @@ const filtered = computed(() => {
 	</div>
 	<p class="rule-filters__count">
 		{{ filtered.length }} règles sur {{ rules.length
-		}}<span v-if="styleFilter">, pour les {{ styles[styleFilter].contexts }}</span>
+		}}<span v-if="filtering">, le filtre montre seulement {{ filterScope }}</span>
 	</p>
 	<table class="rule-table">
 		<thead>

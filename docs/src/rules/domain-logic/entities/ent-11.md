@@ -4,7 +4,8 @@ title: Les méthodes du domaine sont nommées dans le langage du métier
 group: Comportement
 scope: [domain]
 style: [tactical]
-severity: minor
+kind: structure
+severity: major
 severityNote: Question quand un concept semble manquer. Un setter public relève d’ENT-10.
 detection: []
 review: approved

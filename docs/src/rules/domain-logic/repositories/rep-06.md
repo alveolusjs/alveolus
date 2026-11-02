@@ -4,8 +4,8 @@ title: Pas de suppression physique des aggregates que le métier doit garder
 group: Écritures
 scope: [domain, driven]
 style: [tactical]
+kind: safeguard
 severity: blocking
-severityNote: Bloquante si une obligation de conservation s’applique. Majeure sinon.
 detection: []
 review: approved
 sources:

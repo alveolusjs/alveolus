@@ -4,6 +4,8 @@ title: Un type du domaine garde son nom métier, le rôle va dans le nom du fich
 group: Noms de types
 scope: [domain]
 style: [tactical]
+kind: convention
+convention: layout.by-concept-and-technology
 severity: minor
 detection: []
 review: approved

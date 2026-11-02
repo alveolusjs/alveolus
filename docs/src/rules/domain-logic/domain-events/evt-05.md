@@ -4,6 +4,7 @@ title: Un event porte de quoi agir sans relire sa source
 group: Modéliser l’event
 scope: [domain, public]
 style: [tactical]
+kind: structure
 severity: major
 severityNote: Majeure quand un subscriber ne peut pas agir sans relire la source. Mineure sinon.
 detection: []

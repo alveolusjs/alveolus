@@ -4,8 +4,8 @@ title: L’id technique de persistance reste caché
 group: Identité
 scope: [domain, driven, schema]
 style: [tactical]
-severity: minor
-severityNote: Majeure si l’id technique sort dans une API ou un event.
+kind: structure
+severity: major
 detection: []
 review: approved
 sources:

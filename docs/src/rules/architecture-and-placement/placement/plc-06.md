@@ -4,7 +4,8 @@ title: Les modules évoluent avec le modèle
 group: Modules
 scope: [structure]
 style: [tactical, transaction-script]
-severity: minor
+kind: structure
+severity: major
 detection: []
 review: approved
 sources:

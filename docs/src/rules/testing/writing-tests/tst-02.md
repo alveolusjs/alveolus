@@ -4,6 +4,8 @@ title: Les tests du domaine se lisent dans le langage du métier
 group: Principes
 scope: [tests]
 style: [tactical, transaction-script]
+kind: convention
+convention: testing.test-style
 severity: minor
 detection: []
 review: approved

@@ -4,6 +4,7 @@ title: L’anticorruption layer vit à un seul endroit
 group: Anticorruption layer
 scope: [driven, domain]
 style: [tactical, transaction-script]
+kind: structure
 severity: major
 severityNote: Mineure pour un même concept traduit dans plusieurs handlers.
 detection: []

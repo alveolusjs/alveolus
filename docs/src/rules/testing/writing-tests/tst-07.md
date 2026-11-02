@@ -4,6 +4,8 @@ title: Un test est déterministe
 group: Fiabilité
 scope: [tests]
 style: [tactical, transaction-script]
+kind: convention
+convention: testing.time-and-order
 severity: minor
 detection: []
 review: approved

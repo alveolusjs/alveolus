@@ -4,6 +4,8 @@ title: Un système tiers se simule depuis son contrat
 group: Systèmes tiers
 scope: [driven, tests]
 style: [tactical, transaction-script]
+kind: convention
+convention: testing.msw-contracts
 severity: minor
 detection: []
 review: approved

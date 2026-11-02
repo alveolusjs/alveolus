@@ -4,6 +4,7 @@ title: Un terme a un seul sens dans le bounded context
 group: Langage et frontière
 scope: [domain]
 style: [tactical]
+kind: structure
 severity: question
 detection: []
 review: approved

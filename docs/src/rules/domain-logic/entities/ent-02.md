@@ -4,6 +4,7 @@ title: Une entity ne porte que ce que ses use cases écrivent ou lisent
 group: Nature d’une entity
 scope: [domain]
 style: [tactical]
+kind: structure
 severity: question
 detection: []
 review: approved

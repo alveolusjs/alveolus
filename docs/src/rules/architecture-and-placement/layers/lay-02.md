@@ -4,6 +4,7 @@ title: Aucun cycle entre modules de même niveau
 group: Sens des dépendances
 scope: [structure]
 style: [tactical, transaction-script]
+kind: structure
 severity: major
 detection: [dependency-cruiser]
 review: approved

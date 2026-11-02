@@ -4,6 +4,8 @@ title: L’investissement tactique suit la complexité du domaine
 group: Style d’implémentation
 scope: [structure]
 style: [tactical, transaction-script]
+kind: structure
+checkedBy: decision
 severity: question
 detection: []
 review: approved

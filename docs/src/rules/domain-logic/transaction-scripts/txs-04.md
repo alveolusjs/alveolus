@@ -4,6 +4,8 @@ title: Un script vérifie avant d’écrire, et refuse avec un résultat
 group: Forme d’un script
 scope: [application]
 style: [transaction-script]
+kind: convention
+convention: errors.result
 severity: minor
 detection: []
 review: approved
@@ -38,6 +40,8 @@ Une condition qui dépend de l’écriture elle-même, comme une contrainte d’
 ## Adaptation
 
 **Notre choix** : les erreurs métier sont des valeurs `Result`, dans les deux styles. Un `Result` en erreur annule aussi la transaction du Unit of Work.
+
+**Avec des exceptions** : charger, vérifier, puis écrire reste la règle. Un refus lève `FeeNotWaivable`, jamais une `HttpException`, et le deuxième signal ne s’applique plus.
 
 ## Exemple
 

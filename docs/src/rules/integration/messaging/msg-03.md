@@ -4,8 +4,10 @@ title: Le forwarder publie dans l’ordre et suit ce qu’il a envoyé
 group: Publication
 scope: [application, driven]
 style: [tactical, transaction-script]
+kind: safeguard
+requires: [messaging.outbox-forwarder]
 severity: blocking
-severityNote: Bloquante pour un event marqué publié avant la confirmation du broker, qui peut se perdre. Majeure sinon.
+severityNote: Majeure pour un forwarder placé dans le domaine.
 detection: []
 review: approved
 sources:

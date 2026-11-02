@@ -4,6 +4,8 @@ title: "Transaction ou eventual consistency : à qui revient le travail ?"
 group: Transactions et cohérence
 scope: [structure, application]
 style: [tactical]
+kind: structure
+checkedBy: decision
 severity: question
 detection: []
 review: approved

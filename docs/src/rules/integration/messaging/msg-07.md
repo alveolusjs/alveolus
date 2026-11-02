@@ -4,7 +4,9 @@ title: La publication et la consommation survivent à une panne du broker
 group: Pannes
 scope: [driving, driven]
 style: [tactical, transaction-script]
-severity: major
+kind: safeguard
+requires: [messaging.outbox-forwarder]
+severity: blocking
 detection: []
 review: approved
 sources:

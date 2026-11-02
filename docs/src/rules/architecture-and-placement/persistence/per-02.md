@@ -4,8 +4,10 @@ title: Une colonne a le type exact de sa valeur
 group: Le schéma
 scope: [schema]
 style: [tactical, transaction-script]
-severity: major
-severityNote: Bloquante pour un montant en virgule flottante ou une date stockée comme un instant. Mineure pour un statut en texte libre ou une identité sans `@db.Uuid`.
+kind: safeguard
+requires: [persistence.postgres-schema, persistence.prisma]
+severity: blocking
+severityNote: Mineure pour un statut en texte libre ou une identité sans `@db.Uuid`.
 detection: []
 review: approved
 sources:

@@ -50,7 +50,7 @@ export class WalletMapper extends RowMapper {
 - Le solde est un entier en unités mineures, la devise tient en trois lettres, l’instant porte son fuseau, le statut est un enum (PER-02).
 - Un wallet par titulaire et par devise : la base refuse le second, même quand deux requêtes se croisent (PER-03).
 - Le mapper reconstruit chaque valeur par ses vérifications, et une ligne corrompue arrête la lecture (PER-04, PER-05).
-- Une liste de wallets est bornée et ordonnée, et chaque lecture courante a son index (PER-06, PER-07).
+- Une liste de wallets est bornée et lue par pages sans sauter de ligne, et chaque lecture courante a son index (PER-06, PER-13, PER-07).
 - Aucun appel distant dans la transaction, et un cumul se prend sous verrou (PER-08, PER-09).
 - Le schéma change par des migrations, compatibles avec la version qui tourne, qui ne réécrivent jamais un fait (PER-10, PER-11, PER-12).
 

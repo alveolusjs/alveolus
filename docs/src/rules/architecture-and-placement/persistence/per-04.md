@@ -4,6 +4,8 @@ title: Une ligne stockée se relit par les vérifications du modèle, et une lig
 group: Mappers
 scope: [driven]
 style: [tactical]
+kind: safeguard
+requires: [persistence.row-mapper, errors.result]
 severity: blocking
 detection: []
 review: approved
@@ -66,6 +68,8 @@ export abstract class RowMapper {
 ```
 
 Une valeur venue d’une requête et refusée est un refus métier, que le use case renvoie dans un `Result`. Une valeur venue de la base et refusée ne l’est pas : elle a été acceptée à l’écriture, ou la base a été modifiée par une autre voie. Aucun appelant ne peut la corriger, d’où l’exception.
+
+**Avec des exceptions** : le mapper laisse remonter l’exception de la factory. Le signal devient un `catch` qui renvoie une valeur par défaut, un objet partiel ou `undefined`.
 
 ## Voir aussi
 
