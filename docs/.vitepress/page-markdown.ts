@@ -3,6 +3,7 @@ import { join } from 'node:path';
 
 import matter from 'gray-matter';
 
+import { kinds } from './kinds';
 import { parts } from './parts';
 import { type Rule, srcDir, writtenThemes } from './rules';
 import { scopeLabel } from './scopes';
@@ -71,17 +72,21 @@ function ruleMeta(relativePath: string): string {
 
 	return [
 		...(rule.context ? [`- **Condition** : ${rule.context}`] : []),
+		`- **Nature** : ${withNote(natureLabel(rule), rule.severityNote)}`,
 		`- **Style** : ${rule.style.map((style) => styles[style].label).join(', ')}`,
-		`- **Sévérité** : ${withNote(badgeLabel(rule.severity), rule.severityNote)}`,
 		`- **S’applique à** : ${rule.scope.map(scopeLabel).join(', ')}`,
 	].join('\n');
 }
 
+function natureLabel(rule: Rule): string {
+	return `${kinds[rule.kind].label} · ${badgeLabel(rule.severity)}`;
+}
+
 function ruleRows(rules: readonly Rule[]): string[] {
 	return [
-		'| Code | Règle | Sévérité |',
+		'| Code | Règle | Nature |',
 		'| --- | --- | --- |',
-		...rules.map((rule) => `| [${rule.code}](${rule.link}) | ${rule.title} | ${badgeLabel(rule.severity)} |`),
+		...rules.map((rule) => `| [${rule.code}](${rule.link}) | ${rule.title} | ${natureLabel(rule)} |`),
 	];
 }
 

@@ -158,7 +158,7 @@ function ruleItemText(rule: Rule): string {
 	return [
 		'<span class="rb-rule-item">',
 		`<span class="rb-rule-item__code">${rule.code}</span>`,
-		`<span class="rb-rule-item__label">${escapeHtml(rule.title)}</span>`,
+		`<span class="rb-rule-item__label" title="${escapeHtml(rule.title)}">${escapeHtml(rule.title)}</span>`,
 		'</span>',
 	].join('');
 }
@@ -189,6 +189,7 @@ export function rulesSidebar(): DefaultTheme.SidebarItem[] {
 		},
 		...parts.map((part) => ({
 			text: `<span class="rb-part-icon">${iconSvg(part.icon)}</span>${part.title}`,
+			collapsed: true,
 			items: [
 				overviewItem(`rules/${part.slug}`),
 				...(part.slug === 'domain-logic'
@@ -207,7 +208,7 @@ const RULE_CODE = /\b[A-Z]{2,4}-\d{2}\b/g;
  * Skips headings, text already inside a link, inline code and mentions of the current page.
  */
 export function ruleLinks(md: MarkdownRenderer): void {
-	const links = new Map(writtenThemes.flatMap(({ rules }) => rules.map((rule) => [rule.code, rule.link] as const)));
+	const links = new Map(writtenThemes.flatMap(({ rules }) => rules.map((rule) => [rule.code, rule] as const)));
 
 	md.core.ruler.push('rule-links', (state) => {
 		const currentPage = `/${(state.env?.relativePath ?? '').replace(/\.md$/, '')}`;
@@ -238,15 +239,18 @@ export function ruleLinks(md: MarkdownRenderer): void {
 				const result = [];
 				let last = 0;
 				for (const match of token.content.matchAll(RULE_CODE)) {
-					const href = links.get(match[0]);
-					if (!href || href === currentPage) {
+					const rule = links.get(match[0]);
+					if (!rule || rule.link === currentPage) {
 						continue;
 					}
 
 					const before = new state.Token('text', '', 0);
 					before.content = token.content.slice(last, match.index);
 					const open = new state.Token('link_open', 'a', 1);
-					open.attrs = [['href', href]];
+					open.attrs = [
+						['href', rule.link],
+						['title', `${rule.code} · ${rule.title}`],
+					];
 					const label = new state.Token('text', '', 0);
 					label.content = match[0];
 					const close = new state.Token('link_close', 'a', -1);

@@ -6,6 +6,7 @@ import { parts } from './parts';
 import { ruleLinks, rulesSidebar } from './rules';
 import { sectionIconsCss } from './section-icons';
 import { reloadSidebarOnFrontmatterChange } from './sidebar-reload';
+import { groupAnchor, themes } from './themes';
 
 export default defineConfig({
 	lang: 'fr-FR',
@@ -41,17 +42,35 @@ export default defineConfig({
 			pageData.frontmatter.features = withIcons(pageData.frontmatter.features);
 		}
 
-		const overview = /^rules\/([\w-]+)\/(?:([\w-]+)\/)?index\.md$/.exec(pageData.relativePath);
-		const partIndex = overview ? parts.findIndex((part) => part.slug === overview[1]) : -1;
+		const location = /^rules\/([\w-]+)\/(?:([\w-]+)\/)?([\w-]+)\.md$/.exec(pageData.relativePath);
+		const partIndex = location ? parts.findIndex((part) => part.slug === location[1]) : -1;
 
-		if (overview && partIndex >= 0) {
+		if (location && partIndex >= 0) {
+			const [, partSlug, themeSlug, page] = location;
 			const part = parts[partIndex];
-			pageData.frontmatter.partEyebrow = {
-				icon: iconSvg(part.icon),
-				label: overview[2]
-					? `Partie ${partIndex + 1} · ${part.title}`
-					: `Partie ${partIndex + 1} sur ${parts.length}`,
-			};
+			const partCrumb = { text: `Partie ${partIndex + 1} · ${part.title}`, link: `/rules/${partSlug}/` };
+			const theme = themes.find((candidate) => candidate.slug === themeSlug);
+
+			if (page === 'index' && !themeSlug) {
+				pageData.frontmatter.partEyebrow = {
+					icon: iconSvg(part.icon),
+					label: `Partie ${partIndex + 1} sur ${parts.length}`,
+				};
+			} else if (page === 'index' && theme) {
+				pageData.frontmatter.partEyebrow = { icon: iconSvg(part.icon), crumbs: [partCrumb] };
+				pageData.frontmatter.themeRules = theme.slug;
+			} else if (theme && pageData.frontmatter.code) {
+				const themeLink = `/rules/${partSlug}/${theme.slug}/`;
+				const group = String(pageData.frontmatter.group ?? '');
+				pageData.frontmatter.partEyebrow = {
+					icon: iconSvg(part.icon),
+					crumbs: [
+						partCrumb,
+						{ text: theme.title, link: themeLink },
+						...(group ? [{ text: group, link: `${themeLink}#${groupAnchor(group)}` }] : []),
+					],
+				};
+			}
 		}
 
 		if (pageData.frontmatter.layout !== 'page') {
@@ -104,6 +123,12 @@ export default defineConfig({
 			},
 		},
 		outline: { level: [2, 3], label: 'Sur cette page' },
-		lastUpdated: { text: 'Mis à jour' },
+		lastUpdated: { text: 'Mis à jour', formatOptions: { dateStyle: 'long', forceLocale: true } },
+		notFound: {
+			title: 'Page introuvable',
+			quote: 'Cette adresse ne mène à aucune page. Cherchez une règle par son code avec la recherche, en haut.',
+			linkLabel: 'Revenir à l’accueil',
+			linkText: 'Revenir à l’accueil',
+		},
 	},
 });

@@ -5,7 +5,6 @@ import { computed } from 'vue';
 import { scopeLabel } from '../../scopes';
 import { clearRuleFilters, filterScope, matchesRuleFilters } from '../rule-filters';
 import KindBadge from './KindBadge.vue';
-import RuleBadge from './RuleBadge.vue';
 import StyleBadge from './StyleBadge.vue';
 
 withDefaults(defineProps<{ variant?: 'inline' | 'aside' }>(), { variant: 'inline' });
@@ -39,7 +38,8 @@ const outOfFilter = computed(
 		<div class="rule-meta__kind">
 			<dt>Nature</dt>
 			<dd>
-				<KindBadge :value="frontmatter.kind" />
+				<KindBadge :value="frontmatter.kind" :severity="frontmatter.severity" />
+				<span v-if="frontmatter.severityNote" class="rule-meta__note">{{ frontmatter.severityNote }}</span>
 				<span v-if="frontmatter.checkedBy === 'decision'" class="rule-meta__note">
 					Se tranche par une décision, pas dans le diff.
 				</span>
@@ -48,13 +48,6 @@ const outOfFilter = computed(
 		<div class="rule-meta__style">
 			<dt>Style</dt>
 			<dd><StyleBadge :value="frontmatter.style" /></dd>
-		</div>
-		<div class="rule-meta__severity">
-			<dt>Sévérité</dt>
-			<dd>
-				<RuleBadge kind="severity" :value="frontmatter.severity" />
-				<span v-if="frontmatter.severityNote" class="rule-meta__note">{{ frontmatter.severityNote }}</span>
-			</dd>
 		</div>
 		<div class="rule-meta__scope">
 			<dt>S’applique à</dt>

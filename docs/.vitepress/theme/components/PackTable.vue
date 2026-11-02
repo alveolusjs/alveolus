@@ -58,23 +58,23 @@ const rows = computed(() =>
 				:key="group.id"
 				:class="{ 'pack-table__alternative': group.alternativeTo }"
 			>
-				<td>
+				<td data-label="Choix">
 					<span v-if="group.alternativeTo" class="pack-table__or">ou </span>
 					<span v-html="labelHtml(group.label)" />
 				</td>
-				<td>
+				<td data-label="Conventions" :class="{ 'pack-table__empty': conventions.length === 0 }">
 					<template v-for="(code, index) in conventions" :key="code">
 						<a :href="withBase(urls.get(code) ?? '')" class="rule-code">{{ code }}</a
 						><span v-if="index < conventions.length - 1">, </span>
 					</template>
 				</td>
-				<td>
+				<td data-label="Porté aussi par" :class="{ 'pack-table__empty': carriedBy.length === 0 }">
 					<template v-for="(code, index) in carriedBy" :key="code">
 						<a :href="withBase(urls.get(code) ?? '')" class="rule-code">{{ code }}</a
 						><span v-if="index < carriedBy.length - 1">, </span>
 					</template>
 				</td>
-				<td>
+				<td data-label="Garde-fous qui en dépendent" :class="{ 'pack-table__empty': safeguards.length === 0 }">
 					<template v-for="(code, index) in safeguards" :key="code">
 						<a :href="withBase(urls.get(code) ?? '')" class="rule-code">{{ code }}</a
 						><span v-if="index < safeguards.length - 1">, </span>

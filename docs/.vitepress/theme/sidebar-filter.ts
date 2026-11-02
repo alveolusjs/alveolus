@@ -21,6 +21,7 @@ export function filterSidebar(): void {
 	for (const item of items) {
 		const rule = ruleOf(item.querySelector(':scope > .item a[href]'));
 		const children = item.querySelector(':scope > .items');
+		const current = item.classList.contains('is-active') || item.classList.contains('has-active');
 		let hidden = false;
 
 		if (rule) {
@@ -33,6 +34,24 @@ export function filterSidebar(): void {
 			hidden = ruleItems.length > 0 && ruleItems.every((ruleItem) => ruleItem?.classList.contains('rb-filtered'));
 		}
 
-		item.classList.toggle('rb-filtered', hidden);
+		item.classList.toggle('rb-filtered', hidden && !current);
 	}
+}
+
+export function revealActiveSidebarItem(): void {
+	const sidebar = document.querySelector<HTMLElement>('.VPSidebar');
+	const active = sidebar?.querySelector<HTMLElement>('.VPSidebarItem.is-active > .item');
+
+	if (!sidebar || !active) {
+		return;
+	}
+
+	const sidebarBox = sidebar.getBoundingClientRect();
+	const activeBox = active.getBoundingClientRect();
+
+	if (activeBox.top >= sidebarBox.top && activeBox.bottom <= sidebarBox.bottom) {
+		return;
+	}
+
+	sidebar.scrollTop += activeBox.top - sidebarBox.top - sidebarBox.height / 2;
 }

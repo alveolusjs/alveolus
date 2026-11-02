@@ -1,20 +1,23 @@
 <script setup lang="ts">
 import { withBase } from 'vitepress';
-import { computed, ref, watch } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 
 import { parts } from '../../parts';
 import { scopes } from '../../scopes';
 import { themes } from '../../themes';
 import { badgeLabel, severities } from '../badges';
-import { filterScope, filtering, matchesRuleFilters } from '../rule-filters';
+import { matchesRuleFilters } from '../rule-filters';
 import { data as rules } from '../rules.data';
-import RuleBadge from './RuleBadge.vue';
+import FilterNote from './FilterNote.vue';
+import KindBadge from './KindBadge.vue';
 
 const search = ref('');
 const part = ref('');
 const theme = ref('');
 const severity = ref('');
 const scope = ref('');
+
+const queryFields = { q: search, part, theme, severity, scope };
 
 const partOf = new Map(themes.map((t) => [t.slug, t.part]));
 const writtenThemes = computed(() =>
@@ -26,6 +29,29 @@ watch(part, () => {
 		theme.value = '';
 	}
 });
+
+onMounted(() => {
+	const params = new URLSearchParams(window.location.search);
+
+	for (const [key, field] of Object.entries(queryFields)) {
+		field.value = params.get(key) ?? '';
+	}
+
+	watch(Object.values(queryFields), () => {
+		const params = new URLSearchParams();
+
+		for (const [key, field] of Object.entries(queryFields)) {
+			if (field.value) {
+				params.set(key, field.value);
+			}
+		}
+
+		const query = params.toString();
+		history.replaceState(history.state, '', query ? `?${query}` : window.location.pathname);
+	});
+});
+
+const hiddenByFilters = computed(() => rules.filter((rule) => !matchesRuleFilters(rule)).length);
 
 const filtered = computed(() => {
 	const terms = search.value.trim().toLowerCase();
@@ -43,34 +69,38 @@ const filtered = computed(() => {
 
 <template>
 	<div class="rule-filters">
-		<input v-model="search" type="search" placeholder="Chercher un code ou un mot…" />
-		<select v-model="part">
+		<input
+			v-model="search"
+			type="search"
+			placeholder="Chercher un code ou un mot…"
+			aria-label="Chercher une règle"
+		/>
+		<select v-model="part" aria-label="Partie">
 			<option value="">Toutes les parties</option>
 			<option v-for="p in parts" :key="p.slug" :value="p.slug">{{ p.title }}</option>
 		</select>
-		<select v-model="theme">
+		<select v-model="theme" aria-label="Thème">
 			<option value="">Tous les thèmes</option>
 			<option v-for="t in writtenThemes" :key="t.slug" :value="t.slug">{{ t.title }}</option>
 		</select>
-		<select v-model="severity">
+		<select v-model="severity" aria-label="Sévérité">
 			<option value="">Toutes les sévérités</option>
 			<option v-for="s in severities" :key="s" :value="s">{{ badgeLabel(s) }}</option>
 		</select>
-		<select v-model="scope">
+		<select v-model="scope" aria-label="Portée">
 			<option value="">Toutes les portées</option>
 			<option v-for="s in scopes" :key="s.id" :value="s.id">{{ s.label }}</option>
 		</select>
 	</div>
-	<p class="rule-filters__count">
-		{{ filtered.length }} règles sur {{ rules.length
-		}}<span v-if="filtering">, le filtre montre seulement {{ filterScope }}</span>
-	</p>
-	<table class="rule-table">
+	<p class="rule-filters__count" aria-live="polite">{{ filtered.length }} règles sur {{ rules.length }}</p>
+	<FilterNote :hidden="hiddenByFilters" />
+	<p v-if="filtered.length === 0" class="rule-filters__empty">Aucune règle ne correspond à cette recherche.</p>
+	<table v-else class="rule-table">
 		<thead>
 			<tr>
 				<th>Code</th>
 				<th>Règle</th>
-				<th>Sévérité</th>
+				<th class="rule-table__nature">Nature</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -82,8 +112,11 @@ const filtered = computed(() => {
 					{{ rule.title }}
 					<span v-if="rule.context" class="rule-conditional" :title="rule.context">conditionnelle</span>
 					<br /><small>{{ rule.group }}</small>
+					<span class="rule-table__nature-inline">
+						<KindBadge :value="rule.kind" :severity="rule.severity" />
+					</span>
 				</td>
-				<td><RuleBadge kind="severity" :value="rule.severity" /></td>
+				<td class="rule-table__nature"><KindBadge :value="rule.kind" :severity="rule.severity" /></td>
 			</tr>
 		</tbody>
 	</table>

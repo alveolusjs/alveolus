@@ -19,6 +19,8 @@ export function matchesRuleFilters(rule: FilterableRule): boolean {
 
 export const filtering = computed(() => Boolean(styleFilter.value || kindFilter.value));
 
+export const activeFilterCount = computed(() => [styleFilter.value, kindFilter.value].filter(Boolean).length);
+
 export const filterScope = computed(() => {
 	const shown = kindFilter.value ? `les ${kinds[kindFilter.value].plural}` : 'les règles';
 
