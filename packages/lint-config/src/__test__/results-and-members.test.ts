@@ -13,8 +13,8 @@ export abstract class Ledger {
 }
 `;
 
-const app = TestApp.reference().with('src/wallets/domain/wallet/ledger.port.ts', result);
-const command = 'src/wallets/application/wallet/transfer.command.ts';
+const app = TestApp.reference().with('src/wallets/internal/domain/wallet/ledger.port.ts', result);
+const command = 'src/wallets/internal/application/wallet/transfer.command.ts';
 
 function useCase(body: string): string {
 	return `import type { Ledger } from '../../domain/wallet/ledger.port.ts';
@@ -84,7 +84,7 @@ describe('UC-11 with ESLint', () => {
 	});
 
 	it('leaves a Result assigned to a field or a variable', () => {
-		const refusal = 'src/wallets/application/wallet/refusal.ts';
+		const refusal = 'src/wallets/internal/application/wallet/refusal.ts';
 		const project = app
 			.with(
 				refusal,
@@ -127,7 +127,7 @@ export class Refusal {
 	});
 
 	it('leaves a variable, a parameter and a promise that hold no Result', () => {
-		const consumer = 'src/wallets/application/wallet/consumer.ts';
+		const consumer = 'src/wallets/internal/application/wallet/consumer.ts';
 		const project = app
 			.with(
 				consumer,
@@ -159,13 +159,13 @@ describe('NAM-09 with ESLint', () => {
 	it('reports a parameter property, and leaves a # field', () => {
 		const project = app
 			.with(
-				'src/wallets/application/wallet/close.command.ts',
+				'src/wallets/internal/application/wallet/close.command.ts',
 				`export class Close {\n\tpublic constructor(private readonly clock: Date) {}\n}\n`,
 			)
 			.with(command, useCase('\t\treturn 0;'));
 
 		expect(project.eslint(nam09)).toEqual([
-			`src/wallets/application/wallet/close.command.ts:2 ${nam09.describe()}`,
+			`src/wallets/internal/application/wallet/close.command.ts:2 ${nam09.describe()}`,
 		]);
 	});
 });

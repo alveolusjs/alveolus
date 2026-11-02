@@ -35,8 +35,7 @@ Ne garder dans `shared` que le wiring technique et la mise en place de ses tests
 
 ```txt
 src/shared/
-├── shared.module.ts
-├── shared.config.ts
+├── composition/        shared.module.ts, shared.config.ts, shared.composition.ts
 ├── driven/prisma/      client Prisma, Unit of Work, outbox
 ├── driving/http/       pipe global, référence de l’API
 └── __test__/           mise en place de la base, helpers transverses

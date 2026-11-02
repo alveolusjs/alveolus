@@ -29,7 +29,7 @@ sources:
 
 Le lien est une décision : quelle base, quel provider, quelle horloge. Prise dans un seul fichier par bounded context, elle se lit à un seul endroit et se change à un seul endroit. Répartie dans les classes, elle attache chacune à une technologie, et personne ne sait quelle implémentation tourne sans toutes les lire.
 
-Le domaine et l’application ne connaissent que le port. Le module est le seul fichier du bounded context autorisé à connaître les deux côtés.
+Le domaine et l’application ne connaissent que le port. Le dossier `composition` est le seul endroit du bounded context autorisé à connaître les deux côtés.
 
 ## Exceptions
 
@@ -37,10 +37,12 @@ Les ports techniques partagés par tous les bounded contexts (Unit of Work, outb
 
 ## Correction
 
-Un `<context>.module.ts` à la racine du bounded context (PLC-01) lie chaque port du bounded context à son implémentation. Un choix qui dépend de l’environnement se fait là, d’après la configuration (WIR-11).
+Un `<context>.module.ts`, dans le dossier `composition` du bounded context (PLC-01), lie chaque port du bounded context à son implémentation. Un choix qui dépend de l’environnement se fait là, d’après la configuration (WIR-11).
+
+Quand le module grossit, il se découpe par sujet : persistance, use cases, event handlers. Chaque morceau est un fichier `<sujet>.composition.ts` de `composition`, qui exporte un tableau de providers. Le module les étale, et reste le seul `@Module` du bounded context.
 
 ```ts
-// wallets.module.ts
+// composition/wallets.module.ts
 { ...construct(PrismaWalletRepository, [PrismaUnitOfWork]), provide: WalletRepository },
 {
 	provide: ExchangeRates,

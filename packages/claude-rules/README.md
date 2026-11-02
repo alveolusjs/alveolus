@@ -2,7 +2,7 @@
 
 The [Alveolus](https://alveolus.dev/) rules for Claude Code, installed in an app:
 
-- its approved rules as [path-scoped rules](https://code.claude.com/docs/en/memory#path-specific-rules), one folder per style and one file per scope in `.claude/rules/alveolus/`. Claude Code loads each file only when it reads or edits a file of that scope: the rules of `domain` when it works in `src/wallets/domain/`, those of `driven` in `src/wallets/driven/`;
+- its approved rules as [path-scoped rules](https://code.claude.com/docs/en/memory#path-specific-rules), one folder per style and one file per scope in `.claude/rules/alveolus/`. Claude Code loads each file only when it reads or edits a file of that scope: the rules of `domain` when it works in `src/wallets/internal/domain/`, those of `driven` in `src/wallets/internal/driven/`;
 - three skills that take a user story from design to review, and a reviewer agent.
 
 The site walks through it in [getting started](https://alveolus.dev/start/getting-started#claude-code).
@@ -70,11 +70,12 @@ One folder per style, one file per scope:
 
 | Scope | Files it matches, for each bounded context |
 | --- | --- |
-| `domain` | `src/<context>/domain/**`, tactical contexts only (TXS-05) |
-| `application`, `driving`, `driven`, `public` | `src/<context>/<layer>/**` |
+| `domain` | `src/<context>/internal/domain/**`, tactical contexts only (TXS-05) |
+| `application`, `driving`, `driven` | `src/<context>/internal/<layer>/**` |
+| `public` | `src/<context>/public/**` |
 | `schema` | `prisma/<context>.prisma` |
 | `tests` | `src/<context>/**/__test__/**`, `*.spec.ts`, `*.test.ts` |
-| `structure` | `src/<context>/*.ts`: module, config, wiring |
+| `structure` | `src/<context>/composition/**`: module, config, wiring |
 
 A big ball of mud gets no layer rules: it has no layers. Its own file, `big-ball-of-mud/<context>.md`, matches its whole folder and keeps it contained: fix it at the minimum, never model it, and propose a bounded context of its own for a feature that deserves one (MAP-04). The index lists every big ball of mud, so that code elsewhere reads it only through an anticorruption layer in `driven`. A big ball of mud outside the project, at a `path` starting with `..` or absolute, is only listed.
 

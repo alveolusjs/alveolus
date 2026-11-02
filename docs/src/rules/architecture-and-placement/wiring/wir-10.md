@@ -35,7 +35,7 @@ Aucune.
 Le bootstrap active les shutdown hooks (WIR-02). Chaque classe qui démarre un travail l’arrête, et attend l’exécution en cours, dans `beforeApplicationShutdown`. Le module qui a ouvert un client le ferme dans `onApplicationShutdown`, que NestJS appelle ensuite.
 
 ```ts
-// driving/in-process/expired-holds.scheduler.ts
+// internal/driving/in-process/expired-holds.scheduler.ts
 export class ExpiredHoldsScheduler implements OnApplicationBootstrap, BeforeApplicationShutdown {
 	readonly #releaseExpiredHolds: ReleaseExpiredHoldsHandler;
 	readonly #intervalMs: number;
@@ -61,7 +61,7 @@ export class ExpiredHoldsScheduler implements OnApplicationBootstrap, BeforeAppl
 ```
 
 ```ts
-// shared.module.ts
+// shared/composition/shared.module.ts
 export class SharedModule implements OnApplicationShutdown {
 	readonly #prisma: PrismaClient;
 

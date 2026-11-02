@@ -39,7 +39,7 @@ Les classes que NestJS crée et pilote lui-même, dans `driving/http` : controll
 Retirer les decorators, et construire la classe dans le module avec `construct`, qui liste les injection tokens dans l’ordre du constructeur. Une classe qui reçoit aussi une valeur de la configuration se construit avec `useFactory` (WIR-11).
 
 ```ts
-// application/wallet/credit-wallet.command.ts
+// internal/application/wallet/credit-wallet.command.ts
 export class CreditWalletHandler extends CommandHandler<CreditWalletCommand, void, CreditWalletError> {
 	readonly #unitOfWork: UnitOfWork;
 	readonly #wallets: WalletRepository;
@@ -65,13 +65,13 @@ export class CreditWalletHandler extends CommandHandler<CreditWalletCommand, voi
 ```
 
 ```ts
-// wallets.module.ts
+// composition/wallets.module.ts
 construct(CreditWalletHandler, [UnitOfWork, WalletRepository, Journal, DomainEventDispatcher, Clock]),
 ```
 
 ## Adaptation
 
-`construct` est une fonction de wiring de `shared/` (`shared.wiring.ts`), présentée dans la [vue d’ensemble](./#in-practice). Elle transforme une classe et ses injection tokens en factory provider NestJS ; `{ ...construct(Implémentation, tokens), provide: Port }` le lie à un port.
+`construct` est une fonction de wiring de `shared/composition/` (`shared.composition.ts`), présentée dans la [vue d’ensemble](./#in-practice). Elle transforme une classe et ses injection tokens en factory provider NestJS ; `{ ...construct(Implémentation, tokens), provide: Port }` le lie à un port.
 
 **Notre choix** : aucun decorator NestJS dans `domain`, `application` et `driven`. Le domaine en était déjà libre (LAY-01, AGG-04) ; cette règle étend la même liberté au reste du bounded context.
 

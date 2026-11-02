@@ -73,7 +73,7 @@ if (!refunded.ok) {
 ```
 
 ```ts
-// domain/payment/payment.aggregate.ts
+// internal/domain/payment/payment.aggregate.ts
 refund(amount: Amount, at: Date): Result<void, RefundExceedsPayment> {
 	// checks the amount against what is left to refund, then records PaymentRefunded with this.#method
 }

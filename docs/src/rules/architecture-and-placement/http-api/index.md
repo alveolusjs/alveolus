@@ -11,7 +11,7 @@ L’API HTTP est un adapter driving. Ces règles gardent le modèle derrière el
 Bloquer les débits d’un wallet par HTTP :
 
 ```ts
-// driving/http/wallet.controller.ts
+// internal/driving/http/wallet.controller.ts
 @Controller('wallets')
 export class WalletController extends ResultController {
 	protected readonly statuses = { WalletNotFound: 404, WalletIsClosed: 409 };
@@ -43,7 +43,7 @@ export class WalletController extends ResultController {
 La requête a son propre schéma, distinct du modèle du domaine :
 
 ```ts
-// driving/http/block-wallet.request.ts
+// internal/driving/http/block-wallet.request.ts
 export const BlockWalletRequest = z
 	.object({
 		reference: z.string().min(1).max(64).meta({ example: 'fraud-review-2026-0142' }),

@@ -11,7 +11,7 @@ Une factory method sur un aggregate root crée un autre aggregate. Elle garantit
 Un titulaire ouvre un wallet, et un titulaire fermé ou suspendu ne peut pas en ouvrir. La règle appartient au titulaire : la factory method vit donc sur le titulaire. `Wallet.openFor` construit le wallet et enregistre son premier event. Il n’est appelé que depuis le module `wallet`, où vivent les deux aggregates :
 
 ```ts
-// domain/wallet/holder.aggregate.ts
+// internal/domain/wallet/holder.aggregate.ts
 openWallet(currency: Currency, at: Date): Result<Wallet, HolderIsClosed | HolderIsSuspended> {
 	if (this.#status === 'closed') {
 		return err(new HolderIsClosed(this.id));

@@ -27,7 +27,7 @@ Le rôle dit ce que fait un fichier, la couche dit ce dont il peut dépendre (LA
 
 ## Exceptions
 
-Les rôles de wiring (`.module`, `.wiring`, `.bootstrap`, `.config`) vont partout : ils assemblent ce qui vit autour d’eux.
+Les rôles de wiring vivent hors des couches, car ils assemblent ce qui vit dedans : `.module`, `.composition` et `.config` dans le dossier `composition` d’un bounded context ou de `shared` (PLC-01), `.bootstrap`, le module et la configuration de l’application à la racine de `src` (WIR-02).
 
 ## Correction
 
@@ -40,7 +40,8 @@ Déplacer le fichier dans la couche de son rôle, ou le renommer d’après le r
 | `driven` | `.repository`, `.adapter`, `.mapper`, `.translator`, `.event-handler`, `.client` |
 | `driving` | `.controller`, `.event-handler`, `.consumer`, `.relay`, `.scheduler`, `.cli`, `.adapter`, `.request`, `.representation`, `.parser`, `.http`, `.filter`, `.pipe`, `.guard` |
 | `public` | `.facade`, `.dto`, `.integration-events`, `.contract` |
-| toutes | `.module`, `.wiring`, `.bootstrap`, `.config` |
+| `composition` | `.module`, `.composition`, `.config` |
+| racine de `src` | `.bootstrap`, `.module`, `.config` |
 
 ## Voir aussi
 

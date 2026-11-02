@@ -28,8 +28,7 @@ apps/<app>/
     ├── app.module.ts
     ├── app.config.ts
     ├── shared/                      technique uniquement
-    │   ├── shared.module.ts
-    │   ├── shared.config.ts
+    │   ├── composition/             shared.module.ts, shared.config.ts, shared.composition.ts
     │   ├── driven/prisma/           client Prisma, Unit of Work, outbox
     │   ├── driving/http/            pipe global, référence de l’API
     │   └── __test__/                mise en place de la base, helpers transverses
@@ -41,28 +40,31 @@ Un bounded context tactique :
 
 ```txt
 src/wallets/
-├── wallets.module.ts                wiring : port → implémentation
-├── event-handlers.wiring.ts         wiring : les event handlers des domain events, et leur mode
-├── wallets.config.ts                configuration, passée en valeurs
-├── domain/                          par concept
-│   ├── wallet/                      titulaire et wallet : aggregates, identités, events, erreurs, ports
-│   │   └── __test__/                tests unitaires
-│   └── money/
-├── application/                     par concept, comme le domaine
-│   └── wallet/                      commands, queries, views, view ports
-├── driving/                         par technologie
-│   ├── http/                        controllers, schémas des requêtes et des représentations
-│   └── in-process/                  adapter de la facade, consumers, event handlers asynchrones
-├── driven/                          par technologie
-│   ├── prisma/                      repositories, adapters des views, mappers
-│   │   └── __test__/                tests d’intégration
-│   ├── outbox/                      translator : domain events → integration events
-│   └── http/rates-provider/         anticorruption layer
+├── composition/                     la composition root du bounded context
+│   ├── wallets.module.ts            wiring : port → implémentation, le seul @Module
+│   ├── wallets.config.ts            configuration, passée en valeurs
+│   └── event-handlers.composition.ts
+│                                    un morceau du module, quand il grossit : les event handlers, et leur mode
+├── internal/                        ce que les autres bounded contexts ne voient pas
+│   ├── domain/                      par concept
+│   │   ├── wallet/                  titulaire et wallet : aggregates, identités, events, erreurs, ports
+│   │   │   └── __test__/            tests unitaires
+│   │   └── money/
+│   ├── application/                 par concept, comme le domaine
+│   │   └── wallet/                  commands, queries, views, view ports
+│   ├── driving/                     par technologie
+│   │   ├── http/                    controllers, schémas des requêtes et des représentations
+│   │   └── in-process/              adapter de la facade, consumers, event handlers asynchrones
+│   └── driven/                      par technologie
+│       ├── prisma/                  repositories, adapters des views, mappers
+│       │   └── __test__/            tests d’intégration
+│       ├── outbox/                  translator : domain events → integration events
+│       └── http/rates-provider/     anticorruption layer
 ├── public/                          facade, DTO, integration events
 └── __test__/                        tests end-to-end : règles, scénarios, contrat, support
 ```
 
-- Un dossier par bounded context, avec son module, sa configuration et ses couches. En haut de `src`, rien d’autre que `shared` (PLC-01).
+- Un dossier par bounded context : son module et sa configuration dans `composition`, ses couches dans `internal`, son contrat dans `public`. En haut de `src`, rien d’autre que `shared` (PLC-01).
 - `shared` ne contient que du code technique : pas de `Money`, pas de client (PLC-02).
 - Chaque fichier va dans la couche de son rôle : un aggregate dans `domain`, une command dans `application`, un controller dans `driving`, un mapper dans `driven` (PLC-03).
 - `driving` et `driven` se découpent par technologie : Prisma uniquement dans `driven/prisma` (PLC-13, PLC-07). Un message d’un autre bounded context se consomme dans `driving/in-process`, comme un domain event du bounded context qu’un event handler asynchrone traite après le commit. Un domain event se traduit en integration event dans `driven/outbox` (PLC-08). Chaque mapping vit avec son adapter (PLC-09).
@@ -70,7 +72,7 @@ src/wallets/
 Dans le domaine, les modules suivent les concepts, et le nom des fichiers dit leur rôle :
 
 ```txt
-src/wallets/domain/
+src/wallets/internal/domain/
 ├── wallet/          holder.aggregate.ts, holder.id.ts, holder.events.ts, holder.errors.ts, holder.repository.ts,
 │                    wallet.aggregate.ts, wallet.id.ts, wallet.events.ts, wallet.errors.ts, wallet.repository.ts,
 │                    withdrawal-limit.service.ts, recent-withdrawals.port.ts
@@ -85,16 +87,18 @@ Un bounded context en transaction scripts n’a pas de `domain` : un service par
 
 ```txt
 src/notifications/
-├── notifications.module.ts
-├── notifications.config.ts
-├── application/
-│   ├── notification.service.ts      une méthode par use case
-│   └── notification.errors.ts
-├── driving/
-│   ├── http/
-│   └── in-process/                  consumers des autres bounded contexts
-├── driven/
-│   └── smtp/
+├── composition/
+│   ├── notifications.module.ts
+│   └── notifications.config.ts
+├── internal/
+│   ├── application/
+│   │   ├── notification.service.ts  une méthode par use case
+│   │   └── notification.errors.ts
+│   ├── driving/
+│   │   ├── http/
+│   │   └── in-process/              consumers des autres bounded contexts
+│   └── driven/
+│       └── smtp/
 ├── public/
 └── __test__/
 ```

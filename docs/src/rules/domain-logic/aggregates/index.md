@@ -16,7 +16,7 @@ Un aggregate est une frontière de cohérence transactionnelle autour de vrais i
 Un wallet protège un invariant : son solde ne descend jamais sous zéro. Ce solde est la somme des écritures du journal, et le code ne le modifie jamais. Le wallet vérifie chaque mouvement, puis crée l’écriture que le journal enregistre. Il peut être bloqué au débit, au crédit, ou les deux, par plusieurs blocages à la fois.
 
 ```ts
-// domain/wallet/wallet.aggregate.ts
+// internal/domain/wallet/wallet.aggregate.ts
 export type WalletStatus = 'open' | 'closed';
 export type Direction = 'credits' | 'debits';
 export type Directions = [Direction, ...Direction[]];
@@ -91,7 +91,7 @@ export class Wallet extends AggregateRoot<WalletId, WalletEvent, WalletSnapshot>
 Le use case charge le wallet, lui fait créer l’écriture, et la confie au journal :
 
 ```ts
-// application/wallet/debit-wallet.command.ts
+// internal/application/wallet/debit-wallet.command.ts
 async handle(command: DebitWalletCommand): Promise<Result<void, DebitWalletError>> {
 	// walletId, reference, amount and to: the command parsed into value objects
 

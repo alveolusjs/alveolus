@@ -50,7 +50,7 @@ INF-03 fige le contrat que ce test vérifie. TST-01 garde la sandbox hors de la 
 ## Exemple
 
 ```ts
-// src/wallets/driven/http/rates-provider/__test__/http-exchange-rates.contract-spec.ts
+// src/wallets/internal/driven/http/rates-provider/__test__/http-exchange-rates.contract-spec.ts
 it('answers a quote that the translator can read', async () => {
 	// Arrange
 	const matchesContract = contract.response('GET /quotes', 200);

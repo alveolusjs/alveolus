@@ -30,7 +30,7 @@ model Wallet {
 ```
 
 ```ts
-// driven/prisma/wallet.mapper.ts
+// internal/driven/prisma/wallet.mapper.ts
 export class WalletMapper extends RowMapper {
 	toDomain(row: WalletRow): Wallet {
 		const currency = this.stored(Currency.of(row.currency));

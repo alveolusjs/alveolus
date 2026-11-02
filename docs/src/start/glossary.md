@@ -138,7 +138,7 @@ Alveolus est écrit en français. Les termes techniques et ceux de la littératu
 | DTO | m. | Un objet de données sans comportement, pour un transport. |
 | payload | m. | Des données venues de l’extérieur, à valider avant usage. |
 | wiring | m. | L’assemblage des objets d’un bounded context par son module. |
-| composition root | f. | Le seul endroit qui assemble l’application. |
+| composition root | f. | Ce qui assemble les objets, et rien d’autre : le dossier `composition` de chaque bounded context et de `shared`, que le module de l’application réunit. |
 | refactoring | m. | Une transformation du code qui change sa structure sans changer son comportement. |
 | deployment unit | f. | Ce que l’on déploie d’un bloc : un service, une fonction, un job. |
 | getter, setter | m. | Une méthode ou une propriété qui lit, ou écrit, un champ de l’objet depuis l’extérieur. |

@@ -49,7 +49,7 @@ INF-03 génère les autres stubs depuis le contrat. INF-02 remet la base à zér
 ## Exemple
 
 ```ts
-// src/wallets/driven/http/rates-provider/__test__/rates-provider.stubs.ts
+// src/wallets/internal/driven/http/rates-provider/__test__/rates-provider.stubs.ts
 type Quote = components['schemas']['Quote'];
 
 export class RatesProviderJourneys {

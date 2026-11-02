@@ -31,10 +31,10 @@ Aucune. Un test passe les valeurs dont il a besoin.
 
 ## Correction
 
-Chaque bounded context lit sa configuration dans `<context>.config.ts`, l’application dans `app.config.ts`, le wiring technique dans `shared.config.ts`. Une valeur invalide arrête le démarrage. Le module passe les valeurs aux classes qui en ont besoin, par leur constructeur.
+Chaque bounded context lit sa configuration dans `composition/<context>.config.ts`, l’application dans `app.config.ts`, le wiring technique dans `shared/composition/shared.config.ts`. Une valeur invalide arrête le démarrage. Le module passe les valeurs aux classes qui en ont besoin, par leur constructeur.
 
 ```ts
-// wallets.config.ts
+// composition/wallets.config.ts
 const env = z
 	.object({
 		WITHDRAWAL_LIMIT_MINOR: z.coerce.bigint().positive(),
@@ -50,7 +50,7 @@ export const walletsConfig = {
 ```
 
 ```ts
-// wallets.module.ts
+// composition/wallets.module.ts
 {
 	provide: WithdrawalLimit,
 	useFactory: (withdrawals: RecentWithdrawals) => new WithdrawalLimit(withdrawals, walletsConfig.withdrawalLimit),

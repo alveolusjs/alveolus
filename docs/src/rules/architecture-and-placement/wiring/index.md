@@ -12,10 +12,10 @@ La place du module relève de [Ce qui va où](../placement/) (PLC-01). La façon
 
 Le bounded context `wallets` d’une application de wallet. Chaque classe est une classe ordinaire ; le module les construit toutes.
 
-Le module construit chaque classe avec `construct`, une fonction de wiring de `shared/` : elle prend la classe et ses injection tokens, dans l’ordre du constructeur, et renvoie un provider NestJS. `{ ...construct(Implémentation, tokens), provide: Port }` lie l’implémentation au port. Chaque token est une classe, son propre injection token (WIR-07), et le compilateur vérifie qu’il produit le type attendu à sa place : deux tokens inversés ne compilent pas.
+Le module construit chaque classe avec `construct`, une fonction de wiring de `shared/composition/` : elle prend la classe et ses injection tokens, dans l’ordre du constructeur, et renvoie un provider NestJS. `{ ...construct(Implémentation, tokens), provide: Port }` lie l’implémentation au port. Chaque token est une classe, son propre injection token (WIR-07), et le compilateur vérifie qu’il produit le type attendu à sa place : deux tokens inversés ne compilent pas.
 
 ```ts
-// shared/shared.wiring.ts
+// shared/composition/shared.composition.ts
 type Tokens<Args extends unknown[]> = { [K in keyof Args]: abstract new (...args: never[]) => Args[K] };
 
 export function construct<T, Args extends unknown[]>(
@@ -27,14 +27,14 @@ export function construct<T, Args extends unknown[]>(
 ```
 
 ```ts
-// wallets.module.ts
+// composition/wallets.module.ts
 @Module({
 	controllers: [WalletController],
 	providers: [
 		{ ...construct(PrismaWalletRepository, [PrismaUnitOfWork]), provide: WalletRepository },
 		{ ...construct(PrismaJournal, [PrismaUnitOfWork]), provide: Journal },
 		{ ...construct(PrismaWalletViews, [PrismaClient]), provide: WalletViews },
-		// DomainEventDispatcher: built from event-handlers.wiring.ts, never exported (EVT-08)
+		// DomainEventDispatcher: built from event-handlers.composition.ts, never exported (EVT-08)
 		construct(DebitWalletHandler, [UnitOfWork, WalletRepository, Journal, DomainEventDispatcher, Clock]),
 		construct(CreditWalletHandler, [UnitOfWork, WalletRepository, Journal, DomainEventDispatcher, Clock]),
 		construct(GetWalletHandler, [WalletViews]),
@@ -46,7 +46,7 @@ export class WalletsModule {}
 ```
 
 ```ts
-// application/wallet/debit-wallet.command.ts
+// internal/application/wallet/debit-wallet.command.ts
 export class DebitWalletHandler extends CommandHandler<DebitWalletCommand, void, DebitWalletError> {
 	readonly #unitOfWork: UnitOfWork;
 	readonly #wallets: WalletRepository;
@@ -74,7 +74,7 @@ export class DebitWalletHandler extends CommandHandler<DebitWalletCommand, void,
 ```
 
 ```ts
-// driving/http/wallet.controller.ts
+// internal/driving/http/wallet.controller.ts
 @Controller('wallets')
 export class WalletController extends ResultController {
 	readonly #debitWallet: DebitWalletHandler;

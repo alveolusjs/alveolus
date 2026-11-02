@@ -55,11 +55,11 @@ const config: Linter.Config[] = defineConfig(
 		rules: { 'no-restricted-imports': ['error', { paths: [prisma] }] },
 	},
 	{
-		files: ['src/*/domain/**/*.ts'],
+		files: ['src/*/internal/domain/**/*.ts'],
 		rules: { 'no-restricted-imports': ['error', { patterns: [packagesInDomain] }] },
 	},
 	{
-		files: ['src/**/*.module.ts', 'src/**/*.wiring.ts', 'src/**/*.bootstrap.ts', 'src/**/*.config.ts'],
+		files: ['src/**/*.module.ts', 'src/**/*.composition.ts', 'src/**/*.bootstrap.ts', 'src/**/*.config.ts'],
 		rules: { 'no-restricted-imports': 'off' },
 	},
 	{

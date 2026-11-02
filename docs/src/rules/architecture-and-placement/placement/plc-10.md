@@ -35,7 +35,7 @@ Aucune. Une migration change la forme des données, jamais leurs faits (PER-12) 
 ## Correction
 
 ```txt
-src/wallets/driving/
+src/wallets/internal/driving/
 ├── in-process/
 │   └── expired-holds.scheduler.ts    déclenche ReleaseExpiredHolds à intervalle régulier
 └── cli/

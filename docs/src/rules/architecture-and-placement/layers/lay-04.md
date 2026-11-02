@@ -18,7 +18,7 @@ sources: []
 ## Signal
 
 - Une classe avec du comportement dans `public`, ou un import de `domain` depuis `public`.
-- Un autre bounded context qui importe autre chose que `public`.
+- Un autre bounded context qui importe autre chose que `public` : un fichier de son `internal`, son module, sa configuration.
 
 ## Pourquoi
 

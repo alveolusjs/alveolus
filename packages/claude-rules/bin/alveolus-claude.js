@@ -27,14 +27,14 @@ Options:
   --help                 show this help`;
 
 const scopePaths = {
-	domain: ({ path }) => [`${path}/domain/**`],
-	application: ({ path }) => [`${path}/application/**`],
-	driving: ({ path }) => [`${path}/driving/**`],
-	driven: ({ path }) => [`${path}/driven/**`],
+	domain: ({ path }) => [`${path}/internal/domain/**`],
+	application: ({ path }) => [`${path}/internal/application/**`],
+	driving: ({ path }) => [`${path}/internal/driving/**`],
+	driven: ({ path }) => [`${path}/internal/driven/**`],
 	public: ({ path }) => [`${path}/public/**`],
 	schema: ({ name }, { prisma }) => [`${prisma}/${name}.prisma`],
 	tests: ({ path }) => [`${path}/**/__test__/**`, `${path}/**/*.spec.ts`, `${path}/**/*.test.ts`],
-	structure: ({ path }) => [`${path}/*.ts`],
+	structure: ({ path }) => [`${path}/composition/**`],
 };
 
 function fail(message) {
