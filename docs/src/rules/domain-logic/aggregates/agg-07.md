@@ -30,7 +30,7 @@ Aucune. Lire l’autre aggregate pour vérifier une condition est normal.
 
 ## Correction
 
-L’aggregate appelé enregistre un domain event, et un handler modifie l’autre aggregate dans sa propre transaction (AGG-08). Si la cohérence doit être immédiate, revoir la frontière (AGG-10, AGG-11).
+L’aggregate appelé enregistre un domain event, et un event handler asynchrone modifie l’autre aggregate dans sa propre transaction (AGG-08). Si la cohérence doit être immédiate, revoir la frontière (AGG-10, AGG-11).
 
 ## Exemple
 
@@ -71,4 +71,4 @@ suspend(at: Date): Result<void, HolderIsSuspended> {
 }
 ```
 
-Un handler de `HolderSuspended` bloque ensuite les débits de chaque wallet du titulaire, chacun dans sa propre transaction (AGG-08). Le blocage porte une référence : si l’event est traité deux fois, le wallet retrouve le même blocage et ne change rien.
+Un event handler de `HolderSuspended` bloque ensuite les débits de chaque wallet du titulaire, chacun dans sa propre transaction (AGG-08). Le blocage porte une référence : si l’event est traité deux fois, le wallet retrouve le même blocage et ne change rien.

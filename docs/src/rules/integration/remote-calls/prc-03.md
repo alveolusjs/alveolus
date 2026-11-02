@@ -37,7 +37,7 @@ Un value object qui porte un état explicite, et la référence distante quand e
 
 ## Voir aussi
 
-PRC-02 pour créer la ressource distante par un handler. VO-01 pour les value objects.
+PRC-02 pour créer la ressource distante par un event handler. VO-01 pour les value objects.
 
 ## Exemple
 

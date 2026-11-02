@@ -19,8 +19,8 @@ sources:
 
 ## Signal
 
-- Un bounded context upstream expose ses objets internes tels quels : une entity du domaine ou un modèle Prisma sérialisé en réponse d’API, ou un event obtenu en sérialisant un aggregate.
-- Un contrat d’API ou d’event sans schéma documenté ni version.
+- Un bounded context upstream expose ses objets internes tels quels : une entity du domaine ou un modèle Prisma sérialisé en réponse d’API, ou un integration event obtenu en sérialisant un aggregate.
+- Un contrat d’API ou d’integration event sans schéma documenté ni version.
 
 ## Pourquoi
 
@@ -34,7 +34,7 @@ Aucune.
 
 ## Correction
 
-Un schéma publié et versionné dans `public`, construit par traduction depuis le modèle interne : dans `driven` pour les events sortants, dans `driving` pour les réponses d’API. Le schéma dit le format de chaque champ : un identifiant, une date, un montant.
+Un schéma publié et versionné dans `public`, construit par traduction depuis le modèle interne : dans `driven` pour les integration events, dans `driving` pour les réponses d’API. Le schéma dit le format de chaque champ : un identifiant, une date, un montant.
 
 ## Adaptation
 
@@ -44,4 +44,4 @@ Le published language vit dans `public` (voir l’[architecture de référence](
 
 ## Voir aussi
 
-AGG-09 pour le contenu des events. CTX-01 pour l’import de classes d’un bounded context à l’autre.
+AGG-09 pour le contenu des domain events. CTX-01 pour l’import de classes d’un bounded context à l’autre.

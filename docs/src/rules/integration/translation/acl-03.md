@@ -20,7 +20,7 @@ sources:
 ## Signal
 
 - Un aggregate local qui garde des attributs d’un objet d’un autre bounded context (le nom du client, son statut), et ne les met à jour qu’à l’event de création (`CustomerOnboarded`).
-- Une copie locale sans handler pour les events qui changent ces attributs, suspendent l’objet ou le ferment : un client suspendu, une relation close.
+- Une copie locale sans consumer pour les integration events qui changent ces attributs, suspendent l’objet ou le ferment : un client suspendu, une relation close.
 - Une copie pour laquelle personne n’a décidé si elle doit rester à jour.
 
 ## Pourquoi

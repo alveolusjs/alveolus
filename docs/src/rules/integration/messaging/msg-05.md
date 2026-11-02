@@ -46,7 +46,7 @@ Dédupliquer par identifiant de message (MSG-04) ne suffit pas ici. Un retry du 
 
 ## Voir aussi
 
-MSG-04 pour les doublons d’un même message. AGG-08 pour la discipline des handlers. REP-04 pour l’unicité garantie par la base.
+MSG-04 pour les doublons d’un même message. AGG-08 pour la discipline des event handlers. REP-04 pour l’unicité garantie par la base.
 
 ## Exemple
 
@@ -81,7 +81,7 @@ async handle(command: OpenWalletCommand): Promise<Result<WalletId, OpenWalletErr
 			return saved;
 		}
 
-		await this.#outbox.add(this.#translator.translateAll(wallet.value.pullDomainEvents()));
+		await this.#events.dispatch(wallet.value.pullDomainEvents());
 
 		return ok(wallet.value.id);
 	});

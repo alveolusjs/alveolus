@@ -48,4 +48,4 @@ L’aggregate ne publie pas ses events lui-même par un singleton statique. Il l
 
 ## Voir aussi
 
-EVT-07 interdit à un event handler synchrone de modifier un autre aggregate. MSG-01 enregistre l’état et les events ensemble, par l’outbox, et MSG-04 rend le consumer idempotent.
+EVT-07 interdit à un event handler synchrone de modifier un autre aggregate. MSG-01 enregistre l’état et ses events ensemble, par l’outbox, et MSG-04 rend le consumer idempotent.

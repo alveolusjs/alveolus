@@ -34,8 +34,9 @@ export function construct<T, Args extends unknown[]>(
 		{ ...construct(PrismaWalletRepository, [PrismaUnitOfWork]), provide: WalletRepository },
 		{ ...construct(PrismaJournal, [PrismaUnitOfWork]), provide: Journal },
 		{ ...construct(PrismaWalletViews, [PrismaClient]), provide: WalletViews },
-		construct(DebitWalletHandler, [UnitOfWork, WalletRepository, Journal, Outbox, Clock]),
-		construct(CreditWalletHandler, [UnitOfWork, WalletRepository, Journal, Outbox, Clock]),
+		// DomainEventDispatcher: built from event-handlers.wiring.ts, never exported (EVT-08)
+		construct(DebitWalletHandler, [UnitOfWork, WalletRepository, Journal, DomainEventDispatcher, Clock]),
+		construct(CreditWalletHandler, [UnitOfWork, WalletRepository, Journal, DomainEventDispatcher, Clock]),
 		construct(GetWalletHandler, [WalletViews]),
 		{ ...construct(WalletsFacadeAdapter, [CreditWalletHandler, GetWalletHandler]), provide: WalletsFacade },
 	],
@@ -50,15 +51,21 @@ export class DebitWalletHandler extends CommandHandler<DebitWalletCommand, void,
 	readonly #unitOfWork: UnitOfWork;
 	readonly #wallets: WalletRepository;
 	readonly #journal: Journal;
-	readonly #outbox: Outbox;
+	readonly #events: DomainEventDispatcher<WalletEvent>;
 	readonly #clock: Clock;
 
-	constructor(unitOfWork: UnitOfWork, wallets: WalletRepository, journal: Journal, outbox: Outbox, clock: Clock) {
+	constructor(
+		unitOfWork: UnitOfWork,
+		wallets: WalletRepository,
+		journal: Journal,
+		events: DomainEventDispatcher<WalletEvent>,
+		clock: Clock,
+	) {
 		super();
 		this.#unitOfWork = unitOfWork;
 		this.#wallets = wallets;
 		this.#journal = journal;
-		this.#outbox = outbox;
+		this.#events = events;
 		this.#clock = clock;
 	}
 

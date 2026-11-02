@@ -18,7 +18,7 @@ sources:
 
 ## Signal
 
-Un event avec des setters, des champs modifiables, ou modifié après sa création (un handler qui l’enrichit sur place).
+Un event avec des setters, des champs modifiables, ou modifié après sa création (un event handler qui l’enrichit sur place).
 
 ## Pourquoi
 

@@ -71,7 +71,7 @@ if (!saved.ok) {
 	return saved;
 }
 
-await this.#outbox.add(this.#translator.translateAll(wallet.value.pullDomainEvents()));
+await this.#events.dispatch(wallet.value.pullDomainEvents());
 
 return ok();
 ```

@@ -44,15 +44,21 @@ export class CreditWalletHandler extends CommandHandler<CreditWalletCommand, voi
 	readonly #unitOfWork: UnitOfWork;
 	readonly #wallets: WalletRepository;
 	readonly #journal: Journal;
-	readonly #outbox: Outbox;
+	readonly #events: DomainEventDispatcher<WalletEvent>;
 	readonly #clock: Clock;
 
-	constructor(unitOfWork: UnitOfWork, wallets: WalletRepository, journal: Journal, outbox: Outbox, clock: Clock) {
+	constructor(
+		unitOfWork: UnitOfWork,
+		wallets: WalletRepository,
+		journal: Journal,
+		events: DomainEventDispatcher<WalletEvent>,
+		clock: Clock,
+	) {
 		super();
 		this.#unitOfWork = unitOfWork;
 		this.#wallets = wallets;
 		this.#journal = journal;
-		this.#outbox = outbox;
+		this.#events = events;
 		this.#clock = clock;
 	}
 }
@@ -60,7 +66,7 @@ export class CreditWalletHandler extends CommandHandler<CreditWalletCommand, voi
 
 ```ts
 // wallets.module.ts
-construct(CreditWalletHandler, [UnitOfWork, WalletRepository, Journal, Outbox, Clock]),
+construct(CreditWalletHandler, [UnitOfWork, WalletRepository, Journal, DomainEventDispatcher, Clock]),
 ```
 
 ## Adaptation

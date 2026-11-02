@@ -41,7 +41,7 @@ async handle(command: DebitWalletCommand): Promise<Result<void, DebitWalletError
 			return booked;
 		}
 
-		await this.#outbox.add(this.#translator.translateAll(entry.value.pullDomainEvents()));
+		await this.#events.dispatch(entry.value.pullDomainEvents());
 
 		return ok();
 	});

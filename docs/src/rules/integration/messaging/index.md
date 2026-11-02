@@ -4,7 +4,7 @@ menu: Vue d’ensemble
 
 # Messagerie
 
-Les events sortent d’un bounded context par des messages. Ces règles enregistrent les events avec l’état qui les a produits (outbox), les transmettent dans l’ordre, les consomment une seule fois malgré les doublons et le désordre, et survivent à une panne du broker quand il y en a un.
+Les integration events sortent d’un bounded context par des messages. Ces règles enregistrent les events avec l’état qui les a produits (outbox), les transmettent dans l’ordre, les consomment une seule fois malgré les doublons et le désordre, et survivent à une panne du broker quand il y en a un.
 
 Dans un monolithe, elles valent aussi entre bounded contexts qui échangent des messages dans le même processus.
 
@@ -12,7 +12,7 @@ L’outbox garde deux sortes d’entrées : les integration events à publier au
 
 ## En pratique {#in-practice}
 
-Quand de l’argent sort d’un wallet, le titulaire reçoit une notification. Le bounded context `wallets` enregistre l’event dans l’outbox, dans la transaction qui comptabilise l’écriture :
+Quand de l’argent sort d’un wallet, le titulaire reçoit une notification. Le bounded context `wallets` transmet le domain event au dispatcher, dans la transaction qui comptabilise l’écriture. Son translator, event handler synchrone, écrit l’integration event dans l’outbox :
 
 ```ts
 const booked = await this.#journal.book(entry.value);
@@ -21,10 +21,10 @@ if (!booked.ok) {
 	return booked;
 }
 
-await this.#outbox.add(this.#translator.translateAll(entry.value.pullDomainEvents()));
+await this.#events.dispatch(entry.value.pullDomainEvents());
 ```
 
-Un forwarder publie ensuite l’outbox dans l’ordre (MSG-03). Dans le bounded context `notifications`, un consumer lit le contrat publié et met la notification en file une seule fois, même quand le message arrive deux fois :
+Un forwarder publie ensuite les integration events de l’outbox dans l’ordre (MSG-03). Dans le bounded context `notifications`, un consumer lit le contrat publié et met la notification en file une seule fois, même quand le message arrive deux fois :
 
 ```ts
 export const IncomingMoneyWithdrawn = z.object({

@@ -42,4 +42,4 @@ Une identité de processus portée par chaque event, un objet de suivi persistan
 
 ## Voir aussi
 
-AGG-08 et MSG-04 pour la discipline des handlers et les doublons. PRC-04 pour l’initiateur qui suit son processus.
+AGG-08 et MSG-04 pour la discipline des event handlers et les doublons. PRC-04 pour l’initiateur qui suit son processus.

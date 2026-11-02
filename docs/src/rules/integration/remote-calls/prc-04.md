@@ -20,7 +20,7 @@ sources:
 ## Signal
 
 - Un bounded context qui écoute l’event d’un autre (`WalletOpened`, `CustomerOnboarded`), et crée ses propres objets comme s’il avait reçu une demande.
-- Un bounded context qui accumule des handlers d’events étrangers de types différents, qui veulent tous dire « crée-moi un X ».
+- Un bounded context qui accumule des consumers d’events étrangers de types différents, qui veulent tous dire « crée-moi un X ».
 
 ## Pourquoi
 

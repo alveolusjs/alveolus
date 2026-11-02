@@ -21,7 +21,7 @@ sources:
 
 ## Signal
 
-- Un consumer d’events sans protection contre les doublons.
+- Un consumer d’integration events sans protection contre les doublons.
 - Un suivi des messages traités qui ne garde que le dernier identifiant, alors que les messages peuvent arriver dans le désordre.
 - Un suivi écrit dans une autre transaction que les changements du modèle.
 
@@ -54,4 +54,4 @@ Un event handler asynchrone n’a pas besoin de cette table : le forwarder enreg
 
 ## Voir aussi
 
-AGG-08 pour la discipline des handlers. MSG-05 pour les doublons qu’un identifiant de message ne voit pas.
+AGG-08 pour la discipline des event handlers. MSG-05 pour les doublons qu’un identifiant de message ne voit pas.

@@ -18,9 +18,9 @@ sources:
 
 ## Signal
 
-- Un bounded context qui importe les classes d’event ou de représentation d’un autre, avec leurs méthodes, pour s’en servir chez lui.
+- Un bounded context qui importe les classes de domain event ou de représentation d’un autre, avec leurs méthodes, pour s’en servir chez lui.
 - Un consumer qui appelle une méthode de ces classes.
-- Un consumer qui refait un calcul du producer à partir des données brutes de l’event : des frais, un taux appliqué, un solde.
+- Un consumer qui refait un calcul du producer à partir des données brutes de l’integration event : des frais, un taux appliqué, un solde.
 
 ## Pourquoi
 
@@ -28,7 +28,7 @@ Des classes partagées se déploient partout, et chaque consumer se reconstruit 
 
 Un contrat en published language remplace ces classes. Le consumer le lit sans les classes du producer. Il ne reçoit que des données, et rien ne le pousse à utiliser le comportement d’un autre modèle.
 
-Les adapters du consumer passent ces données au domaine en types locaux. Si un calcul est nécessaire, le producer le fait, et publie le résultat dans l’event.
+Les adapters du consumer passent ces données au domaine en types locaux. Si un calcul est nécessaire, le producer le fait, et publie le résultat dans l’integration event.
 
 ## Exceptions
 
@@ -44,4 +44,4 @@ En TypeScript, `public` n’exporte que des types et des constantes : des interf
 
 ## Voir aussi
 
-CTX-01 pour l’import de classes d’un autre bounded context. PUB-01 pour le published language. EVT-05 pour un event assez riche pour agir.
+CTX-01 pour l’import de classes d’un autre bounded context. PUB-01 pour le published language. EVT-05 pour un domain event assez riche pour agir.

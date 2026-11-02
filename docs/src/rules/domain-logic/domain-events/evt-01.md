@@ -36,7 +36,7 @@ Les faits dont personne ne se soucie.
 
 ## Correction
 
-Nommer le fait. L’enregistrer dans la méthode métier qui le produit. Laisser les subscribers réagir.
+Nommer le fait. L’enregistrer dans la méthode métier qui le produit. Laisser les event handlers réagir.
 
 ## Voir aussi
 
