@@ -1,5 +1,12 @@
 # @alveolus/lint-config
 
+## 0.4.0
+
+### Minor Changes
+
+- 7c61bcb: A bounded context holds three folders: `composition/` (its module, its config, and the `*.composition.ts` pieces of a module that grows), `internal/` (its layers: `domain`, `application`, `driving`, `driven`) and `public/`. `shared` keeps its layers and moves its module and config into `composition/`. The ESLint and dependency-cruiser configs and the path scopes of the installed rules only match this layout: move each layer folder under `internal/` and the module and config under `composition/` when upgrading. The pieces of a module are named `*.composition.ts`, no longer `*.wiring.ts`.
+- 623bf4d: ESLint checks EVT-08 with `alveolus/evt-08`: an event handler of `driving` (`*.event-handler.ts`) that imports the `public` folder of its own bounded context reacts to its own published language instead of the domain event. EVT-08 lists ESLint in its detection.
+
 ## 0.3.1
 
 ### Patch Changes

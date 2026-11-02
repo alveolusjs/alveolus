@@ -1,5 +1,13 @@
 # @alveolus/core
 
+## 0.5.0
+
+### Minor Changes
+
+- 8bbf742: Add the domain event dispatcher. A bounded context declares its event handlers in a `DomainEventHandlers` registry, typed by the union of its domain events: each entry is `[event class, event handler class, 'sync' | 'async']`, an event handler registered on an event it does not read does not compile, and an event registered `'async'` must have `toSnapshot()` and a static `fromSnapshot()`. The use case calls `DomainEventDispatcher.dispatch(events)` once, after `save`: the synchronous event handlers run in its transaction, and each event that has an asynchronous one is written to the outbox. `DomainEventForwarder` then delivers it to each asynchronous event handler, in a transaction that also moves that handler's position, retries a failure up to a limit, and moves the entry to the dead letters beyond it. `CorrelationContext` carries the correlation of the operation, so the use case never sees it.
+- 8bbf742: Breaking: `EventTranslator` is a synchronous event handler. It takes an `IdGenerator`, the `Outbox` and a `CorrelationContext`; `translate(event)` is protected and returns a list of integration events, empty when the domain event stays inside its bounded context, two during a version migration. `translateAll` and `IntegrationEventContext` are removed: the correlation comes from `CorrelationContext`, whose `Correlation` replaces the context.
+- 8bbf742: Breaking: the outbox also keeps domain events. `Outbox` gains `addDomainEvents`, `pendingDomainEvents`, `recordFailure` and `recordDeadLetter`; `StoredEvent` becomes `StoredIntegrationEvent`. `OutboxRelay` becomes `OutboxForwarder`, and its `relay()` becomes `forward()`, as the forwarder of the site's glossary.
+
 ## 0.4.0
 
 ### Minor Changes
