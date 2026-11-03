@@ -14,6 +14,7 @@ interface PackagedRule {
 	code: string;
 	title: string;
 	theme: string;
+	part: string;
 	scope: string[];
 	style: Style[];
 	kind: Kind;
@@ -103,6 +104,7 @@ function loadRule(theme: Theme, path: string): PackagedRule {
 		code: data.code,
 		title: data.title,
 		theme: theme.title,
+		part: theme.part,
 		scope,
 		style: data.style,
 		kind: data.kind,

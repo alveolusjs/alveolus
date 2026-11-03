@@ -121,6 +121,23 @@ A rules file starts with its contents, its rules listed by theme, then gives the
 
 `index.md` has no `paths`, so it is loaded at the start of every session. It has one section per bounded context: each of its folders, its rules file, how many rules that file holds and their themes. A new file only loads its rules after it is written: the index tells Claude which file of rules to read before creating a file in each folder.
 
+The same rules are also written by part, for the agents that design:
+
+```
+.claude/alveolus/design/
+├── tactical/
+│   ├── strategic-design.md
+│   ├── domain-logic.md
+│   ├── architecture-and-placement.md
+│   ├── integration.md
+│   ├── testing.md
+│   └── operations.md
+└── transaction-script/
+    └── …
+```
+
+One folder per style, one file per part of the rules, each rule in exactly one file of its style. A design agent reads the file of its part whole before deciding anything: the boundaries read `strategic-design`, the model `domain-logic`, and so on. These files sit outside `.claude/rules/`, so Claude Code never loads them on its own.
+
 ## Build it
 
 `pnpm build` turns the rules of `docs/src/rules/` into `generated/rules.json`, the only data the command reads, and compiles `design check` from `src/` into `dist/`. The skills live in `skills/`, the agent in `agents/`, copied as they are. `pnpm test` runs the tests of `design check` against a complete design, `src/__test__/support/deposit-design.md`, and each of the problems it reports. To try a change in an app before publishing, install the package with `pnpm add -D link:<path to this folder>`.

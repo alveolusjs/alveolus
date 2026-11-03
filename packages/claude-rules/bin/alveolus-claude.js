@@ -9,6 +9,15 @@ const bigBallOfMud = 'big-ball-of-mud';
 const declarations = [...styles, bigBallOfMud];
 const scopesWithoutFolder = { tactical: [], 'transaction-script': ['domain'] };
 const outputDir = join('.claude', 'rules', 'alveolus');
+const designDir = join('.claude', 'alveolus', 'design');
+const parts = [
+	'strategic-design',
+	'domain-logic',
+	'architecture-and-placement',
+	'integration',
+	'testing',
+	'operations',
+];
 const packageDir = join(dirname(fileURLToPath(import.meta.url)), '..');
 const rulesFile = join(packageDir, 'generated', 'rules.json');
 const { version } = JSON.parse(readFileSync(join(packageDir, 'package.json'), 'utf8'));
@@ -19,8 +28,9 @@ const usage = `Usage: alveolus-claude install [options]
 install
 Writes the Alveolus rules into ${outputDir}/, one folder per style and one file per scope, each loaded
 by Claude Code only when it reads or edits a file of that scope, and one file per big ball of mud.
-Installs the skills /alveolus-design, /alveolus-implement and /alveolus-review, and the agent
-alveolus-reviewer.
+Writes the same rules into ${designDir}/, one folder per style and one file per part of the rules,
+which the design agents read and Claude Code never loads on its own. Installs the skills
+/alveolus-design, /alveolus-implement and /alveolus-review, and the agents.
 
   --architecture <file>  bounded contexts and their style (default: architecture.json)
   --src <dir>            folder holding one folder per bounded context, unless its "path" says otherwise
@@ -253,6 +263,44 @@ function writeMudFiles(muds, rules) {
 	});
 }
 
+function renderDesignBundle(part, style, rules) {
+	const intro = [
+		`# Alveolus rules · ${part} · ${style}`,
+		[
+			`The Alveolus rules of the \`${part}\` part, for ${style} bounded contexts.`,
+			'A design agent reads this file whole before it decides anything in its part of a design.',
+			'Rule codes in the text point to other Alveolus rules.',
+		].join(' '),
+	].join('\n\n');
+
+	return `${[intro, renderContents(rules), ...renderRules(rules)].join('\n\n')}\n`;
+}
+
+function writeDesignBundles(rules, contexts) {
+	rmSync(designDir, { recursive: true, force: true });
+
+	for (const style of styles) {
+		if (!contexts.some((context) => context.style === style)) {
+			continue;
+		}
+
+		for (const part of parts) {
+			const partRules = rules.filter((rule) => rule.part === part && rule.style.includes(style));
+
+			if (partRules.length === 0) {
+				continue;
+			}
+
+			const file = join(designDir, style, `${part}.md`);
+			const text = renderDesignBundle(part, style, partRules);
+
+			mkdirSync(dirname(file), { recursive: true });
+			writeFileSync(file, text);
+			console.log(`${file}: ${partRules.length} rules, ${Math.round(Buffer.byteLength(text) / 1024)} KB`);
+		}
+	}
+}
+
 function install(options) {
 	if (!existsSync(rulesFile)) {
 		fail(`${rulesFile} not found: build the package first.`);
@@ -273,6 +321,8 @@ function install(options) {
 
 	writeFileSync(join(outputDir, 'index.md'), renderIndex(modelled, files, muds, options));
 	console.log(`${join(outputDir, 'index.md')}: always loaded, points each folder to its rules`);
+
+	writeDesignBundles(rules, modelled);
 
 	installWorkflow();
 }
