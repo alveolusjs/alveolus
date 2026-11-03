@@ -256,14 +256,14 @@ describe('design check', () => {
 
 		it('reports fields out of their values', async () => {
 			const design = deposit
-				.replace('type: story', 'type: epic')
+				.replace('type: story', 'type: spike')
 				.replace('status: draft', 'status: done')
 				.replace('version: 1', 'version: one')
 				.replace('    subdomain: core', '    subdomain: central');
 			const report = await check.run(design.text);
 
 			expect(report.findings).toEqual([
-				{ line: 3, message: 'frontmatter: type is "epic", expected one of story, task' },
+				{ line: 3, message: 'frontmatter: type is "spike", expected one of story, task, epic' },
 				{
 					line: 5,
 					message:
@@ -273,6 +273,47 @@ describe('design check', () => {
 				{
 					line: 7,
 					message: 'frontmatter: contexts, entry 1: subdomain must be one of core, supporting, generic',
+				},
+			]);
+		});
+	});
+
+	describe('epics', () => {
+		const epic = DesignFixture.savingsEpic();
+
+		it('passes a complete epic design, with its own sections', async () => {
+			const report = await check.run(epic.text);
+
+			expect(report).toEqual({ findings: [], notices: [] });
+		});
+
+		it('reports a section of a story design in an epic design', async () => {
+			const design = epic.replace(
+				'## B. Alveolus rules applied',
+				'## 10. Contracts\n\nNone.\n\n## B. Alveolus rules applied',
+			);
+			const report = await check.run(design.text);
+
+			expect(report.findings).toEqual([
+				{ line: design.lineOf('## 10. Contracts'), message: 'section 10 is not in the template' },
+			]);
+		});
+
+		it('reports a story without its value', async () => {
+			const design = epic.replace('| Money is protected |', '| |');
+			const report = await check.run(design.text);
+
+			expect(report.findings).toEqual([{ line: design.lineOf('| S-2 |'), message: 'S-2: Value is empty' }]);
+		});
+
+		it('reports a story cited but never listed', async () => {
+			const design = epic.replace('| 3 | S-3 |', '| 3 | S-4 |');
+			const report = await check.run(design.text);
+
+			expect(report.findings).toEqual([
+				{
+					line: design.lineOf('| 3 | S-4 |'),
+					message: 'S-4 is cited but never defined: define it in a table row of section 2',
 				},
 			]);
 		});

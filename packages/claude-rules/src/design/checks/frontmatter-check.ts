@@ -1,7 +1,7 @@
 import type { DesignDocument, Frontmatter } from '../design-document.ts';
 import type { Finding } from '../finding.ts';
 
-const types = ['story', 'task'];
+const types = ['story', 'task', 'epic'];
 const statuses = ['draft', 'approved', 'in-progress', 'implemented', 'reviewed'];
 const styles = ['tactical', 'transaction-script', 'big-ball-of-mud'];
 const subdomains = ['core', 'supporting', 'generic'];

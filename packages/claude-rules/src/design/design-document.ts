@@ -100,6 +100,16 @@ export class DesignDocument {
 		return this.#frontmatter;
 	}
 
+	public get type(): string | undefined {
+		const data = this.#frontmatter?.data;
+
+		if (typeof data !== 'object' || data === null || !('type' in data)) {
+			return undefined;
+		}
+
+		return typeof data.type === 'string' ? data.type : undefined;
+	}
+
 	public get titleLine(): number | undefined {
 		return this.#titleLine;
 	}

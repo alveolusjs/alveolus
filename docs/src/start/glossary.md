@@ -201,6 +201,7 @@ Alveolus est écrit en français. Les termes techniques et ceux de la littératu
 | building block | m. | Une classe de base fournie par un package (`AggregateRoot`, `ValueObject`), que le code du modèle étend. |
 | package | m. | Une bibliothèque publiée sur npm, qu’un projet installe en dépendance. |
 | user story | f. | Un besoin décrit du point de vue de celui qui l’exprime, avec ses critères d’acceptation. |
+| epic | f. | Un ensemble de user stories qui servent un même objectif, livrées l’une après l’autre. |
 | skill | m. | Une commande de Claude Code qui guide une étape du travail, lancée par `/` suivi de son nom. |
 
 ### Intégration

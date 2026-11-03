@@ -89,6 +89,17 @@ export const identifierKinds: readonly IdentifierKind[] = [
 		],
 	}),
 	new IdentifierKind({
+		prefix: 'S',
+		separator: '-',
+		home: '2',
+		definedBy: 'row',
+		cells: 5,
+		required: [
+			{ index: 1, name: 'Story' },
+			{ index: 2, name: 'Value' },
+		],
+	}),
+	new IdentifierKind({
 		prefix: 'D',
 		separator: '-',
 		home: '4',

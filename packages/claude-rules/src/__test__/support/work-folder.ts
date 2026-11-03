@@ -3,9 +3,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const skeleton = fileURLToPath(new URL('../../../skills/alveolus-design/skeleton.md', import.meta.url));
-const deposit = fileURLToPath(new URL('deposit-design.md', import.meta.url));
-const notes = fileURLToPath(new URL('work', import.meta.url));
+const frontmatter = /^---\n[\s\S]*?\n---\n/;
 
 export class WorkFolder {
 	readonly #path: string;
@@ -15,13 +13,27 @@ export class WorkFolder {
 	}
 
 	public static deposit(): WorkFolder {
-		const path = mkdtempSync(join(tmpdir(), 'alveolus-work-'));
-		const frontmatter = /^---\n[\s\S]*?\n---\n/.exec(readFileSync(deposit, 'utf8'))?.[0] ?? '';
-		const text = readFileSync(skeleton, 'utf8')
-			.replace(/^---\n[\s\S]*?\n---\n/, frontmatter)
-			.replace('# <Title of the story>', '# Deposit money into a wallet');
+		return WorkFolder.#create('skeleton.md', 'deposit-design.md', 'work', [
+			'<Title of the story>',
+			'Deposit money into a wallet',
+		]);
+	}
 
-		cpSync(notes, path, { recursive: true });
+	public static savingsEpic(): WorkFolder {
+		return WorkFolder.#create('epic-skeleton.md', 'savings-epic-design.md', 'epic-work', [
+			'<Title of the epic>',
+			'Savings goals',
+		]);
+	}
+
+	static #create(skeleton: string, design: string, notes: string, title: readonly [string, string]): WorkFolder {
+		const path = mkdtempSync(join(tmpdir(), 'alveolus-work-'));
+		const skeletonFile = fileURLToPath(new URL(`../../../skills/alveolus-design/${skeleton}`, import.meta.url));
+		const designFile = fileURLToPath(new URL(design, import.meta.url));
+		const filled = frontmatter.exec(readFileSync(designFile, 'utf8'))?.[0] ?? '';
+		const text = readFileSync(skeletonFile, 'utf8').replace(frontmatter, filled).replace(title[0], title[1]);
+
+		cpSync(fileURLToPath(new URL(notes, import.meta.url)), path, { recursive: true });
 		writeFileSync(join(path, 'skeleton.md'), text);
 
 		return new WorkFolder(path);

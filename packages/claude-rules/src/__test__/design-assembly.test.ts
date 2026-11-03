@@ -21,6 +21,15 @@ describe('design assemble', () => {
 		expect(report.findings).toEqual([]);
 	});
 
+	it('assembles an epic design from its own skeleton', async () => {
+		const { text, warnings } = new DesignAssembly(WorkFolder.savingsEpic().path, 'None.').assemble();
+		const report = await check.run(text);
+
+		expect(warnings).toEqual([]);
+		expect(report.findings).toEqual([]);
+		expect(text).toContain('| D-1 | A goal is an aggregate of its own');
+	});
+
 	it('renumbers the local identifiers in the order of their definitions', () => {
 		const { text } = new DesignAssembly(WorkFolder.deposit().path, 'None.').assemble();
 

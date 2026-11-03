@@ -11,6 +11,10 @@ export class DesignFixture {
 		return new DesignFixture(readFileSync(new URL('deposit-design.md', import.meta.url), 'utf8'));
 	}
 
+	public static savingsEpic(): DesignFixture {
+		return new DesignFixture(readFileSync(new URL('savings-epic-design.md', import.meta.url), 'utf8'));
+	}
+
 	public get text(): string {
 		return this.#text;
 	}
