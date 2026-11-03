@@ -1,7 +1,7 @@
 {
 	"name": "@alveolus/claude-rules",
 	"version": "0.4.0",
-	"description": "The Alveolus rules for Claude Code: its approved rules as path-scoped rules, and the skills to design, implement and review a user story with them.",
+	"description": "The Alveolus rules for Claude Code: its approved rules as path-scoped rules, the skills to design, implement and review a user story with them, and a check for designs.",
 	"keywords": [
 		"claude-code",
 		"claude-code-rules",
@@ -24,17 +24,42 @@
 	},
 	"files": [
 		"bin",
+		"dist",
 		"generated",
 		"skills",
 		"agents"
 	],
 	"type": "module",
 	"scripts": {
-		"build": "node scripts/generate.ts",
-		"prepack": "node scripts/generate.ts"
+		"build": "node scripts/generate.ts && tsdown",
+		"prepack": "node scripts/generate.ts && tsdown",
+		"test": "vitest run",
+		"typecheck": "tsc -p tsconfig.json"
+	},
+	"dependencies": {
+		"yaml": "^2.9.1"
 	},
 	"devDependencies": {
-		"gray-matter": "^4.0.3"
+		"@types/node": "26.6.3",
+		"gray-matter": "^4.0.3",
+		"happy-dom": "21.0.4",
+		"mermaid": "12.2.0",
+		"tsdown": "0.23.0",
+		"typescript": "6.0.3",
+		"vite": "8.3.1",
+		"vitest": "5.0.2"
+	},
+	"peerDependencies": {
+		"happy-dom": ">=20.0.0",
+		"mermaid": ">=12.0.0"
+	},
+	"peerDependenciesMeta": {
+		"happy-dom": {
+			"optional": true
+		},
+		"mermaid": {
+			"optional": true
+		}
 	},
 	"engines": {
 		"node": ">=24"
