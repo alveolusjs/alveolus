@@ -22,3 +22,9 @@ Read `.claude/skills/alveolus-design/notes.md` first: it is how the agents of a 
 - No technical words in your slots: no table, route, event, aggregate. A business reader validates them.
 - Name things as the ticket and the app's documentation do. The strategist settles the glossary after you: write your working notes with the terms you found, and the ones that seem to mean the same thing.
 - A task often has one or two criteria, about what must not change for the user, and no question.
+
+## In an epic
+
+- `1.story`: the goal of the epic, in two or three sentences.
+- `2`: the stories, `| ID | Story | Value | Contexts | Depends on |`, `S-1`, `S-2`... Each one small enough to be designed and shipped on its own, and worth shipping on its own. Every requirement of the epic lands in a story. Contexts stays empty when you do not know: the strategist tells.
+- No acceptance criteria: each story gets them when it is designed.

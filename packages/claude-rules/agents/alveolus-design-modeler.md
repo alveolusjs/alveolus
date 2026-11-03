@@ -24,3 +24,7 @@ Read `.claude/skills/alveolus-design/notes.md` first: it is how the agents of a 
 - `decisions`, `questions.*`, `rules`, `waivers`, `adrs` as needed.
 
 Each acceptance criterion of the analyst that refuses something maps to an error and an invariant or a check. Say in your working notes which criterion each invariant serves.
+
+## In an epic
+
+`7` is a sketch: the `classDiagram`, then one block per aggregate the stories create or change, `### 7.<n> <context>: AGG:<Name> (<new | existing, changed>)`, with its role and the stories (`S-n`) that change it. No invariant, method, value object or error table: each story design writes them. `8.events` names the domain events the stories share.

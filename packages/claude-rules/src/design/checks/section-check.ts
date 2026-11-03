@@ -1,7 +1,7 @@
 import type { DesignDocument, Section } from '../design-document.ts';
 import type { Finding } from '../finding.ts';
 
-const expected = [
+const storySections = [
 	'summary',
 	'1',
 	'2',
@@ -22,12 +22,16 @@ const expected = [
 	'B',
 	'C',
 ];
+const epicSections = ['summary', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'B', 'C'];
 
 export class SectionCheck {
 	readonly #document: DesignDocument;
 
+	readonly #expected: readonly string[];
+
 	public constructor(document: DesignDocument) {
 		this.#document = document;
+		this.#expected = document.type === 'epic' ? epicSections : storySections;
 	}
 
 	public findings(): Finding[] {
@@ -41,7 +45,7 @@ export class SectionCheck {
 	#presence(titleLine: number): Finding[] {
 		const findings: Finding[] = [];
 
-		for (const id of expected) {
+		for (const id of this.#expected) {
 			const found = this.#document.sections.filter((section) => section.id === id);
 			const [, second] = found;
 
@@ -62,7 +66,7 @@ export class SectionCheck {
 		let furthest = -1;
 
 		for (const section of this.#document.sections) {
-			const position = expected.indexOf(section.id);
+			const position = this.#expected.indexOf(section.id);
 
 			if (position === -1) {
 				findings.push({ line: section.line, message: `${this.#label(section.id)} is not in the template` });

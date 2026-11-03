@@ -25,3 +25,7 @@ Read `.claude/skills/alveolus-design/notes.md` first: it is how the agents of a 
 - `decisions`, `questions.*`, `rules`, `adrs` as needed.
 
 In your working notes, write the `contexts` entries of the frontmatter, one per context touched: `name`, `style`, `subdomain`, `new`.
+
+## In an epic
+
+You also own `8.process`, the flow across contexts and stories as a Mermaid `sequenceDiagram`, and `8.messages`, the events that cross a boundary, at the level of their names and who publishes and consumes them. Fill the Contexts column of the stories in your working notes when the analyst left it empty.

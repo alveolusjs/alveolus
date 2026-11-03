@@ -121,10 +121,12 @@ bunx alveolus-claude install
 La commande lit `architecture.json` et écrit dans `.claude/` : les règles, que Claude Code charge selon le dossier où il travaille, trois skills et un agent de revue.
 
 <div class="gs-flow">
-	<div><strong>Concevoir</strong><code>/alveolus-design &lt;story&gt;</code><span>Écrit la conception technique de la user story ou de la tâche, sur un modèle fixe, et la découpe en incréments. Le skill ne modifie pas le code.</span></div>
+	<div><strong>Concevoir</strong><code>/alveolus-design &lt;story&gt;</code><span>Fait écrire la conception technique de la user story, de la tâche ou de l’epic par des agents spécialisés, chacun sur une partie des règles, sur un modèle fixe, et la découpe en incréments. Le skill ne modifie pas le code.</span></div>
 	<div><strong>Implémenter</strong><code>/alveolus-implement &lt;conception&gt;</code><span>Écrit l’incrément suivant sur une nouvelle branche, en commençant par son test. Le commit n’est pas poussé.</span></div>
 	<div><strong>Relire</strong><code>/alveolus-review</code><span>Lance les contrôles du projet, fait vérifier les règles par l’agent et compare l’incrément à la conception.</span></div>
 </div>
+
+Chaque agent décide une partie de la conception : le besoin, les bounded contexts, le modèle, l’intégration, le flux et les données, les tests, l’exploitation. Ils décident l’un après l’autre, chacun sur ce que les précédents ont écrit, et un dernier agent relit la conception sans avoir vu leurs notes. Une epic est d’abord conçue d’un bloc : ses stories, leur ordre et ce qu’elles partagent. Chaque story est ensuite conçue à part.
 
 La conception est relue et approuvée avant que le code commence. Le métier lit le besoin et ce qui est à valider : les décisions et les questions ouvertes. La tech lit aussi la conception et les incréments. Chaque élément y est défini une seule fois, et cité ailleurs par son identifiant : `AC-1` pour un critère d’acceptation, `D-1` pour une décision, `UC:DepositMoney` pour un use case.
 

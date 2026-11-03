@@ -13,6 +13,7 @@ Read the design named in `$ARGUMENTS`, or the only design of `docs/designs/` who
 
 Stop and say why when:
 
+- the design's `type` is `epic`: an epic is not implemented, each of its stories is designed first, with `/alveolus-design <design> S-1`;
 - the design's `status`, on the base branch, is neither `approved` nor `in-progress`: the user approves the design first, and merges it;
 - `npx alveolus-claude design check <design>` fails: the design is fixed and approved again first;
 - an increment before this one is still `todo` on the base branch: each increment is marked `done` in its own pull request, so it is not merged yet;

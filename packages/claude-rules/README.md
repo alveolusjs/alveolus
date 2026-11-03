@@ -11,13 +11,15 @@ The site walks through it in [getting started](https://alveolus.dev/start/gettin
 
 | Step | Run | What it does | Design `status` after |
 | --- | --- | --- | --- |
-| Design | `/alveolus-design <story>` | Reads the story or the task, the code and the rules of each folder it touches, and writes `docs/designs/<slug>.md` from its template: the need, what to validate, the design, the increments. Runs `design check` until it passes. No code. | `draft`, then `approved` by the user |
-| Implement | `/alveolus-implement <design>` | Only from an approved design, merged. Builds one increment, the next unticked one, on its own branch: test first, reading each folder's rules before writing in it. Ticks it and commits, never pushes. Stops on a gap in the story or the design, a rule it cannot keep, or an increment that outgrows its plan. | `in-progress`, `implemented` after the last increment |
+| Design | `/alveolus-design <story>` | Has `alveolus-designer` lead the design agents on the story or the task: they read it, the code and the rules of their part, and write `docs/designs/<slug>.md` from its template: the need, what to validate, the design, the increments. Runs `design check` and a fresh review until they pass. No code. | `draft`, then `approved` by the user |
+| Implement | `/alveolus-implement <design>` | Only from an approved design, merged. Builds one increment, the next one still `todo`, on its own branch: test first, reading each folder's rules before writing in it. Marks it `done` and commits, never pushes. Stops on a gap in the story or the design, a rule it cannot keep, or an increment that outgrows its plan. | `in-progress`, `implemented` after the last increment |
 | Review | `/alveolus-review [design]` | Runs the app's checks, has the `alveolus-reviewer` agent check the rules on the changed files, and checks the increment against the design: its test, its files, why it is safe to merge. On the last increment, every criterion of the story too. Proposes the pull request. Fixes nothing. | `reviewed`, once the user accepts the verdict on the last increment |
 
 The design cuts the story into increments, one pull request each, that a person reviews in one sitting. Each one merges on its own, leaves every check green and breaks nothing: the first criterion is built one layer at a time, inside out, and stays unreachable until its wiring; each other criterion is one increment, end to end; a change to existing behaviour is a parallel change. Then, for each increment: `/alveolus-implement`, `/alveolus-review`, the user pushes and merges, and runs the next one.
 
 The user reviews between steps: each skill runs only when invoked, never on its own. Designs go to `docs/designs/` unless the app's CLAUDE.md names another folder.
+
+An epic is designed first as a whole, `/alveolus-design <epic>`: its stories and their order, what they share (contexts, language, a sketch of the model, events) and its open questions, from `epic-template.md`. Each story is then designed on its own, `/alveolus-design docs/designs/<epic>.md S-1`, keeping the names of the epic. A design is revised the same way: `/alveolus-design docs/designs/<slug>.md` with the answers to its questions runs again only the agents they touch, and adds 1 to its `version`.
 
 ## The design
 
@@ -59,7 +61,7 @@ pnpm add -D mermaid happy-dom
 
 ## The design agents
 
-A design can be written by several agents, each deciding one part and reading only the rules of that part (`.claude/alveolus/design/<style>/<part>.md`). The decisions are taken one after the other, so that no agent contradicts another; only the reading and the proofs run side by side.
+`/alveolus-design` runs `alveolus-designer` in a context of its own (`context: fork`), so the main session only gets its report. It triages the ticket, then runs the design agents, each deciding one part and reading only the rules of that part (`.claude/alveolus/design/<style>/<part>.md`). The decisions are taken one after the other, so that no agent contradicts another; only the reading and the proofs run side by side. A task skips the agents it does not need, an epic stops at the model sketch. Subagents run two levels below the main session: an app that sets `CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH` below 2 gets a designer that writes every part itself.
 
 | Agent | Decides | Rules it reads | Writes |
 | --- | --- | --- | --- |
