@@ -1,0 +1,51 @@
+{
+	"design": {
+		"isError": false,
+		"costUsd": 3.5564091999999996,
+		"durationMs": 803977,
+		"turns": 39,
+		"subagents": 0,
+		"permissionDenials": 5
+	},
+	"check": {
+		"passed": true,
+		"problems": 0,
+		"output": "/var/folders/y6/qyq35n454d99n5l1krygj9400000gp/T/alveolus-bench-task-close-reason-d5fxf7/docs/designs/task-close-reason.md: design check passed\n"
+	},
+	"judge": {
+		"isError": false,
+		"costUsd": 2.1977475,
+		"durationMs": 144502,
+		"turns": 19,
+		"subagents": 0,
+		"permissionDenials": 1
+	},
+	"verdict": {
+		"scores": {
+			"fidelity": 0.8,
+			"questions": 0.8,
+			"rules": 0.8,
+			"reuse": 0.9,
+			"coherence": 0.8,
+			"proportion": 0.55,
+			"readability": 0.75
+		},
+		"reasons": {
+			"fidelity": "It covers both reasons, closed wallets with no known reason (shown as « inconnu », nothing filled in after the fact) and the support reading the wallet, and it raises the open behaviour (closing by the bank with money left, reading today) as questions; but it decides on its own to relabel the ticket as a story and to make the reason optional at first.",
+			"questions": "Q-1, Q-2, Q-4, Q-5, Q-6 and Q-7 are real gaps, each with a sensible assumption and what it blocks; Q-9 isn't really a gap because VO-08 already allows a class with a fixed set of instances, and Q-8 should have been a waiver.",
+			"rules": "The rules are applied correctly (value object for a closed list, a query on a view for the read, « unknown » computed in driving, a nullable migration, no backfill, the mapper rebuilding through the value object, a test without the support role), but the closure route stays without authorization against the blocking rule UC-06, raised only as a question, with « Waivers : aucun ».",
+			"reuse": "It builds on Wallet.close, CloseWalletHandler, WalletRepository, WalletMapper, the Currency pattern and CorrelationContext, describes what exists accurately, and adds only the read side that is really missing.",
+			"coherence": "The names agree everywhere (ClosureReason, customer_request/bank_decision, closure_reason, WalletViews) and the increments go inside out, each safe to merge; but the summary says Q-1 to Q-4 come before I1 while Q-3 blocks I4 and Q-4 blocks I3 and I5, and T-4 claims to prove AC-6 although it is a domain unit test.",
+			"proportion": "For a ticket typed as a technical task, it delivers 6 increments, 10 decisions, 9 questions, 16 tests, and a two-step rollout (reason optional, then mandatory) gated by two weeks of production logs, when the answer to Q-5 alone could settle it.",
+			"readability": "The summary and the acceptance criteria, with Alice's example, are clear and say what happens on failure, and every decision gives a checkable reason; but Part 2, which the business is asked to validate, is written in technical terms (value object, view, driving, integration event)."
+		},
+		"problems": [
+			"Proportion, D-5, D-10, I6: a ticket typed as a technical task becomes a 6-increment story with a reason that is optional and then mandatory, two weeks of production log monitoring and 16 tests, when the answer to Q-5 could make the reason mandatory from I4.",
+			"Q-8 and API:CloseWallet: I4 changes the closure route but leaves it without authorization, against the blocking rule UC-06, so any caller can record « par la banque »; this should be a waiver with its reason, not an open question next to « Waivers : aucun ».",
+			"I5 and Q-6: the support's read of the wallet, the point of the ticket, waits on an authentication story that exists nowhere and has no owner, and the design names neither who delivers it nor a temporary fallback.",
+			"Partie 2: D-2, D-6, D-7 and D-9 are given to the business to validate, but they are written in technical terms (value object, view, driving, integration event) that a business reader cannot judge.",
+			"Summary table and section 15: « Métier : Q-1 à Q-4, à confirmer avant I1 » contradicts Q-3 (blocks I4) and Q-4 (blocks I3, I5), and T-4, a domain unit test, cannot prove AC-6, where the support reads an open wallet with 12,50 €."
+		],
+		"verdict": "approve"
+	}
+}

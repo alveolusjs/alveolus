@@ -26,10 +26,16 @@ For each ticket, the runner:
 3. runs `design check` on the design written in `docs/designs/`;
 4. runs the judge in the same folder, read-only, with `rubric.md`, capped at 5 dollars.
 
-The temporary folders stay, so a design can be read in its app: the runner prints where each one is.
+The temporary folders stay, so a design can be read in its app: the runner prints where each one is. Running a few tickets again under the same label replaces their results and rebuilds the summary from every ticket of the label.
+
+The tickets are written as a product team writes them, gaps included. The task on the list of a customer's wallets names a call that the app does not have: a good design notices it and asks, rather than inventing it.
 
 ## Read the results
 
 The judge is a model too: its scores move from one run to the next. Compare the means over the six tickets and read the problems it lists, not one score. The check, the cost, the time and the number of subagents are measured, not judged.
 
-`results/baseline/` holds the scores of the single-agent skill that writes the design from its template, the baseline any other way of designing must beat.
+`results/baseline/` holds the scores of the single-agent skill that writes the design from its template, the baseline any other way of designing must beat. To compare two labels, mean by criterion, verdicts, checks, cost and time, then ticket by ticket:
+
+```sh
+node bench/compare.ts baseline <label>
+```

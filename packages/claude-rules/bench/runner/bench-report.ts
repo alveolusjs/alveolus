@@ -2,6 +2,7 @@ import { mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 import type { BenchSettings } from './bench-settings.ts';
+import { TicketRecord } from './ticket-record.ts';
 import type { TicketOutcome } from './ticket-run.ts';
 import { criteria } from './verdict.ts';
 
@@ -21,7 +22,7 @@ export class BenchReport {
 			this.#writeTicket(join(folder, outcome.ticket), outcome);
 		}
 
-		const summary = this.#summary();
+		const summary = this.#summary(TicketRecord.readAll(folder));
 		writeFileSync(join(folder, 'summary.md'), summary);
 
 		return summary;
@@ -45,9 +46,8 @@ export class BenchReport {
 		writeFileSync(join(folder, 'outcome.json'), `${JSON.stringify(record, null, '\t')}\n`);
 	}
 
-	#summary(): string {
+	#summary(records: readonly TicketRecord[]): string {
 		const header = ['Ticket', 'Check', ...criteria, 'Mean', 'Verdict', 'Cost ($)', 'Minutes', 'Subagents'];
-		const rows = this.#outcomes.map((outcome) => this.#row(outcome));
 
 		return [
 			`# Bench · ${this.#settings.label}`,
@@ -55,67 +55,53 @@ export class BenchReport {
 			[
 				`| ${header.join(' | ')} |`,
 				`| ${header.map(() => '---').join(' | ')} |`,
-				...rows.map((row) => `| ${row.join(' | ')} |`),
-				`| ${this.#totals().join(' | ')} |`,
+				...records.map((record) => `| ${this.#row(record).join(' | ')} |`),
+				`| ${this.#totals(records).join(' | ')} |`,
 			].join('\n'),
-			...this.#outcomes.map((outcome) => this.#problems(outcome)),
+			...records.map((record) => this.#problems(record)),
 		].join('\n\n');
 	}
 
-	#row(outcome: TicketOutcome): string[] {
-		const scores = criteria.map((criterion) => this.#format(outcome.verdict?.scores[criterion]));
+	#row(record: TicketRecord): string[] {
+		const scores = criteria.map((criterion) => this.#format(record.verdict?.scores[criterion]));
 
 		return [
-			outcome.ticket,
-			this.#checkCell(outcome),
+			record.ticket,
+			record.checkCell(),
 			...scores,
-			this.#format(this.#mean(outcome)),
-			outcome.verdict?.verdict ?? 'n/a',
-			(outcome.design.costUsd + outcome.judge.costUsd).toFixed(2),
-			(outcome.design.durationMs / 60000).toFixed(1),
-			String(outcome.design.subagents),
+			this.#format(record.mean()),
+			record.verdict?.verdict ?? 'n/a',
+			record.cost.toFixed(2),
+			record.minutes.toFixed(1),
+			String(record.subagents),
 		];
 	}
 
-	#totals(): string[] {
-		const judged = this.#outcomes.filter((outcome) => outcome.verdict !== undefined);
+	#totals(records: readonly TicketRecord[]): string[] {
+		const judged = records.filter((record) => record.verdict !== undefined);
 		const means = criteria.map((criterion) =>
-			this.#format(this.#average(judged.map((outcome) => outcome.verdict?.scores[criterion] ?? 0))),
+			this.#format(this.#average(judged.map((record) => record.verdict?.scores[criterion] ?? 0))),
 		);
-		const passed = this.#outcomes.filter((outcome) => outcome.check?.passed === true).length;
-		const cost = this.#outcomes.reduce((sum, outcome) => sum + outcome.design.costUsd + outcome.judge.costUsd, 0);
-		const minutes = this.#outcomes.reduce((sum, outcome) => sum + outcome.design.durationMs, 0) / 60000;
+		const passed = records.filter((record) => record.passed).length;
+		const cost = records.reduce((sum, record) => sum + record.cost, 0);
+		const minutes = records.reduce((sum, record) => sum + record.minutes, 0);
 
 		return [
 			'**All**',
-			`${passed}/${this.#outcomes.length} passed`,
+			`${passed}/${records.length} passed`,
 			...means,
-			this.#format(this.#average(judged.map((outcome) => this.#mean(outcome) ?? 0))),
-			`${judged.filter((outcome) => outcome.verdict?.verdict === 'approve').length} approved`,
+			this.#format(this.#average(judged.map((record) => record.mean() ?? 0))),
+			`${judged.filter((record) => record.verdict?.verdict === 'approve').length} approved`,
 			cost.toFixed(2),
 			minutes.toFixed(1),
 			'',
 		];
 	}
 
-	#problems(outcome: TicketOutcome): string {
-		const problems = outcome.verdict?.problems ?? ['No verdict: the judge failed.'];
+	#problems(record: TicketRecord): string {
+		const problems = record.verdict?.problems ?? ['No verdict: the judge failed.'];
 
-		return [`## ${outcome.ticket}`, ...problems.map((problem) => `- ${problem}`)].join('\n\n');
-	}
-
-	#checkCell(outcome: TicketOutcome): string {
-		if (outcome.check === undefined) {
-			return 'no design';
-		}
-
-		return outcome.check.passed ? 'passed' : `${outcome.check.problems} problems`;
-	}
-
-	#mean(outcome: TicketOutcome): number | undefined {
-		const scores = outcome.verdict?.scores;
-
-		return scores === undefined ? undefined : this.#average(criteria.map((criterion) => scores[criterion]));
+		return [`## ${record.ticket}`, ...problems.map((problem) => `- ${problem}`)].join('\n\n');
 	}
 
 	#average(values: readonly number[]): number {
