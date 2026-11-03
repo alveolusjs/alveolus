@@ -24,6 +24,7 @@ const { version } = JSON.parse(readFileSync(join(packageDir, 'package.json'), 'u
 
 const usage = `Usage: alveolus-claude install [options]
        alveolus-claude design check <design.md>...
+       alveolus-claude design assemble <work folder> <design.md> [--none <text>]
 
 install
 Writes the Alveolus rules into ${outputDir}/, one folder per style and one file per scope, each loaded
@@ -42,7 +43,12 @@ design check
 Checks designs written from the template of /alveolus-design: every section present, every identifier
 defined once, every acceptance criterion and invariant proven by a test, every decision with a reason,
 every question with an assumption, every increment safe, the rules cited approved. Checks the Mermaid
-diagrams too when mermaid and happy-dom are installed. Exits with 1 when a design has a problem.`;
+diagrams too when mermaid and happy-dom are installed. Exits with 1 when a design has a problem.
+
+design assemble
+Fills the skeleton.md of a work folder with the slots of the notes of the design agents, in the order
+of the template, and renumbers their local identifiers (D-M1, Q-A2...) across the design. A slot no
+agent filled says the text of --none (default: "None."), in the language of the story.`;
 
 const scopePaths = {
 	domain: ({ path }) => [`${path}/internal/domain/**`],
@@ -352,6 +358,7 @@ const { values, positionals } = parseArgs({
 		architecture: { type: 'string', default: 'architecture.json' },
 		src: { type: 'string', default: 'src' },
 		prisma: { type: 'string', default: 'prisma' },
+		none: { type: 'string', default: 'None.' },
 		help: { type: 'boolean', default: false },
 	},
 });
@@ -367,6 +374,10 @@ if (positionals[0] === 'install') {
 	const { DesignCommand } = await import('../dist/design.mjs');
 
 	process.exit(await new DesignCommand(rulesFile).check(positionals.slice(2)));
+} else if (positionals[0] === 'design' && positionals[1] === 'assemble' && positionals.length === 4) {
+	const { DesignCommand } = await import('../dist/design.mjs');
+
+	process.exit(new DesignCommand(rulesFile).assemble(positionals[2], positionals[3], values.none));
 } else {
 	console.log(usage);
 	process.exit(1);

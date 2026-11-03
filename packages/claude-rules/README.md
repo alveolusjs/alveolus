@@ -57,6 +57,30 @@ Checking the Mermaid diagrams needs `mermaid` and `happy-dom`, about 140 MB, so 
 pnpm add -D mermaid happy-dom
 ```
 
+## The design agents
+
+A design can be written by several agents, each deciding one part and reading only the rules of that part (`.claude/alveolus/design/<style>/<part>.md`). The decisions are taken one after the other, so that no agent contradicts another; only the reading and the proofs run side by side.
+
+| Agent | Decides | Rules it reads | Writes |
+| --- | --- | --- | --- |
+| `alveolus-design-analyst` | The need, in business words | none | Story, acceptance criteria, out of scope, business questions |
+| `alveolus-design-explorer` | Nothing: maps the code to reuse | none | What already exists, and a map of the code for the others |
+| `alveolus-design-strategist` | The bounded contexts, their relationships, the glossary | strategic design | Context map, section 6 |
+| `alveolus-design-modeler` | Aggregates, invariants, value objects, errors, domain events, or transaction scripts | domain logic | Section 7, domain events |
+| `alveolus-design-integrator` | Messages between contexts, facades, third-party systems | integration | Messages, facades, section 12 |
+| `alveolus-design-architect` | Transactions, use cases, routes, schema, files | architecture and placement | Sequence, sections 9 to 11 |
+| `alveolus-design-tester` | A test for each criterion and invariant | testing | Section 15 |
+| `alveolus-design-operator` | Correlation, alerts, personal data, access | operations | Section 13 |
+| `alveolus-design-critic` | Nothing: reviews the assembled design with a fresh eye | the parts it doubts | Its findings |
+
+They share a work folder, `docs/designs/.work/<slug>/`, as `skills/alveolus-design/notes.md` describes: a skeleton of the design, with its headings in the language of the story, and one notes file per agent. Each agent writes its slots of the skeleton, and the decisions, questions and rules it adds, with local identifiers (`D-M1` for the first decision of the modeler).
+
+```sh
+pnpm exec alveolus-claude design assemble docs/designs/.work/<slug> docs/designs/<slug>.md --none "None."
+```
+
+`design assemble` fills the skeleton with the slots in the order of the template, renumbers the local identifiers across the design (`D-M1` becomes `D-1`, and every citation follows), and writes the text of `--none` in a slot no agent filled.
+
 ## Use it in an app
 
 The app declares its bounded contexts and their style in `architecture.json` (CTX-14), and its big balls of mud (MAP-04):

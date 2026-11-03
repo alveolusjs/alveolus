@@ -1,5 +1,7 @@
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { join } from 'node:path';
 
+import { DesignAssembly } from './assembly/design-assembly.ts';
 import { DesignCheck } from './design-check.ts';
 import { MermaidParser } from './mermaid-parser.ts';
 import { RuleCatalog } from './rule-catalog.ts';
@@ -20,6 +22,25 @@ export class DesignCommand {
 		}
 
 		return failed ? 1 : 0;
+	}
+
+	public assemble(workDir: string, output: string, none: string): number {
+		if (!existsSync(join(workDir, 'skeleton.md'))) {
+			console.error(`${workDir}: no skeleton.md`);
+
+			return 1;
+		}
+
+		const { text, warnings } = new DesignAssembly(workDir, none).assemble();
+
+		for (const warning of warnings) {
+			console.log(`${workDir}  warning: ${warning}`);
+		}
+
+		writeFileSync(output, text);
+		console.log(`${output}: assembled from ${workDir}`);
+
+		return 0;
 	}
 
 	async #checkFile(check: DesignCheck, path: string): Promise<boolean> {
