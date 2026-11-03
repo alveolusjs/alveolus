@@ -11,20 +11,28 @@ const scopesWithoutFolder = { tactical: [], 'transaction-script': ['domain'] };
 const outputDir = join('.claude', 'rules', 'alveolus');
 const packageDir = join(dirname(fileURLToPath(import.meta.url)), '..');
 const rulesFile = join(packageDir, 'generated', 'rules.json');
+const { version } = JSON.parse(readFileSync(join(packageDir, 'package.json'), 'utf8'));
 
 const usage = `Usage: alveolus-claude install [options]
+       alveolus-claude design check <design.md>...
 
+install
 Writes the Alveolus rules into ${outputDir}/, one folder per style and one file per scope, each loaded
 by Claude Code only when it reads or edits a file of that scope, and one file per big ball of mud.
 Installs the skills /alveolus-design, /alveolus-implement and /alveolus-review, and the agent
 alveolus-reviewer.
 
-Options:
   --architecture <file>  bounded contexts and their style (default: architecture.json)
   --src <dir>            folder holding one folder per bounded context, unless its "path" says otherwise
                          (default: src)
   --prisma <dir>         folder holding one Prisma schema per bounded context (default: prisma)
-  --help                 show this help`;
+  --help                 show this help
+
+design check
+Checks designs written from the template of /alveolus-design: every section present, every identifier
+defined once, every acceptance criterion and invariant proven by a test, every decision with a reason,
+every question with an assumption, every increment safe, the rules cited approved. Checks the Mermaid
+diagrams too when mermaid and happy-dom are installed. Exits with 1 when a design has a problem.`;
 
 const scopePaths = {
 	domain: ({ path }) => [`${path}/internal/domain/**`],
@@ -181,6 +189,7 @@ function renderIndex(contexts, files, muds, options) {
 			'it matches, but a new file only loads them after it is written. Before you create a file, read the rules',
 			'file of its folder. Each rules file starts with its contents.',
 		].join(' '),
+		`Installed from \`@alveolus/claude-rules ${version}\`.`,
 		...contexts.map((context) => renderContext(context, files, options)),
 		...(muds.length === 0
 			? []
@@ -297,9 +306,18 @@ const { values, positionals } = parseArgs({
 	},
 });
 
-if (values.help || positionals[0] !== 'install') {
+if (values.help) {
 	console.log(usage);
-	process.exit(values.help ? 0 : 1);
+	process.exit(0);
 }
 
-install(values);
+if (positionals[0] === 'install') {
+	install(values);
+} else if (positionals[0] === 'design' && positionals[1] === 'check' && positionals.length > 2) {
+	const { DesignCommand } = await import('../dist/design.mjs');
+
+	process.exit(await new DesignCommand(rulesFile).check(positionals.slice(2)));
+} else {
+	console.log(usage);
+	process.exit(1);
+}
