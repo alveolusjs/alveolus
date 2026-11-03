@@ -1,0 +1,19 @@
+model Wallet {
+  id         String       @id @db.Uuid
+  customerId String       @map("customer_id") @db.Uuid
+  currency   String       @db.Char(3)
+  balance    BigInt
+  status     WalletStatus
+  version    Int
+
+  @@map("wallet")
+  @@schema("wallets")
+}
+
+enum WalletStatus {
+  open
+  closed
+
+  @@map("wallet_status")
+  @@schema("wallets")
+}

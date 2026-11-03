@@ -1,0 +1,51 @@
+{
+	"design": {
+		"isError": false,
+		"costUsd": 1.8354812000000007,
+		"durationMs": 380790,
+		"turns": 26,
+		"subagents": 0,
+		"permissionDenials": 3
+	},
+	"check": {
+		"passed": true,
+		"problems": 0,
+		"output": "/var/folders/y6/qyq35n454d99n5l1krygj9400000gp/T/alveolus-bench-task-wallet-customer-index-glZe5h/docs/designs/wallet-customer-index.md: design check passed\n"
+	},
+	"judge": {
+		"isError": false,
+		"costUsd": 0.8439684,
+		"durationMs": 109135,
+		"turns": 12,
+		"subagents": 0,
+		"permissionDenials": 1
+	},
+	"verdict": {
+		"scores": {
+			"fidelity": 0.85,
+			"questions": 0.8,
+			"rules": 0.8,
+			"reuse": 0.9,
+			"coherence": 0.75,
+			"proportion": 0.6,
+			"readability": 0.85
+		},
+		"reasons": {
+			"fidelity": "It covers both requirements (AC-1 for a fast list, AC-2 for an unchanged result), turns the missing call and missing migration history into questions instead of inventing code, and respects scope; but it decides an app-wide deploy process (ADR-1, migrate resolve on every database) inside a wallets task.",
+			"questions": "Q-3 (the call isn't in the repo) and Q-4 (no migration history) are real gaps, each with a sensible assumption and what it blocks; Q-1 and Q-2 are marginal for a technical task, and Q-5 blocks I1 but isn't listed as blocking.",
+			"rules": "It applies PER-07 (index in schema, realistic-volume test), PER-10/11/12 (committed, non-blocking, shape-only migration), INF-01/02 and TST-05 correctly, but stretches CTX-09 and REP-16, and the test file names don't follow TST-06's <tested file> pattern (raised only for one of the two, in Q-6).",
+			"reuse": "Its account of what exists is accurate (only the PK index, no finder by customer, no route, no migrations, one unit test); it extends wallets.prisma, saves test data through PrismaWalletRepository and reuses the fixture customer id, with no parallel read.",
+			"coherence": "Identifiers and the index name are consistent throughout, and the increments run infra-first then index, each with a safety reason; but the summary, front matter and I1's context column say only wallets, while 0_init baselines the notifications and outbox schemas and I1 adds shared test infrastructure.",
+			"proportion": "A one-line @@index task grows into a migration baseline for every schema, Testcontainers/Vitest setup, a deploy ADR, six questions and a 100k-row planner test; the prerequisite is real but belongs in its own task, not in I1 of this one.",
+			"readability": "The summary clearly says what changes, where, how and what happens if the build fails, and every decision gives a reason a reviewer can check; part 2 is necessarily technical (CONCURRENTLY, IF NOT EXISTS) but stays plain."
+		},
+		"problems": [
+			"I1 bundles an app-wide prerequisite into a one-index task: the 0_init baseline over wallets, notifications and outbox, the Testcontainers/Vitest infrastructure and ADR-1 on how every context deploys; it should be its own prerequisite task, since it changes the deploy of all contexts and depends entirely on Q-4.",
+			"The summary table, the front matter `contexts` and I1's Context column name only `wallets`, yet 0_init baselines the notifications (transaction-script) and outbox schemas and I1 adds `src/shared/__test__/`, and the notifications rules are never consulted.",
+			"Q-5 says it blocks I1 (CI Docker, the production PostgreSQL version for the container), but the summary lists only Q-3 and Q-4 as blocking.",
+			"Appendix B stretches CTX-09 (an index name is not model vocabulary) and REP-16 (T-3's read by customer is a raw query in the test, not a repository finder), and T-1's `migrations.integration-spec.ts` does not follow TST-06's <tested file> naming, unlike the case raised in Q-6.",
+			"T-2 asserts the plan scans `wallet_customer_id_idx`, without saying that an Index Scan and a Bitmap Index Scan both count, which leaves the TST-07 determinism of the plan check fragile."
+		],
+		"verdict": "approve"
+	}
+}

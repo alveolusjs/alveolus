@@ -1,0 +1,51 @@
+{
+	"design": {
+		"isError": false,
+		"costUsd": 4.8636848,
+		"durationMs": 912576,
+		"turns": 53,
+		"subagents": 0,
+		"permissionDenials": 6
+	},
+	"check": {
+		"passed": true,
+		"problems": 0,
+		"output": "/var/folders/y6/qyq35n454d99n5l1krygj9400000gp/T/alveolus-bench-story-deposit-C0Z3hE/docs/designs/deposit-money.md: design check passed\n"
+	},
+	"judge": {
+		"isError": false,
+		"costUsd": 2.5164068,
+		"durationMs": 163455,
+		"turns": 24,
+		"subagents": 0,
+		"permissionDenials": 1
+	},
+	"verdict": {
+		"scores": {
+			"fidelity": 0.85,
+			"questions": 0.9,
+			"rules": 0.8,
+			"reuse": 0.95,
+			"coherence": 0.75,
+			"proportion": 0.8,
+			"readability": 0.8
+		},
+		"reasons": {
+			"fidelity": "Every acceptance criterion and the note about showing the balance are covered, and AC-7 follows from the resend rule, but a few choices are settled without saying the ticket is silent: D-4 claims deposit history matters to the business, and a resend gets the current balance while D-2 says it gets the same response as the lost send.",
+			"questions": "The questions are real and grounded in the code (where the money comes from, no authentication, no committed migrations, no test database, a reused id with another amount, retry after a 5xx), each with an assumption and what it blocks; only Q-2 and Q-3 are light.",
+			"rules": "It mostly follows the tactical rules (only the wallet is written, the version check settles concurrent sends, the command returns nothing and a query reads a view, a strict request schema, a properly formed waiver W-1) and admits in Q-9/Q-10 that using the journal as the replay check stretches EVT-07, MSG-05 and PER-03; ENT-17 and ENT-05 are cited loosely, and the rule-test file name ignores TST-06.",
+			"reuse": "It extends Wallet, Money (adds plus), Currency, the existing version check, WalletController and its statuses, and the event-handler registry, and its account of the existing code is accurate: two currencies, the translator ignores other events, no query, no migrations, no database test infrastructure.",
+			"coherence": "Names, invariants, tests and files agree throughout, but I2 merges about 150 lines of handlers with no test while I4 says the lower layers are 'merged and tested', and D-2's promise of the same response on a resend conflicts with D-6 reading the current balance.",
+			"proportion": "A full story design whose weight (10 decisions, 16 tests, 2 ADRs) is mostly earned by resend safety and concurrency, though a little heavy for a single route.",
+			"readability": "The summary says what changes, where, how and what happens on failure, the criteria read as concrete Alice scenarios, and every decision has a checkable reason and a rejected alternative, but the business-facing 'Ce qui existe déjà' section is full of jargon (repository, outbox, view port, migration)."
+		},
+		"problems": [
+			"§14 Incréments: I2 merges UC:DepositMoney and its replay logic with no test ('Fini quand' is only lint and typing), while I4 claims the lower layers are already tested; build driven before application, or fold I2 into I4 so the command arrives with T-14 and T-16.",
+			"D-2 promises that a resend 'reçoit la même réponse que l'envoi perdu', but D-6 and QRY:GetWalletBalance return the balance read after the command, so a resend after any other operation shows a different balance; either say so or keep the post-deposit balance (already in EVT:MoneyDeposited) in TBL:wallets.deposit and return it.",
+			"D-4 and Annex B justify TBL:wallets.deposit with 'L'historique des dépôts compte pour le métier' and ENT-17, but the ticket never says this, and ENT-17 stays a question until the business names the history it wants; the real reason is crediting a deposit only once, and the design should say so or ask.",
+			"§15 T-14 to T-16: the file `__test__/rules/deposit-credited-once.e2e-spec.ts` does not follow TST-06's `<rule code>-<rule name>` naming for rule tests, and INV-5 has no rule code to give it.",
+			"§1 'Ce qui existe déjà' and the Résumé, written for the business, rely on repository, version check, outbox, query, view port and migration jargon a business reader cannot check."
+		],
+		"verdict": "approve"
+	}
+}

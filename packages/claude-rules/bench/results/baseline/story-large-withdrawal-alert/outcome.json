@@ -1,0 +1,51 @@
+{
+	"design": {
+		"isError": false,
+		"costUsd": 3.8191316000000004,
+		"durationMs": 767522,
+		"turns": 39,
+		"subagents": 0,
+		"permissionDenials": 6
+	},
+	"check": {
+		"passed": true,
+		"problems": 0,
+		"output": "/var/folders/y6/qyq35n454d99n5l1krygj9400000gp/T/alveolus-bench-story-large-withdrawal-alert-eKMlAV/docs/designs/large-withdrawal-alert.md: design check passed\n"
+	},
+	"judge": {
+		"isError": false,
+		"costUsd": 3.1110232,
+		"durationMs": 175760,
+		"turns": 25,
+		"subagents": 0,
+		"permissionDenials": 1
+	},
+	"verdict": {
+		"scores": {
+			"fidelity": 0.9,
+			"questions": 0.9,
+			"rules": 0.85,
+			"reuse": 0.95,
+			"coherence": 0.8,
+			"proportion": 0.75,
+			"readability": 0.8
+		},
+		"reasons": {
+			"fidelity": "Every acceptance criterion of the ticket maps to AC-1 to AC-8, the receipt stays on MoneyWithdrawn v1, and every addition the ticket leaves open (currency mismatch, closed wallet, zero threshold, the one-minute target) is a D or a Q with its assumption. The one exception is 'no route reads the threshold back', which is put out of scope without being asked.",
+			"questions": "The questions point at real gaps: how the email names a wallet, the time zone, a late alert, telling the customer when a threshold is removed, the missing auth and migrations, and an existing 100-row starvation bug that threatens the one-minute target. Each has an assumption and says what it blocks. Only Q-12 is close to trivial.",
+			"rules": "The design keeps the tactical and transaction-script styles: invariants in Wallet, the translator in the outbox, a dedupe consumer, PER-11-safe migrations (the enum value gets its own migration), and a proper W-1 waiver with an ADR for UC-06 and SEC-02. But it files deviations from PUB-01 and MAP-01 as non-blocking questions instead of waivers, and stretches AGG-12 to cover a single optional value.",
+			"reuse": "It extends what exists and describes it accurately: Money, CurrencyMismatch and WalletIsClosed, WalletMapper, WalletEventsTranslator, IntegrationConsumer with processed_message, the notification table and its index, PendingNotificationsScheduler, EmailSender and SmtpEmailSender. The facts it states about the repo are correct (no migrations folder, listPending(100), a single unit test).",
+			"coherence": "Names stay the same from the glossary through the model, events, contracts, columns, tests and files, and the increments go inside out with the routes last for a stated safety reason. But I2 merges untested, the operations alert and the ≤30 s interval promised 'from I6 on' belong to no increment, and the summary's blocking list leaves out Q-4.",
+			"proportion": "This is a complete story design. It is heavy for one story, though: 7 PRs, 15 questions and a 50-row rules appendix, partly because of the test-infra and baseline-migration groundwork, and I2 and I6 are very thin increments.",
+			"readability": "Parts 1 and 2 use concrete Alice/W1 examples, the summary covers what, where, how and what happens on failure, and every decision has a reason a reviewer can check. But D-6 (message envelope) and D-7 (nullable columns, check constraints) are technical decisions sitting in the business-validation part."
+		},
+		"problems": [
+			"Section 14, I2: the two new use cases merge with only 'type check and lint green', and their tests wait until I7, so this increment ships untested code; put it after I3/I4 with an integration test, or merge it into I7.",
+			"Section 13 and Q-3: the operations alert for an alert still pending after 60 s, and the sending interval of 30 s or less, are promised 'from I6 on', but no increment, file (notifications.config.ts, monitoring) or test delivers them.",
+			"Section 5, 'On the rules' (Q-14, Q-15): publishing LargeWithdrawalMade v1 without a documented schema (PUB-01) and without a context-map update (MAP-01) deviates from two major rules, and the design records this as non-blocking questions instead of waivers.",
+			"Summary table: the 'Blocking questions' line leaves out Q-4 (blocks I5) and Q-3 (blocks section 13), which contradicts the Blocks column of section 5.",
+			"Part 2, D-6 and D-7: these are storage and messaging choices (envelope date, nullable balance, per-kind checks) placed in the part the business validates, in wording a business reader cannot judge; move them to part 3 or reword them as their business effect."
+		],
+		"verdict": "approve"
+	}
+}

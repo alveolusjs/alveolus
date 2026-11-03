@@ -3,7 +3,15 @@ import { defineConfig, globalIgnores } from 'eslint/config';
 import tseslint from 'typescript-eslint';
 
 export default defineConfig(
-	globalIgnores(['**/dist', '**/coverage', 'docs/.vitepress/cache', 'docs/.vitepress/dist', '**/generated']),
+	globalIgnores([
+		'**/dist',
+		'**/coverage',
+		'docs/.vitepress/cache',
+		'docs/.vitepress/dist',
+		'**/generated',
+		'packages/claude-rules/bench/app',
+		'packages/claude-rules/bench/results',
+	]),
 	js.configs.recommended,
 	tseslint.configs.recommended,
 	{

@@ -1,0 +1,46 @@
+{
+	"design": {
+		"isError": false,
+		"costUsd": 2.155478,
+		"durationMs": 136987,
+		"turns": 20,
+		"subagents": 0,
+		"permissionDenials": 2
+	},
+	"judge": {
+		"isError": false,
+		"costUsd": 1.5933144000000001,
+		"durationMs": 69906,
+		"turns": 13,
+		"subagents": 0,
+		"permissionDenials": 1
+	},
+	"verdict": {
+		"scores": {
+			"fidelity": 0.85,
+			"questions": 0.8,
+			"rules": 0.85,
+			"reuse": 0.9,
+			"coherence": 0.75,
+			"proportion": 1,
+			"readability": 0.85
+		},
+		"reasons": {
+			"fidelity": "All four ticket requirements map to a story (S1 monthly content, S2 closed wallet, S3 PDF email, S4 list and download), the out of scope is respected, and the two additions (S0 deposits, T1 history) are backed by verified gaps in the code and marked to validate. One gap: S2 does not say when the last statement is issued, and nobody is asked about it.",
+			"questions": "The business and tech gaps are real: time zone, wallets with no movement, wallets opened mid-month, one email or several, customers with no email, retention and whether the PDF must never change, authentication, PDF library. Most come with an assumption and the story they block, but the deposits, authentication and PDF-library questions have no assumption, and the timing of the closed-wallet statement is missing.",
+			"rules": "The decisions fit the tactical and transaction-script rules: wallets owns statements, which avoids a shared database (MAP-02). `wallets.statement.StatementIssued` follows PUB-03, reaches notifications through the outbox, and the PDF goes through the `public` facade (LAY-04). Statements are never deleted (REP-06), the caller comes from authentication (SEC-02), and the stored balance after each movement follows PER-07. Rule codes are not cited, and the answer does not say where PDF rendering sits in the core domain's layers.",
+			"reuse": "The inventory matches the code: the `Wallet` aggregate has no deposit, so the zero opening balance makes every withdrawal fail; there is no history, `customerId` comes from the request, `EmailSender.sendReceipt` handles receipts only, and the `notification` table requires `amount` and `balance`. It plans to extend the existing outbox, consumer and pending-email scheduler rather than add parallel paths.",
+			"coherence": "The IDs (S0–S4, T1) and the order are used consistently, and wallets comes before notifications. But S3 and S4 are called independent although both need the PDF renderer, and no story owns it. The 'T1 in production a full month' constraint is stricter than needed, because every balance is zero until S0 ships. S3 also spans two contexts in one story.",
+			"proportion": "This is an epic, and the answer is the right size for one: a split into stories, a dependency order, three decisions to validate and the open questions, with no detailed design.",
+			"readability": "Each story is a plain user statement with a goal, and each decision gives its reason and the rejected alternative, so a reviewer can check it. The decisions table uses technical terms (outbox, published event, core subdomain), and nothing says what happens when building or sending a statement fails."
+		},
+		"problems": [
+			"Proposed split: the PDF renderer that both S3 and S4 need belongs to no story, yet S3 and S4 are called independent, so whichever ships first silently takes on the renderer and its PDF library choice (only S3 is said to be blocked by it).",
+			"Open questions: S2 does not ask when the last statement of a closed wallet is issued (at closing or on the first of the next month), although the ticket leaves this open.",
+			"Order: the rule that 'T1 must be in production a full month before the first statement' is stricter than needed, because every wallet balance is zero until deposits (S0) exist, so T1 shipped before or with S0 already gives a complete history.",
+			"Open questions: the deposits, authentication and PDF-library questions have no working assumption, so S0, S4 and S3 are blocked with no default to plan against.",
+			"Proposed split: S3 spans wallets (published event, PDF through the facade) and notifications (consumer, a new notification kind, a schema change for the non-null `amount` and `balance`), so it would be better split upstream first, and nothing says what happens when building or sending a statement fails."
+		],
+		"verdict": "approve"
+	}
+}
