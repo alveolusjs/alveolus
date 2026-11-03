@@ -1,0 +1,49 @@
+model OutboxEvent {
+  sequence BigInt          @id @default(autoincrement())
+  kind     OutboxEventKind
+  source   String
+  type     String
+  body     Json
+  addedAt  DateTime        @default(now()) @map("added_at") @db.Timestamptz(3)
+
+  @@index([kind, source, sequence])
+  @@map("event")
+  @@schema("outbox")
+}
+
+model OutboxPublication {
+  channel      String @id
+  lastSequence BigInt @map("last_sequence")
+  failures     Int    @default(0)
+
+  @@map("publication")
+  @@schema("outbox")
+}
+
+model OutboxDeadLetter {
+  channel    String
+  sequence   BigInt
+  recordedAt DateTime @default(now()) @map("recorded_at") @db.Timestamptz(3)
+
+  @@id([channel, sequence])
+  @@map("dead_letter")
+  @@schema("outbox")
+}
+
+model ProcessedMessage {
+  consumer    String
+  messageId   String   @map("message_id") @db.Uuid
+  processedAt DateTime @map("processed_at") @db.Timestamptz(3)
+
+  @@id([consumer, messageId])
+  @@map("processed_message")
+  @@schema("outbox")
+}
+
+enum OutboxEventKind {
+  integration
+  domain
+
+  @@map("event_kind")
+  @@schema("outbox")
+}

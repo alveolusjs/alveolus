@@ -1,0 +1,22 @@
+{
+	"name": "bank",
+	"private": true,
+	"scripts": {
+		"test": "vitest run",
+		"lint": "eslint src"
+	},
+	"dependencies": {
+		"@alveolus/core": "*",
+		"@nestjs/common": "*",
+		"@nestjs/core": "*",
+		"@prisma/client": "*",
+		"nodemailer": "*",
+		"prisma": "*",
+		"zod": "*"
+	},
+	"devDependencies": {
+		"@alveolus/claude-rules": "*",
+		"eslint": "*",
+		"vitest": "*"
+	}
+}

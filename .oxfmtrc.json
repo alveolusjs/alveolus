@@ -12,6 +12,7 @@
 		"*/.vitepress/cache",
 		"*/.vitepress/dist",
 		"**/generated",
+		"packages/claude-rules/bench/results",
 		"**/*.md",
 		"**/*.yml",
 		"**/*.yaml"

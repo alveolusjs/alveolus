@@ -1,0 +1,37 @@
+{
+	"type": "object",
+	"properties": {
+		"scores": {
+			"type": "object",
+			"properties": {
+				"fidelity": { "type": "number", "minimum": 0, "maximum": 1 },
+				"questions": { "type": "number", "minimum": 0, "maximum": 1 },
+				"rules": { "type": "number", "minimum": 0, "maximum": 1 },
+				"reuse": { "type": "number", "minimum": 0, "maximum": 1 },
+				"coherence": { "type": "number", "minimum": 0, "maximum": 1 },
+				"proportion": { "type": "number", "minimum": 0, "maximum": 1 },
+				"readability": { "type": "number", "minimum": 0, "maximum": 1 }
+			},
+			"required": ["fidelity", "questions", "rules", "reuse", "coherence", "proportion", "readability"],
+			"additionalProperties": false
+		},
+		"reasons": {
+			"type": "object",
+			"properties": {
+				"fidelity": { "type": "string" },
+				"questions": { "type": "string" },
+				"rules": { "type": "string" },
+				"reuse": { "type": "string" },
+				"coherence": { "type": "string" },
+				"proportion": { "type": "string" },
+				"readability": { "type": "string" }
+			},
+			"required": ["fidelity", "questions", "rules", "reuse", "coherence", "proportion", "readability"],
+			"additionalProperties": false
+		},
+		"problems": { "type": "array", "items": { "type": "string" }, "maxItems": 5 },
+		"verdict": { "type": "string", "enum": ["approve", "revise", "reject"] }
+	},
+	"required": ["scores", "reasons", "problems", "verdict"],
+	"additionalProperties": false
+}
